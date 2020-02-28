@@ -12,7 +12,7 @@
 */
 bool TimerInteruptFlag = false;
 
-void TimerAInit( void ) {
+void TimerAInteruptInit( void ) {
     /* Configuring Timer_A1 for Up Mode */
     MAP_Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
 
@@ -22,6 +22,7 @@ void TimerAInit( void ) {
 
     /* Enabling MASTER interrupts */
     MAP_Interrupt_enableMaster();
+
 
 }
 
@@ -42,4 +43,22 @@ void Delayms( uint32_t ms ) {
     }
     count = 0;
     MAP_Timer_A_stopTimer(TIMER_A1_BASE);
+}
+
+void StartTimer( TimerEvent_t *obj ) {
+
+}
+
+void TimerInit( TimerEvent_t *obj, void ( *callback )( void *context ) ) {
+    obj->Timestamp = 0;
+    obj->ReloadValue = 0;
+    obj->IsStarted = false;
+    obj->IsNext2Expire = false;
+    obj->Callback = callback;
+    obj->Context = NULL;
+    obj->Next = NULL;
+}
+
+void TimerSetContext( TimerEvent_t *obj, void* context ) {
+    obj->Context = context;
 }

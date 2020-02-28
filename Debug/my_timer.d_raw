@@ -49,3 +49,6 @@ my_timer.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/
 my_timer.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/wdt_a.h
 my_timer.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/sysctl.h
 my_timer.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/flash.h
+my_timer.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stddef.h
+my_timer.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/_ti_config.h
+my_timer.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h
