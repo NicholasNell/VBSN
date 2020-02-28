@@ -12,6 +12,11 @@
 */
 bool TimerInteruptFlag = false;
 
+/*!
+ * Timers list head pointer
+ */
+static TimerEvent_t *TimerListHead = NULL;
+
 void TimerAInteruptInit( void ) {
     /* Configuring Timer_A1 for Up Mode */
     MAP_Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
@@ -46,6 +51,19 @@ void Delayms( uint32_t ms ) {
 }
 
 void StartTimer( TimerEvent_t *obj ) {
+    uint32_t elapsedTime = 0;
+
+    MAP_Interrupt_disableMaster();  //Disable all interupts while things are being set up
+
+    if ( ( obj == NULL ) || (TimerExists( obj ) == true ) ) {
+        MAP_Interrupt_enableMaster();
+        return;
+    }// If the timer object does not exist or the timer is already on the timer list return
+
+    obj->Timestamp = obj->ReloadValue;
+    obj->IsStarted = true;
+    obj->IsNext2Expire = false;
+
 
 }
 
