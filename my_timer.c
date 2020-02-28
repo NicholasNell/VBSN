@@ -32,6 +32,14 @@ void TA1_0_IRQHandler( void ) {
 }
 
 void Delayms( uint32_t ms ) {
-    Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE)
+    uint32_t count = 0;
+    MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
 
+    while (count < ms) {
+        if (TimerInteruptFlag) {
+            count++;
+        }
+    }
+    count = 0;
+    MAP_Timer_A_stopTimer(TIMER_A1_BASE);
 }
