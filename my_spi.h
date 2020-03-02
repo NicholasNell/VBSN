@@ -9,8 +9,8 @@
 #define MY_SPI_H_
 
 #define RFM_SPI_WRITE_MASK 0x80
-#define RFM95_NSS_HIGH GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2)
-#define RFM95_NSS_LOW GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2)
+#define RFM95_NSS_HIGH P5->OUT |= BIT2 //GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2)
+#define RFM95_NSS_LOW P5->OUT &= ~BIT2 //GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2)
 
 
 void spi_open(void);

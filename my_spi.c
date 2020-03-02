@@ -17,7 +17,7 @@ const eUSCI_SPI_MasterConfig spiMasterConfig =
 {
      EUSCI_B_SPI_CLOCKSOURCE_SMCLK,         // SMCLK clock.
      3000000,                                                            // SMCLK = DCO = 3MHz
-     5000000,                                                                 // SPICLK = 500kHz
+     1000000,                                                                 // SPICLK = 500kHz
      EUSCI_B_SPI_MSB_FIRST,                               // MSB first
      EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,   //phase
      EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,
@@ -48,11 +48,13 @@ void spi_close(void)
 
 void spiWrite_RFM(uint8_t addr, uint8_t val)
 {
-    RFM95_NSS_LOW;
+//    RFM95_NSS_LOW;
+    P5->OUT &= ~BIT2;
     uint8_t address = addr | RFM_SPI_WRITE_MASK;   //  read: mask 0x80 for write access; mask 0x7F for read access
     val = RFM_spi_read_write(address);
     val = RFM_spi_read_write(val);
-    RFM95_NSS_HIGH;
+//    RFM95_NSS_HIGH;
+    P5->OUT |= BIT2;
 
 }
 
