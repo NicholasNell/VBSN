@@ -10,6 +10,21 @@
 /*
     Global variables
 */
+/*
+    Period (s) = (TIMER_PERIOD * DIVIDER) / (SMCLK = 3MHz)
+*/
+#define TIMER_PERIOD    375
+
+/* Timer_A UpMode Configuration Parameter */
+const Timer_A_UpModeConfig upConfig =
+{
+        TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
+        TIMER_A_CLOCKSOURCE_DIVIDER_8,          // SMCLK/1 = 3MHz
+        TIMER_PERIOD,                           // 375 tick period
+        TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
+        TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE ,    // Enable CCR0 interrupt
+        TIMER_A_DO_CLEAR                        // Clear value
+};
 bool TimerInteruptFlag = false;
 
 void TimerAInteruptInit( void ) {

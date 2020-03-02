@@ -9,8 +9,8 @@
 #define MY_RFM9X_H_
 
 #include <stdint.h>
-#include <stdlib.h>
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+//#include <stdlib.h>
+//#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include "my_spi.h"
 #include "radio.h"
 #include "sx1276Regs-Fsk.h"

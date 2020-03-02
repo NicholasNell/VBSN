@@ -52,25 +52,41 @@
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
-#include "my_spi.h"
 #include "my_timer.h"
-#include "my_systick.h"
+#include "my_spi.h"
 #include "my_RFM9x.h"
+
+uint8_t buffer[40];
 
 int main(void)
 {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
+    MAP_Interrupt_enableMaster();
+
+    //  set LED1 to output
+    GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN1);
+    GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
+
+
+    uint8_t i;
+    for(i = 0; i < 40; i++) {
+        buffer[i] = 'N';
+    }
 
     TimerAInteruptInit();
     spi_open();
     SX1276Init();
+    SX1276SetModem(MODEM_LORA);
+    SX1276SetTxConfig(MODEM_LORA, 14, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
+    SX1276SetChannel(868100000);
 
+    while(1) {
+        SX1276Send( buffer, 40 );
+        GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
+        Delayms( 10 );
+        GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN1);
+        Delayms( 5000 );
 
-
-
-    while(1)
-    {
-        
     }
 }
