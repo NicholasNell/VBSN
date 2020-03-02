@@ -17,7 +17,7 @@
 /* Application Defines  */
 
 /*
-    Initialise timer_a it count up mode. Trigger interupt when TAR equals CCR0.
+    Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
     Timer will be configured for ms interupts.
 */
 void TimerAInteruptInit( void );

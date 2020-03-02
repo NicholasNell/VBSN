@@ -76,17 +76,35 @@ int main(void)
 
     TimerAInteruptInit();
     spi_open();
+    uint8_t j = spiRead_RFM(REG_LR_OPMODE);
+    spiWrite_RFM(REG_LR_OPMODE, RFLR_OPMODE_LONGRANGEMODE_ON);
+    j = spiRead_RFM(REG_LR_LNA);
     SX1276Init();
+    j = spiRead_RFM(REG_LR_OPMODE);
     SX1276SetModem(MODEM_LORA);
+    j = spiRead_RFM(REG_LR_OPMODE);
     SX1276SetTxConfig(MODEM_LORA, 14, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
     SX1276SetChannel(868100000);
 
+
+
     while(1) {
-        SX1276Send( buffer, 40 );
+//        SX1276Send( buffer, 40 );
         GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
         Delayms( 10 );
         GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN1);
         Delayms( 5000 );
+        j = spiRead_RFM(REG_LR_OPMODE);
+        spiWrite_RFM(REG_LR_OPMODE, RFLR_OPMODE_LONGRANGEMODE_ON);
 
     }
+}
+
+void PORT2_IRQHandler(void)
+{
+    uint32_t status;
+
+    status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
+    MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
+
 }

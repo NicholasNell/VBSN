@@ -139,18 +139,19 @@ uint8_t SX1276Init(/*RadioEvents_t *events*/)
 
     SX1276Reset();
 
-    RxChainCalibration();
+//    RxChainCalibration();
 
     SX1276SetOpMode(RF_OPMODE_SLEEP);
 
     SX1276IoIrqInit( );
-
+    uint8_t j = spiRead_RFM(0x01);
     for( i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ )
     {
         SX1276SetModem( RadioRegsInit[i].Modem );
         spiWrite_RFM( RadioRegsInit[i].Addr, RadioRegsInit[i].Value );
+        j = spiRead_RFM(RadioRegsInit[i].Addr);
     }
-    uint8_t j = spiRead_RFM(0x01);
+
     SX1276SetModem( MODEM_LORA );
     j = spiRead_RFM(0x01);
 
@@ -206,11 +207,13 @@ uint8_t SX1276Init(/*RadioEvents_t *events*/)
 
 void SX1276IoIrqInit( void ) {
     //  Set interupt
-/*        MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN4);
+        MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P2, GPIO_PIN4);
         MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, GPIO_PIN4);
         MAP_GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN4);
-        MAP_Interrupt_enableInterrupt(INT_PORT2);*/
+        MAP_Interrupt_enableInterrupt(INT_PORT2);
 }
+
+
 
 RadioState_t SX1276GetStatus( void )
 {

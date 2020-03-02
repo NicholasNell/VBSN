@@ -158,6 +158,7 @@ typedef struct SX1276_s
 #define RF_MID_BAND_THRESH                          525000000
 
 
+
 /*!
  * \brief Initializes the radio
  *
