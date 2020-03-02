@@ -52,11 +52,22 @@
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
+#include "my_spi.h"
+#include "my_timer.h"
+#include "my_systick.h"
+#include "my_RFM9x.h"
 
 int main(void)
 {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
+
+    TimerAInteruptInit();
+    spi_open();
+    SX1276Init();
+
+
+
 
     while(1)
     {

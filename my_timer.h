@@ -14,21 +14,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/*!
- * \brief Timer object description
- */
-typedef struct TimerEvent_s
-{
-    uint32_t Timestamp;                  //! Current timer value
-    uint32_t ReloadValue;                //! Timer delay value
-    bool IsStarted;                      //! Is the timer currently running
-    bool IsNext2Expire;                  //! Is the next timer to expire
-    void ( *Callback )( void* context ); //! Timer IRQ callback function
-    void *Context;                       //! User defined data object pointer to pass back
-    struct TimerEvent_s *Next;           //! Pointer to the next Timer object.
-}TimerEvent_t;
-
-
 /* Application Defines  */
 
 /*
@@ -54,11 +39,6 @@ const Timer_A_UpModeConfig upConfig =
 void TimerAInteruptInit( void );
 
 /*
-    initilise a new timer object
-*/
-void TimerInit( TimerEvent_t *obj, void ( *callback )( void *context ) );
-
-/*
     Timer A ISR Handler
 */
 void TA1_0_IRQHandler( void );
@@ -67,21 +47,5 @@ void TA1_0_IRQHandler( void );
  * Delay function 1ms resolution
  */
 void Delayms( uint32_t ms );
-
-/*
-    Start a new timer A1
-*/
-void StartTimer( TimerEvent_t *obj );
-
-/*!
- * \brief Sets a user defined object pointer
- *
- * \param [IN] context User defined data object pointer to pass back
- *                     on IRQ handler callback
- */
-void TimerSetContext( TimerEvent_t *obj, void* context );
-
-
-
 
 #endif /* MY_TIMER_H_ */
