@@ -48,13 +48,11 @@ void spi_close(void)
 
 void spiWrite_RFM(uint8_t addr, uint8_t val)
 {
-//    RFM95_NSS_LOW;
-    P5->OUT &= ~BIT2;
+    RFM95_NSS_LOW;
     uint8_t address = addr | RFM_SPI_WRITE_MASK;   //  read: mask 0x80 for write access; mask 0x7F for read access
-    val = RFM_spi_read_write(address);
+    RFM_spi_read_write(address);
     val = RFM_spi_read_write(val);
-//    RFM95_NSS_HIGH;
-    P5->OUT |= BIT2;
+    RFM95_NSS_HIGH;
 
 }
 
