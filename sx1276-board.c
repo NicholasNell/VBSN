@@ -12,6 +12,7 @@
 #include "sx1276-board.h"
 #include "board-config.h"
 #include "my_spi.h"
+#include "my_timer.h"
 
 /*!
  * \brief Gets the board PA selection configuration
@@ -76,7 +77,7 @@ void SX1276IoInit( void )
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+
 }
 
 static void Dio0IrqHandler( void );
@@ -192,7 +193,7 @@ void SX1276SetBoardTcxo( uint8_t state )
 
 uint32_t SX1276GetBoardTcxoWakeupTime( void )
 {
-
+    return BOARD_TCXO_WAKEUP_TIME;
 }
 
 void SX1276Reset(void)

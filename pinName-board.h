@@ -30,6 +30,7 @@ extern "C"
 
 /*!
  * MSP432 Pin Names
+ * MSP432 pin numbers only go to 7, but keeping the pins 0 through 15 here makes my life easier
  */
 #define MCU_PINS \
     P1_0 = 0, P1_1, P1_2, P1_3, P1_4, P1_5, P1_6, P1_7, P1_8, P1_9, P1_10, P1_11, P1_12, P1_13, P1_14, P1_15, \
