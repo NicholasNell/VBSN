@@ -4,15 +4,14 @@
  *  Created on: 24 Feb 2020
  *      Author: nicholas
  */
-#include "my_RFM9x.h"
-#include "my_timer.h"
-#include <math.h>
-#include "radio.h"
-#include "sx1276-board.h"
+
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
-
-
-
+#include <math.h>
+#include <string.h>
+#include "my_timer.h"
+#include "radio.h"
+#include "my_RFM9x.h"
+#include "sx1276-board.h"
 
 /*
  * Local types definition
@@ -169,6 +168,14 @@ static RadioEvents_t *RadioEvents;
  */
 SX1276_t SX1276;
 
+/*!
+ * Hardware DIO IRQ callback initialization
+ */
+DioIrqHandler *DioIrq[] = { SX1276OnDio0Irq, SX1276OnDio1Irq,
+                            SX1276OnDio2Irq, SX1276OnDio3Irq,
+                            SX1276OnDio4Irq, NULL };
+
+
 
 /*!
  * Radio hardware registers initialization
@@ -194,6 +201,7 @@ uint8_t GetFskBandwidthRegValue( uint32_t bandwidth )
 
 uint8_t SX1276Init(RadioEvents_t *events)
 {
+    uint8_t i;
 
 // Set NSS pin HIgh during Normal operation
     GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
@@ -203,8 +211,6 @@ uint8_t SX1276Init(RadioEvents_t *events)
     GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
     GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN7);
 
-    uint8_t i;
-
     RadioEvents = events;
 
     SX1276Reset();
@@ -213,7 +219,8 @@ uint8_t SX1276Init(RadioEvents_t *events)
 
     SX1276SetOpMode(RF_OPMODE_SLEEP);
 
-    SX1276IoIrqInit( );
+//    SX1276IoIrqInit( DioIrq );
+
     for( i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ )
     {
         SX1276SetModem( RadioRegsInit[i].Modem );
@@ -230,16 +237,6 @@ uint8_t SX1276Init(RadioEvents_t *events)
 
     return 1;
 }
-
-void SX1276IoIrqInit( DioIrqHandler **irqHandlers ) {
-    //  Set interupt
-        MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P2, GPIO_PIN4);
-        MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, GPIO_PIN4);
-        MAP_GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN4);
-        MAP_Interrupt_enableInterrupt(INT_PORT2);
-}
-
-
 
 RadioState_t SX1276GetStatus( void )
 {
@@ -899,16 +896,6 @@ void SX1276SetStby(void)
 
 }*/
 
-
-
-void SX1276Reset(void)
-{
-    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
-    Delayms( 1 );
-    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
-    Delayms( 5 );
-}
-
 void RxChainCalibration()
 {
     uint8_t regPaConfigInitVal;
@@ -943,218 +930,6 @@ void RxChainCalibration()
     SX1276SetChannel( initialFreq );
 }
 
-void SX1276SetRfTxPower(int8_t power)
-{
-    uint8_t paConfig = 0;
-    uint8_t paDac = 0;
-
-    paConfig = spiRead_RFM( REG_PACONFIG );
-    paDac = spiRead_RFM( REG_PADAC );
-
-    paConfig = ( paConfig & RF_PACONFIG_PASELECT_MASK ) | SX1276GetPaSelect( power );
-
-    if( ( paConfig & RF_PACONFIG_PASELECT_PABOOST ) == RF_PACONFIG_PASELECT_PABOOST )
-   {
-       if( power > 17 )
-       {
-           paDac = ( paDac & RF_PADAC_20DBM_MASK ) | RF_PADAC_20DBM_ON;
-       }
-       else
-       {
-           paDac = ( paDac & RF_PADAC_20DBM_MASK ) | RF_PADAC_20DBM_OFF;
-       }
-       if( ( paDac & RF_PADAC_20DBM_ON ) == RF_PADAC_20DBM_ON )
-       {
-           if( power < 5 )
-           {
-               power = 5;
-           }
-           if( power > 20 )
-           {
-               power = 20;
-           }
-           paConfig = ( paConfig & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( uint8_t )( ( uint16_t )( power - 5 ) & 0x0F );
-       }
-       else
-       {
-           if( power < 2 )
-           {
-               power = 2;
-           }
-           if( power > 17 )
-           {
-               power = 17;
-           }
-           paConfig = ( paConfig & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( uint8_t )( ( uint16_t )( power - 2 ) & 0x0F );
-       }
-   }
-   else
-   {
-       if( power > 0 )
-       {
-           if( power > 15 )
-           {
-               power = 15;
-           }
-           paConfig = ( paConfig & RF_PACONFIG_MAX_POWER_MASK & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( 7 << 4 ) | ( power );
-       }
-       else
-       {
-           if( power < -4 )
-           {
-               power = -4;
-           }
-           paConfig = ( paConfig & RF_PACONFIG_MAX_POWER_MASK & RF_PACONFIG_OUTPUTPOWER_MASK ) | ( 0 << 4 ) | ( power + 4 );
-       }
-   }
-    spiWrite_RFM( REG_PACONFIG, paConfig );
-    spiWrite_RFM( REG_PADAC, paDac );
-}
-
-/*void RFM_set_SF(uint8_t sf)
-{
-    if (sf < 6) {
-        sf = 6;
-      } else if (sf > 12) {
-        sf = 12;
-      }
-
-      if (sf == 6)
-      {
-          spiWrite_RFM(REG_LR_DETECTOPTIMIZE, 0xc5);
-          spiWrite_RFM(REG_LR_DETECTIONTHRESHOLD, 0x0c);
-      } else
-      {
-          spiWrite_RFM(REG_LR_DETECTOPTIMIZE, 0xc3);
-          spiWrite_RFM(REG_LR_DETECTIONTHRESHOLD, 0x0a);
-      }
-
-      spiWrite_RFM(REG_LR_MODEMCONFIG2, (spiRead_RFM(REG_LR_MODEMCONFIG2) & 0x0f) | ((sf << 4) & 0xf0));
-      RFM_set_Ldo_Flag(); //Low datarate optimisation
-}*/
-
-/*void RFM_set_BW(uint64_t sbw)
-{
-    uint32_t bw;
-
-      if (sbw <= 7.8E3)
-      {
-        bw = 0;
-      } else if (sbw <= 10.4E3)
-      {
-        bw = 1;
-      } else if (sbw <= 15.6E3)
-      {
-        bw = 2;
-      } else if (sbw <= 20.8E3)
-      {
-        bw = 3;
-      } else if (sbw <= 31.25E3)
-      {
-        bw = 4;
-      } else if (sbw <= 41.7E3)
-      {
-        bw = 5;
-      } else if (sbw <= 62.5E3)
-      {
-        bw = 6;
-      } else if (sbw <= 125E3)
-      {
-        bw = 7;
-      } else if (sbw <= 250E3)
-      {
-        bw = 8;
-      } else if (sbw <= 250E3)
-      {
-        bw = 9;
-      }
-
-      spiWrite_RFM(REG_LR_MODEMCONFIG1, (spiRead_RFM(REG_LR_MODEMCONFIG1) & 0x0f) | (bw << 4));
-      RFM_set_Ldo_Flag();
-}*/
-
-/*void RFM_set_Ldo_Flag(void)
-{
-    // Section 4.1.1.5
-      uint32_t symbolDuration = 1000 / ( RFM_get_BW() / (1L << RFM_get_SF()) ) ;
-
-      // Section 4.1.1.6
-      uint8_t ldoOn = 0b00000100;
-      uint8_t config3 = spiRead_RFM(REG_LR_MODEMCONFIG3);
-
-      if (symbolDuration > 16)
-      {
-          config3 |= ldoOn;
-      }
-      else
-      {
-          config3 &= ~ldoOn;
-      }
-
-      spiWrite_RFM(REG_LR_MODEMCONFIG3, config3);
-}*/
-
-/*void RFM_set_CR4(uint8_t rate)
-{
-    if (rate < 5) {
-        rate = 5;
-      } else if (rate > 8) {
-        rate = 8;
-      }
-
-      uint8_t cr = rate - 4;
-
-      spiWrite_RFM(REG_LR_MODEMCONFIG1, (spiRead_RFM(REG_LR_MODEMCONFIG1) & 0xf1) | (cr << 1));
-}*/
-
-/*void RFM_set_Preamble(uint8_t len)
-{
-    spiWrite_RFM(REG_LR_PREAMBLEMSB, (uint8_t)(len >> 8));
-    spiWrite_RFM(REG_LR_PREAMBLELSB, (uint8_t)(len >> 0));
-}*/
-
-/*void RFM_set_syncword(uint32_t sw)
-{
-    spiWrite_RFM(REG_LR_SYNCWORD, sw);
-}*/
-
-/*void RFM_set_OCP(uint8_t mA)
-{
-    uint8_t ocpTrim = 27;
-
-      if (mA <= 120) {
-        ocpTrim = (mA - 45) / 5;
-      } else if (mA <=240) {
-        ocpTrim = (mA + 30) / 10;
-      }
-
-      spiWrite_RFM(REG_OCP, 0x20 | (0x1F & ocpTrim));
-}*/
-
-/*uint64_t RFM_get_BW(void)
-{
-    uint8_t bw = (spiRead_RFM(REG_LR_MODEMCONFIG1) >> 4);
-
-      switch (bw) {
-        case 0: return 7.8E3;
-        case 1: return 10.4E3;
-        case 2: return 15.6E3;
-        case 3: return 20.8E3;
-        case 4: return 31.25E3;
-        case 5: return 41.7E3;
-        case 6: return 62.5E3;
-        case 7: return 125E3;
-        case 8: return 250E3;
-        case 9: return 500E3;
-      }
-
-      return 0;
-}*/
-
-/*uint8_t RFM_get_SF(void)
-{
-    return spiRead_RFM(REG_LR_MODEMCONFIG2) >> 4;
-}*/
 
 void SX1276WriteFifo( uint8_t *buffer, uint8_t size )
 {
@@ -1523,5 +1298,10 @@ uint8_t SX1276GetPaSelect( int8_t power )
     {
         return RF_PACONFIG_PASELECT_RFO;
     }
+}
+
+uint32_t SX1276GetWakeupTime( void )
+{
+    return SX1276GetBoardTcxoWakeupTime( ) + RADIO_WAKEUP_TIME;
 }
 

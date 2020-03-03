@@ -55,6 +55,7 @@
 #include "my_timer.h"
 #include "my_spi.h"
 #include "my_RFM9x.h"
+#include "my_gpio.h"
 
 
 uint8_t buffer[] = {'H','E','L','L','O'};
@@ -125,7 +126,10 @@ int main(void)
 
 
     TimerAInteruptInit();
-    spi_open();
+//    spi_open();
+
+
+
     SX1276Init(&RadioEvents);
 //    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
     SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);

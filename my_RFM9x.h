@@ -16,6 +16,8 @@
 #include "sx1276Regs-Fsk.h"
 #include "sx1276Regs-LoRa.h"
 
+
+
 /*!
  * Radio wake-up time from sleep
  */
@@ -377,11 +379,6 @@ void SX1276SetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time );
  */
 int16_t SX1276ReadRssi( RadioModems_t modem );
 
-
-
-
-
-
 /*!
  * Returns the known FSK bandwidth registers value
  *
@@ -390,7 +387,13 @@ int16_t SX1276ReadRssi( RadioModems_t modem );
  */
 uint8_t GetFskBandwidthRegValue( uint32_t bandwidth );
 
-uint8_t SX1276GetPaSelect( int8_t power );
+/*!
+ * \brief Gets the time required for the board plus radio to get out of sleep.[ms]
+ *
+ * \retval time Radio plus board wakeup time in ms.
+ */
+uint32_t SX1276GetWakeupTime( void );
+
 
 
 

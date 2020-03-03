@@ -52,6 +52,8 @@ main.obj: ../my_timer.h
 main.obj: ../my_spi.h
 main.obj: ../my_RFM9x.h
 main.obj: ../my_gpio.h
+main.obj: ../pinName-board.h
+main.obj: ../pinName-ioe.h
 main.obj: ../radio.h
 main.obj: ../sx1276Regs-Fsk.h
 main.obj: ../sx1276Regs-LoRa.h

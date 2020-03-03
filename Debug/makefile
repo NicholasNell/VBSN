@@ -8,12 +8,14 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./gpio-board.obj" \
 "./main.obj" \
 "./my_RFM9x.obj" \
 "./my_gpio.obj" \
 "./my_spi.obj" \
 "./my_systick.obj" \
 "./my_timer.obj" \
+"./sx1276-board.obj" \
 "./system_msp432p401r.obj" \
 "./ccs/startup_msp432p401r_ccs.obj" \
 "../msp432p401r.cmd" \
@@ -167,8 +169,8 @@ Meesters.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "my_RFM9x.obj" "my_gpio.obj" "my_spi.obj" "my_systick.obj" "my_timer.obj" "system_msp432p401r.obj" "ccs/startup_msp432p401r_ccs.obj" 
-	-$(RM) "main.d" "my_RFM9x.d" "my_gpio.d" "my_spi.d" "my_systick.d" "my_timer.d" "system_msp432p401r.d" "ccs/startup_msp432p401r_ccs.d" 
+	-$(RM) "gpio-board.obj" "main.obj" "my_RFM9x.obj" "my_gpio.obj" "my_spi.obj" "my_systick.obj" "my_timer.obj" "sx1276-board.obj" "system_msp432p401r.obj" "ccs/startup_msp432p401r_ccs.obj" 
+	-$(RM) "gpio-board.d" "main.d" "my_RFM9x.d" "my_gpio.d" "my_spi.d" "my_systick.d" "my_timer.d" "sx1276-board.d" "system_msp432p401r.d" "ccs/startup_msp432p401r_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
