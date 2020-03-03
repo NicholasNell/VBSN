@@ -56,7 +56,55 @@
 #include "my_spi.h"
 #include "my_RFM9x.h"
 
-uint8_t buffer[40];
+
+uint8_t buffer[] = {'H','E','L','L','O'};
+
+typedef enum
+{
+    LOWPOWER,
+    RX,
+    RX_TIMEOUT,
+    RX_ERROR,
+    TX,
+    TX_TIMEOUT,
+}States_t;
+
+#define RX_TIMEOUT_VALUE                            1000
+#define BUFFER_SIZE                                 64 // Define the payload size here
+
+States_t State = LOWPOWER;
+
+uint16_t BufferSize = BUFFER_SIZE;
+uint8_t Buffer[BUFFER_SIZE];
+int8_t RssiValue = 0;
+int8_t SnrValue = 0;
+
+static RadioEvents_t RadioEvents;
+
+/*!
+ * \brief Function to be executed on Radio Tx Done event
+ */
+void OnTxDone( void );
+
+/*!
+ * \brief Function to be executed on Radio Rx Done event
+ */
+void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
+
+/*!
+ * \brief Function executed on Radio Tx Timeout event
+ */
+void OnTxTimeout( void );
+
+/*!
+ * \brief Function executed on Radio Rx Timeout event
+ */
+void OnRxTimeout( void );
+
+/*!
+ * \brief Function executed on Radio Rx Error event
+ */
+void OnRxError( void );
 
 int main(void)
 {
@@ -64,47 +112,77 @@ int main(void)
     MAP_WDT_A_holdTimer();
     MAP_Interrupt_enableMaster();
 
+    // Radio initialization
+    RadioEvents.TxDone = OnTxDone;
+    RadioEvents.RxDone = OnRxDone;
+    RadioEvents.TxTimeout = OnTxTimeout;
+    RadioEvents.RxTimeout = OnRxTimeout;
+    RadioEvents.RxError = OnRxError;
+
     //  set LED1 to output
     GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN1);
     GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
 
 
-    uint8_t i;
-    for(i = 0; i < 40; i++) {
-        buffer[i] = 'N';
-    }
-
     TimerAInteruptInit();
     spi_open();
-    uint8_t j = spiRead_RFM(REG_LR_OPMODE);
-    spiWrite_RFM(REG_LR_OPMODE, RFLR_OPMODE_LONGRANGEMODE_ON);
-    j = spiRead_RFM(REG_LR_LNA);
-    SX1276Init();
-    j = spiRead_RFM(REG_LR_OPMODE);
-    SX1276SetModem(MODEM_LORA);
-    j = spiRead_RFM(REG_LR_OPMODE);
-    SX1276SetTxConfig(MODEM_LORA, 14, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
+    SX1276Init(&RadioEvents);
+//    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
+    SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
+    SX1276SetRxConfig(MODEM_LORA, 1, 7, 1, 0, 8, 20, 0, 0, 1, 0, 0, 0, true);
     SX1276SetChannel(868100000);
+    SX1276SetPublicNetwork(false);
+    SX1276SetSleep();
 
 
 
     while(1) {
-//        SX1276Send( buffer, 40 );
+        SX1276Send( buffer, 5 );
         GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
         Delayms( 10 );
         GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN1);
-        Delayms( 5000 );
-        j = spiRead_RFM(REG_LR_OPMODE);
-        spiWrite_RFM(REG_LR_OPMODE, RFLR_OPMODE_LONGRANGEMODE_ON);
-
+        Delayms( 1000 );
     }
 }
 
 void PORT2_IRQHandler(void)
 {
     uint32_t status;
-
     status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
+}
+
+void OnTxDone( void )
+{
+    SX1276SetSleep();
+    State = TX;
+}
+
+void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
+{
+//    Radio.Sleep( );
+//    BufferSize = size;
+//    memcpy( Buffer, payload, BufferSize );
+//    RssiValue = rssi;
+//    SnrValue = snr;
+//    State = RX;
+}
+
+void OnTxTimeout( void )
+{
+//    Radio.Sleep( );
+//    State = TX_TIMEOUT;
+}
+
+void OnRxTimeout( void )
+{
+//    Radio.Sleep( );
+//    State = RX_TIMEOUT;
+}
+
+void OnRxError( void )
+{
+//    Radio.Sleep( );
+//    State = RX_ERROR;
 }

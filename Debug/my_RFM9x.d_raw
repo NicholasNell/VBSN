@@ -8,9 +8,12 @@ my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/machine/_types.h
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/machine/_stdint.h
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/sys/_stdint.h
+my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
+my_RFM9x.obj: ../my_gpio.h
+my_RFM9x.obj: ../pinName-board.h
+my_RFM9x.obj: ../pinName-ioe.h
 my_RFM9x.obj: ../my_spi.h
 my_RFM9x.obj: ../radio.h
-my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
 my_RFM9x.obj: ../sx1276Regs-Fsk.h
 my_RFM9x.obj: ../sx1276Regs-LoRa.h
 my_RFM9x.obj: ../my_timer.h
@@ -59,3 +62,4 @@ my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/_defs.h
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/machine/_limits.h
+my_RFM9x.obj: ../sx1276-board.h

@@ -9,6 +9,7 @@ CMD_SRCS += \
 C_SRCS += \
 ../main.c \
 ../my_RFM9x.c \
+../my_gpio.c \
 ../my_spi.c \
 ../my_systick.c \
 ../my_timer.c \
@@ -17,6 +18,7 @@ C_SRCS += \
 C_DEPS += \
 ./main.d \
 ./my_RFM9x.d \
+./my_gpio.d \
 ./my_spi.d \
 ./my_systick.d \
 ./my_timer.d \
@@ -25,6 +27,7 @@ C_DEPS += \
 OBJS += \
 ./main.obj \
 ./my_RFM9x.obj \
+./my_gpio.obj \
 ./my_spi.obj \
 ./my_systick.obj \
 ./my_timer.obj \
@@ -33,6 +36,7 @@ OBJS += \
 OBJS__QUOTED += \
 "main.obj" \
 "my_RFM9x.obj" \
+"my_gpio.obj" \
 "my_spi.obj" \
 "my_systick.obj" \
 "my_timer.obj" \
@@ -41,6 +45,7 @@ OBJS__QUOTED += \
 C_DEPS__QUOTED += \
 "main.d" \
 "my_RFM9x.d" \
+"my_gpio.d" \
 "my_spi.d" \
 "my_systick.d" \
 "my_timer.d" \
@@ -49,6 +54,7 @@ C_DEPS__QUOTED += \
 C_SRCS__QUOTED += \
 "../main.c" \
 "../my_RFM9x.c" \
+"../my_gpio.c" \
 "../my_spi.c" \
 "../my_systick.c" \
 "../my_timer.c" \

@@ -9,13 +9,12 @@
 #define MY_RFM9X_H_
 
 #include <stdint.h>
-//#include <stdlib.h>
-//#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <stdbool.h>
+#include "my_gpio.h"
 #include "my_spi.h"
 #include "radio.h"
 #include "sx1276Regs-Fsk.h"
 #include "sx1276Regs-LoRa.h"
-
 
 /*!
  * Radio wake-up time from sleep
@@ -119,52 +118,33 @@ typedef struct
  */
 typedef struct SX1276_s
 {
-/*    Gpio_t        Reset;
+    Gpio_t        Reset;
     Gpio_t        DIO0;
     Gpio_t        DIO1;
     Gpio_t        DIO2;
     Gpio_t        DIO3;
     Gpio_t        DIO4;
     Gpio_t        DIO5;
-    Spi_t         Spi;*/
+//    Spi_t         Spi;
     RadioSettings_t Settings;
 }SX1276_t;
+
+/*!
+ * Hardware IO IRQ callback function definition
+ */
+typedef void ( DioIrqHandler )( void* context );
 
 //  RFM definitions
 #define XTAL_FREQ                                   32000000
 #define FREQ_STEP                                   61.03515625
 #define RX_BUFFER_SIZE                              256
 
-#define RADIO_INIT_REGISTERS_VALUE                \
-{                                                 \
-    { MODEM_FSK , REG_LNA                , 0x23 },\
-    { MODEM_FSK , REG_RXCONFIG           , 0x1E },\
-    { MODEM_FSK , REG_RSSICONFIG         , 0xD2 },\
-    { MODEM_FSK , REG_AFCFEI             , 0x01 },\
-    { MODEM_FSK , REG_PREAMBLEDETECT     , 0xAA },\
-    { MODEM_FSK , REG_OSC                , 0x07 },\
-    { MODEM_FSK , REG_SYNCCONFIG         , 0x12 },\
-    { MODEM_FSK , REG_SYNCVALUE1         , 0xC1 },\
-    { MODEM_FSK , REG_SYNCVALUE2         , 0x94 },\
-    { MODEM_FSK , REG_SYNCVALUE3         , 0xC1 },\
-    { MODEM_FSK , REG_PACKETCONFIG1      , 0xD8 },\
-    { MODEM_FSK , REG_FIFOTHRESH         , 0x8F },\
-    { MODEM_FSK , REG_IMAGECAL           , 0x02 },\
-    { MODEM_FSK , REG_DIOMAPPING1        , 0x00 },\
-    { MODEM_FSK , REG_DIOMAPPING2        , 0x30 },\
-    { MODEM_LORA, REG_LR_PAYLOADMAXLENGTH, 0x40 },\
-}                                                 \
-
-#define RF_MID_BAND_THRESH                          525000000
-
-
-
 /*!
  * \brief Initializes the radio
  *
  * \param [IN] events Structure containing the driver callback functions
  */
-uint8_t SX1276Init(/*RadioEvents_t *events*/);
+uint8_t SX1276Init(RadioEvents_t *events);
 
 /*!
  * Return current radio status
@@ -397,24 +377,10 @@ void SX1276SetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time );
  */
 int16_t SX1276ReadRssi( RadioModems_t modem );
 
-/*!
- * Performs the Rx chain calibration for LF and HF bands
- * \remark Must be called just after the reset so all registers are at their
- *         default values
- */
-void RxChainCalibration(void);
 
-/*!
- * \brief Sets the SX1276 operating mode
- *
- * \param [IN] opMode New operating mode
- */
-void SX1276SetOpMode( uint8_t opMode );
 
-/*!
- * Reset the Radio Module
- */
-void SX1276Reset(void);
+
+
 
 /*!
  * Returns the known FSK bandwidth registers value
@@ -426,23 +392,7 @@ uint8_t GetFskBandwidthRegValue( uint32_t bandwidth );
 
 uint8_t SX1276GetPaSelect( int8_t power );
 
-void SX1276SetTx( uint32_t timeout );
 
-void SX1276IoIrqInit( void );
-
-//void PORT4_IRQHandler(void);
-
-void SX1276SetRfTxPower(int8_t power);
-//void RFM_set_SF(uint8_t sf);
-//void RFM_set_Ldo_Flag(void);
-//uint64_t RFM_get_BW(void);
-//uint8_t RFM_get_SF(void);
-//void RFM_set_BW(uint64_t bw);
-//void RFM_set_CR4(uint8_t rate);
-//void RFM_set_Preamble(uint8_t len);
-//void RFM_set_syncword(uint32_t sw);
-//void RFM_set_OCP(uint8_t mA);
-//void RFM_lora_mode(void);
 
 
 #endif /* MY_RFM9X_H_ */

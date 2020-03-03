@@ -7,6 +7,10 @@
 #include "my_RFM9x.h"
 #include "my_timer.h"
 #include <math.h>
+#include "radio.h"
+#include "sx1276-board.h"
+#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+
 
 
 
@@ -41,6 +45,71 @@ typedef struct
  * \param [IN] size Number of bytes to be written to the FIFO
  */
 void SX1276WriteFifo( uint8_t *buffer, uint8_t size );
+
+/*!
+ * \brief Sets the SX1276 in transmission mode for the given time
+ * \param [IN] timeout Transmission timeout [ms] [0: continuous, others timeout]
+ */
+void SX1276SetTx( uint32_t timeout );
+
+/*!
+ * Performs the Rx chain calibration for LF and HF bands
+ * \remark Must be called just after the reset so all registers are at their
+ *         default values
+ */
+void RxChainCalibration(void);
+
+/*!
+ * \brief Sets the SX1276 operating mode
+ *
+ * \param [IN] opMode New operating mode
+ */
+void SX1276SetOpMode( uint8_t opMode );
+
+/*!
+ * \brief Reads the contents of the SX1276 FIFO
+ *
+ * \param [OUT] buffer Buffer where to copy the FIFO read data.
+ * \param [IN] size Number of bytes to be read from the FIFO
+ */
+void SX1276ReadFifo( uint8_t *buffer, uint8_t size );
+
+/*!
+ * \brief DIO 0 IRQ callback
+ */
+void SX1276OnDio0Irq( void* context );
+
+/*!
+ * \brief DIO 1 IRQ callback
+ */
+void SX1276OnDio1Irq( void* context );
+
+/*!
+ * \brief DIO 2 IRQ callback
+ */
+void SX1276OnDio2Irq( void* context );
+
+/*!
+ * \brief DIO 3 IRQ callback
+ */
+void SX1276OnDio3Irq( void* context );
+
+/*!
+ * \brief DIO 4 IRQ callback
+ */
+void SX1276OnDio4Irq( void* context );
+
+/*!
+ * \brief DIO 5 IRQ callback
+ */
+void SX1276OnDio5Irq( void* context );
+
+/*!
+ * \brief Tx & Rx timeout timer callback
+ */
+void SX1276OnTimeoutIrq( void* context );
+
+
 
 /*!
  * Constant values need to compute the RSSI value
@@ -84,7 +153,7 @@ const FskBandwidth_t FskBandwidths[] =
 /*!
  * Radio callbacks variable
  */
-//static RadioEvents_t *RadioEvents;
+static RadioEvents_t *RadioEvents;
 
 /*!
  * Reception buffer
@@ -99,6 +168,7 @@ const FskBandwidth_t FskBandwidths[] =
  * Radio hardware and global parameters
  */
 SX1276_t SX1276;
+
 
 /*!
  * Radio hardware registers initialization
@@ -122,7 +192,7 @@ uint8_t GetFskBandwidthRegValue( uint32_t bandwidth )
     while( 1 );
 }
 
-uint8_t SX1276Init(/*RadioEvents_t *events*/)
+uint8_t SX1276Init(RadioEvents_t *events)
 {
 
 // Set NSS pin HIgh during Normal operation
@@ -135,25 +205,22 @@ uint8_t SX1276Init(/*RadioEvents_t *events*/)
 
     uint8_t i;
 
-//    RadioEvents = events;
+    RadioEvents = events;
 
     SX1276Reset();
 
-//    RxChainCalibration();
+    RxChainCalibration();
 
     SX1276SetOpMode(RF_OPMODE_SLEEP);
 
     SX1276IoIrqInit( );
-    uint8_t j = spiRead_RFM(0x01);
     for( i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ )
     {
         SX1276SetModem( RadioRegsInit[i].Modem );
         spiWrite_RFM( RadioRegsInit[i].Addr, RadioRegsInit[i].Value );
-        j = spiRead_RFM(RadioRegsInit[i].Addr);
     }
 
     SX1276SetModem( MODEM_LORA );
-    j = spiRead_RFM(0x01);
 
     SX1276.Settings.State = RF_IDLE;
 
@@ -161,51 +228,10 @@ uint8_t SX1276Init(/*RadioEvents_t *events*/)
     uint8_t version = spiRead_RFM(REG_LR_VERSION);
     if(version != 0x12) return 0;
 
-
-/*//    Put chip in sleep mode to enable programming
-
-//    Setting up DIO0 as interupt
-    GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P2, GPIO_PIN4);
-    GPIO_clearInterruptFlag(GPIO_PORT_P2, GPIO_PIN4);
-    GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN4);
-    GPIO_interruptEdgeSelect(GPIO_PORT_P2, GPIO_PIN4, GPIO_LOW_TO_HIGH_TRANSITION);
-    Interrupt_enableInterrupt(INT_PORT2);
-
-  Enable the use of the entire FIFO space for receive or transmit. 256 bytes
-*   by setting the fifo address pointer to the bottom of memory for both the transmit and recieve buffers.
-
-    i = spiRead_RFM(REG_LR_FIFORXBASEADDR);
-    spiWrite_RFM(REG_LR_FIFORXBASEADDR, 0);
-    spiWrite_RFM(REG_LR_FIFOTXBASEADDR, 0);
-    i = spiRead_RFM(REG_LR_FIFORXBASEADDR);
-
-//    Set LNA Boost: RFI_HF boost to 150%  LNA current
-    i = spiRead_RFM(REG_LNA);
-    spiWrite_RFM(REG_LNA, spiRead_RFM(REG_LNA) | RFLR_LNA_BOOST_HF_ON);
-    i = spiRead_RFM(REG_LNA);
-
-// set auto AGC: LNA gain set by the internal AGC loop
-    spiWrite_RFM(REG_LR_MODEMCONFIG3, RFLR_MODEMCONFIG3_AGCAUTO_ON);
-
-    i = spiRead_RFM(REG_OPMODE);
-    RFM_stby_mode();
-    i = spiRead_RFM(REG_OPMODE);
-// set output power to 17 dBm
-    RFM_set_TX_power(17);
-    uint64_t bw = RFM_get_BW();
-    RFM_set_BW(250E3);
-    bw = RFM_get_BW();
-    RFM_set_CR4(5);
-    RFM_set_OCP(100);
-    RFM_set_Preamble(8);
-    RFM_set_SF(12);
-    RFM_set_frequency(868100000);
-    RFM_set_syncword(0x55);*/
-
     return 1;
 }
 
-void SX1276IoIrqInit( void ) {
+void SX1276IoIrqInit( DioIrqHandler **irqHandlers ) {
     //  Set interupt
         MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P2, GPIO_PIN4);
         MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, GPIO_PIN4);
