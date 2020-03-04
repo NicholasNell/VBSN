@@ -18,7 +18,10 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
         return;
     } // If pin is not connected return
 
-    obj->pinIndex = obj->pin - ( ( 16 ) * ( floor( obj->pin / 15 ) - 1 ) );
+    uint8_t t = (uint8_t)(obj->pin);
+    uint8_t y = ( floor( t / 15 ) );
+    t = t - ( ( 16 ) * y );
+    obj->pinIndex = t;
 
     if( ( obj->pin & 0xF0 ) == 0x00 ) {
         obj->portIndex = GPIO_PORT_P1;
@@ -117,7 +120,7 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
 }
 
 void GpioMcuRemoveInterrupt( Gpio_t *obj ) {
-
+    GPIO_disableInterrupt(obj->portIndex, obj->pinIndex);
 }
 
 void GpioMcuWrite( Gpio_t *obj, uint32_t value ) {
@@ -129,6 +132,7 @@ void GpioMcuWrite( Gpio_t *obj, uint32_t value ) {
         return;
     }// return if pin is not connected
 
+    GPIO_setAsOutputPin(obj->portIndex, obj->pinIndex);
     if (value == 0) {
         GPIO_setOutputLowOnPin(obj->portIndex, obj->pinIndex);
     }

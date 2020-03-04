@@ -1,4 +1,4 @@
 #!/bin/bash
 git add *
-git commit -m "next commit"
+git commit 
 git push origin master

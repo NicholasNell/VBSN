@@ -56,6 +56,8 @@
 #include "my_spi.h"
 #include "my_RFM9x.h"
 #include "my_gpio.h"
+#include "board-config.h"
+#include "board.h"
 
 
 uint8_t buffer[] = {'H','E','L','L','O'};
@@ -107,11 +109,13 @@ void OnRxTimeout( void );
  */
 void OnRxError( void );
 
+
 int main(void)
 {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
     MAP_Interrupt_enableMaster();
+    BoardInitMcu();
 
     // Radio initialization
     RadioEvents.TxDone = OnTxDone;
@@ -120,17 +124,9 @@ int main(void)
     RadioEvents.RxTimeout = OnRxTimeout;
     RadioEvents.RxError = OnRxError;
 
-    //  set LED1 to output
-    GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN1);
-    GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
-
-
+//  set LED1 to output
     TimerAInteruptInit();
-//    spi_open();
 
-
-
-    SX1276Init(&RadioEvents);
 //    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
     SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
     SX1276SetRxConfig(MODEM_LORA, 1, 7, 1, 0, 8, 20, 0, 0, 1, 0, 0, 0, true);
@@ -141,11 +137,17 @@ int main(void)
 
 
     while(1) {
-        SX1276Send( buffer, 5 );
-        GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
+//        SX1276Send( buffer, 5 );
+/*        GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
         Delayms( 10 );
         GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN1);
-        Delayms( 1000 );
+        Delayms( 1000 );*/
+
+//        GpioWrite(&Led2, 1);
+//        Delayms( 50 );
+//        GpioWrite(&Led2, 0);
+
+        Delayms(1000);
     }
 }
 

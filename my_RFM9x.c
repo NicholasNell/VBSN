@@ -199,7 +199,7 @@ uint8_t GetFskBandwidthRegValue( uint32_t bandwidth )
     while( 1 );
 }
 
-uint8_t SX1276Init(RadioEvents_t *events)
+void SX1276Init(RadioEvents_t *events)
 {
     uint8_t i;
 
@@ -232,10 +232,9 @@ uint8_t SX1276Init(RadioEvents_t *events)
     SX1276.Settings.State = RF_IDLE;
 
 //    Check RFM Chip Version
-    uint8_t version = spiRead_RFM(REG_LR_VERSION);
-    if(version != 0x12) return 0;
+//    uint8_t version = spiRead_RFM(REG_LR_VERSION);
+//    if(version != 0x12) return 0;
 
-    return 1;
 }
 
 RadioState_t SX1276GetStatus( void )
@@ -851,33 +850,15 @@ int16_t SX1276ReadRssi( RadioModems_t modem )
     return rssi;
 }
 
-
-
-
-/*void RFM_IoIrqInit(  )
-{
-
-}*/
-
 /*
 Set the RFM95 chip to sleep mode
 */
-bool SX1276SetSleep(void)
+void SX1276SetSleep(void)
 {
 //    Put into sleep mode and wait 100ms to settle
     spiWrite_RFM(REG_LR_OPMODE, RFLR_OPMODE_LONGRANGEMODE_ON | RFLR_OPMODE_SLEEP);
     Delayms( 1 );
-//    Check to see if written correctly
-    if (spiRead_RFM(REG_LR_OPMODE) != (RFLR_OPMODE_SLEEP | RFLR_OPMODE_LONGRANGEMODE_ON)) return false;
-    return true;
 }
-
-/*void RFM_lora_mode(void)
-{
-    uint8_t opmode = spiRead_RFM(REG_OPMODE);
-    opmode |= RFLR_OPMODE_LONGRANGEMODE_ON;
-    spiWrite_RFM(REG_OPMODE, opmode);
-}*/
 
 void SX1276SetStby(void)
 {
@@ -888,13 +869,6 @@ void SX1276SetStby(void)
     SX1276SetOpMode( RF_OPMODE_STANDBY );
     SX1276.Settings.State = RF_IDLE;
 }
-
-
-
-/*void PORT4_IRQHandler(void)
-{
-
-}*/
 
 void RxChainCalibration()
 {
@@ -1304,4 +1278,31 @@ uint32_t SX1276GetWakeupTime( void )
 {
     return SX1276GetBoardTcxoWakeupTime( ) + RADIO_WAKEUP_TIME;
 }
+
+void SX1276OnDio0Irq( void* context ) {
+
+}
+
+void SX1276OnDio2Irq( void* context ) {
+
+}
+
+void SX1276OnDio3Irq( void* context ) {
+
+}
+
+void SX1276OnDio4Irq( void* context ) {
+
+}
+
+void SX1276OnDio5Irq( void* context ) {
+
+}
+
+void SX1276OnTimeoutIrq( void* context ) {
+
+}
+
+
+
 

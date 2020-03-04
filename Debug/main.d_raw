@@ -57,3 +57,6 @@ main.obj: ../pinName-ioe.h
 main.obj: ../radio.h
 main.obj: ../sx1276Regs-Fsk.h
 main.obj: ../sx1276Regs-LoRa.h
+main.obj: ../board-config.h
+main.obj: ../board.h
+main.obj: ../utilities.h

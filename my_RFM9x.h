@@ -141,12 +141,15 @@ typedef void ( DioIrqHandler )( void* context );
 #define FREQ_STEP                                   61.03515625
 #define RX_BUFFER_SIZE                              256
 
+
+
+
 /*!
  * \brief Initializes the radio
  *
  * \param [IN] events Structure containing the driver callback functions
  */
-uint8_t SX1276Init(RadioEvents_t *events);
+void SX1276Init(RadioEvents_t *events);
 
 /*!
  * Return current radio status
@@ -345,7 +348,7 @@ void SX1276SetPublicNetwork( bool enable );
 /*!
  * \brief Sets the radio in sleep mode
  */
-bool SX1276SetSleep(void);
+void SX1276SetSleep(void);
 
 /*!
  * \brief Sets the radio in standby mode

@@ -15,8 +15,8 @@
 
 void spi_open(void);
 void spi_close(void);
-uint8_t spiRead_RFM(uint8_t addr);
-void spiWrite_RFM(uint8_t addr, uint8_t val);
+uint8_t spiRead_RFM(uint16_t addr);
+void spiWrite_RFM(uint16_t addr, uint8_t val);
 int RFM_spi_read_write(uint8_t pBuff);
 
 

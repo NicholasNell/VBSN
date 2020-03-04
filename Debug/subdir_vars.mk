@@ -7,6 +7,7 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
+../board.c \
 ../gpio-board.c \
 ../main.c \
 ../my_RFM9x.c \
@@ -18,6 +19,7 @@ C_SRCS += \
 ../system_msp432p401r.c 
 
 C_DEPS += \
+./board.d \
 ./gpio-board.d \
 ./main.d \
 ./my_RFM9x.d \
@@ -29,6 +31,7 @@ C_DEPS += \
 ./system_msp432p401r.d 
 
 OBJS += \
+./board.obj \
 ./gpio-board.obj \
 ./main.obj \
 ./my_RFM9x.obj \
@@ -40,6 +43,7 @@ OBJS += \
 ./system_msp432p401r.obj 
 
 OBJS__QUOTED += \
+"board.obj" \
 "gpio-board.obj" \
 "main.obj" \
 "my_RFM9x.obj" \
@@ -51,6 +55,7 @@ OBJS__QUOTED += \
 "system_msp432p401r.obj" 
 
 C_DEPS__QUOTED += \
+"board.d" \
 "gpio-board.d" \
 "main.d" \
 "my_RFM9x.d" \
@@ -62,6 +67,7 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
+"../board.c" \
 "../gpio-board.c" \
 "../main.c" \
 "../my_RFM9x.c" \

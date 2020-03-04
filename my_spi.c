@@ -46,7 +46,7 @@ void spi_close(void)
     SPI_disableModule(EUSCI_B0_BASE);
 }
 
-void spiWrite_RFM(uint8_t addr, uint8_t val)
+void spiWrite_RFM(uint16_t addr, uint8_t val)
 {
     RFM95_NSS_LOW;
     uint8_t address = addr | RFM_SPI_WRITE_MASK;   //  read: mask 0x80 for write access; mask 0x7F for read access
@@ -56,7 +56,7 @@ void spiWrite_RFM(uint8_t addr, uint8_t val)
 
 }
 
-uint8_t spiRead_RFM(uint8_t addr)
+uint8_t spiRead_RFM(uint16_t addr)
 {
     uint8_t val;
     RFM95_NSS_LOW;  // To start SPI coms to rmf95 nss must be pulled low
