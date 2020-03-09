@@ -48,6 +48,7 @@ main.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devi
 main.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/wdt_a.h
 main.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/sysctl.h
 main.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/flash.h
+main.obj: /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/drivers/GPIO.h
 main.obj: ../my_timer.h
 main.obj: ../my_spi.h
 main.obj: ../my_RFM9x.h

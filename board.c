@@ -93,6 +93,7 @@ void BoardInitMcu( void )
 {
     if( McuInitialized == false )
     {
+        TimerAInteruptInit();
 
         // LEDs
         GpioInit( &Led1, LED_1, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );

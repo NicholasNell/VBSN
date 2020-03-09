@@ -48,6 +48,7 @@
 *******************************************************************************/
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <ti/drivers/GPIO.h>
 
 /* Standard Includes */
 #include <stdint.h>
@@ -59,6 +60,21 @@
 #include "board-config.h"
 #include "board.h"
 
+#define RF_FREQUENCY                                868100000 // Hz
+#define TX_OUTPUT_POWER                             14        // dBm
+#define LORA_BANDWIDTH                              0         // [0: 125 kHz,
+                                                              //  1: 250 kHz,
+                                                              //  2: 500 kHz,
+                                                              //  3: Reserved]
+#define LORA_SPREADING_FACTOR                       7         // [SF7..SF12]
+#define LORA_CODINGRATE                             1         // [1: 4/5,
+                                                              //  2: 4/6,
+                                                              //  3: 4/7,
+                                                              //  4: 4/8]
+#define LORA_PREAMBLE_LENGTH                        8         // Same for Tx and Rx
+#define LORA_SYMBOL_TIMEOUT                         5         // Symbols
+#define LORA_FIX_LENGTH_PAYLOAD_ON                  false
+#define LORA_IQ_INVERSION_ON                        false
 
 uint8_t buffer[] = {'H','E','L','L','O'};
 
@@ -109,6 +125,7 @@ void OnRxTimeout( void );
  */
 void OnRxError( void );
 
+Gpio_t Led1;
 
 int main(void)
 {
@@ -117,6 +134,9 @@ int main(void)
     MAP_Interrupt_enableMaster();
     BoardInitMcu();
 
+
+
+
     // Radio initialization
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.RxDone = OnRxDone;
@@ -124,30 +144,48 @@ int main(void)
     RadioEvents.RxTimeout = OnRxTimeout;
     RadioEvents.RxError = OnRxError;
 
-//  set LED1 to output
-    TimerAInteruptInit();
+
+    Radio.Init(&RadioEvents);
+
+    Radio.SetChannel( RF_FREQUENCY );
+
+
+    Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
+                                   LORA_SPREADING_FACTOR, LORA_CODINGRATE,
+                                   LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
+                                   true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+
+    Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
+
+
+
 
 //    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
-    SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
+/*    SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
     SX1276SetRxConfig(MODEM_LORA, 1, 7, 1, 0, 8, 20, 0, 0, 1, 0, 0, 0, true);
     SX1276SetChannel(868100000);
     SX1276SetPublicNetwork(false);
-    SX1276SetSleep();
-
-
+    SX1276SetSleep();*/
 
     while(1) {
-//        SX1276Send( buffer, 5 );
-/*        GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN1);
+/*        SX1276Send( buffer, 5 );
+        GpioWrite(&Led1, 1);
         Delayms( 10 );
-        GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN1);
-        Delayms( 1000 );*/
+        GpioWrite(&Led1, 0);
+        Delayms(10000);
+        SX1276StartCad();
+        Delayms( 10000 );*/
+        GpioToggle(&Led1);
+        Delayms(1000);
 
 //        GpioWrite(&Led2, 1);
 //        Delayms( 50 );
 //        GpioWrite(&Led2, 0);
 
-        Delayms(1000);
+//        Delayms(1000);
     }
 }
 

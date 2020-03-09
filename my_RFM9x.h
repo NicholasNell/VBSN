@@ -121,6 +121,7 @@ typedef struct
 typedef struct SX1276_s
 {
     Gpio_t        Reset;
+    Gpio_t        NSS;
     Gpio_t        DIO0;
     Gpio_t        DIO1;
     Gpio_t        DIO2;

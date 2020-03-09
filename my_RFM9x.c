@@ -108,8 +108,6 @@ void SX1276OnDio5Irq( void* context );
  */
 void SX1276OnTimeoutIrq( void* context );
 
-
-
 /*!
  * Constant values need to compute the RSSI value
  */
@@ -175,8 +173,6 @@ DioIrqHandler *DioIrq[] = { SX1276OnDio0Irq, SX1276OnDio1Irq,
                             SX1276OnDio2Irq, SX1276OnDio3Irq,
                             SX1276OnDio4Irq, NULL };
 
-
-
 /*!
  * Radio hardware registers initialization
  *
@@ -203,14 +199,6 @@ void SX1276Init(RadioEvents_t *events)
 {
     uint8_t i;
 
-// Set NSS pin HIgh during Normal operation
-    GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
-    GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN2);
-
-// Set Reset pin of RFM95W high during normal operation
-    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
-    GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN7);
-
     RadioEvents = events;
 
     SX1276Reset();
@@ -219,7 +207,8 @@ void SX1276Init(RadioEvents_t *events)
 
     SX1276SetOpMode(RF_OPMODE_SLEEP);
 
-//    SX1276IoIrqInit( DioIrq );
+
+    SX1276IoIrqInit( DioIrq );
 
     for( i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ )
     {
@@ -1279,8 +1268,8 @@ uint32_t SX1276GetWakeupTime( void )
     return SX1276GetBoardTcxoWakeupTime( ) + RADIO_WAKEUP_TIME;
 }
 
-void SX1276OnDio0Irq( void* context ) {
-
+/*void SX1276OnDio0Irq( void* context ) {
+__no_operation();
 }
 
 void SX1276OnDio2Irq( void* context ) {
@@ -1301,7 +1290,7 @@ void SX1276OnDio5Irq( void* context ) {
 
 void SX1276OnTimeoutIrq( void* context ) {
 
-}
+}*/
 
 
 

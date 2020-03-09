@@ -70,8 +70,6 @@ void RTC_C_IRQHandler(void)
     status = MAP_RTC_C_getEnabledInterruptStatus();
     MAP_RTC_C_clearInterruptFlag(status);
 
-    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN0);
-
     if (status & RTC_C_CLOCK_READ_READY_INTERRUPT)
     {
 

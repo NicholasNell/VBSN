@@ -6,6 +6,7 @@
  */
 
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <ti/drivers/GPIO.h>
 #include <string.h>
 #include <stdint.h>
 #include "radio.h"
@@ -71,12 +72,22 @@ Gpio_t DbgPinRx;
 
 void SX1276IoInit( void )
 {
+
+    GpioInit(&SX1276.Reset, RADIO_RESET, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1);
+    GpioInit(&SX1276.NSS, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
     spi_open();
+
+
     GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+
+/*    // Set NSS pin HIgh during Normal operation
+        GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
+        GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN2);*/
+
 
 }
 
@@ -85,9 +96,9 @@ static void Dio1IrqHandler( void );
 static void Dio2IrqHandler( void );
 static void Dio3IrqHandler( void );
 static void Dio4IrqHandler( void );
-static void Dio5IrqHandler( void );*/
+static void Dio5IrqHandler( void );
 
-/*static Gpio_t *DioIrqs[] = {
+static Gpio_t *DioIrqs[] = {
     &SX1276.DIO0,
     &SX1276.DIO1,
     &SX1276.DIO2,
@@ -95,6 +106,19 @@ static void Dio5IrqHandler( void );*/
     &SX1276.DIO4,
     &SX1276.DIO5
 };*/
+
+/*static GPIO_CallbackFxn ExtIrqHandlers[] = {
+    Dio0IrqHandler,
+    Dio1IrqHandler,
+    Dio2IrqHandler,
+    Dio3IrqHandler,
+    Dio4IrqHandler,
+    Dio5IrqHandler
+};*/
+
+//void greet(void (*greeter)());
+/*void IRQ(void (*Dio0IrqHandler)());
+*/
 
 /*static void DioIrqHanlderProcess( uint8_t index )
 {
@@ -134,14 +158,26 @@ static void Dio5IrqHandler( void )
     DioIrqHanlderProcess( 5 );
 }*/
 
+
+/*static void IoIrqInit( uint8_t index, DioIrqHandler *irqHandler )
+{
+    DioIrqs[index]->IrqHandler = irqHandler;
+    GPIO_registerInterrupt(DioIrqs[index]->portIndex, ExtIrqHandlers[index]);
+}*/
+
 void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
 {
+
     GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[0] );
     GpioSetInterrupt( &SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[1] );
     GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[2] );
     GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
     GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[4] );
     GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
+/*    for( i = 0; i < 5; i++ )
+    {
+        IoIrqInit( i, irqHandlers[i] );
+    }*/
 }
 
 void SX1276IoDeInit( void )
@@ -190,9 +226,11 @@ uint32_t SX1276GetBoardTcxoWakeupTime( void )
 
 void SX1276Reset(void)
 {
-    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
+    GpioWrite(&SX1276.Reset, 0);
+//    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
     Delayms( 1 );
-    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
+    GpioWrite(&SX1276.Reset, 1);
+//    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
     Delayms( 6 );
 }
 
@@ -289,6 +327,8 @@ bool SX1276CheckRfFrequency( uint32_t frequency )
     // Implement check. Currently all frequencies are supported
     return true;
 }
+
+
 
 #if defined( USE_RADIO_DEBUG )
 void SX1276DbgPinTxWrite( uint8_t state )
