@@ -11,7 +11,44 @@
 #include "gpio-board.h"
 
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value ) {
+/*
+ * #define GPIO_PORT_P1                                                          1
+    #define GPIO_PORT_P2                                                          2
+    #define GPIO_PORT_P3                                                          3
+    #define GPIO_PORT_P4                                                          4
+    #define GPIO_PORT_P5                                                          5
+    #define GPIO_PORT_P6                                                          6
+    #define GPIO_PORT_P7                                                          7
+    #define GPIO_PORT_P8                                                          8
+    #define GPIO_PORT_P9                                                          9
+    #define GPIO_PORT_P10                                                         10
+    #define GPIO_PORT_PA                                                           1
+    #define GPIO_PORT_PB                                                           3
+    #define GPIO_PORT_PC                                                           5
+    #define GPIO_PORT_PD                                                           7
+    #define GPIO_PORT_PE                                                           9
+    #define GPIO_PORT_PJ                                                          11
 
+
+    #define GPIO_PIN0                                                      (0x0001)
+    #define GPIO_PIN1                                                      (0x0002)
+    #define GPIO_PIN2                                                      (0x0004)
+    #define GPIO_PIN3                                                      (0x0008)
+    #define GPIO_PIN4                                                      (0x0010)
+    #define GPIO_PIN5                                                      (0x0020)
+    #define GPIO_PIN6                                                      (0x0040)
+    #define GPIO_PIN7                                                      (0x0080)
+    #define GPIO_PIN8                                                      (0x0100)
+    #define GPIO_PIN9                                                      (0x0200)
+    #define GPIO_PIN10                                                     (0x0400)
+    #define GPIO_PIN11                                                     (0x0800)
+    #define GPIO_PIN12                                                     (0x1000)
+    #define GPIO_PIN13                                                     (0x2000)
+    #define GPIO_PIN14                                                     (0x4000)
+    #define GPIO_PIN15                                                     (0x8000)
+    #define PIN_ALL8                                                       (0xFF)
+    #define PIN_ALL16                                                      (0xFFFF)
+*/
     obj->pin = pin;
 
     if(pin == NC) {
@@ -21,7 +58,8 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     uint8_t t = (uint8_t)(obj->pin);
     uint8_t y = ( floor( t / 15 ) );
     t = t - ( ( 16 ) * y );
-    obj->pinIndex = t;
+
+    obj->pinIndex = 0x0001 << t;
 
     if( ( obj->pin & 0xF0 ) == 0x00 ) {
         obj->portIndex = GPIO_PORT_P1;
@@ -52,21 +90,6 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     }
     else if( ( obj->pin & 0xF0 ) == 0x90 ) {
         obj->portIndex = GPIO_PORT_P10;
-    }
-    else if( ( obj->pin & 0xF0 ) == 0xA0 ) {
-        obj->portIndex = GPIO_PORT_PA;
-    }
-    else if( ( obj->pin & 0xF0 ) == 0xB0 ) {
-        obj->portIndex = GPIO_PORT_PB;
-    }
-    else if( ( obj->pin & 0xF0 ) == 0xC0 ) {
-        obj->portIndex = GPIO_PORT_PC;
-    }
-    else if( ( obj->pin & 0xF0 ) == 0xD0 ) {
-        obj->portIndex = GPIO_PORT_PD;
-    }
-    else if( ( obj->pin & 0xF0 ) == 0xE0 ) {
-        obj->portIndex = GPIO_PORT_PE;
     }
     else if( ( obj->pin & 0xF0 ) == 0xF0 ) {
         obj->portIndex = GPIO_PORT_PJ;
