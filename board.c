@@ -13,6 +13,7 @@
 #include "board-config.h"
 #include "sx1276-board.h"
 #include "board.h"
+#include "my_rtc.h"
 
 /*!
  * LED GPIO pins objects
@@ -94,25 +95,20 @@ void BoardInitMcu( void )
     {
 
         // LEDs
-        GpioInit( &Led1, LED_1, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-        GpioInit( &Led2, LED_2, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-        GpioInit( &Led3, LED_3, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+        GpioInit( &Led1, LED_1, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+        GpioInit( &Led2, LED_2, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+        GpioInit( &Led3, LED_3, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 
 //        TODO: Implement Clock Config
 //        SystemClockConfig( );
 
         UsbIsConnected = true;
 
-//        TODO: Implement RTC
-//        RtcInit( );
-
-        GpioWrite( &Led1, 0 );
-        GpioWrite( &Led2, 0 );
-        GpioWrite( &Led3, 0 );
+        RtcInit( );
 
         BoardUnusedIoInit( );
 
-//        TODO: Fix Board power source
+//        TODO: Fix Board power source (Will need external IO pin to detect bat voltage)
         if( GetBoardPowerSource( ) == BATTERY_POWER )
         {
             // Disables OFF mode - Enables lowest power mode (STOP)
@@ -127,6 +123,7 @@ void BoardInitMcu( void )
 //    SpiInit( &SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
 //    spi_open();
     SX1276IoInit( );
+//    SX1276IoIrqInit( );
 
     GpioWrite( &Led1, 0 );
     GpioWrite( &Led2, 0 );
@@ -151,6 +148,7 @@ void BoardResetMcu( void )
 
     //Restart system
     NVIC_SystemReset( );
+    CRITICAL_SECTION_END( );
 }
 
 void BoardDeInitMcu( void )

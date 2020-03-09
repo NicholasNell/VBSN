@@ -132,6 +132,7 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
     if( irqMode == IRQ_RISING_EDGE ) {
         GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
         GPIO_interruptEdgeSelect(obj->portIndex, obj->pinIndex, GPIO_LOW_TO_HIGH_TRANSITION);
+
     }
     else if( irqMode == IRQ_FALLING_EDGE ) {
         GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
