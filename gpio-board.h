@@ -29,6 +29,7 @@ extern "C"
 #endif
 
 #include "my_gpio.h"
+#include "ti/drivers/GPIO.h"
 
 /*!
  * \brief Initializes the given GPIO object

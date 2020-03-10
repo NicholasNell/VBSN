@@ -169,6 +169,7 @@ SX1276_t SX1276;
 /*!
  * Hardware DIO IRQ callback initialization
  */
+
 DioIrqHandler *DioIrq[] = { SX1276OnDio0Irq, SX1276OnDio1Irq,
                             SX1276OnDio2Irq, SX1276OnDio3Irq,
                             SX1276OnDio4Irq, NULL };
@@ -1268,8 +1269,12 @@ uint32_t SX1276GetWakeupTime( void )
     return SX1276GetBoardTcxoWakeupTime( ) + RADIO_WAKEUP_TIME;
 }
 
-/*void SX1276OnDio0Irq( void* context ) {
+void SX1276OnDio0Irq( void* context ) {
 __no_operation();
+}
+
+void SX1276OnDio1Irq( void* context ) {
+
 }
 
 void SX1276OnDio2Irq( void* context ) {
@@ -1290,7 +1295,7 @@ void SX1276OnDio5Irq( void* context ) {
 
 void SX1276OnTimeoutIrq( void* context ) {
 
-}*/
+}
 
 
 

@@ -49,6 +49,7 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     #define PIN_ALL8                                                       (0xFF)
     #define PIN_ALL16                                                      (0xFFFF)
 */
+
     obj->pin = pin;
 
     if(pin == NC) {
@@ -95,24 +96,24 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
         obj->portIndex = GPIO_PORT_PJ;
     }
     else {
-       return;
+        return;
     } // determine port mapping for each pin
 
 
     if ( mode == PIN_INPUT ) {
 
         if (type == PIN_PULL_UP) {
-            GPIO_setAsInputPinWithPullUpResistor(obj->portIndex, obj->pinIndex);
+            MAP_GPIO_setAsInputPinWithPullUpResistor(obj->portIndex, obj->pinIndex);
         }
         else if ( type == PIN_PULL_DOWN ) {
-            GPIO_setAsInputPinWithPullDownResistor(obj->portIndex, obj->pinIndex);
+            MAP_GPIO_setAsInputPinWithPullDownResistor(obj->portIndex, obj->pinIndex);
         }
         else {
-            GPIO_setAsInputPin(obj->portIndex, obj->pinIndex);
+            MAP_GPIO_setAsInputPin(obj->portIndex, obj->pinIndex);
         }
     }// Set as input if defined as input pin
     else {
-        GPIO_setAsOutputPin(obj->portIndex, obj->pinIndex);
+        MAP_GPIO_setAsOutputPin(obj->portIndex, obj->pinIndex);
         GpioMcuWrite(obj, value);
     }// set as output and low else
 }
@@ -126,21 +127,59 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
     if( irqHandler == NULL ) {
         return;
     }
+/*
+#define INT_PORT1                                       (51)  PORT1 IRQ
+#define INT_PORT2                                       (52)  PORT2 IRQ
+#define INT_PORT3                                       (53)  PORT3 IRQ
+#define INT_PORT4                                       (54)  PORT4 IRQ
+#define INT_PORT5                                       (55)  PORT5 IRQ
+#define INT_PORT6                                       (56)  PORT6 IRQ
+*/
+    uint32_t INT_PORTx = 0x0;
+    switch (obj->portIndex) {
+        case GPIO_PORT_P1:
+            INT_PORTx = INT_PORT1;
+            break;
+        case GPIO_PORT_P2:
+            INT_PORTx = INT_PORT2;
+            break;
+        case GPIO_PORT_P3:
+            INT_PORTx = INT_PORT3;
+            break;
+        case GPIO_PORT_P4:
+            INT_PORTx = INT_PORT4;
+            break;
+        case GPIO_PORT_P5:
+            INT_PORTx = INT_PORT5;
+            break;
+        case GPIO_PORT_P6:
+            INT_PORTx = INT_PORT6;
+            break;
+        default:
+            break;
+    }
 
     obj->IrqHandler = irqHandler;
 
     if( irqMode == IRQ_RISING_EDGE ) {
-        GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
-        GPIO_interruptEdgeSelect(obj->portIndex, obj->pinIndex, GPIO_LOW_TO_HIGH_TRANSITION);
+        MAP_GPIO_clearInterruptFlag(obj->portIndex, obj->pinIndex);
+        MAP_GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
+        MAP_Interrupt_enableInterrupt(INT_PORTx);
+        MAP_GPIO_interruptEdgeSelect(obj->portIndex, obj->pinIndex, GPIO_LOW_TO_HIGH_TRANSITION);
 
     }
     else if( irqMode == IRQ_FALLING_EDGE ) {
-        GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
-        GPIO_interruptEdgeSelect(obj->portIndex, obj->pinIndex, GPIO_HIGH_TO_LOW_TRANSITION);
+        MAP_GPIO_clearInterruptFlag(obj->portIndex, obj->pinIndex);
+        MAP_GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
+        MAP_Interrupt_enableInterrupt(INT_PORTx);
+        MAP_GPIO_interruptEdgeSelect(obj->portIndex, obj->pinIndex, GPIO_HIGH_TO_LOW_TRANSITION);
     }
     else {
-        GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
+        MAP_GPIO_clearInterruptFlag(obj->portIndex, obj->pinIndex);
+        MAP_GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
+        MAP_Interrupt_enableInterrupt(INT_PORTx);
     }
+
 }
 
 void GpioMcuRemoveInterrupt( Gpio_t *obj ) {
@@ -187,7 +226,3 @@ uint32_t GpioMcuRead( Gpio_t *obj ) {
     }
     return GPIO_getInputPinValue(obj->portIndex, obj->pinIndex);
 }
-
-/*void PORT1_IRQHandler ( void ) {
-
-}*/

@@ -171,15 +171,12 @@ int main(void)
     SX1276SetSleep();*/
 
     while(1) {
-/*        SX1276Send( buffer, 5 );
+        SX1276Send( buffer, 5 );
         GpioWrite(&Led1, 1);
         Delayms( 10 );
         GpioWrite(&Led1, 0);
-        Delayms(10000);
-        SX1276StartCad();
-        Delayms( 10000 );*/
-        GpioToggle(&Led1);
-        Delayms(1000);
+        Delayms( 10000 );
+
 
 //        GpioWrite(&Led2, 1);
 //        Delayms( 50 );

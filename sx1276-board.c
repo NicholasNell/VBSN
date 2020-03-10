@@ -105,22 +105,18 @@ static Gpio_t *DioIrqs[] = {
     &SX1276.DIO3,
     &SX1276.DIO4,
     &SX1276.DIO5
-};*/
+};
 
-/*static GPIO_CallbackFxn ExtIrqHandlers[] = {
+static void*ExtIrqHandlers[] = {
     Dio0IrqHandler,
     Dio1IrqHandler,
     Dio2IrqHandler,
     Dio3IrqHandler,
     Dio4IrqHandler,
     Dio5IrqHandler
-};*/
+};
 
-//void greet(void (*greeter)());
-/*void IRQ(void (*Dio0IrqHandler)());
-*/
-
-/*static void DioIrqHanlderProcess( uint8_t index )
+static void DioIrqHanlderProcess( uint8_t index )
 {
     if( ( DioIrqs[index] != NULL ) && ( DioIrqs[index]->IrqHandler != NULL ) )
     {
@@ -174,7 +170,8 @@ void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
     GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
     GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[4] );
     GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
-/*    for( i = 0; i < 5; i++ )
+/*    int8_t i;
+    for( i = 0; i < 5; i++ )
     {
         IoIrqInit( i, irqHandlers[i] );
     }*/
@@ -182,6 +179,9 @@ void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
 
 void SX1276IoDeInit( void )
 {
+    GpioInit(&SX1276.NSS, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1);
+    spi_close();
+
     GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
