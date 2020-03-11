@@ -55,6 +55,7 @@ my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/machine/_limits.h
 my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/string.h
 my_RFM9x.obj: ../my_timer.h
+my_RFM9x.obj: /home/nicholas/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stddef.h
 my_RFM9x.obj: ../radio.h
 my_RFM9x.obj: ../my_RFM9x.h
 my_RFM9x.obj: ../my_gpio.h

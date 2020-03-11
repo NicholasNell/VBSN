@@ -14,6 +14,7 @@
 #include "sx1276-board.h"
 #include "board.h"
 #include "my_rtc.h"
+#include "rtc-board.h"
 
 /*!
  * LED GPIO pins objects
