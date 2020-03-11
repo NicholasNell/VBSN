@@ -14,6 +14,7 @@
 #include "board-config.h"
 #include "my_spi.h"
 #include "my_timer.h"
+#include "my_RFM9x.h"
 
 /*!
  * \brief Gets the board PA selection configuration
@@ -27,6 +28,8 @@ static uint8_t SX1276GetPaSelect( uint32_t channel );
  * Flag used to set the RF switch control pins in low power mode when the radio is not active.
  */
 static bool RadioIsActive = false;
+
+extern void SX1276OnDio0Irq(void *context);
 
 /*!
  * Radio driver structure initialization

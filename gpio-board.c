@@ -180,6 +180,8 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
         MAP_Interrupt_enableInterrupt(INT_PORTx);
     }
 
+//    MAP_GPIO_registerInterrupt( obj->portIndex, irqHandler );
+
 }
 
 void GpioMcuRemoveInterrupt( Gpio_t *obj ) {

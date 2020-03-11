@@ -61,7 +61,7 @@
 #include "board.h"
 
 #define RF_FREQUENCY                                868100000 // Hz
-#define TX_OUTPUT_POWER                             14        // dBm
+#define TX_OUTPUT_POWER                             20        // dBm
 #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
                                                               //  1: 250 kHz,
                                                               //  2: 500 kHz,
@@ -126,6 +126,7 @@ void OnRxTimeout( void );
 void OnRxError( void );
 
 Gpio_t Led1;
+uint32_t status;
 
 int main(void)
 {
@@ -160,9 +161,6 @@ int main(void)
                                    LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
                                    0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
 
-
-
-
 //    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
 /*    SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
     SX1276SetRxConfig(MODEM_LORA, 1, 7, 1, 0, 8, 20, 0, 0, 1, 0, 0, 0, true);
@@ -170,13 +168,24 @@ int main(void)
     SX1276SetPublicNetwork(false);
     SX1276SetSleep();*/
 
+
     while(1) {
-        SX1276Send( buffer, 5 );
+/*
+
         GpioWrite(&Led1, 1);
         Delayms( 10 );
         GpioWrite(&Led1, 0);
-        Delayms( 10000 );
+        Delayms( 1000 );
+        Radio.Send(buffer, 5);
+*/
+        Radio.SetTxContinuousWave( RF_FREQUENCY, TX_OUTPUT_POWER, TX_TIMEOUT );
+        Delayms(10000);
 
+        if(status & GPIO_PIN4)
+        {
+            status = 0;
+            OnTxDone();
+        }
 
 //        GpioWrite(&Led2, 1);
 //        Delayms( 50 );
@@ -188,42 +197,40 @@ int main(void)
 
 void PORT2_IRQHandler(void)
 {
-    uint32_t status;
     status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
-
 }
 
 void OnTxDone( void )
 {
-    SX1276SetSleep();
+    Radio.Sleep();
     State = TX;
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-//    Radio.Sleep( );
-//    BufferSize = size;
-//    memcpy( Buffer, payload, BufferSize );
-//    RssiValue = rssi;
-//    SnrValue = snr;
-//    State = RX;
+    Radio.Sleep( );
+    BufferSize = size;
+    memcpy( Buffer, payload, BufferSize );
+    RssiValue = rssi;
+    SnrValue = snr;
+    State = RX;
 }
 
 void OnTxTimeout( void )
 {
-//    Radio.Sleep( );
-//    State = TX_TIMEOUT;
+    Radio.Sleep( );
+    State = TX_TIMEOUT;
 }
 
 void OnRxTimeout( void )
 {
-//    Radio.Sleep( );
-//    State = RX_TIMEOUT;
+    Radio.Sleep( );
+    State = RX_TIMEOUT;
 }
 
 void OnRxError( void )
 {
-//    Radio.Sleep( );
-//    State = RX_ERROR;
+    Radio.Sleep( );
+    State = RX_ERROR;
 }

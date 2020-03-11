@@ -115,7 +115,7 @@ typedef struct
     uint16_t portIndex;
     PinTypes pull;
     void* Context;
-    GpioIrqHandler* IrqHandler;
+    void* IrqHandler;
 }Gpio_t;
 
 /*!

@@ -74,41 +74,6 @@ void SX1276SetOpMode( uint8_t opMode );
 void SX1276ReadFifo( uint8_t *buffer, uint8_t size );
 
 /*!
- * \brief DIO 0 IRQ callback
- */
-void SX1276OnDio0Irq( void* context );
-
-/*!
- * \brief DIO 1 IRQ callback
- */
-void SX1276OnDio1Irq( void* context );
-
-/*!
- * \brief DIO 2 IRQ callback
- */
-void SX1276OnDio2Irq( void* context );
-
-/*!
- * \brief DIO 3 IRQ callback
- */
-void SX1276OnDio3Irq( void* context );
-
-/*!
- * \brief DIO 4 IRQ callback
- */
-void SX1276OnDio4Irq( void* context );
-
-/*!
- * \brief DIO 5 IRQ callback
- */
-void SX1276OnDio5Irq( void* context );
-
-/*!
- * \brief Tx & Rx timeout timer callback
- */
-void SX1276OnTimeoutIrq( void* context );
-
-/*!
  * Constant values need to compute the RSSI value
  */
 #define RSSI_OFFSET_LF                              -164
@@ -1269,8 +1234,8 @@ uint32_t SX1276GetWakeupTime( void )
     return SX1276GetBoardTcxoWakeupTime( ) + RADIO_WAKEUP_TIME;
 }
 
-void SX1276OnDio0Irq( void* context ) {
-__no_operation();
+void SX1276OnDio0Irq() {
+    Radio.Sleep();
 }
 
 void SX1276OnDio1Irq( void* context ) {

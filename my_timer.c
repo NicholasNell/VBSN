@@ -37,7 +37,7 @@ void TimerAInteruptInit( void ) {
     MAP_Interrupt_enableInterrupt(INT_TA1_0);
 
     MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
-
+    MAP_SysCtl_enableSRAMBankRetention(SYSCTL_SRAM_BANK1);
     /* Enabling MASTER interrupts */
     MAP_Interrupt_enableMaster();
 
