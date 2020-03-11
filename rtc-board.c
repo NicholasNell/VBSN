@@ -144,7 +144,7 @@ void RtcInit( void )
 uint32_t RtcSetTimerContext( void )
 {
 //    TODO: FIX THIS! RTCTIM0 is not correct. Find a way to get the time in uint32_t
-    RtcTimerContext.Time = ( uint32_t ) (RTCTIM0);
+    RtcTimerContext.Time = ( uint32_t ) RTC_C_getCalendarTime().seconds;
     return ( uint32_t )RtcTimerContext.Time;
 }
 
