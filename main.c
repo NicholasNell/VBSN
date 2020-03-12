@@ -125,15 +125,20 @@ void OnRxTimeout( void );
  */
 void OnRxError( void );
 
-Gpio_t Led1;
+extern Gpio_t Led1;
+extern Gpio_t Led2;
+extern Gpio_t Led3;
 uint32_t status;
 
 int main(void)
 {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
-    MAP_Interrupt_enableMaster();
+//    MAP_Interrupt_enableMaster();
+
     BoardInitMcu();
+
+    GpioFlash(&Led2, 20);
 
 
 
@@ -144,7 +149,7 @@ int main(void)
     RadioEvents.TxTimeout = OnTxTimeout;
     RadioEvents.RxTimeout = OnRxTimeout;
     RadioEvents.RxError = OnRxError;
-
+    GpioFlash(&Led2, 20);
 
     Radio.Init(&RadioEvents);
 
@@ -155,6 +160,7 @@ int main(void)
                                    LORA_SPREADING_FACTOR, LORA_CODINGRATE,
                                    LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
                                    true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+    GpioFlash(&Led2, 20);
 
     Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
                                    LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
@@ -170,22 +176,11 @@ int main(void)
 
 
     while(1) {
-/*
-
-        GpioWrite(&Led1, 1);
-        Delayms( 10 );
-        GpioWrite(&Led1, 0);
+        PCM_gotoLPM0InterruptSafe();
         Delayms( 1000 );
         Radio.Send(buffer, 5);
-*/
-        Radio.SetTxContinuousWave( RF_FREQUENCY, TX_OUTPUT_POWER, TX_TIMEOUT );
-        Delayms(10000);
-
-        if(status & GPIO_PIN4)
-        {
-            status = 0;
-            OnTxDone();
-        }
+//        Radio.SetTxContinuousWave( RF_FREQUENCY, TX_OUTPUT_POWER, TX_TIMEOUT );
+//        Delayms(10000);
 
 //        GpioWrite(&Led2, 1);
 //        Delayms( 50 );
@@ -199,6 +194,7 @@ void PORT2_IRQHandler(void)
 {
     status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
+    GpioFlash(&Led2, 20);
 }
 
 void OnTxDone( void )

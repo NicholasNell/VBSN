@@ -403,19 +403,17 @@ void TimerAInteruptInit( void ) {
     MAP_SysCtl_enableSRAMBankRetention(SYSCTL_SRAM_BANK1);
     /* Enabling MASTER interrupts */
     MAP_Interrupt_enableMaster();
-
-
 }
 
 void TA1_0_IRQHandler( void ) {
     TimerInteruptFlag = true;
-    MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A1_BASE,
+    Timer_A_clearCaptureCompareInterrupt(TIMER_A1_BASE,
             TIMER_A_CAPTURECOMPARE_REGISTER_0);
 }
 
 void Delayms( uint32_t ms ) {
     uint32_t count = 0;
-//    MAP_Timer_A_clearTimer(TIMER_A1_BASE);
+    MAP_Timer_A_clearTimer(TIMER_A1_BASE);
     MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
 
     while (count < ms) {
@@ -427,11 +425,5 @@ void Delayms( uint32_t ms ) {
     count = 0;
     MAP_Timer_A_stopTimer(TIMER_A1_BASE);
 }
-
-/*void StartTimer( void ) {
-//    uint32_t elapsedTime = 0;
-
-    MAP_Interrupt_disableMaster();  //Disable all interupts while things are being set up
-}*/
 
 

@@ -26,37 +26,36 @@
  */
 #include "gpio-board.h"
 
-void GpioInit( Gpio_t *obj, PinNames pin, PinModes mode,  PinConfigs config, PinTypes type, uint32_t value )
-{
+void GpioInit( Gpio_t *obj, PinNames pin, PinModes mode,  PinConfigs config, PinTypes type, uint32_t value ) {
     GpioMcuInit( obj, pin, mode, config, type, value );
 }
 
-void GpioSetContext( Gpio_t *obj, void* context )
-{
+void GpioSetContext( Gpio_t *obj, void* context ) {
     GpioMcuSetContext( obj, context );
 }
 
-void GpioSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler)
-{
+void GpioSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler) {
     GpioMcuSetInterrupt( obj, irqMode, irqPriority, irqHandler );
 }
 
-void GpioRemoveInterrupt( Gpio_t *obj )
-{
+void GpioRemoveInterrupt( Gpio_t *obj ) {
     GpioMcuRemoveInterrupt( obj );
 }
 
-void GpioWrite( Gpio_t *obj, uint32_t value )
-{
+void GpioWrite( Gpio_t *obj, uint32_t value ) {
     GpioMcuWrite( obj, value );
 }
 
-void GpioToggle( Gpio_t *obj )
-{
+void GpioToggle( Gpio_t *obj ) {
     GpioMcuToggle( obj );
 }
 
-uint32_t GpioRead( Gpio_t *obj )
-{
+uint32_t GpioRead( Gpio_t *obj ) {
     return GpioMcuRead( obj );
+}
+
+void GpioFlash( Gpio_t *obj, uint8_t delay ) {
+    GpioToggle(obj);
+    Delayms(delay);
+    GpioToggle(obj);
 }

@@ -35,6 +35,7 @@ extern "C"
 #include <stdint.h>
 #include "pinName-board.h"
 #include "pinName-ioe.h"
+#include "my_timer.h"
 
 /*!
  * Board GPIO pin names
@@ -138,6 +139,14 @@ void GpioInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinT
  *                     on IRQ handler callback
  */
 void GpioSetContext( Gpio_t *obj, void* context );
+
+/*!
+ * \brief toggles pin on and off
+ *
+ * \param [IN] config pin
+ * \param [IN] flash delay
+ */
+void GpioFlash( Gpio_t *obj, uint8_t delay );
 
 /*!
  * \brief GPIO IRQ Initialization

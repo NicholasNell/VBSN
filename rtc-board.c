@@ -22,6 +22,13 @@
 
 #define MIN_ALARM_DELAY                             3 // in ticks
 
+
+extern Gpio_t Led2;
+/*
+ * Static Local Functions
+*/
+static void HwTimerInit( );
+
 /*!
  * \brief Indicates if the RTC is already Initialized or not
  */
@@ -36,12 +43,12 @@ static volatile RTC_C_Calendar newTime;
 const RTC_C_Calendar currentTime =
 {
         0x00,
-        0x03,
-        0x22,
-        0x06,
+        0x00,
+        0x10,
+        0x04,
         0x12,
-        0x11,
-        0x1955
+        0x03,
+        0x2020
 };
 
 typedef enum AlarmStates_e
@@ -90,50 +97,63 @@ static void RtcAlarmIrq( void );
  */
 static void RtcOverflowIrq( void );
 
+static void HwTimerInit( ) {
+
+    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
+            GPIO_PIN0 | GPIO_PIN1, GPIO_PRIMARY_MODULE_FUNCTION);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
+
+
+
+    CS_setExternalClockSourceFrequency(32000,48000000);
+
+//    //     Starting LFXT in non-bypass mode without a timeout.
+//    CS_startLFXT(CS_LFXT_DRIVE3);
+
+    MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BINARY);
+
+//     Specify an interrupt to assert every minute
+    MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
+
+/*     Enable interrupt for RTC Ready Status, which asserts when the RTC
+     * Calendar registers are ready to read.
+     * Also, enable interrupts for the Calendar alarm and Calendar event.*/
+
+    MAP_RTC_C_clearInterruptFlag(
+            RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
+                    | RTC_C_CLOCK_ALARM_INTERRUPT);
+    MAP_RTC_C_enableInterrupt(
+            RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
+                    | RTC_C_CLOCK_ALARM_INTERRUPT);
+
+//     Start RTC Clock
+    MAP_RTC_C_startClock();
+    //![Simple RTC Example]
+
+//     Enable interrupts
+    MAP_Interrupt_enableInterrupt(INT_RTC_C);
+    MAP_Interrupt_enableMaster();
+}
+
+void RTC_C_IRQHandler(void)
+{
+    uint32_t status;
+
+    status = MAP_RTC_C_getEnabledInterruptStatus();
+    MAP_RTC_C_clearInterruptFlag(status);
+//    GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN0);
+//    GpioFlash(&Led2, 20);
+}
+
+
 void RtcInit( void )
 {
     if( RtcInitialized == false ) {
 
-        MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
-                GPIO_PIN0 | GPIO_PIN1, GPIO_PRIMARY_MODULE_FUNCTION);
-
-    /*     Setting the external clock frequency. This API is optional, but will
-         * come in handy if the user ever wants to use the getMCLK/getACLK/etc
-         * functions*/
-
-/*        // RTC timer
+        // RTC timer
         HwTimerInit( );
-        HwTimerAlarmSetCallback( RtcAlarmIrq );
-        HwTimerOverflowSetCallback( RtcOverflowIrq );*/
-
-        CS_setExternalClockSourceFrequency(32000,48000000);
-
-    //     Starting LFXT in non-bypass mode without a timeout.
-        CS_startLFXT(CS_LFXT_DRIVE3);
-
-        MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
-
-    //     Specify an interrupt to assert every minute
-        MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
-
-    /*     Enable interrupt for RTC Ready Status, which asserts when the RTC
-         * Calendar registers are ready to read.
-         * Also, enable interrupts for the Calendar alarm and Calendar event.*/
-
-        MAP_RTC_C_clearInterruptFlag(
-                RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
-                        | RTC_C_CLOCK_ALARM_INTERRUPT);
-        MAP_RTC_C_enableInterrupt(
-                RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
-                        | RTC_C_CLOCK_ALARM_INTERRUPT);
-
-    //     Start RTC Clock
-        MAP_RTC_C_startClock();
-        //![Simple RTC Example]
-
-    //     Enable interrupts and go to sleep.
-        MAP_Interrupt_enableInterrupt(INT_RTC_C);
-
+//        HwTimerAlarmSetCallback( RtcAlarmIrq );
+//        HwTimerOverflowSetCallback( RtcOverflowIrq );
         RtcTimerContext.AlarmState = ALARM_STOPPED;
         RtcSetTimerContext( );
         RtcInitialized = true;
@@ -143,6 +163,13 @@ void RtcInit( void )
 
 uint32_t RtcSetTimerContext( void )
 {
+    /*The real-time clock registers are updated once per second. To prevent reading any real-time clock register
+at the time of an update that could result in an invalid time being read, a keep-out window is provided. The
+keep-out window is centered approximately 128/32768 seconds around the update transition. The read
+only RTCRDY bit is reset during the keep-out window period and set outside the keep-out the window
+period. Any read of the clock registers while RTCRDY is reset is considered to be potentially invalid, and
+the time read should be ignored.
+    */
 //    TODO: FIX THIS! RTCTIM0 is not correct. Find a way to get the time in uint32_t
     RtcTimerContext.Time = ( uint32_t ) RTC_C_getCalendarTime().seconds;
     return ( uint32_t )RtcTimerContext.Time;
