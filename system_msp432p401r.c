@@ -68,7 +68,7 @@
 //     <12000000> 12 MHz
 //     <24000000> 24 MHz
 //     <48000000> 48 MHz
-#define  __SYSTEM_CLOCK    3000000
+#define  __SYSTEM_CLOCK    1500000
 
 /*--------------------- Power Regulator Configuration -----------------------*/
 //  Power Regulator Mode
@@ -79,8 +79,8 @@
 /*----------------------------------------------------------------------------
    Define clocks, used for SystemCoreClockUpdate()
  *---------------------------------------------------------------------------*/
-#define __VLOCLK           10000
-#define __MODCLK           24000000
+#define __VLOCLK           9400
+#define __MODCLK           25000000
 #define __LFXT             32768
 #define __HFXT             48000000
 

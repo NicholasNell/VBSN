@@ -140,9 +140,6 @@ int main(void)
 
     GpioFlash(&Led2, 20);
 
-
-
-
     // Radio initialization
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.RxDone = OnRxDone;

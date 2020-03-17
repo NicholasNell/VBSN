@@ -24,8 +24,9 @@ typedef struct TimerEvent_s
 {
     uint32_t Timestamp;                  //! Current timer value
     uint32_t ReloadValue;                //! Timer delay value
-/*
     bool IsStarted;                      //! Is the timer currently running
+
+/*
     bool IsNext2Expire;                  //! Is the next timer to expire
     void ( *Callback )( void* context ); //! Timer IRQ callback function
     void *Context;                       //! User defined data object pointer to pass back
@@ -50,13 +51,8 @@ typedef uint32_t TimerTime_t;
  * \param [IN] obj          Structure containing the timer object parameters
  * \param [IN] callback     Function callback called at the end of the timeout
  */
-void TimerInit( TimerEvent_t *obj, void ( *callback )( void *context ) );
+void TimerInit( TimerEvent_t *obj );
 
-
-/*!
- * Timer IRQ event handler
- */
-void TimerIrqHandler( void );
 
 /*!
  * \brief Starts and adds the timer object to the list of timer events
@@ -134,7 +130,7 @@ void TimerProcess( void );
     Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
     Timer will be configured for ms interupts.
 */
-void TimerAInteruptInit( void );
+void TimerAInteruptInit( Timer_A_UpModeConfig *upConfig );
 
 /*
     Timer A ISR Handler
