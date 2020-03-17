@@ -13,7 +13,7 @@
 	<ignoreDefaultDeviceSettings value="true"/>
 	<ignoreDefaultCCSSettings value="true"/>
 	<templateProperties value="id=empty_MSP_EXP432P401R_nortos_ccs.projectspec.empty_MSP_EXP432P401R_nortos_ccs,buildProfile=release,isHybrid=true"/>
-	<origin value="/home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/examples/nortos/MSP_EXP432P401R/driverlib/empty/ccs/empty_MSP_EXP432P401R_nortos_ccs.projectspec"/>
+	<origin value="C:/Users/Nicholas/OneDrive - Stellenbosch University/Vineyard Based Sensor Networks temp/Meesters"/>
 	<filesToOpen value=""/>
 	<isTargetManual value="false"/>
 </projectOptions>
