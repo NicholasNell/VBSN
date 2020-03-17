@@ -94,6 +94,8 @@ void BoardInitMcu( void )
 {
     if( McuInitialized == false )
     {
+        BoardUnusedIoInit( );
+
         TimerAInteruptInit();
 //        MAP_Interrupt_enableMaster();
 
@@ -109,7 +111,7 @@ void BoardInitMcu( void )
 
         RtcInit( );
 
-        BoardUnusedIoInit( );
+
 
 //        TODO: Fix Board power source (Will need external IO pin to detect bat voltage)
         if( GetBoardPowerSource( ) == BATTERY_POWER )
@@ -179,12 +181,16 @@ static void BoardUnusedIoInit( void ) {
     /* Terminating all remaining pins to minimize power consumption. This is
         done by register accesses for simplicity and to minimize branching API
         calls */
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_PA, PIN_ALL16);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_PB, PIN_ALL16);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_PC, PIN_ALL16);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_PD, PIN_ALL16);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_PE, PIN_ALL16);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_PJ, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P4, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P5, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P6, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P7, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P8, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P9, PIN_ALL16);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P10, PIN_ALL16);
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_PA, PIN_ALL16);
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_PB, PIN_ALL16);
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_PC, PIN_ALL16);
