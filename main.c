@@ -164,18 +164,29 @@ int main(void)
                                    LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
                                    0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
 
+
 //    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
 /*    SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
     SX1276SetRxConfig(MODEM_LORA, 1, 7, 1, 0, 8, 20, 0, 0, 1, 0, 0, 0, true);
     SX1276SetChannel(868100000);
     SX1276SetPublicNetwork(false);
     SX1276SetSleep();*/
+    TimerEvent_t timerA;
+    TimerInit(&timerA);
+    timerA.timer = TIMER_A0_BASE;
+    timerA.captureCompareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_0;
+    timerA.timerMode = TIMER_A_CONTINUOUS_MODE;
+    TimerAInteruptInit();
+    TimerStart(&timerA);
+    uint32_t temp;
+
 
 
     while(1) {
-        PCM_gotoLPM0InterruptSafe();
+//        PCM_gotoLPM0InterruptSafe();
         Delayms( 1000 );
-        Radio.Send(buffer, 5);
+//        Radio.Send(buffer, 5);
+        temp = TimerGetElapsedTime(&timerA);
 //        Radio.SetTxContinuousWave( RF_FREQUENCY, TX_OUTPUT_POWER, TX_TIMEOUT );
 //        Delayms(10000);
 

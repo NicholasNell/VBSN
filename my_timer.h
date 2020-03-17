@@ -25,6 +25,10 @@ typedef struct TimerEvent_s
     uint32_t Timestamp;                  //! Current timer value
     uint32_t ReloadValue;                //! Timer delay value
     bool IsStarted;                      //! Is the timer currently running
+    uint_fast16_t compareValue;          //! Value to compare to
+    uint32_t timer;                      //! Timer to use
+    uint_fast16_t timerMode;             //! Timer Mode
+    uint_fast16_t captureCompareRegister; //! CCR to use
 
 /*
     bool IsNext2Expire;                  //! Is the next timer to expire
@@ -98,17 +102,9 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value );
  *
  * \retval time returns current time
  */
-TimerTime_t TimerGetCurrentTime( void );
+TimerTime_t TimerGetCurrentTime( TimerEvent_t *obj );
 
-/*!
- * \brief Return the Time elapsed since a fix moment in Time
- *
- * \remark TimerGetElapsedTime will return 0 for argument 0.
- *
- * \param [IN] past         fix moment in Time
- * \retval time             returns elapsed time
- */
-TimerTime_t TimerGetElapsedTime( TimerTime_t past );
+uint_fast16_t TimerGetElapsedTime( TimerEvent_t *obj );
 
 /*!
  * \brief Computes the temperature compensation for a period of time on a
@@ -121,16 +117,12 @@ TimerTime_t TimerGetElapsedTime( TimerTime_t past );
  */
 TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature );
 
-/*!
- * \brief Processes pending timer events
- */
-void TimerProcess( void );
 
 /*
     Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
     Timer will be configured for ms interupts.
 */
-void TimerAInteruptInit( Timer_A_UpModeConfig *upConfig );
+void TimerAInteruptInit( void );
 
 /*
     Timer A ISR Handler

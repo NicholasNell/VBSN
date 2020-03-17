@@ -51,14 +51,21 @@ static bool TimerExists( TimerEvent_t *obj );
 #define TIMER_PERIOD    375
 
 /* Timer_A UpMode Configuration Parameter */
-const Timer_A_UpModeConfig upConfig =
-{
+const Timer_A_UpModeConfig upConfig = {
         TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
-        TIMER_A_CLOCKSOURCE_DIVIDER_4,          // SMCLK/1 = 3MHz
+        TIMER_A_CLOCKSOURCE_DIVIDER_4,          // SMCLK/1 = 1.5MHz
         TIMER_PERIOD,                           // 375 tick period
         TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
         TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE ,    // Enable CCR0 interrupt
         TIMER_A_DO_CLEAR                        // Clear value
+};
+
+/* Configure Timer_A0 as a continuous counter for timing 500kHz. 1 Tick = 2us*/
+const Timer_A_ContinuousModeConfig contConfig = {
+        TIMER_A_CLOCKSOURCE_SMCLK,
+        TIMER_A_CLOCKSOURCE_DIVIDER_3,
+        TIMER_A_TAIE_INTERRUPT_DISABLE,
+        TIMER_A_SKIP_CLEAR
 };
 bool TimerInteruptFlag = false;
 
@@ -66,11 +73,14 @@ void TimerInit( TimerEvent_t *obj )
 {
     obj->Timestamp = 0;
     obj->ReloadValue = 0;
+    obj->IsStarted = false;
+    obj->compareValue = NULL;
 }
 
 void TimerStart( TimerEvent_t *obj ) {
     CRITICAL_SECTION_BEGIN( );
-
+    Timer_A_startCounter(obj->timer, obj->timerMode);
+    obj->IsStarted = true;
     CRITICAL_SECTION_END( );
 }
 
@@ -78,13 +88,9 @@ bool TimerIsStarted( TimerEvent_t *obj ) {
     return obj->IsStarted;
 }
 
-void TimerIrqHandler( void ) {
-
-}
-
 void TimerStop( TimerEvent_t *obj ) {
     CRITICAL_SECTION_BEGIN( );
-
+    Timer_A_stopTimer(obj->timer);
     CRITICAL_SECTION_END( );
 }
 
@@ -105,12 +111,15 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value ) {
 
 }
 
-TimerTime_t TimerGetCurrentTime( void ) {
+TimerTime_t TimerGetCurrentTime( TimerEvent_t *obj ) {
 
 }
 
-TimerTime_t TimerGetElapsedTime( TimerTime_t past ) {
-
+uint_fast16_t TimerGetElapsedTime( TimerEvent_t *obj ) {
+    uint_fast16_t old = obj->Timestamp;
+    uint_fast16_t cur =  Timer_A_getCounterValue(obj->timer);
+    obj->Timestamp = cur;
+    return cur - old;
 }
 
 
@@ -121,20 +130,20 @@ static void TimerSetTimeout( TimerEvent_t *obj ) {
 TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature ) {
 }
 
-void TimerProcess( void )
-{
 
-}
+void TimerAInteruptInit( void ) {
 
-void TimerAInteruptInit( Timer_A_UpModeConfig *upConfig ) {
-    /* Configuring Timer_A1 for Up Mode */
-    MAP_Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
+    /* Configure Timer_A0 for timing purposes */
+    MAP_Timer_A_configureContinuousMode(TIMER_A0_BASE, &contConfig );
+    /* Configuring Timer_A1 for Up Mode and capture compare*/
+    MAP_Timer_A_configureUpMode( TIMER_A1_BASE, &upConfig );
+
 
     /* Enabling interrupts and starting the timer */
 //    MAP_Interrupt_enableSleepOnIsrExit();
     MAP_Interrupt_enableInterrupt(INT_TA1_0);
 
-    MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
+//    MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
     MAP_SysCtl_enableSRAMBankRetention(SYSCTL_SRAM_BANK1);
     /* Enabling MASTER interrupts */
     MAP_Interrupt_enableMaster();

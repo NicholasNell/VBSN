@@ -94,6 +94,7 @@ void BoardInitMcu( void )
 {
     if( McuInitialized == false )
     {
+//        CS_initClockSignal(CS_ACLK, CS_VLOCLK_SELECT, )
         TimerAInteruptInit();
 //        MAP_Interrupt_enableMaster();
 
