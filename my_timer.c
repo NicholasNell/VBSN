@@ -26,32 +26,6 @@
         }                                      \
     }while( 0 );
 
-/*!
- * Timers list head pointer
- */
-static TimerEvent_t *TimerListHead = NULL;
-
-/*!
- * \brief Adds or replace the head timer of the list.
- *
- * \remark The list is automatically sorted. The list head always contains the
- *         next timer to expire.
- *
- * \param [IN]  obj Timer object to be become the new head
- * \param [IN]  remainingTime Remaining time of the previous head to be replaced
- */
-static void TimerInsertNewHeadTimer( TimerEvent_t *obj );
-
-/*!
- * \brief Adds a timer to the list.
- *
- * \remark The list is automatically sorted. The list head always contains the
- *         next timer to expire.
- *
- * \param [IN]  obj Timer object to be added to the list
- * \param [IN]  remainingTime Remaining time of the running head after which the object may be added
- */
-static void TimerInsertTimer( TimerEvent_t *obj );
 
 /*!
  * \brief Sets a timeout with the duration "timestamp"
@@ -92,18 +66,7 @@ void TimerInit( TimerEvent_t *obj, void ( *callback )( void *context ) )
 {
     obj->Timestamp = 0;
     obj->ReloadValue = 0;
-    obj->IsStarted = false;
-    obj->IsNext2Expire = false;
-    obj->Callback = callback;
-    obj->Context = NULL;
-    obj->Next = NULL;
 }
-
-void TimerSetContext( TimerEvent_t *obj, void* context )
-{
-    obj->Context = context;
-}
-
 
 void TimerStart( TimerEvent_t *obj )
 {

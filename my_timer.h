@@ -24,11 +24,13 @@ typedef struct TimerEvent_s
 {
     uint32_t Timestamp;                  //! Current timer value
     uint32_t ReloadValue;                //! Timer delay value
+/*
     bool IsStarted;                      //! Is the timer currently running
     bool IsNext2Expire;                  //! Is the next timer to expire
     void ( *Callback )( void* context ); //! Timer IRQ callback function
     void *Context;                       //! User defined data object pointer to pass back
     struct TimerEvent_s *Next;           //! Pointer to the next Timer object.
+*/
 }TimerEvent_t;
 
 /*!
@@ -50,13 +52,6 @@ typedef uint32_t TimerTime_t;
  */
 void TimerInit( TimerEvent_t *obj, void ( *callback )( void *context ) );
 
-/*!
- * \brief Sets a user defined object pointer
- *
- * \param [IN] context User defined data object pointer to pass back
- *                     on IRQ handler callback
- */
-void TimerSetContext( TimerEvent_t *obj, void* context );
 
 /*!
  * Timer IRQ event handler
