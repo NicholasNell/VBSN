@@ -79,8 +79,8 @@
 /*----------------------------------------------------------------------------
    Define clocks, used for SystemCoreClockUpdate()
  *---------------------------------------------------------------------------*/
-#define __VLOCLK           9400
-#define __MODCLK           25000000
+#define __VLOCLK           10000
+#define __MODCLK           24000000
 #define __LFXT             32768
 #define __HFXT             48000000
 

@@ -8,39 +8,7 @@
 #include "my_timer.h"
 #include "utilities.h"
 #include "board.h"
-#include "rtc-board.h"
 
-/*!
- * Safely execute call back
- */
-#define ExecuteCallBack( _callback_, context ) \
-    do                                         \
-    {                                          \
-        if( _callback_ == NULL )               \
-        {                                      \
-            while( 1 );                        \
-        }                                      \
-        else                                   \
-        {                                      \
-            _callback_( context );             \
-        }                                      \
-    }while( 0 );
-
-
-/*!
- * \brief Sets a timeout with the duration "timestamp"
- *
- * \param [IN] timestamp Delay duration
- */
-static void TimerSetTimeout( TimerEvent_t *obj );
-
-/*!
- * \brief Check if the Object to be added is not already in the list
- *
- * \param [IN] timestamp Delay duration
- * \retval true (the object is already in the list) or false
- */
-static bool TimerExists( TimerEvent_t *obj );
 /*
     Global variables
 */
@@ -57,94 +25,29 @@ const Timer_A_UpModeConfig upConfig = {
         TIMER_PERIOD,                           // 375 tick period
         TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
         TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE ,    // Enable CCR0 interrupt
-        TIMER_A_DO_CLEAR                        // Clear value
+        TIMER_A_SKIP_CLEAR                         // Clear value
 };
 
-/* Configure Timer_A0 as a continuous counter for timing 500kHz. 1 Tick = 2us*/
+/* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from vloclk at 10kHz with 1 divider for 100 us ticks*/
 const Timer_A_ContinuousModeConfig contConfig = {
-        TIMER_A_CLOCKSOURCE_SMCLK,
-        TIMER_A_CLOCKSOURCE_DIVIDER_3,
+        TIMER_A_CLOCKSOURCE_ACLK,
+        TIMER_A_CLOCKSOURCE_DIVIDER_1,
         TIMER_A_TAIE_INTERRUPT_DISABLE,
         TIMER_A_SKIP_CLEAR
 };
 bool TimerInteruptFlag = false;
 
-void TimerInit( TimerEvent_t *obj )
-{
-    obj->Timestamp = 0;
-    obj->ReloadValue = 0;
-    obj->IsStarted = false;
-    obj->compareValue = NULL;
-}
-
-void TimerStart( TimerEvent_t *obj ) {
-    CRITICAL_SECTION_BEGIN( );
-    Timer_A_startCounter(obj->timer, obj->timerMode);
-    obj->IsStarted = true;
-    CRITICAL_SECTION_END( );
-}
-
-bool TimerIsStarted( TimerEvent_t *obj ) {
-    return obj->IsStarted;
-}
-
-void TimerStop( TimerEvent_t *obj ) {
-    CRITICAL_SECTION_BEGIN( );
-    Timer_A_stopTimer(obj->timer);
-    CRITICAL_SECTION_END( );
-}
-
-static bool TimerExists( TimerEvent_t *obj ) {
-    if ( obj == NULL ) {
-        return false;
-    }
-    return true;
-}
-
-void TimerReset( TimerEvent_t *obj )
-{
-    TimerStop( obj );
-    TimerStart( obj );
-}
-
-void TimerSetValue( TimerEvent_t *obj, uint32_t value ) {
-
-}
-
-TimerTime_t TimerGetCurrentTime( TimerEvent_t *obj ) {
-
-}
-
-uint_fast16_t TimerGetElapsedTime( TimerEvent_t *obj ) {
-    uint_fast16_t old = obj->Timestamp;
-    uint_fast16_t cur =  Timer_A_getCounterValue(obj->timer);
-    obj->Timestamp = cur;
-    return cur - old;
-}
-
-
-static void TimerSetTimeout( TimerEvent_t *obj ) {
-
-}
-
-TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature ) {
-}
-
 
 void TimerAInteruptInit( void ) {
 
-    /* Configure Timer_A0 for timing purposes */
-    MAP_Timer_A_configureContinuousMode(TIMER_A0_BASE, &contConfig );
-    /* Configuring Timer_A1 for Up Mode and capture compare*/
-    MAP_Timer_A_configureUpMode( TIMER_A1_BASE, &upConfig );
 
+    /* Configuring Timer_A1 for Up Mode */
+    MAP_Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
 
     /* Enabling interrupts and starting the timer */
 //    MAP_Interrupt_enableSleepOnIsrExit();
     MAP_Interrupt_enableInterrupt(INT_TA1_0);
 
-//    MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
-    MAP_SysCtl_enableSRAMBankRetention(SYSCTL_SRAM_BANK1);
     /* Enabling MASTER interrupts */
     MAP_Interrupt_enableMaster();
 }
@@ -157,7 +60,8 @@ void TA1_0_IRQHandler( void ) {
 
 void Delayms( uint32_t ms ) {
     uint32_t count = 0;
-    MAP_Timer_A_clearTimer(TIMER_A1_BASE);
+    MAP_Timer_A_stopTimer(TIMER_A1_BASE);
+//    MAP_Timer_A_clearTimer(TIMER_A1_BASE);
     MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
 
     while (count < ms) {
@@ -170,4 +74,40 @@ void Delayms( uint32_t ms ) {
     MAP_Timer_A_stopTimer(TIMER_A1_BASE);
 }
 
+/*!
+ * \brief Sets up timer for 100 us accuracy
+ */
+void TimerATimerInit( void ) {
+    MAP_CS_initClockSignal(CS_ACLK, CS_VLOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    /* Configure Timer_A0 for timing purposes */
+    Timer_A_configureContinuousMode(TIMER_A0_BASE, &contConfig );
+}
 
+/*!
+ * \brief Starts Timing using Timer_A0
+ */
+void startTiming( void ) {
+    Timer_A_stopTimer(TIMER_A0_BASE);
+    Timer_A_clearTimer(TIMER_A0_BASE);
+    Timer_A_startCounter( TIMER_A0_BASE, TIMER_A_CONTINUOUS_MODE );
+}
+
+/*!
+ * \brief Stop the timer and returns time in us
+ */
+uint32_t stopTiming(void) {
+    uint32_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
+    Timer_A_stopTimer(TIMER_A0_BASE);
+    Timer_A_clearTimer(TIMER_A0_BASE);
+    return tickVal * 100;
+}
+
+
+/*!
+ * \brief Gets the current elapsed time in us
+ */
+uint32_t getTiming(void) {
+    uint16_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
+    uint32_t timeVal = tickVal * 100;
+    return timeVal;
+}

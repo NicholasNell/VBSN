@@ -185,20 +185,22 @@ uint32_t RtcGetMinimumTimeout( void )
     return( MIN_ALARM_DELAY );
 }
 
+/*
 uint32_t RtcMs2Tick( TimerTime_t milliseconds )
 {
     return ( uint32_t )( milliseconds );
 }
+*/
 
-TimerTime_t RtcTick2Ms( uint32_t tick )
+/*TimerTime_t RtcTick2Ms( uint32_t tick )
 {
     uint32_t seconds = tick >> 10;
 
     tick = tick & 0x3FF;
     return ( ( seconds * 1000 ) + ( ( tick * 1000 ) >> 10 ) );
-}
+}*/
 
-void RtcDelayMs( TimerTime_t milliseconds )
+/*void RtcDelayMs( TimerTime_t milliseconds )
 {
     uint32_t delayTicks = 0;
     uint32_t refTicks = RtcGetTimerValue( );
@@ -210,7 +212,7 @@ void RtcDelayMs( TimerTime_t milliseconds )
     {
         __NOP( );
     }
-}
+}*/
 
 void RtcSetAlarm( uint32_t timeout )
 {
@@ -301,16 +303,16 @@ void RtcProcess( void )
             // Because of one shot the task will be removed after the callback
             RtcTimeoutPendingPolling = false;
             // NOTE: The handler should take less then 1 ms otherwise the clock shifts
-            TimerIrqHandler( );
+//            TimerIrqHandler( );
         }
     }
     CRITICAL_SECTION_END( );
 }
 
-TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
+/*TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
 {
     return period;
-}
+}*/
 
 static void RtcAlarmIrq( void )
 {
@@ -319,7 +321,7 @@ static void RtcAlarmIrq( void )
     RtcTimeoutPendingInterrupt = false;
 
     // NOTE: The handler should take less then 1 ms otherwise the clock shifts
-    TimerIrqHandler( );
+//    TimerIrqHandler( );
 }
 
 static void RtcOverflowIrq( void )
