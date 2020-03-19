@@ -65,14 +65,6 @@ const struct Radio_s Radio =
     NULL, // void ( *SetRxDutyCycle )( uint32_t rxTime, uint32_t sleepTime ) - SX126x Only
 };
 
-/*!
- * Debug GPIO pins objects
- */
-#if defined( USE_RADIO_DEBUG )
-Gpio_t DbgPinTx;
-Gpio_t DbgPinRx;
-#endif
-
 void SX1276IoInit( void )
 {
 
@@ -86,12 +78,6 @@ void SX1276IoInit( void )
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-
-/*    // Set NSS pin HIgh during Normal operation
-        GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
-        GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN2);*/
-
-
 }
 
 /*static void Dio0IrqHandler( void );

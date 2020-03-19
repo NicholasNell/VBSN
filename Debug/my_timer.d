@@ -56,7 +56,6 @@ my_timer.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/_ti
 my_timer.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h
 my_timer.obj: ../utilities.h
 my_timer.obj: ../board.h
-my_timer.obj: ../rtc-board.h
 
 ../my_timer.c: 
 ../my_timer.h: 
@@ -114,4 +113,3 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/_ti_config.h:
 C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h: 
 ../utilities.h: 
 ../board.h: 
-../rtc-board.h: 

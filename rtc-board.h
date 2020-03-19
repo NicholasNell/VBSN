@@ -72,7 +72,7 @@ uint32_t RtcGetMinimumTimeout( void );
  * \param[IN] milliseconds Time in milliseconds
  * \retval returns time in timer ticks
  */
-uint32_t RtcMs2Tick( TimerTime_t milliseconds );
+//uint32_t RtcMs2Tick( TimerTime_t milliseconds );
 
 /*!
  * \brief converts time in ticks to time in ms
@@ -80,14 +80,14 @@ uint32_t RtcMs2Tick( TimerTime_t milliseconds );
  * \param[IN] time in timer ticks
  * \retval returns time in milliseconds
  */
-TimerTime_t RtcTick2Ms( uint32_t tick );
+//TimerTime_t RtcTick2Ms( uint32_t tick );
 
 /*!
  * \brief Performs a delay of milliseconds by polling RTC
  *
  * \param[IN] milliseconds Delay in ms
  */
-void RtcDelayMs( TimerTime_t milliseconds );
+//void RtcDelayMs( TimerTime_t milliseconds );
 
 /*!
  * \brief Calculates the wake up time between wake up and MCU start
@@ -192,7 +192,7 @@ void RtcProcess( void );
  *
  * \retval Compensated time period
  */
-TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature );
+//TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature );
 
 #ifdef __cplusplus
 }

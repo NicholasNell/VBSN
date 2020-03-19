@@ -97,7 +97,7 @@ void BoardInitMcu( void )
         BoardUnusedIoInit( );
 
         TimerAInteruptInit();
-//        MAP_Interrupt_enableMaster();
+        TimerATimerInit();
 
         // LEDs
         GpioInit( &Led1, LED_1, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
@@ -109,15 +109,19 @@ void BoardInitMcu( void )
 
         UsbIsConnected = true;
 
-        RtcInit( );
+//        RtcInit( );
 
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> MultiTimers
 
 //        TODO: Fix Board power source (Will need external IO pin to detect bat voltage)
         if( GetBoardPowerSource( ) == BATTERY_POWER )
         {
             // Disables OFF mode - Enables lowest power mode (STOP)
-            PCM_setPowerState(PCM_LPM3);
+//            PCM_setPowerState(PCM_LPM3);
         }
     }
     else
@@ -125,8 +129,6 @@ void BoardInitMcu( void )
         SystemClockReConfig( );
     }
 
-//    SpiInit( &SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
-//    spi_open();
     SX1276IoInit( );
 //    SX1276IoIrqInit( );
 
@@ -137,8 +139,8 @@ void BoardInitMcu( void )
     if( McuInitialized == false )
     {
         McuInitialized = true;
-        SX1276IoDbgInit( );
-        SX1276IoTcxoInit( );
+//        SX1276IoDbgInit( );
+//        SX1276IoTcxoInit( );
         if( GetBoardPowerSource( ) == BATTERY_POWER )
         {
 //            TODO: Fix Timer stuff
@@ -213,6 +215,6 @@ uint8_t GetBoardPowerSource( void )
 
 void SystemClockReConfig( void )
 {
-    PCM_setPowerState(PCM_AM_LDO_VCORE0);
+//    PCM_setPowerState(PCM_AM_LDO_VCORE0);
 
 }

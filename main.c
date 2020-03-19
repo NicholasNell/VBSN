@@ -134,59 +134,20 @@ int main(void)
 {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
-//    MAP_Interrupt_enableMaster();
 
     BoardInitMcu();
+    GpioFlash(&Led1, 1);
 
-    GpioFlash(&Led2, 20);
-
-
-
-
-    // Radio initialization
-    RadioEvents.TxDone = OnTxDone;
-    RadioEvents.RxDone = OnRxDone;
-    RadioEvents.TxTimeout = OnTxTimeout;
-    RadioEvents.RxTimeout = OnRxTimeout;
-    RadioEvents.RxError = OnRxError;
-    GpioFlash(&Led2, 20);
-
-    Radio.Init(&RadioEvents);
-
-    Radio.SetChannel( RF_FREQUENCY );
-
-
-    Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
-                                   LORA_SPREADING_FACTOR, LORA_CODINGRATE,
-                                   LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
-                                   true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
-    GpioFlash(&Led2, 20);
-
-    Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
-                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
-                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
-                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
-
-//    (modem, power, fdev, bandwidth, datarate, coderate, preambleLen, fixLen, crcOn, freqHopOn, hopPeriod, iqInverted, timeout)
-/*    SX1276SetTxConfig(MODEM_LORA, 20, 0, 1, 7, 1, 8, 0, 1, 0, 0, 0, 100);
-    SX1276SetRxConfig(MODEM_LORA, 1, 7, 1, 0, 8, 20, 0, 0, 1, 0, 0, 0, true);
-    SX1276SetChannel(868100000);
-    SX1276SetPublicNetwork(false);
-    SX1276SetSleep();*/
-
+    uint32_t time = 0;
 
     while(1) {
-        PCM_gotoLPM0InterruptSafe();
-        Delayms( 1000 );
-        Radio.Send(buffer, 5);
-//        Radio.SetTxContinuousWave( RF_FREQUENCY, TX_OUTPUT_POWER, TX_TIMEOUT );
-//        Delayms(10000);
-
-//        GpioWrite(&Led2, 1);
-//        Delayms( 50 );
-//        GpioWrite(&Led2, 0);
-
-//        Delayms(1000);
+        startTiming();
+        GpioWrite(&Led2, 0);
+        Delayms(1000);
+        GpioWrite(&Led2, 1);
+        time = stopTiming();
+        __no_operation();
+        Delayms(1000);
     }
 }
 
