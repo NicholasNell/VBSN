@@ -54,8 +54,8 @@ uint32_t GpioRead( Gpio_t *obj ) {
     return GpioMcuRead( obj );
 }
 
-void GpioFlash( Gpio_t *obj, uint8_t delay ) {
-    GpioToggle(obj);
+void GpioFlashLED( Gpio_t *obj, uint8_t delay ) {
+    GpioWrite(obj, 1);
     Delayms(delay);
-    GpioToggle(obj);
+    GpioWrite(obj, 0);
 }

@@ -146,7 +146,7 @@ void GpioSetContext( Gpio_t *obj, void* context );
  * \param [IN] config pin
  * \param [IN] flash delay
  */
-void GpioFlash( Gpio_t *obj, uint8_t delay );
+void GpioFlashLED( Gpio_t *obj, uint8_t delay );
 
 /*!
  * \brief GPIO IRQ Initialization

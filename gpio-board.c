@@ -123,10 +123,6 @@ void GpioMcuSetContext( Gpio_t *obj, void* context ) {
 }
 
 void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority ) {
-
-    if( irqHandler == NULL ) {
-        return;
-    }
 /*
 #define INT_PORT1                                       (51)  PORT1 IRQ
 #define INT_PORT2                                       (52)  PORT2 IRQ
@@ -161,7 +157,7 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
 
     if( irqMode == IRQ_RISING_EDGE ) {
         MAP_GPIO_clearInterruptFlag(obj->portIndex, obj->pinIndex);
-        MAP_GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
+        GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
         MAP_Interrupt_enableInterrupt(INT_PORTx);
         MAP_GPIO_interruptEdgeSelect(obj->portIndex, obj->pinIndex, GPIO_LOW_TO_HIGH_TRANSITION);
 

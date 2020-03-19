@@ -342,7 +342,7 @@ void SX1276SetMaxPayloadLength( RadioModems_t modem, uint8_t max );
  *
  * \param [IN] enable if true, it enables a public network
  */
-void SX1276SetPublicNetwork( bool enable );
+void SX1276SetPublicNetwork( bool enable, uint16_t syncword );
 
 /*!
  * \brief Sets the radio in sleep mode

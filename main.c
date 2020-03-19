@@ -45,7 +45,7 @@
  *            |                  |
  *            |                  |
  * Author: 
-*******************************************************************************/
+ *******************************************************************************/
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <ti/drivers/GPIO.h>
@@ -60,36 +60,37 @@
 #include "board-config.h"
 #include "board.h"
 
-#define RF_FREQUENCY                                868100000 // Hz
-#define TX_OUTPUT_POWER                             20        // dBm
-#define LORA_BANDWIDTH                              0         // [0: 125 kHz,
-                                                              //  1: 250 kHz,
-                                                              //  2: 500 kHz,
-                                                              //  3: Reserved]
-#define LORA_SPREADING_FACTOR                       7         // [SF7..SF12]
-#define LORA_CODINGRATE                             1         // [1: 4/5,
-                                                              //  2: 4/6,
-                                                              //  3: 4/7,
-                                                              //  4: 4/8]
-#define LORA_PREAMBLE_LENGTH                        8         // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT                         5         // Symbols
-#define LORA_FIX_LENGTH_PAYLOAD_ON                  false
-#define LORA_IQ_INVERSION_ON                        false
+#define RF_FREQUENCY 868500000  // Hz
+#define TX_OUTPUT_POWER 1	    // dBm
+#define LORA_BANDWIDTH 0        // [0: 125 kHz, \
+                                //  1: 250 kHz, \
+                                //  2: 500 kHz, \
+                                //  3: Reserved]
+#define LORA_SPREADING_FACTOR 7 // [SF7..SF12]
+#define LORA_CODINGRATE 1       // [1: 4/5, \
+                                //  2: 4/6, \
+                                //  3: 4/7, \
+                                //  4: 4/8]
+#define LORA_PREAMBLE_LENGTH 8  // Same for Tx and Rx
+#define LORA_SYMBOL_TIMEOUT 5   // Symbols
+#define LORA_FIX_LENGTH_PAYLOAD_ON false
+#define LORA_IQ_INVERSION_ON false
+#define LORA_FREQ_DEV 0
+#define LORA_CRC_ON true
 
-uint8_t buffer[] = {'H','E','L','L','O'};
+uint8_t buffer[] = { 'H', 'E', 'L', 'L', 'O' };
+bool DIO0Flag = false;
+bool DIO1Flag = false;
+bool DIO2Flag = false;
+bool DIO3Flag = false;
+bool DIO4Flag = false;
 
-typedef enum
-{
-    LOWPOWER,
-    RX,
-    RX_TIMEOUT,
-    RX_ERROR,
-    TX,
-    TX_TIMEOUT,
-}States_t;
+typedef enum {
+	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT,
+} States_t;
 
-#define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 64 // Define the payload size here
+#define RX_TIMEOUT_VALUE 1000
+#define BUFFER_SIZE 64 // Define the payload size here
 
 States_t State = LOWPOWER;
 
@@ -128,60 +129,78 @@ void OnRxError( void );
 extern Gpio_t Led1;
 extern Gpio_t Led2;
 extern Gpio_t Led3;
-uint32_t status;
 
-int main(void)
-{
-    /* Stop Watchdog  */
-    MAP_WDT_A_holdTimer();
+int main( void ) {
+	/* Stop Watchdog  */
+	MAP_WDT_A_holdTimer();
 
-    BoardInitMcu();
-    GpioFlash(&Led1, 100);
+	BoardInitMcu();
+	GpioFlashLED(&Led1, 100);
 
+	SX1276SetTxConfig(MODEM_LORA, TX_OUTPUT_POWER, LORA_FREQ_DEV,
+	LORA_BANDWIDTH, LORA_SPREADING_FACTOR, LORA_CODINGRATE,
+	LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
+	LORA_CRC_ON, 0, 0, LORA_IQ_INVERSION_ON,
+	LORA_SYMBOL_TIMEOUT);
+	SX1276SetPublicNetwork(false, 0x55);
+	SX1276SetChannel(RF_FREQUENCY);
 
-    while(1) {
-        Delayms(1000);
-    }
+	while (1) {
+		Delayms(1000);
+		SX1276Send(buffer, 5);
+
+		if (DIO0Flag) {
+			DIO0Flag = false;
+			OnTxDone();
+			GpioFlashLED(&Led1, 100);
+		}
+
+	}
 }
 
-void PORT2_IRQHandler(void)
-{
-    uint_fast16_t status;
-    status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
-    MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
-    GpioFlash(&Led2, 20);
+void PORT2_IRQHandler( void ) {
+	uint32_t status;
+
+	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
+
+	/* Toggling the output on the LED */
+	if (status & GPIO_PIN4) {
+		DIO0Flag = true;
+	}
+	else if (status & GPIO_PIN6) {
+		DIO1Flag = true;
+	}
+	else if (status & GPIO_PIN7) {
+		DIO2Flag = true;
+	}
 }
 
-void OnTxDone( void )
-{
-    Radio.Sleep();
-    State = TX;
+void OnTxDone( void ) {
+	Radio.Sleep();
+	State = TX;
 }
 
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
-{
-    Radio.Sleep( );
-    BufferSize = size;
-    memcpy( Buffer, payload, BufferSize );
-    RssiValue = rssi;
-    SnrValue = snr;
-    State = RX;
+void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
+	Radio.Sleep();
+	BufferSize = size;
+	memcpy(Buffer, payload, BufferSize);
+	RssiValue = rssi;
+	SnrValue = snr;
+	State = RX;
 }
 
-void OnTxTimeout( void )
-{
-    Radio.Sleep( );
-    State = TX_TIMEOUT;
+void OnTxTimeout( void ) {
+	Radio.Sleep();
+	State = TX_TIMEOUT;
 }
 
-void OnRxTimeout( void )
-{
-    Radio.Sleep( );
-    State = RX_TIMEOUT;
+void OnRxTimeout( void ) {
+	Radio.Sleep();
+	State = RX_TIMEOUT;
 }
 
-void OnRxError( void )
-{
-    Radio.Sleep( );
-    State = RX_ERROR;
+void OnRxError( void ) {
+	Radio.Sleep();
+	State = RX_ERROR;
 }
