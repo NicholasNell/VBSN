@@ -63,7 +63,7 @@ void GpioMcuSetContext( Gpio_t *obj, void* context );
  *                                       IRQ_VERY_HIGH_PRIORITY]
  * \param [IN] irqHandler  Callback function pointer
  */
-void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler );
+void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority );
 
 /*!
  * \brief Removes the interrupt from the object

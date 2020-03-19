@@ -150,20 +150,14 @@ static void Dio5IrqHandler( void )
     GPIO_registerInterrupt(DioIrqs[index]->portIndex, ExtIrqHandlers[index]);
 }*/
 
-void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
+void SX1276IoIrqInit( void )
 {
-
-    GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[0] );
-    GpioSetInterrupt( &SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[1] );
-    GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[2] );
-    GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[3] );
-    GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[4] );
-    GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, irqHandlers[5] );
-/*    int8_t i;
-    for( i = 0; i < 5; i++ )
-    {
-        IoIrqInit( i, irqHandlers[i] );
-    }*/
+    GpioSetInterrupt( &SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY );
+    GpioSetInterrupt( &SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY );
+    GpioSetInterrupt( &SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY );
+    GpioSetInterrupt( &SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY );
+    GpioSetInterrupt( &SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY );
+    GpioSetInterrupt( &SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY );
 }
 
 void SX1276IoDeInit( void )
@@ -179,12 +173,8 @@ void SX1276IoDeInit( void )
     GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
 
-void SX1276IoDbgInit( void )
-{
-#if defined( USE_RADIO_DEBUG )
-    GpioInit( &DbgPinTx, RADIO_DBG_PIN_TX, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &DbgPinRx, RADIO_DBG_PIN_RX, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-#endif
+void SX1276IoDbgInit( void ) {
+
 }
 
 void SX1276IoTcxoInit( void )
@@ -192,20 +182,7 @@ void SX1276IoTcxoInit( void )
     // No TCXO component available on this board design.
 }
 
-void SX1276SetBoardTcxo( uint8_t state )
-{
-    // No TCXO component available on this board design.
-#if 0
-    if( state == true )
-    {
-        TCXO_ON( );
-        DelayMs( BOARD_TCXO_WAKEUP_TIME );
-    }
-    else
-    {
-        TCXO_OFF( );
-    }
-#endif
+void SX1276SetBoardTcxo( uint8_t state ) {
 }
 
 uint32_t SX1276GetBoardTcxoWakeupTime( void )

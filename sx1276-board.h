@@ -69,7 +69,7 @@ void SX1276IoInit( void );
  *
  * \param [IN] irqHandlers Array containing the IRQ callback functions
  */
-void SX1276IoIrqInit( DioIrqHandler **irqHandlers );
+void SX1276IoIrqInit( void );
 
 /*!
  * \brief De-initializes the radio I/Os pins interface.

@@ -122,7 +122,7 @@ void GpioMcuSetContext( Gpio_t *obj, void* context ) {
     obj->Context = context;
 }
 
-void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler ) {
+void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority ) {
 
     if( irqHandler == NULL ) {
         return;
@@ -159,8 +159,6 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
             break;
     }
 
-    obj->IrqHandler = irqHandler;
-
     if( irqMode == IRQ_RISING_EDGE ) {
         MAP_GPIO_clearInterruptFlag(obj->portIndex, obj->pinIndex);
         MAP_GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
@@ -179,9 +177,6 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
         MAP_GPIO_enableInterrupt(obj->portIndex, obj->pinIndex);
         MAP_Interrupt_enableInterrupt(INT_PORTx);
     }
-
-//    MAP_GPIO_registerInterrupt( obj->portIndex, irqHandler );
-
 }
 
 void GpioMcuRemoveInterrupt( Gpio_t *obj ) {

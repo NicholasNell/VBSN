@@ -136,24 +136,18 @@ int main(void)
     MAP_WDT_A_holdTimer();
 
     BoardInitMcu();
-    GpioFlash(&Led1, 1);
+    GpioFlash(&Led1, 100);
 
-    uint32_t time = 0;
 
     while(1) {
-        startTiming();
-        GpioWrite(&Led2, 0);
-        Delayms(1000);
-        GpioWrite(&Led2, 1);
-        time = stopTiming();
-        __no_operation();
         Delayms(1000);
     }
 }
 
 void PORT2_IRQHandler(void)
 {
-    status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
+    uint_fast16_t status;
+    status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
     GpioFlash(&Led2, 20);
 }

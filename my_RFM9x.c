@@ -131,13 +131,6 @@ static RadioEvents_t *RadioEvents;
  */
 SX1276_t SX1276;
 
-/*!
- * Hardware DIO IRQ callback initialization
- */
-
-DioIrqHandler *DioIrq[] = { SX1276OnDio0Irq, SX1276OnDio1Irq,
-                            SX1276OnDio2Irq, SX1276OnDio3Irq,
-                            SX1276OnDio4Irq, NULL };
 
 /*!
  * Radio hardware registers initialization
@@ -245,8 +238,9 @@ void SX1276SetChannel(uint32_t freq)
 bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh, uint32_t maxCarrierSenseTime )
 {
     bool status = true;
-//    int16_t rssi = 0;
-//    uint32_t carrierSenseTime = 0;
+    int16_t rssi = 0;
+    uint32_t carrierSenseTime = 0;
+
 
     SX1276SetSleep( );
 
@@ -258,12 +252,12 @@ bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh
 
     Delayms( 1 );
 
-/*    carrierSenseTime = TimerGetCurrentTime( );
+    startTiming();
 
     // Perform carrier sense for maxCarrierSenseTime
-    while( TimerGetElapsedTime( carrierSenseTime ) < maxCarrierSenseTime )
+    while( getTiming()*1000 < maxCarrierSenseTime )
     {
-        rssi = RFM_read_rssi( modem );
+        rssi = SX1276ReadRssi( modem );
 
         if( rssi > rssiThresh )
         {
@@ -271,7 +265,9 @@ bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh
             break;
         }
     }
-    RFM_sleep_mode( );*/
+
+    stopTiming();
+    SX1276SetSleep();
     return status;
 }
 
@@ -1232,34 +1228,6 @@ uint8_t SX1276GetPaSelect( int8_t power )
 uint32_t SX1276GetWakeupTime( void )
 {
     return SX1276GetBoardTcxoWakeupTime( ) + RADIO_WAKEUP_TIME;
-}
-
-void SX1276OnDio0Irq() {
-    Radio.Sleep();
-}
-
-void SX1276OnDio1Irq( void* context ) {
-
-}
-
-void SX1276OnDio2Irq( void* context ) {
-
-}
-
-void SX1276OnDio3Irq( void* context ) {
-
-}
-
-void SX1276OnDio4Irq( void* context ) {
-
-}
-
-void SX1276OnDio5Irq( void* context ) {
-
-}
-
-void SX1276OnTimeoutIrq( void* context ) {
-
 }
 
 

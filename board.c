@@ -111,12 +111,6 @@ void BoardInitMcu( void )
 
 //        RtcInit( );
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> MultiTimers
-
 //        TODO: Fix Board power source (Will need external IO pin to detect bat voltage)
         if( GetBoardPowerSource( ) == BATTERY_POWER )
         {
@@ -130,7 +124,7 @@ void BoardInitMcu( void )
     }
 
     SX1276IoInit( );
-//    SX1276IoIrqInit( );
+    SX1276IoIrqInit( );
 
     GpioWrite( &Led1, 0 );
     GpioWrite( &Led2, 0 );

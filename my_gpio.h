@@ -159,7 +159,7 @@ void GpioFlash( Gpio_t *obj, uint8_t delay );
  *                                       IRQ_VERY_HIGH_PRIORITY]
  * \param [IN] irqHandler  Callback function pointer
  */
-void GpioSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler );
+void GpioSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority );
 
 /*!
  * \brief Removes the interrupt from the object
