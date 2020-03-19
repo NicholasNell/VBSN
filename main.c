@@ -143,11 +143,11 @@ int main(void)
     while(1) {
         startTiming();
         GpioWrite(&Led2, 0);
-        Delayms( 5 );
+        Delayms(1000);
         GpioWrite(&Led2, 1);
         time = stopTiming();
         __no_operation();
-        Delayms( 1000 );
+        Delayms(1000);
     }
 }
 

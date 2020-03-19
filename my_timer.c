@@ -17,6 +17,7 @@
 */
 /* Application Defines  */
 #define TIMER_PERIOD    375
+#define TICK_TIME_A1_CONT 0.016 /* time in ms per tick*/
 
 /* Timer_A UpMode Configuration Parameter */
 const Timer_A_UpModeConfig upConfig = {
@@ -28,8 +29,17 @@ const Timer_A_UpModeConfig upConfig = {
         TIMER_A_SKIP_CLEAR                         // Clear value
 };
 
-/* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from vloclk at 10kHz with 1 divider for 100 us ticks*/
-const Timer_A_ContinuousModeConfig contConfig = {
+
+/* Configure Timer_A1 as a continuous counter for timing using Sub master clock*/
+const Timer_A_ContinuousModeConfig contConfig1 = {
+        TIMER_A_CLOCKSOURCE_SMCLK,
+        TIMER_A_CLOCKSOURCE_DIVIDER_24,
+        TIMER_A_TAIE_INTERRUPT_DISABLE,
+        TIMER_A_SKIP_CLEAR
+};
+
+/* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from REFO at 132.765lHz*/
+const Timer_A_ContinuousModeConfig contConfig0 = {
         TIMER_A_CLOCKSOURCE_ACLK,
         TIMER_A_CLOCKSOURCE_DIVIDER_1,
         TIMER_A_TAIE_INTERRUPT_DISABLE,
@@ -60,7 +70,7 @@ void TA1_0_IRQHandler( void ) {
 
 void Delayms( uint32_t ms ) {
     uint32_t count = 0;
-    MAP_Timer_A_stopTimer(TIMER_A1_BASE);
+//    MAP_Timer_A_stopTimer(TIMER_A1_BASE);
 //    MAP_Timer_A_clearTimer(TIMER_A1_BASE);
     MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
 
@@ -75,12 +85,12 @@ void Delayms( uint32_t ms ) {
 }
 
 /*!
- * \brief Sets up timer for 100 us accuracy
+ * \brief Sets up timer for 30.512 us accuracy
  */
 void TimerATimerInit( void ) {
-    MAP_CS_initClockSignal(CS_ACLK, CS_VLOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
     /* Configure Timer_A0 for timing purposes */
-    Timer_A_configureContinuousMode(TIMER_A0_BASE, &contConfig );
+    Timer_A_configureContinuousMode(TIMER_A0_BASE, &contConfig0 );
 }
 
 /*!
@@ -96,10 +106,10 @@ void startTiming( void ) {
  * \brief Stop the timer and returns time in us
  */
 uint32_t stopTiming(void) {
-    uint32_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
+    float timeVal = Timer_A_getCounterValue(TIMER_A0_BASE) * 30.51757813;
     Timer_A_stopTimer(TIMER_A0_BASE);
     Timer_A_clearTimer(TIMER_A0_BASE);
-    return tickVal * 100;
+    return (uint32_t)timeVal;
 }
 
 
@@ -108,6 +118,6 @@ uint32_t stopTiming(void) {
  */
 uint32_t getTiming(void) {
     uint16_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
-    uint32_t timeVal = tickVal * 100;
+    uint32_t timeVal = tickVal * 30.51757813;
     return timeVal;
 }

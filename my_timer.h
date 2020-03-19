@@ -14,10 +14,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define VLOCLK 10000
-#define ACLK_DIV 1
-
-
 /* Application Defines  */
 
 /*!
@@ -55,5 +51,10 @@ uint32_t stopTiming ( void );
  * \brief Gets the current elapsed time in us
  */
 uint32_t getTiming ( void );
+
+/*!
+ * \brief Delay using timer without interupts
+ */
+void DelayLoop(uint16_t ms);
 
 #endif /* MY_TIMER_H_ */
