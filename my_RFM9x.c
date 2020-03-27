@@ -238,7 +238,7 @@ bool SX1276IsChannelFree(
 	startTiming();
 
 	// Perform carrier sense for maxCarrierSenseTime
-	while (getTiming() * 1000 < maxCarrierSenseTime) {
+	while (getTiming() /1000.0 < maxCarrierSenseTime) {
 		rssi = SX1276ReadRssi(modem);
 
 		if (rssi > rssiThresh) {

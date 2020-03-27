@@ -17,7 +17,8 @@
  */
 /* Application Defines  */
 #define TIMER_PERIOD    375
-#define TICK_TIME_A1_CONT 0.016 /* time in ms per tick*/
+#define REFO 32765.0
+#define TICK_TIME_A0_CONT (1.0 / (REFO / TIMER_A_CLOCKSOURCE_DIVIDER_16)) * 1000000.0  /* time in us per tick*/
 
 /* Timer_A UpMode Configuration Parameter */
 const Timer_A_UpModeConfig upConfig = {
@@ -36,10 +37,10 @@ const Timer_A_ContinuousModeConfig contConfig1 = {
 		TIMER_A_TAIE_INTERRUPT_DISABLE,
 		TIMER_A_SKIP_CLEAR };
 
-/* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from REFO at 132.765lHz*/
+/* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from REFO at 32.765kHz / 16*/
 const Timer_A_ContinuousModeConfig contConfig0 = {
 		TIMER_A_CLOCKSOURCE_ACLK,
-		TIMER_A_CLOCKSOURCE_DIVIDER_1,
+		TIMER_A_CLOCKSOURCE_DIVIDER_16,
 		TIMER_A_TAIE_INTERRUPT_DISABLE,
 		TIMER_A_SKIP_CLEAR };
 bool TimerInteruptFlag = false;
@@ -81,7 +82,7 @@ void Delayms( uint32_t ms ) {
 }
 
 /*!
- * \brief Sets up timer for 30.512 us accuracy
+ * \brief Sets up timer for TICK_TIME_A0_CONT us accuracy
  */
 void TimerATimerInit( void ) {
 	MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
@@ -102,17 +103,17 @@ void startTiming( void ) {
  * \brief Stop the timer and returns time in us
  */
 uint32_t stopTiming( void ) {
-	float timeVal = Timer_A_getCounterValue(TIMER_A0_BASE) * 30.51757813;
+	float timeVal = Timer_A_getCounterValue(TIMER_A0_BASE) * TICK_TIME_A0_CONT;
 	Timer_A_stopTimer(TIMER_A0_BASE);
 	Timer_A_clearTimer(TIMER_A0_BASE);
 	return (uint32_t) timeVal;
 }
 
 /*!
- * \brief Gets the current elapsed time in us
+ * \brief Gets the current elapsed time in us Max 32.00244163 sec
  */
 uint32_t getTiming( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
-	uint32_t timeVal = tickVal * 30.51757813;
+	uint32_t timeVal = tickVal * TICK_TIME_A0_CONT;
 	return timeVal;
 }

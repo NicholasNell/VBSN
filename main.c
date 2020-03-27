@@ -144,17 +144,15 @@ int main( void ) {
 	LORA_SYMBOL_TIMEOUT);
 	SX1276SetPublicNetwork(false, 0x55);
 	SX1276SetChannel(RF_FREQUENCY);
+	SX1276SetSleep();
+	State = LOWPOWER;
+
 
 	while (1) {
-		Delayms(1000);
-		SX1276Send(buffer, 5);
-
-		if (DIO0Flag) {
+		if (DIO0Flag | (State == TX)) {
 			DIO0Flag = false;
 			OnTxDone();
-			GpioFlashLED(&Led1, 100);
 		}
-
 	}
 }
 
@@ -171,6 +169,9 @@ void PORT2_IRQHandler( void ) {
 	else if (status & GPIO_PIN6) {
 		DIO1Flag = true;
 	}
+	else if (status & GPIO_PIN3) {
+		DIO4Flag = true;
+		}
 	else if (status & GPIO_PIN7) {
 		DIO2Flag = true;
 	}
