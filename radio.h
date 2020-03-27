@@ -97,7 +97,6 @@ typedef struct
      */
     void ( *CadDone ) ( bool channelActivityDetected );
 }RadioEvents_t;
-
 /*!
  * \brief Radio driver definition
  */
@@ -337,7 +336,7 @@ struct Radio_s
      *
      * \param [IN] enable if true, it enables a public network
      */
-    void    ( *SetPublicNetwork )( bool enable );
+    void    ( *SetPublicNetwork )( bool enable, uint16_t syncword );
     /*!
      * \brief Gets the time required for the board plus radio to get out of sleep.[ms]
      *

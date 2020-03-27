@@ -24,12 +24,12 @@
  */
 static uint8_t SX1276GetPaSelect( uint32_t channel );
 
-/*!
- * Flag used to set the RF switch control pins in low power mode when the radio is not active.
- */
-static bool RadioIsActive = false;
-
-extern void SX1276OnDio0Irq(void *context);
+extern void SX1276OnDio0Irq();
+extern void SX1276OnDio1Irq();
+extern void SX1276OnDio2Irq();
+extern void SX1276OnDio3Irq();
+extern void SX1276OnDio4Irq();
+extern void SX1276OnDio5Irq();
 
 /*!
  * Radio driver structure initialization
@@ -271,16 +271,6 @@ void SX1276SetRfTxPower(int8_t power)
 static uint8_t SX1276GetPaSelect( uint32_t channel )
 {
     return RF_PACONFIG_PASELECT_PABOOST;
-}
-
-void SX1276SetAntSwLowPower( bool status )
-{
-    // No antenna switch available.
-    // Just control the TCXO if available.
-    if( RadioIsActive != status )
-    {
-        RadioIsActive = status;
-    }
 }
 
 void SX1276SetAntSw( uint8_t opMode )

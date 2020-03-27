@@ -148,7 +148,7 @@ typedef void ( DioIrqHandler )( void* context );
  *
  * \param [IN] events Structure containing the driver callback functions
  */
-void SX1276Init(RadioEvents_t *events);
+void SX1276Init( RadioEvents_t *events );
 
 /*!
  * Return current radio status
@@ -396,8 +396,47 @@ uint8_t GetFskBandwidthRegValue( uint32_t bandwidth );
  */
 uint32_t SX1276GetWakeupTime( void );
 
+/*!
+ * \brief get the RSSI value of the latest received packet
+ *
+ * \retval RSSI value of packet
+ */
+int16_t SX1276GetPacketRSSI( void );
 
+/*!
+ * \brief get the SNR value of the latest received packet
+ *
+ * \retval SNR (dB) value of packet
+ */
+int16_t SX1276GetPacketSNR( void );
 
+/*!
+ * \brief returns last received packets size
+ * @return
+ */
+uint8_t SX1276GetPacketSize( void );
 
+/*!
+ * \brief Reads the contents of the SX1276 FIFO
+ *
+ * \param [OUT] buffer Buffer where to copy the FIFO read data.
+ * \param [IN] size Number of bytes to be read from the FIFO
+ */
+void SX1276ReadFifo( uint8_t *buffer, uint8_t size );
+
+/*!
+ * \brief DIO0 Callback function
+ */
+void SX1276OnDio0Irq( );
+
+void SX1276OnDio1Irq( );
+
+void SX1276OnDio2Irq( );
+
+void SX1276OnDio3Irq( );
+
+void SX1276OnDio4Irq( );
+
+void SX1276OnDio5Irq( );
 
 #endif /* MY_RFM9X_H_ */

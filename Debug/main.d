@@ -66,6 +66,7 @@ main.obj: ../sx1276Regs-LoRa.h
 main.obj: ../board-config.h
 main.obj: ../board.h
 main.obj: ../utilities.h
+main.obj: ../sx1276-board.h
 
 ../main.c: 
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/driverlib.h: 
@@ -133,3 +134,4 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h:
 ../board-config.h: 
 ../board.h: 
 ../utilities.h: 
+../sx1276-board.h: 

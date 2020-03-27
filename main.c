@@ -59,14 +59,21 @@
 #include "my_gpio.h"
 #include "board-config.h"
 #include "board.h"
+#include "sx1276-board.h"
+
+/*!
+ * Constant values need to compute the RSSI value
+ */
+#define RSSI_OFFSET_LF                              -164
+#define RSSI_OFFSET_HF                              -157
 
 #define RF_FREQUENCY 868500000  // Hz
-#define TX_OUTPUT_POWER 1	    // dBm
+#define TX_OUTPUT_POWER 20	    // dBm
 #define LORA_BANDWIDTH 0        // [0: 125 kHz, \
                                 //  1: 250 kHz, \
                                 //  2: 500 kHz, \
                                 //  3: Reserved]
-#define LORA_SPREADING_FACTOR 7 // [SF7..SF12]
+#define LORA_SPREADING_FACTOR 12 // [SF7..SF12]
 #define LORA_CODINGRATE 1       // [1: 4/5, \
                                 //  2: 4/6, \
                                 //  3: 4/7, \
@@ -95,11 +102,9 @@ typedef enum {
 States_t State = LOWPOWER;
 
 uint16_t BufferSize = BUFFER_SIZE;
-uint8_t Buffer[BUFFER_SIZE];
+uint8_t Buffer[BUFFER_SIZE] = { 0 };
 int8_t RssiValue = 0;
 int8_t SnrValue = 0;
-
-static RadioEvents_t RadioEvents;
 
 /*!
  * \brief Function to be executed on Radio Tx Done event
@@ -130,29 +135,79 @@ extern Gpio_t Led1;
 extern Gpio_t Led2;
 extern Gpio_t Led3;
 
+/*!
+ * Radio events function pointer
+ */
+static RadioEvents_t RadioEvents;
+
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
 	BoardInitMcu();
+
 	GpioFlashLED(&Led1, 100);
 
-	SX1276SetTxConfig(MODEM_LORA, TX_OUTPUT_POWER, LORA_FREQ_DEV,
-	LORA_BANDWIDTH, LORA_SPREADING_FACTOR, LORA_CODINGRATE,
-	LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
-	LORA_CRC_ON, 0, 0, LORA_IQ_INVERSION_ON,
+	// Radio initialization
+	RadioEvents.TxDone = OnTxDone;
+	RadioEvents.RxDone = OnRxDone;
+	RadioEvents.TxTimeout = OnTxTimeout;
+	RadioEvents.RxTimeout = OnRxTimeout;
+	RadioEvents.RxError = OnRxError;
+
+	SX1276Init(&RadioEvents);
+
+	SX1276SetTxConfig(MODEM_LORA,
+	TX_OUTPUT_POWER,
+	LORA_FREQ_DEV,
+	LORA_BANDWIDTH,
+	LORA_SPREADING_FACTOR,
+	LORA_CODINGRATE,
+	LORA_PREAMBLE_LENGTH,
+	LORA_FIX_LENGTH_PAYLOAD_ON,
+	LORA_CRC_ON, 0, 0,
+	LORA_IQ_INVERSION_ON,
 	LORA_SYMBOL_TIMEOUT);
+
+	SX1276SetRxConfig(MODEM_LORA,
+	LORA_BANDWIDTH,
+	LORA_SPREADING_FACTOR,
+	LORA_CODINGRATE, 0,
+	LORA_PREAMBLE_LENGTH, LORA_SYMBOL_TIMEOUT,
+	LORA_FIX_LENGTH_PAYLOAD_ON, 5,
+	LORA_CRC_ON, 0, 0,
+	LORA_IQ_INVERSION_ON, false);
+
+	SX1276SetMaxPayloadLength(MODEM_LORA, 255);
 	SX1276SetPublicNetwork(false, 0x55);
 	SX1276SetChannel(RF_FREQUENCY);
 	SX1276SetSleep();
 	State = LOWPOWER;
-
+	/*
+	 uint8_t size = spiRead_RFM( REG_LR_RXNBBYTES);
+	 uint8_t payload[BUFFER_SIZE];
+	 int16_t rssi;
+	 int8_t snr;
+	 */
 
 	while (1) {
-		if (DIO0Flag | (State == TX)) {
+		if (DIO0Flag) {
 			DIO0Flag = false;
-			OnTxDone();
+			SX1276OnDio0Irq();
 		}
+		else if (DIO1Flag) {
+			DIO4Flag = false;
+			SX1276OnDio1Irq();
+		}
+		else if (DIO2Flag) {
+			DIO2Flag = false;
+			SX1276OnDio2Irq();
+		}
+		else if (DIO4Flag) {
+			DIO4Flag = false;
+			SX1276OnDio4Irq();
+		}
+		SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -80, 1000);
 	}
 }
 
@@ -171,7 +226,7 @@ void PORT2_IRQHandler( void ) {
 	}
 	else if (status & GPIO_PIN3) {
 		DIO4Flag = true;
-		}
+	}
 	else if (status & GPIO_PIN7) {
 		DIO2Flag = true;
 	}
@@ -205,3 +260,4 @@ void OnRxError( void ) {
 	Radio.Sleep();
 	State = RX_ERROR;
 }
+
