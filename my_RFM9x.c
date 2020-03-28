@@ -374,7 +374,7 @@ void SX1276SetRxConfig(
 				(spiRead_RFM( REG_LR_MODEMCONFIG1) &
 				RFLR_MODEMCONFIG1_BW_MASK &
 				RFLR_MODEMCONFIG1_CODINGRATE_MASK &
-				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth /*<< 4*/)
+				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth << 4)
 						| (coderate << 1) | fixLen);
 
 		spiWrite_RFM(
@@ -549,7 +549,7 @@ void SX1276SetTxConfig(
 				(spiRead_RFM( REG_LR_MODEMCONFIG1) &
 				RFLR_MODEMCONFIG1_BW_MASK &
 				RFLR_MODEMCONFIG1_CODINGRATE_MASK &
-				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth /*<< 4*/) // changed to include full bandwidth allocation
+				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth << 4)
 						| (coderate << 1) | fixLen);
 
 		spiWrite_RFM( REG_LR_MODEMCONFIG2, (spiRead_RFM( REG_LR_MODEMCONFIG2) &
