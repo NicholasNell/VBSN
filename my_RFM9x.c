@@ -337,11 +337,11 @@ void SX1276SetRxConfig(
 	}
 		break;
 	case MODEM_LORA: {
-		if (bandwidth > 2) {
-			// Fatal error: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
+		if (bandwidth > 9) { // changed this from 2 to 9, this library wrongly thought that the sx1276 coudl only achiever bandwidths from 125kHz o 500kHz. which is not the case
+			// Fatal error: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported!!!!!! <-- WRONG!
 			break;
 		}
-		bandwidth += 7;
+//		bandwidth += 7;
 		SX1276.Settings.LoRa.Bandwidth = bandwidth;
 		SX1276.Settings.LoRa.Datarate = datarate;
 		SX1276.Settings.LoRa.Coderate = coderate;
@@ -374,7 +374,7 @@ void SX1276SetRxConfig(
 				(spiRead_RFM( REG_LR_MODEMCONFIG1) &
 				RFLR_MODEMCONFIG1_BW_MASK &
 				RFLR_MODEMCONFIG1_CODINGRATE_MASK &
-				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth << 4)
+				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth /*<< 4*/)
 						| (coderate << 1) | fixLen);
 
 		spiWrite_RFM(
@@ -506,11 +506,11 @@ void SX1276SetTxConfig(
 		break;
 	case MODEM_LORA: {
 		SX1276.Settings.LoRa.Power = power;
-		if (bandwidth > 2) {
-			// Fatal error: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
+		if (bandwidth > 9) { // changed this from 2 to 9, this library wrongly thought that the sx1276 coudl only achiever bandwidths from 125kHz o 500kHz. which is not the case
+			// Fatal error: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported!!!!!! <-- WRONG!
 			break;
 		}
-		bandwidth += 7;
+//		bandwidth += 7;
 		SX1276.Settings.LoRa.Bandwidth = bandwidth;
 		SX1276.Settings.LoRa.Datarate = datarate;
 		SX1276.Settings.LoRa.Coderate = coderate;
@@ -549,7 +549,7 @@ void SX1276SetTxConfig(
 				(spiRead_RFM( REG_LR_MODEMCONFIG1) &
 				RFLR_MODEMCONFIG1_BW_MASK &
 				RFLR_MODEMCONFIG1_CODINGRATE_MASK &
-				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth << 4)
+				RFLR_MODEMCONFIG1_IMPLICITHEADER_MASK) | (bandwidth /*<< 4*/) // changed to include full bandwidth allocation
 						| (coderate << 1) | fixLen);
 
 		spiWrite_RFM( REG_LR_MODEMCONFIG2, (spiRead_RFM( REG_LR_MODEMCONFIG2) &
@@ -1435,7 +1435,6 @@ void SX1276OnDio1Irq( ) {
 		switch (SX1276.Settings.Modem) {
 		case MODEM_FSK:
 
-
 			// FifoLevel interrupt
 			// Read received packet size
 			if ((SX1276.Settings.FskPacketHandler.Size == 0)
@@ -1447,7 +1446,7 @@ void SX1276OnDio1Irq( ) {
 				}
 				else {
 					SX1276.Settings.FskPacketHandler.Size = spiRead_RFM(
-							REG_PAYLOADLENGTH);
+					REG_PAYLOADLENGTH);
 				}
 			}
 
@@ -1543,7 +1542,7 @@ void SX1276OnDio2Irq( ) {
 				SX1276.Settings.FskPacketHandler.SyncWordDetected = true;
 
 				SX1276.Settings.FskPacketHandler.RssiValue = -(spiRead_RFM(
-						REG_RSSIVALUE) >> 1);
+				REG_RSSIVALUE) >> 1);
 
 				SX1276.Settings.FskPacketHandler.AfcValue =
 						(int32_t) (double) (((uint16_t) spiRead_RFM( REG_AFCMSB)
@@ -1556,7 +1555,9 @@ void SX1276OnDio2Irq( ) {
 		case MODEM_LORA:
 			if (SX1276.Settings.LoRa.FreqHopOn == true) {
 				// Clear Irq
-				spiWrite_RFM( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
+				spiWrite_RFM(
+						REG_LR_IRQFLAGS,
+						RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
 
 				if ((RadioEvents != NULL)
 						&& (RadioEvents->FhssChangeChannel != NULL)) {
@@ -1577,7 +1578,9 @@ void SX1276OnDio2Irq( ) {
 		case MODEM_LORA:
 			if (SX1276.Settings.LoRa.FreqHopOn == true) {
 				// Clear Irq
-				spiWrite_RFM( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
+				spiWrite_RFM(
+						REG_LR_IRQFLAGS,
+						RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
 
 				if ((RadioEvents != NULL)
 						&& (RadioEvents->FhssChangeChannel != NULL)) {
@@ -1605,8 +1608,8 @@ void SX1276OnDio3Irq( ) {
 				== RFLR_IRQFLAGS_CADDETECTED) {
 			// Clear Irq
 			spiWrite_RFM(
-					REG_LR_IRQFLAGS,
-					RFLR_IRQFLAGS_CADDETECTED | RFLR_IRQFLAGS_CADDONE);
+			REG_LR_IRQFLAGS,
+			RFLR_IRQFLAGS_CADDETECTED | RFLR_IRQFLAGS_CADDONE);
 			if ((RadioEvents != NULL) && (RadioEvents->CadDone != NULL)) {
 				RadioEvents->CadDone(true);
 			}
