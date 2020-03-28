@@ -68,8 +68,8 @@
 #define RSSI_OFFSET_HF                              -157
 
 #define RF_FREQUENCY 868500000  // Hz
-#define TX_OUTPUT_POWER 20	    // dBm
-#define LORA_BANDWIDTH 5        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
+#define TX_OUTPUT_POWER 1	    // dBm
+#define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
                            		//	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 								//	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
  	 	 	 	 	 	 	 	// 	9: 500 kHz]
@@ -167,13 +167,13 @@ int main( void ) {
 	LORA_FIX_LENGTH_PAYLOAD_ON,
 	LORA_CRC_ON, 0, 0,
 	LORA_IQ_INVERSION_ON,
-	LORA_SYMBOL_TIMEOUT);
+	255);
 
 	SX1276SetRxConfig(MODEM_LORA,
 	LORA_BANDWIDTH,
 	LORA_SPREADING_FACTOR,
 	LORA_CODINGRATE, 0,
-	LORA_PREAMBLE_LENGTH, LORA_SYMBOL_TIMEOUT,
+	LORA_PREAMBLE_LENGTH, 255,
 	LORA_FIX_LENGTH_PAYLOAD_ON, 5,
 	LORA_CRC_ON, 0, 0,
 	LORA_IQ_INVERSION_ON, false);
@@ -182,6 +182,7 @@ int main( void ) {
 	SX1276SetPublicNetwork(false, 0x55);
 	SX1276SetChannel(RF_FREQUENCY);
 	uint8_t band = spiRead_RFM(REG_LR_MODEMCONFIG1);
+	band = spiRead_RFM(REG_LR_MODEMCONFIG2);
 	SX1276SetSleep();
 	State = LOWPOWER;
 
@@ -195,7 +196,6 @@ int main( void ) {
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
-
 			SX1276OnDio0Irq();
 		}
 		else if (DIO1Flag) {
@@ -210,8 +210,8 @@ int main( void ) {
 			DIO4Flag = false;
 			SX1276OnDio4Irq();
 		}
-		SX1276Send(buffer, 5);
-		Delayms(5000);
+//		SX1276Send(buffer, 5);
+		SX1276SetRx(5500);
 	}
 }
 
@@ -244,6 +244,7 @@ void OnTxDone( void ) {
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
+	GpioFlashLED(&Led3, 100);
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;

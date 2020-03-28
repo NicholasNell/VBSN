@@ -922,27 +922,27 @@ void SX1276SetRx( uint32_t timeout ) {
 			switch (SX1276.Settings.LoRa.Bandwidth) {
 			case 0: // 7.8 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x48);
-				SX1276SetChannel(SX1276.Settings.Channel + 7810);
+//				SX1276SetChannel(SX1276.Settings.Channel + 7810);
 				break;
 			case 1: // 10.4 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x44);
-				SX1276SetChannel(SX1276.Settings.Channel + 10420);
+//				SX1276SetChannel(SX1276.Settings.Channel + 10420);
 				break;
 			case 2: // 15.6 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x44);
-				SX1276SetChannel(SX1276.Settings.Channel + 15620);
+//				SX1276SetChannel(SX1276.Settings.Channel + 15620);
 				break;
 			case 3: // 20.8 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x44);
-				SX1276SetChannel(SX1276.Settings.Channel + 20830);
+//				SX1276SetChannel(SX1276.Settings.Channel + 20830);
 				break;
 			case 4: // 31.2 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x44);
-				SX1276SetChannel(SX1276.Settings.Channel + 31250);
+//				SX1276SetChannel(SX1276.Settings.Channel + 31250);
 				break;
 			case 5: // 41.4 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x44);
-				SX1276SetChannel(SX1276.Settings.Channel + 41670);
+//				SX1276SetChannel(SX1276.Settings.Channel + 41670);
 				break;
 			case 6: // 62.5 kHz
 				spiWrite_RFM( REG_LR_IFFREQ1, 0x40);
