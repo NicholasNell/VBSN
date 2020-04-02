@@ -1636,6 +1636,7 @@ void SX1276OnDio4Irq( ) {
 	}
 		break;
 	case MODEM_LORA:
+		Radio.Sleep();
 		break;
 	default:
 		break;

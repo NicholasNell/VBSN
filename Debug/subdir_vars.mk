@@ -12,6 +12,7 @@ C_SRCS += \
 ../board.c \
 ../gpio-board.c \
 ../main.c \
+../my_MAC.c \
 ../my_RFM9x.c \
 ../my_gpio.c \
 ../my_rtc.c \
@@ -26,6 +27,7 @@ C_DEPS += \
 ./board.d \
 ./gpio-board.d \
 ./main.d \
+./my_MAC.d \
 ./my_RFM9x.d \
 ./my_gpio.d \
 ./my_rtc.d \
@@ -40,6 +42,7 @@ OBJS += \
 ./board.obj \
 ./gpio-board.obj \
 ./main.obj \
+./my_MAC.obj \
 ./my_RFM9x.obj \
 ./my_gpio.obj \
 ./my_rtc.obj \
@@ -54,6 +57,7 @@ OBJS__QUOTED += \
 "board.obj" \
 "gpio-board.obj" \
 "main.obj" \
+"my_MAC.obj" \
 "my_RFM9x.obj" \
 "my_gpio.obj" \
 "my_rtc.obj" \
@@ -68,6 +72,7 @@ C_DEPS__QUOTED += \
 "board.d" \
 "gpio-board.d" \
 "main.d" \
+"my_MAC.d" \
 "my_RFM9x.d" \
 "my_gpio.d" \
 "my_rtc.d" \
@@ -82,6 +87,7 @@ C_SRCS__QUOTED += \
 "../board.c" \
 "../gpio-board.c" \
 "../main.c" \
+"../my_MAC.c" \
 "../my_RFM9x.c" \
 "../my_gpio.c" \
 "../my_rtc.c" \

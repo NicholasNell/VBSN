@@ -53,6 +53,7 @@
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
+#include "my_MAC.h"
 #include "my_timer.h"
 #include "my_spi.h"
 #include "my_RFM9x.h"
@@ -192,6 +193,8 @@ int main( void ) {
 	 int16_t rssi;
 	 int8_t snr;
 	 */
+	uint32_t time = 0;
+	startTiming();
 
 	while (1) {
 		if (DIO0Flag) {
@@ -210,16 +213,30 @@ int main( void ) {
 			DIO4Flag = false;
 			SX1276OnDio4Irq();
 		}
-//		SX1276Send(buffer, 5);
-		SX1276SetRx(5500);
+
+		time = getTiming();
+		if(time > 5000000) {
+			MACSend(buffer, 5);
+			stopTiming();
+			startTiming();
+			uint8_t i = spiRead_RFM( REG_LR_DIOMAPPING1);
+			uint8_t j = spiRead_RFM( REG_LR_DIOMAPPING2);
+			__no_operation();
+//			Radio.Sleep();
+
+		}
+
 	}
 }
 
 void PORT2_IRQHandler( void ) {
 	uint32_t status;
 
+	uint8_t i = spiRead_RFM( REG_LR_DIOMAPPING1);
+	uint8_t j = spiRead_RFM( REG_LR_DIOMAPPING2);
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
+
 
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN4) {
