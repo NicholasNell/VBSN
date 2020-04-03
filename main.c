@@ -190,12 +190,6 @@ int main( void ) {
 	SX1276SetSleep();
 	State = LOWPOWER;
 
-	/*
-	 uint8_t size = spiRead_RFM( REG_LR_RXNBBYTES);
-	 uint8_t payload[BUFFER_SIZE];
-	 int16_t rssi;
-	 int8_t snr;
-	 */
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
