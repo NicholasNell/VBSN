@@ -105,12 +105,12 @@ typedef enum {
 States_t State = LOWPOWER;
 
 uint16_t BufferSize = BUFFER_SIZE;
-uint8_t Buffer[BUFFER_SIZE] =
-		{ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+uint8_t Buffer[BUFFER_SIZE] = { 0 };
+/*		{ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
 			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
 			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
 			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
-			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };
+			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };*/
 int8_t RssiValue = 0;
 int8_t SnrValue = 0;
 
@@ -172,7 +172,7 @@ int main( void ) {
 	LORA_PREAMBLE_LENGTH,
 	LORA_FIX_LENGTH_PAYLOAD_ON,
 	LORA_CRC_ON, 0, 0,
-	LORA_IQ_INVERSION_ON, 2000);
+	LORA_IQ_INVERSION_ON, 0);
 
 	SX1276SetRxConfig(MODEM_LORA,
 	LORA_BANDWIDTH,
@@ -191,14 +191,6 @@ int main( void ) {
 	SX1276SetSleep();
 	State = LOWPOWER;
 
-	<<<<<<< HEAD
-	=======
-	/*
-	 uint8_t size = spiRead_RFM( REG_LR_RXNBBYTES);
-	 uint8_t payload[BUFFER_SIZE];
-	 int16_t rssi;
-	 int8_t snr;
-	 */
 	uint32_t time = 0;
 	startTiming();
 
@@ -230,9 +222,6 @@ int main( void ) {
 			MACSend(buffer, 5);
 			stopTiming();
 			startTiming();
-			uint8_t i = spiRead_RFM( REG_LR_DIOMAPPING1);
-			uint8_t j = spiRead_RFM( REG_LR_DIOMAPPING2);
-			__no_operation();
 		}
 
 	}

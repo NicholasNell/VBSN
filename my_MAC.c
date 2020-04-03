@@ -8,19 +8,40 @@
 
 #define ALOHA 1
 
-
-void MACSend( uint8_t *buffer, uint8_t size ) {
+bool MACSend( uint8_t *buffer, uint8_t size ) {
 #ifdef ALOHA
+
+	bool NotRXFlag = false;
+
 	SX1276SetSleep();  // Clear IRQ flags
 	SX1276Send(buffer, size);
+	startTiming();
+	uint8_t i = spiRead_RFM(REG_LR_IRQFLAGS);
+	while (!( i & RFLR_IRQFLAGS_TXDONE_MASK)) {
+		i = spiRead_RFM(REG_LR_IRQFLAGS);
+		if (getTiming() > 5E6) {
+			stopTiming();
+			break;
+		}
+	}
+	stopTiming();
+	startTiming();
+	SX1276SetRx(500);
+	i = spiRead_RFM(REG_LR_IRQFLAGS);
+	while (!( i & RFLR_IRQFLAGS_RXDONE_MASK)) {
+		i = spiRead_RFM(REG_LR_IRQFLAGS);
+		if (getTiming() > 5E6) {
+			stopTiming();
+			NotRXFlag = true;
 
-//	SX1276SetRx(500);
+			break;
+		}
+	}
+	return NotRxFlag;
 
 #else
 
 #endif
 
 }
-
-
 
