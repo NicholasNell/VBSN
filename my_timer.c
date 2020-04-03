@@ -107,7 +107,7 @@ uint32_t stopTiming( void ) {
 }
 
 /*!
- * \brief Gets the current elapsed time in us Max 32.00244163 sec
+ * \brief Gets the current elapsed time in us. Max 32.00244163 sec
  */
 uint32_t getTiming( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
