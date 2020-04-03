@@ -8,6 +8,7 @@
 #include "my_timer.h"
 #include "utilities.h"
 #include "board.h"
+#include "my_RFM9x.h"
 
 /*
  Global variables
@@ -25,17 +26,10 @@ const Timer_A_UpModeConfig upConfig = {
 TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
 		TIMER_A_CLOCKSOURCE_DIVIDER_4,          // SMCLK/1 = 1.5MHz
 		TIMER_PERIOD,                           // 375 tick period
-		TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
+		TIMER_A_TAIE_INTERRUPT_ENABLE,         // enable Timer interrupt
 		TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,    // Enable CCR0 interrupt
 		TIMER_A_SKIP_CLEAR                         // Clear value
 		};
-
-/* Configure Timer_A1 as a continuous counter for timing using Sub master clock*/
-const Timer_A_ContinuousModeConfig contConfig1 = {
-		TIMER_A_CLOCKSOURCE_SMCLK,
-		TIMER_A_CLOCKSOURCE_DIVIDER_24,
-		TIMER_A_TAIE_INTERRUPT_DISABLE,
-		TIMER_A_SKIP_CLEAR };
 
 /* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from REFO at 32.765kHz / 16*/
 const Timer_A_ContinuousModeConfig contConfig0 = {
@@ -43,12 +37,15 @@ const Timer_A_ContinuousModeConfig contConfig0 = {
 		TIMER_A_CLOCKSOURCE_DIVIDER_16,
 		TIMER_A_TAIE_INTERRUPT_DISABLE,
 		TIMER_A_SKIP_CLEAR };
+
 bool TimerInteruptFlag = false;
+extern bool RadioTimeoutFlag;
 
 void TimerAInteruptInit( void ) {
 
 	/* Configuring Timer_A1 for Up Mode */
 	MAP_Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
+	Timer_A_enableInterrupt(TIMER_A1_BASE);
 
 	/* Enabling interrupts and starting the timer */
 //    MAP_Interrupt_enableSleepOnIsrExit();
@@ -116,4 +113,36 @@ uint32_t getTiming( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A0_BASE);
 	uint32_t timeVal = tickVal * TICK_TIME_A0_CONT;
 	return timeVal;
+}
+
+/*!
+ * \brief Start a timer which will interupt after timeout ms. Used specifically for LoRa radio.
+ * @param timeout, value in ms
+ */
+void startLoRaTimer( uint32_t timeout ) {
+	float time = timeout / 1000.0;
+	time = time * 1.5E6 / 48.0;
+	uint16_t timer_period = (uint16_t) time;
+
+	Timer_A_UpModeConfig upConfigA2 = {
+	TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
+			TIMER_A_CLOCKSOURCE_DIVIDER_48,          // SMCLK/1 = 1.5MHz
+			timer_period,                           // 375 tick period
+			TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
+			TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,    // Enable CCR0 interrupt
+			TIMER_A_SKIP_CLEAR                         // Clear value
+			};
+
+	Interrupt_enableInterrupt(INT_TA2_0);
+	Timer_A_configureUpMode(TIMER_A2_BASE, &upConfigA2);
+	Timer_A_startCounter(TIMER_A2_BASE, TIMER_A_UP_MODE);
+}
+
+void TA2_0_IRQHandler( void ) {
+	Timer_A_clearInterruptFlag(TIMER_A2_BASE);
+	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A2_BASE,
+	TIMER_A_CAPTURECOMPARE_REGISTER_0);
+	Timer_A_stopTimer(TIMER_A2_BASE);
+	RadioTimeoutFlag = true;
+//	SX1276SetSleep();
 }

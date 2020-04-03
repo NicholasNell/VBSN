@@ -779,7 +779,7 @@ void SX1276SetSleep( void ) {
 	SX1276SetOpMode( RF_OPMODE_SLEEP);
 
 	SX1276.Settings.State = RF_IDLE;
-	Delayms(100);
+	Delayms(99);
 }
 
 void SX1276SetStby( void ) {
@@ -1006,8 +1006,7 @@ void SX1276SetRx( uint32_t timeout ) {
 
 	SX1276.Settings.State = RF_RX_RUNNING;
 	if (timeout != 0) {
-		/*        TimerSetValue( &RxTimeoutTimer, timeout );
-		 TimerStart( &RxTimeoutTimer );*/
+		startLoRaTimer(timeout);
 	}
 
 	if (SX1276.Settings.Modem == MODEM_FSK) {
@@ -1204,7 +1203,9 @@ void SX1276SetTx( uint32_t timeout ) {
 	}
 
 	SX1276.Settings.State = RF_TX_RUNNING;
-//    TimerStart( &TxTimeoutTimer );
+	if (timeout > 0) {
+		startLoRaTimer(timeout);
+	}
 	SX1276SetOpMode( RF_OPMODE_TRANSMITTER);
 }
 
@@ -1556,8 +1557,8 @@ void SX1276OnDio2Irq( ) {
 			if (SX1276.Settings.LoRa.FreqHopOn == true) {
 				// Clear Irq
 				spiWrite_RFM(
-						REG_LR_IRQFLAGS,
-						RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
+				REG_LR_IRQFLAGS,
+				RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
 
 				if ((RadioEvents != NULL)
 						&& (RadioEvents->FhssChangeChannel != NULL)) {
@@ -1579,8 +1580,8 @@ void SX1276OnDio2Irq( ) {
 			if (SX1276.Settings.LoRa.FreqHopOn == true) {
 				// Clear Irq
 				spiWrite_RFM(
-						REG_LR_IRQFLAGS,
-						RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
+				REG_LR_IRQFLAGS,
+				RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL);
 
 				if ((RadioEvents != NULL)
 						&& (RadioEvents->FhssChangeChannel != NULL)) {

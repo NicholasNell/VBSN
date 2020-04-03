@@ -56,6 +56,14 @@ my_timer.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/_ti
 my_timer.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h
 my_timer.obj: ../utilities.h
 my_timer.obj: ../board.h
+my_timer.obj: ../my_RFM9x.h
+my_timer.obj: ../my_gpio.h
+my_timer.obj: ../pinName-board.h
+my_timer.obj: ../pinName-ioe.h
+my_timer.obj: ../my_spi.h
+my_timer.obj: ../radio.h
+my_timer.obj: ../sx1276Regs-Fsk.h
+my_timer.obj: ../sx1276Regs-LoRa.h
 
 ../my_timer.c: 
 ../my_timer.h: 
@@ -113,3 +121,11 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/_ti_config.h:
 C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h: 
 ../utilities.h: 
 ../board.h: 
+../my_RFM9x.h: 
+../my_gpio.h: 
+../pinName-board.h: 
+../pinName-ioe.h: 
+../my_spi.h: 
+../radio.h: 
+../sx1276Regs-Fsk.h: 
+../sx1276Regs-LoRa.h: 

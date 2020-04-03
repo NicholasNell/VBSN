@@ -57,4 +57,10 @@ uint32_t getTiming ( void );
  */
 void DelayLoop(uint16_t ms);
 
+/*!
+ * \brief Start a timer which will interupt after timeout ms
+ * @param timeout, value in ms
+ */
+void startLoRaTimer(uint32_t timeout);
+
 #endif /* MY_TIMER_H_ */

@@ -70,9 +70,9 @@
 #define RF_FREQUENCY 868500000  // Hz
 #define TX_OUTPUT_POWER 1	    // dBm
 #define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
-                           		//	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
-								//	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
- 	 	 	 	 	 	 	 	// 	9: 500 kHz]
+//	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
+//	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
+// 	9: 500 kHz]
 #define LORA_SPREADING_FACTOR 12 // [SF7..SF12]
 #define LORA_CODINGRATE 4       // [1: 4/5, \
                                 //  2: 4/6, \
@@ -92,6 +92,8 @@ bool DIO2Flag = false;
 bool DIO3Flag = false;
 bool DIO4Flag = false;
 
+extern bool RadioTimeoutFlag = false;
+
 typedef enum {
 	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT,
 } States_t;
@@ -102,7 +104,12 @@ typedef enum {
 States_t State = LOWPOWER;
 
 uint16_t BufferSize = BUFFER_SIZE;
-uint8_t Buffer[BUFFER_SIZE] = { 0 };
+uint8_t Buffer[BUFFER_SIZE] =
+		{ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };
 int8_t RssiValue = 0;
 int8_t SnrValue = 0;
 
@@ -146,8 +153,6 @@ int main( void ) {
 
 	BoardInitMcu();
 
-	GpioFlashLED(&Led1, 100);
-
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
 	RadioEvents.RxDone = OnRxDone;
@@ -166,8 +171,7 @@ int main( void ) {
 	LORA_PREAMBLE_LENGTH,
 	LORA_FIX_LENGTH_PAYLOAD_ON,
 	LORA_CRC_ON, 0, 0,
-	LORA_IQ_INVERSION_ON,
-	255);
+	LORA_IQ_INVERSION_ON, 2000);
 
 	SX1276SetRxConfig(MODEM_LORA,
 	LORA_BANDWIDTH,
@@ -192,7 +196,6 @@ int main( void ) {
 	 int16_t rssi;
 	 int8_t snr;
 	 */
-
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -210,8 +213,11 @@ int main( void ) {
 			DIO4Flag = false;
 			SX1276OnDio4Irq();
 		}
-//		SX1276Send(buffer, 5);
-		SX1276SetRx(5500);
+
+		if (RadioTimeoutFlag) {
+			RadioTimeoutFlag = false;
+			Radio.Sleep();
+		}
 	}
 }
 
