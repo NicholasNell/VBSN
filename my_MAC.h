@@ -18,7 +18,7 @@
 #include "sx1276Regs-Fsk.h"
 #include "sx1276Regs-LoRa.h"
 
-void MACSend( uint8_t *buffer, uint8_t size );
+bool MACSend( uint8_t *buffer, uint8_t size );
 
 
 

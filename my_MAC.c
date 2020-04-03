@@ -33,7 +33,6 @@ bool MACSend( uint8_t *buffer, uint8_t size ) {
 		if (getTiming() > 5E6) {
 			stopTiming();
 			NotRXFlag = true;
-
 			break;
 		}
 	}
