@@ -219,7 +219,7 @@ int main( void ) {
 
 		time = getTiming();
 		if (time > 5000000) {
-			MACSend(buffer, 5);
+
 			stopTiming();
 			startTiming();
 		}
@@ -230,8 +230,6 @@ int main( void ) {
 void PORT2_IRQHandler( void ) {
 	uint32_t status;
 
-	uint8_t i = spiRead_RFM( REG_LR_DIOMAPPING1);
-	uint8_t j = spiRead_RFM( REG_LR_DIOMAPPING2);
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
