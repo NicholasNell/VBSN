@@ -116,17 +116,17 @@ uint32_t getTiming( void ) {
 }
 
 /*!
- * \brief Start a timer which will interupt after timeout ms. Used specifically for LoRa radio.
+ * \brief Start a timer which will interrupt after timeout ms. Used specifically for LoRa radio.
  * @param timeout, value in ms
  */
 void startLoRaTimer( uint32_t timeout ) {
 	float time = timeout / 1000.0;
-	time = time * 1.5E6 / 48.0;
+	time = time * 32765 / 12.0;
 	uint16_t timer_period = (uint16_t) time;
 
 	Timer_A_UpModeConfig upConfigA2 = {
-	TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
-			TIMER_A_CLOCKSOURCE_DIVIDER_48,          // SMCLK/1 = 1.5MHz
+	TIMER_A_CLOCKSOURCE_ACLK, // SMCLK Clock Source
+			TIMER_A_CLOCKSOURCE_DIVIDER_12,          // SMCLK/1 = 1.5MHz
 			timer_period,                           // 375 tick period
 			TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
 			TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,    // Enable CCR0 interrupt
@@ -136,6 +136,14 @@ void startLoRaTimer( uint32_t timeout ) {
 	Interrupt_enableInterrupt(INT_TA2_0);
 	Timer_A_configureUpMode(TIMER_A2_BASE, &upConfigA2);
 	Timer_A_startCounter(TIMER_A2_BASE, TIMER_A_UP_MODE);
+}
+
+void stopLoRaTimer( ) {
+	Timer_A_clearInterruptFlag(TIMER_A2_BASE);
+	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A2_BASE,
+	TIMER_A_CAPTURECOMPARE_REGISTER_0);
+	Timer_A_clearTimer(TIMER_A2_BASE);
+	Timer_A_stopTimer(TIMER_A2_BASE);
 }
 
 void TA2_0_IRQHandler( void ) {

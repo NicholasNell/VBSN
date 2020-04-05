@@ -1431,6 +1431,7 @@ void SX1276OnDio0Irq( ) {
 }
 
 void SX1276OnDio1Irq( ) {
+	stopLoRaTimer();
 	switch (SX1276.Settings.State) {
 	case RF_RX_RUNNING:
 		switch (SX1276.Settings.Modem) {
@@ -1527,6 +1528,7 @@ void SX1276OnDio1Irq( ) {
 }
 
 void SX1276OnDio2Irq( ) {
+	stopLoRaTimer();
 	switch (SX1276.Settings.State) {
 	case RF_RX_RUNNING:
 		switch (SX1276.Settings.Modem) {
@@ -1601,6 +1603,7 @@ void SX1276OnDio2Irq( ) {
 }
 
 void SX1276OnDio3Irq( ) {
+	stopLoRaTimer();
 	switch (SX1276.Settings.Modem) {
 	case MODEM_FSK:
 		break;
@@ -1629,6 +1632,7 @@ void SX1276OnDio3Irq( ) {
 }
 
 void SX1276OnDio4Irq( ) {
+	stopLoRaTimer();
 	switch (SX1276.Settings.Modem) {
 	case MODEM_FSK: {
 		if (SX1276.Settings.FskPacketHandler.PreambleDetected == false) {
@@ -1645,6 +1649,7 @@ void SX1276OnDio4Irq( ) {
 }
 
 void SX1276OnDio5Irq( ) {
+	stopLoRaTimer();
 	switch (SX1276.Settings.Modem) {
 	case MODEM_FSK:
 		break;
