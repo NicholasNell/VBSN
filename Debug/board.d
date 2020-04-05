@@ -67,7 +67,6 @@ board.obj: ../sx1276Regs-Fsk.h
 board.obj: ../sx1276Regs-LoRa.h
 board.obj: ../board.h
 board.obj: ../my_rtc.h
-board.obj: ../rtc-board.h
 
 ../board.c: 
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/driverlib.h: 
@@ -136,4 +135,3 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h:
 ../sx1276Regs-LoRa.h: 
 ../board.h: 
 ../my_rtc.h: 
-../rtc-board.h: 
