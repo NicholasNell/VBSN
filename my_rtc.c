@@ -8,7 +8,6 @@
  */
 
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
-static volatile RTC_C_Calendar newTime;
 
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
@@ -84,7 +83,7 @@ void RTC_C_IRQHandler( void ) {
 /*		Interrupts every
 		minute - Set
 		breakpoint here*/
-		newTime = MAP_RTC_C_getCalendarTime();
+
 
 	}
 

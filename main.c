@@ -51,9 +51,10 @@
 #include <ti/drivers/GPIO.h>
 
 /* Standard Includes */
+#include "main.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "my_MAC.h"
+#include "my_ALOHA.h"
 #include "my_timer.h"
 #include "my_spi.h"
 #include "my_RFM9x.h"
@@ -61,6 +62,7 @@
 #include "board-config.h"
 #include "board.h"
 #include "sx1276-board.h"
+#include <stdio.h>
 
 /*!
  * Constant values need to compute the RSSI value
@@ -107,37 +109,12 @@ States_t State = LOWPOWER;
 uint16_t BufferSize = BUFFER_SIZE;
 uint8_t Buffer[BUFFER_SIZE] = { 0 };
 /*		{ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
-			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
-			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
-			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
-			'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };*/
+ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };*/
 int8_t RssiValue = 0;
 int8_t SnrValue = 0;
-
-/*!
- * \brief Function to be executed on Radio Tx Done event
- */
-void OnTxDone( void );
-
-/*!
- * \brief Function to be executed on Radio Rx Done event
- */
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
-
-/*!
- * \brief Function executed on Radio Tx Timeout event
- */
-void OnTxTimeout( void );
-
-/*!
- * \brief Function executed on Radio Rx Timeout event
- */
-void OnRxTimeout( void );
-
-/*!
- * \brief Function executed on Radio Rx Error event
- */
-void OnRxError( void );
 
 extern Gpio_t Led1;
 extern Gpio_t Led2;
@@ -148,22 +125,26 @@ extern Gpio_t Led3;
  */
 static RadioEvents_t RadioEvents;
 
-int main( void ) {
-	/* Stop Watchdog  */
-	MAP_WDT_A_holdTimer();
-
-	BoardInitMcu();
-
+void RadioInit( ) {
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
 	RadioEvents.RxDone = OnRxDone;
 	RadioEvents.TxTimeout = OnTxTimeout;
 	RadioEvents.RxTimeout = OnRxTimeout;
 	RadioEvents.RxError = OnRxError;
+	Radio.Init(&RadioEvents);
 
-	SX1276Init(&RadioEvents);
+	// detect radio hardware
+	while (Radio.Read( REG_VERSION) == 0x00) {
+		printf("Radio could not be detected!\n\r");
+		Delayms(1000);
+	}
+	printf("RadioRegVersion: 0x%X\r\n", Radio.Read( REG_VERSION));
 
-	SX1276SetTxConfig(MODEM_LORA,
+// set radio frequency channel
+	Radio.SetChannel( RF_FREQUENCY);
+
+	Radio.SetTxConfig(MODEM_LORA,
 	TX_OUTPUT_POWER,
 	LORA_FREQ_DEV,
 	LORA_BANDWIDTH,
@@ -174,7 +155,7 @@ int main( void ) {
 	LORA_CRC_ON, 0, 0,
 	LORA_IQ_INVERSION_ON, 0);
 
-	SX1276SetRxConfig(MODEM_LORA,
+	Radio.SetRxConfig(MODEM_LORA,
 	LORA_BANDWIDTH,
 	LORA_SPREADING_FACTOR,
 	LORA_CODINGRATE, 0,
@@ -183,17 +164,27 @@ int main( void ) {
 	LORA_CRC_ON, 0, 0,
 	LORA_IQ_INVERSION_ON, false);
 
-	SX1276SetMaxPayloadLength(MODEM_LORA, 255);
-	SX1276SetPublicNetwork(false, 0x55);
-	SX1276SetChannel(RF_FREQUENCY);
-	uint8_t band = spiRead_RFM(REG_LR_MODEMCONFIG1);
-	band = spiRead_RFM(REG_LR_MODEMCONFIG2);
-	SX1276SetSleep();
+	Radio.SetMaxPayloadLength(MODEM_LORA, 255);
+	Radio.SetPublicNetwork(false, 0x55);
+	Radio.Sleep();
+
 	State = LOWPOWER;
+}
+
+int main( void ) {
+	/* Stop Watchdog  */
+	MAP_WDT_A_holdTimer();
+
+	BoardInitMcu();
+	RadioInit();
 
 	uint32_t time = 0;
 	startTiming();
-
+	uint_fast16_t cnt = 0;
+	{
+		uint32_t timesasdfghj = Radio.TimeOnAir(MODEM_LORA, 4);
+		__no_operation();
+	}
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -218,11 +209,14 @@ int main( void ) {
 
 		time = getTiming();
 
-		if (time >= 2000000) {
-			SX1276Send(buffer, 5);
-
+		if (time >= 5000000) {
 			stopTiming();
 			startTiming();
+			sendALOHAmessage(buffer, 5);
+//			 uint16_t addr, uint8_t *buffer, uint8_t size
+
+			printf("Sending Message # %d\n", cnt++);
+
 		}
 
 	}
@@ -232,7 +226,7 @@ void PORT2_IRQHandler( void ) {
 	stopLoRaTimer();
 	uint32_t status;
 
-	uint8_t i = spiRead_RFM( REG_LR_IRQFLAGS);
+	uint8_t i = Radio.Read( REG_LR_IRQFLAGS);
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
@@ -260,7 +254,7 @@ void OnTxDone( void ) {
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
 	GpioFlashLED(&Led3, 100);
-	BufferSize = size
+	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;

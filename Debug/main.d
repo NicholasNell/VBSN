@@ -51,7 +51,8 @@ main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/
 main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/sysctl.h
 main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/flash.h
 main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/drivers/GPIO.h
-main.obj: ../my_MAC.h
+main.obj: ../main.h
+main.obj: ../my_ALOHA.h
 main.obj: ../my_gpio.h
 main.obj: ../pinName-board.h
 main.obj: ../pinName-ioe.h
@@ -64,10 +65,13 @@ main.obj: ../radio.h
 main.obj: ../my_RFM9x.h
 main.obj: ../sx1276Regs-Fsk.h
 main.obj: ../sx1276Regs-LoRa.h
+main.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/string.h
 main.obj: ../board-config.h
 main.obj: ../board.h
 main.obj: ../utilities.h
 main.obj: ../sx1276-board.h
+main.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdio.h
+main.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdarg.h
 
 ../main.c: 
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/driverlib.h: 
@@ -120,7 +124,8 @@ C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/sysctl.h: 
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/flash.h: 
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/drivers/GPIO.h: 
-../my_MAC.h: 
+../main.h: 
+../my_ALOHA.h: 
 ../my_gpio.h: 
 ../pinName-board.h: 
 ../pinName-ioe.h: 
@@ -133,7 +138,10 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h:
 ../my_RFM9x.h: 
 ../sx1276Regs-Fsk.h: 
 ../sx1276Regs-LoRa.h: 
+C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/string.h: 
 ../board-config.h: 
 ../board.h: 
 ../utilities.h: 
 ../sx1276-board.h: 
+C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdio.h: 
+C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdarg.h: 

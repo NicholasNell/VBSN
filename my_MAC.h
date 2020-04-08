@@ -20,7 +20,4 @@
 
 bool MACSend( uint8_t *buffer, uint8_t size );
 
-
-
-
 #endif /* MY_MAC_H_ */
