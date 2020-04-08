@@ -211,14 +211,15 @@ int main( void ) {
 			DIO4Flag = false;
 			SX1276OnDio4Irq();
 		}
-
-		if (RadioTimeoutFlag) {
+		else if (RadioTimeoutFlag) {
 			RadioTimeoutFlag = false;
 			Radio.Sleep();
 		}
 
 		time = getTiming();
-		if (time > 5000000) {
+
+		if (time >= 2000000) {
+			SX1276Send(buffer, 5);
 
 			stopTiming();
 			startTiming();
@@ -228,8 +229,10 @@ int main( void ) {
 }
 
 void PORT2_IRQHandler( void ) {
+	stopLoRaTimer();
 	uint32_t status;
 
+	uint8_t i = spiRead_RFM( REG_LR_IRQFLAGS);
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
@@ -257,7 +260,7 @@ void OnTxDone( void ) {
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
 	GpioFlashLED(&Led3, 100);
-	BufferSize = size;
+	BufferSize = size
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;

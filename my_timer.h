@@ -63,4 +63,10 @@ void DelayLoop(uint16_t ms);
  */
 void startLoRaTimer(uint32_t timeout);
 
+/*!
+ *  Stopsthe LoRa module timer
+ */
+
+void stopLoRaTimer();
+
 #endif /* MY_TIMER_H_ */
