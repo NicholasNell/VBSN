@@ -44,7 +44,7 @@
  *            |                  |
  *            |                  |
  *            |                  |
- * Author: 
+ * Author:
  *******************************************************************************/
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -98,10 +98,10 @@ bool DIO4Flag = false;
 extern bool RadioTimeoutFlag = false;
 
 typedef enum {
-	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT,
+	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT
 } States_t;
 
-#define RX_TIMEOUT_VALUE 1000
+#define RX_TIMEOUT_VALUE 4000
 #define BUFFER_SIZE 64 // Define the payload size here
 
 States_t State = LOWPOWER;
@@ -177,14 +177,11 @@ int main( void ) {
 
 	BoardInitMcu();
 	RadioInit();
-
-	uint32_t time = 0;
 	startTiming();
+	uint32_t time = 0;
+
 	uint_fast16_t cnt = 0;
-	{
-		uint32_t timesasdfghj = Radio.TimeOnAir(MODEM_LORA, 4);
-		__no_operation();
-	}
+
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -207,18 +204,51 @@ int main( void ) {
 			Radio.Sleep();
 		}
 
-		time = getTiming();
+		switch (State) {
+			case TX:
+				// transmit done
+				// set the state to pending and attach the timer with random delay
 
-		if (time >= 5000000) {
-			stopTiming();
-			startTiming();
-			sendALOHAmessage(buffer, 5);
-//			 uint16_t addr, uint8_t *buffer, uint8_t size
+				// we dont need ack for ack
+				if (alohaState == ACK_RESP) {
+					alohaState = IDLE;
+					break;
+				}
 
-			printf("Sending Message # %d\n", cnt++);
+				// set delay time
+				if (alohaState == IDLE) {
+					alohaDelay = (Radio.Random() % 1000) / 1000.0f;
+				}
+				else if (alohaState == RETRANSMIT) {
+					alohaDelay *= 2;
+				}
 
+				/*				aloha.AlohaAckTimeout.detach();
+				 aloha.AlohaAckTimeout.attach(&setExpire, aloha.delay);*/
+
+				// increase the attempt counter
+				alohaAttempts += 1;
+
+				// enter listening mode
+				Radio.Rx( RX_TIMEOUT_VALUE);
+
+				// state transition
+				alohaState = PENDING;
+
+				State = LOWPOWER;
+				break;
+			default:
+				break;
 		}
 
+		time = getTiming();
+
+		if (time >= 10000000) {
+			stopTiming();
+			startTiming();
+			sendAlohamessage(buffer, 5);
+			printf("Sending Message # %d\n", cnt++);
+		}
 	}
 }
 
@@ -248,6 +278,7 @@ void PORT2_IRQHandler( void ) {
 void OnTxDone( void ) {
 	Radio.Sleep();
 	GpioFlashLED(&Led2, 100);
+	printf("> OnTxDone\n\r");
 	State = TX;
 }
 
@@ -259,20 +290,24 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	RssiValue = rssi;
 	SnrValue = snr;
 	State = RX;
+	printf("> OnRxDone\n\r");
 }
 
 void OnTxTimeout( void ) {
 	Radio.Sleep();
 	State = TX_TIMEOUT;
+	printf("> OnTxTimeout\n\r");
 }
 
 void OnRxTimeout( void ) {
 	Radio.Sleep();
 	State = RX_TIMEOUT;
+	printf("> OnRxTimeout\n\r");
 }
 
 void OnRxError( void ) {
 	Radio.Sleep();
 	State = RX_ERROR;
+	printf("> OnRxError\n\r");
 }
 

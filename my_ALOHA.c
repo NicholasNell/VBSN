@@ -7,7 +7,7 @@
 #include "my_ALOHA.h"
 uint8_t seqid = 0;
 
-bool sendALOHAmessage( uint8_t *buffer, uint8_t size ) {
+bool sendAlohamessage( uint8_t *buffer, uint8_t size ) {
 
 	HeaderStruct header;
 	DataStruct data;
@@ -23,12 +23,27 @@ bool sendALOHAmessage( uint8_t *buffer, uint8_t size ) {
 	createAlohaPacket(buffer, &header, &data);
 
 	Radio.Send(buffer, 4);
-	{
-		uint8_t fifo[64];
-		Radio.ReadBuffer(REG_FIFO, fifo, 64);
-	}
+
 	return true;
 
+}
+
+void sendAlohaAck( int id ) {
+	HeaderStruct header;
+	DataStruct data;
+
+	memset(&header, 0, sizeof(header));
+	memset(&data, 0, sizeof(data));
+
+	header.fid = 0x1;
+	header.no = (uint8_t) id;
+	data.pd0 = 0x00;
+	data.pd1 = 0x00;
+
+	uint8_t buffer[4];
+	createAlohaPacket(buffer, &header, &data);
+
+	Radio.Send(buffer, 4);
 }
 
 uint8_t crc8( const uint8_t *data, int len ) {
@@ -47,6 +62,18 @@ uint8_t crc8( const uint8_t *data, int len ) {
 
 	return (uint8_t) (crc >> 8);
 }
+
+/*void setExpire()
+{
+    if (aloha_attempts >= ALOHA_MAX_ATTEMPT)
+    {
+    	aloha_state = EXPIRED;
+    }
+    else
+    {
+    	aloha_state = RETRANSMIT;
+    }
+}*/
 
 bool dissectAlohaPacket(
 		uint8_t *input,

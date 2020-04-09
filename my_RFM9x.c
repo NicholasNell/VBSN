@@ -1207,6 +1207,8 @@ void SX1276SetTx( uint32_t timeout ) {
 		startLoRaTimer(timeout);
 	}
 	SX1276SetOpMode( RF_OPMODE_TRANSMITTER);
+	uint8_t fifo[64];
+	Radio.ReadBuffer(REG_FIFO, fifo, 64);
 }
 
 uint8_t SX1276GetPaSelect( int8_t power ) {
