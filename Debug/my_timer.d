@@ -64,6 +64,7 @@ my_timer.obj: ../my_spi.h
 my_timer.obj: ../radio.h
 my_timer.obj: ../sx1276Regs-Fsk.h
 my_timer.obj: ../sx1276Regs-LoRa.h
+my_timer.obj: ../timer.h
 
 ../my_timer.c: 
 ../my_timer.h: 
@@ -129,3 +130,4 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/linkage.h:
 ../radio.h: 
 ../sx1276Regs-Fsk.h: 
 ../sx1276Regs-LoRa.h: 
+../timer.h: 

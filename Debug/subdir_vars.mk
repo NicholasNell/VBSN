@@ -21,7 +21,8 @@ C_SRCS += \
 ../my_systick.c \
 ../my_timer.c \
 ../sx1276-board.c \
-../system_msp432p401r.c 
+../system_msp432p401r.c \
+../timer.c 
 
 C_DEPS += \
 ./board.d \
@@ -36,7 +37,8 @@ C_DEPS += \
 ./my_systick.d \
 ./my_timer.d \
 ./sx1276-board.d \
-./system_msp432p401r.d 
+./system_msp432p401r.d \
+./timer.d 
 
 OBJS += \
 ./board.obj \
@@ -51,7 +53,8 @@ OBJS += \
 ./my_systick.obj \
 ./my_timer.obj \
 ./sx1276-board.obj \
-./system_msp432p401r.obj 
+./system_msp432p401r.obj \
+./timer.obj 
 
 OBJS__QUOTED += \
 "board.obj" \
@@ -66,7 +69,8 @@ OBJS__QUOTED += \
 "my_systick.obj" \
 "my_timer.obj" \
 "sx1276-board.obj" \
-"system_msp432p401r.obj" 
+"system_msp432p401r.obj" \
+"timer.obj" 
 
 C_DEPS__QUOTED += \
 "board.d" \
@@ -81,7 +85,8 @@ C_DEPS__QUOTED += \
 "my_systick.d" \
 "my_timer.d" \
 "sx1276-board.d" \
-"system_msp432p401r.d" 
+"system_msp432p401r.d" \
+"timer.d" 
 
 C_SRCS__QUOTED += \
 "../board.c" \
@@ -96,6 +101,7 @@ C_SRCS__QUOTED += \
 "../my_systick.c" \
 "../my_timer.c" \
 "../sx1276-board.c" \
-"../system_msp432p401r.c" 
+"../system_msp432p401r.c" \
+"../timer.c" 
 
 

@@ -44,7 +44,7 @@
  *            |                  |
  *            |                  |
  *            |                  |
- * Author: 
+ * Author:
  *******************************************************************************/
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -62,6 +62,7 @@
 #include "board-config.h"
 #include "board.h"
 #include "sx1276-board.h"
+#include "timer.h"
 #include <stdio.h>
 
 /*!
@@ -180,11 +181,9 @@ int main( void ) {
 
 	uint32_t time = 0;
 	startTiming();
+	SetAlarm(4000);
 	uint_fast16_t cnt = 0;
-	{
-		uint32_t timesasdfghj = Radio.TimeOnAir(MODEM_LORA, 4);
-		__no_operation();
-	}
+
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -207,7 +206,7 @@ int main( void ) {
 			Radio.Sleep();
 		}
 
-		time = getTiming();
+		/*		time = getTiming();
 
 		if (time >= 5000000) {
 			stopTiming();
@@ -217,7 +216,7 @@ int main( void ) {
 
 			printf("Sending Message # %d\n", cnt++);
 
-		}
+		 }*/
 
 	}
 }
@@ -275,4 +274,6 @@ void OnRxError( void ) {
 	Radio.Sleep();
 	State = RX_ERROR;
 }
+
+
 

@@ -70,6 +70,7 @@ main.obj: ../board-config.h
 main.obj: ../board.h
 main.obj: ../utilities.h
 main.obj: ../sx1276-board.h
+main.obj: ../timer.h
 main.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdio.h
 main.obj: C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdarg.h
 
@@ -143,5 +144,6 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/string.h:
 ../board.h: 
 ../utilities.h: 
 ../sx1276-board.h: 
+../timer.h: 
 C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdio.h: 
 C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stdarg.h: 

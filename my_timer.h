@@ -14,7 +14,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define MIN_ALARM_DELAY 1
+
 /* Application Defines  */
+typedef struct {
+		uint32_t Time;         // Reference time
+} TimerContext_t;
 
 /*!
     \brief Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
@@ -53,11 +58,6 @@ uint32_t stopTiming ( void );
 uint32_t getTiming ( void );
 
 /*!
- * \brief Delay using timer without interupts
- */
-void DelayLoop(uint16_t ms);
-
-/*!
  * \brief Start a timer which will interupt after timeout ms
  * @param timeout, value in ms
  */
@@ -68,5 +68,81 @@ void startLoRaTimer(uint32_t timeout);
  */
 
 void stopLoRaTimer();
+
+/*!
+ * \brief converts time in ms to time in ticks
+ *
+ * \param[IN] milliseconds Time in milliseconds
+ * \retval returns time in timer ticks
+ */
+uint32_t TimerMs2Tick( uint32_t milliseconds );
+
+/*!
+ * \brief Sets the RTC timer reference, sets also the RTC_DateStruct and RTC_TimeStruct
+ *
+ * \param none
+ * \retval timerValue In ticks
+ */
+uint32_t SetTimerContext( void );
+
+/*!
+ * \brief Get the RTC timer elapsed time since the last Alarm was set
+ *
+ * \retval RTC Elapsed time since the last alarm in ticks.
+ */
+uint32_t GetTimerElapsedTime( void );
+
+/*!
+ * \brief Gets the RTC timer reference
+ *
+ * \retval value Timer value in ticks
+ */
+uint32_t GetTimerContext( void );
+
+/*!
+ * \brief Stops the Alarm
+ */
+void StopAlarm( void );
+
+/*!
+ * \brief Get the RTC timer value
+ *
+ * \retval RTC Timer value
+ */
+uint32_t GetTimerValue( void );
+
+/*!
+ * \brief converts time in ticks to time in ms
+ *
+ * \param[IN] time in timer ticks
+ * \retval returns time in milliseconds
+ */
+uint32_t Tick2Ms( uint32_t tick );
+
+/*!
+ * \brief returns the wake up time in ticks
+ *
+ * \retval wake up time in ticks
+ */
+uint32_t GetMinimumTimeout( void );
+
+/*!
+ * \brief Sets the alarm
+ *
+ * \note The alarm is set at now (read in this function) + timeout
+ *
+ * \param timeout Duration of the Timer ticks
+ */
+void SetAlarm( uint32_t timeout );
+
+/*!
+ * \brief Starts wake up alarm
+ *
+ * \note  Alarm in RtcTimerContext.Time + timeout
+ *
+ * \param [IN] timeout Timeout value in ticks
+ */
+void StartAlarm( uint32_t timeout );
+
 
 #endif /* MY_TIMER_H_ */
