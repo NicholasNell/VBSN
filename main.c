@@ -210,7 +210,7 @@ int main( void ) {
 			Radio.Rx(1000);
 		}
 
-//		printf("Sending Message # %d\n", cnt++);
+
 
 	}
 }
@@ -257,6 +257,7 @@ void OnTxTimeout( void ) {
 	Radio.Sleep();
 	State = TX_TIMEOUT;
 }
+
 
 void OnRxTimeout( void ) {
 	Radio.Sleep();
