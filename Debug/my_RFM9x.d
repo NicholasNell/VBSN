@@ -67,6 +67,7 @@ my_RFM9x.obj: ../my_spi.h
 my_RFM9x.obj: ../sx1276Regs-Fsk.h
 my_RFM9x.obj: ../sx1276Regs-LoRa.h
 my_RFM9x.obj: ../sx1276-board.h
+my_RFM9x.obj: ../timer.h
 
 ../my_RFM9x.c: 
 C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/driverlib.h: 
@@ -135,3 +136,4 @@ C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.5.LTS/include/stddef.h:
 ../sx1276Regs-Fsk.h: 
 ../sx1276Regs-LoRa.h: 
 ../sx1276-board.h: 
+../timer.h: 

@@ -212,6 +212,15 @@ uint32_t GetMinimumTimeout( void ) {
 	return ( MIN_ALARM_DELAY);
 }
 
+/*
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_0                                  0x02
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_1                                  0x04
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_2                                  0x06
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_3                                  0x08
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_4                                  0x0A
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_5                                  0x0C
+ #define TIMER_A_CAPTURECOMPARE_REGISTER_6                                  0x0E
+ */
 void SetAlarm( uint32_t timeout ) {
 	Timer_A_CompareModeConfig CMC = {
 	TIMER_A_CAPTURECOMPARE_REGISTER_0,

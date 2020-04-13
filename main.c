@@ -180,10 +180,8 @@ int main( void ) {
 	RadioInit();
 
 	uint32_t time = 0;
-	startTiming();
-	SetAlarm(4000);
 	uint_fast16_t cnt = 0;
-
+	bool rxflag = true;
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -206,23 +204,18 @@ int main( void ) {
 			Radio.Sleep();
 		}
 
-		/*		time = getTiming();
+		if (rxflag) {
+			rxflag = false;
+			printf(">>>RX");
+			Radio.Rx(1000);
+		}
 
-		if (time >= 5000000) {
-			stopTiming();
-			startTiming();
-			sendALOHAmessage(buffer, 5);
-//			 uint16_t addr, uint8_t *buffer, uint8_t size
-
-			printf("Sending Message # %d\n", cnt++);
-
-		 }*/
+//		printf("Sending Message # %d\n", cnt++);
 
 	}
 }
 
 void PORT2_IRQHandler( void ) {
-	stopLoRaTimer();
 	uint32_t status;
 
 	uint8_t i = Radio.Read( REG_LR_IRQFLAGS);
@@ -274,6 +267,4 @@ void OnRxError( void ) {
 	Radio.Sleep();
 	State = RX_ERROR;
 }
-
-
 
