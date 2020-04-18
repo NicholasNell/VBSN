@@ -1,35 +1,34 @@
 ******************************************************************************
                   TI ARM Linker PC v18.12.5                    
 ******************************************************************************
->> Linked Mon Apr 13 14:03:42 2020
+>> Linked Sat Apr 18 11:28:04 2020
 
 OUTPUT FILE NAME:   <Meesters.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00005e05
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00004f51
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  MAIN                  00000000   00040000  00006a34  000395cc  R  X
+  MAIN                  00000000   00040000  0000591a  0003a6e6  R  X
   INFO                  00200000   00004000  00000000  00004000  R  X
-  SRAM_CODE             01000000   00010000  000010ae  0000ef52  RW X
-  SRAM_DATA             20000000   00010000  000010ae  0000ef52  RW  
+  SRAM_CODE             01000000   00010000  00000542  0000fabe  RW X
+  SRAM_DATA             20000000   00010000  00000542  0000fabe  RW  
 
 
 SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    00006a38   00006a38    r-x
+00000000    00000000    00005920   00005920    r-x
   00000000    00000000    000000e4   000000e4    r-- .intvecs
-  000000e4    000000e4    000065e4   000065e4    r-x .text
-  000066c8    000066c8    000002d4   000002d4    r-- .const
-  000069a0    000069a0    00000098   00000098    r-- .cinit
-20000000    20000000    00000eae   00000000    rw-
-  20000000    20000000    00000800   00000000    rw- .sysmem
-  20000800    20000800    00000474   00000000    rw- .bss
-  20000c74    20000c74    0000023a   00000000    rw- .data
+  000000e8    000000e8    0000562a   0000562a    r-x .text
+  00005714    00005714    000001d4   000001d4    r-- .const
+  000058e8    000058e8    00000038   00000038    r-- .cinit
+20000000    20000000    00000342   00000000    rw-
+  20000000    20000000    000002ec   00000000    rw- .bss
+  200002ec    200002ec    00000056   00000000    rw- .data
 2000fe00    2000fe00    00000200   00000000    rw-
   2000fe00    2000fe00    00000200   00000000    rw- .stack
 
@@ -42,294 +41,296 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    000000e4     
                   00000000    000000e4     startup_msp432p401r_ccs.obj (.intvecs:retain)
 
-.text      0    000000e4    000065e4     
-                  000000e4    00000a4e     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:__TI_printfi)
-                  00000b32    00000002     startup_msp432p401r_ccs.obj (.text:Default_Handler)
-                  00000b34    000003b8     my_RFM9x.obj (.text:SX1276SetRxConfig)
-                  00000eec    00000398     my_RFM9x.obj (.text:SX1276GetTimeOnAir)
-                  00001284    00000350     my_RFM9x.obj (.text:SX1276OnDio0Irq)
-                  000015d4    000002ec     my_RFM9x.obj (.text:SX1276SetTxConfig)
-                  000018c0    0000028c     my_RFM9x.obj (.text:SX1276SetRx)
-                  00001b4c    00000270     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:_pconv_a)
-                  00001dbc    00000208     board.obj (.text:BoardUnusedIoInit)
-                  00001fc4    000001d0     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:_pconv_g)
-                  00002194    000001c4     gpio-board.obj (.text:GpioMcuInit)
-                  00002358    000001b6     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_add_t2.asm.obj (.text)
-                  0000250e    00000002     my_systick.obj (.text:SysTick_Handler)
-                  00002510    00000184     main.obj (.text:RadioInit)
-                  00002694    0000017c     my_RFM9x.obj (.text:SX1276OnDio1Irq)
-                  00002810    00000154     sx1276-board.obj (.text:SX1276SetRfTxPower)
-                  00002964    0000014c     my_RFM9x.obj (.text:SX1276Send)
-                  00002ab0    00000144     msp432p4xx_driverlib.lib : timer_a.o (.text:privateTimer_AProcessClockSourceDivider)
-                  00002bf4    00000140     my_RFM9x.obj (.text:SX1276OnDio2Irq)
-                  00002d34    0000013c     my_RFM9x.obj (.text:SX1276OnTimeoutIrq)
-                  00002e70    0000013c     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:_pconv_e)
-                  00002fac    00000136                                   : fd_div_t2.asm.obj (.text)
-                  000030e2    00000002                                   : _lock.c.obj (.text:_nop)
-                  000030e4    00000124                                   : _printfi.c.obj (.text:fcvt)
-                  00003208    00000118     gpio-board.obj (.text:GpioMcuSetInterrupt)
-                  00003320    00000118     rtsv7M4_T_le_v4SPD16_eabi.lib : memory.c.obj (.text:aligned_alloc)
-                  00003438    00000114                                   : fputs.c.obj (.text:fputs)
-                  0000354c    00000110                                   : s_scalbn.c.obj (.text:scalbn)
-                  0000365c    000000fc                                   : fd_mul_t2.asm.obj (.text)
-                  00003758    000000f8                                   : s_ceil.c.obj (.text:ceil)
-                  00003850    000000f8                                   : s_floor.c.obj (.text:floor)
-                  00003948    000000e8     timer.obj (.text:TimerIrqHandler)
-                  00003a30    000000e4     rtsv7M4_T_le_v4SPD16_eabi.lib : memory.c.obj (.text:free)
-                  00003b14    000000dc     timer.obj (.text:TimerStop)
-                  00003bf0    000000dc     rtsv7M4_T_le_v4SPD16_eabi.lib : setvbuf.c.obj (.text:setvbuf)
-                  00003ccc    000000c4     my_RFM9x.obj (.text:SX1276SetTx)
-                  00003d90    000000c4     main.obj (.text:main)
-                  00003e54    000000c0     rtsv7M4_T_le_v4SPD16_eabi.lib : s_round.c.obj (.text:round)
-                  00003f14    000000b4     my_RFM9x.obj (.text:SX1276Init)
-                  00003fc8    000000b1     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:_ltostr)
-                  00004079    00000001     --HOLE-- [fill = 0]
-                  0000407a    000000b0     msp432p4xx_driverlib.lib : spi.o (.text:SPI_initMaster)
-                  0000412a    00000002     rtsv7M4_T_le_v4SPD16_eabi.lib : div0.asm.obj (.text)
-                  0000412c    000000b0     sx1276-board.obj (.text:SX1276IoInit)
-                  000041dc    000000a8     my_RFM9x.obj (.text:RxChainCalibration)
-                  00004284    000000a0     my_RFM9x.obj (.text:SX1276SetModem)
-                  00004324    0000009c     my_RFM9x.obj (.text:SX1276SetTxContinuousWave)
-                  000043c0    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
-                  0000445c    00000096                                   : ull_div_t2.asm.obj (.text)
-                  000044f2    00000002     --HOLE-- [fill = 0]
-                  000044f4    00000094     msp432p4xx_driverlib.lib : rtc_c.o (.text:RTC_C_getEnabledInterruptStatus)
-                  00004588    0000008c     board.obj (.text:BoardInitMcu)
-                  00004614    0000008c     rtsv7M4_T_le_v4SPD16_eabi.lib : fputc.c.obj (.text:fputc)
-                  000046a0    00000086                                   : fd_cmp_t2.asm.obj (.text:__aeabi_cdcmple)
-                  00004726    00000086                                   : fd_cmp_t2.asm.obj (.text:__aeabi_cdrcmple)
-                  000047ac    00000084     timer.obj (.text:TimerStart)
-                  00004830    00000080     my_RFM9x.obj (.text:SX1276IsChannelFree)
-                  000048b0    0000007c     main.obj (.text:PORT2_IRQHandler)
-                  0000492c    0000007a     rtsv7M4_T_le_v4SPD16_eabi.lib : memset_t2.asm.obj (.text)
-                  000049a6    00000002     --HOLE-- [fill = 0]
-                  000049a8    00000078     system_msp432p401r.obj (.text:SystemInit)
-                  00004a20    00000074     rtsv7M4_T_le_v4SPD16_eabi.lib : fclose.c.obj (.text:__TI_closefile)
-                  00004a94    00000070                                   : memory.c.obj (.text:split)
-                  00004b04    0000006e                                   : _printfi.c.obj (.text:_mcpy)
-                  00004b72    00000002     --HOLE-- [fill = 0]
-                  00004b74    0000006c                                   : hostrename.c.obj (.text:HOSTrename)
-                  00004be0    0000006c     my_RFM9x.obj (.text:SX1276ReadRssi)
-                  00004c4c    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : hostlseek.c.obj (.text:HOSTlseek)
-                  00004cb4    00000068     main.obj (.text:OnRxDone)
-                  00004d1c    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  00004d84    00000068                                   : printf.c.obj (.text:printf)
-                  00004dec    00000064     my_RFM9x.obj (.text:GetFskBandwidthRegValue)
-                  00004e50    00000064     rtsv7M4_T_le_v4SPD16_eabi.lib : s_frexp.c.obj (.text:frexp)
-                  00004eb4    00000064                                   : fseek.c.obj (.text:fseek)
-                  00004f18    00000062                                   : _io_perm.c.obj (.text:__TI_wrt_ok)
-                  00004f7a    00000002     --HOLE-- [fill = 0]
-                  00004f7c    00000060                                   : hostopen.c.obj (.text:HOSTopen)
-                  00004fdc    00000060     my_RFM9x.obj (.text:SX1276ReadBuffer)
-                  0000503c    00000060     my_RFM9x.obj (.text:SX1276WriteBuffer)
-                  0000509c    0000005e     my_RFM9x.obj (.text:SX1276Random)
-                  000050fa    00000002     --HOLE-- [fill = 0]
-                  000050fc    0000005c     msp432p4xx_driverlib.lib : rtc_c.o (.text:RTC_C_getInterruptStatus)
-                  00005158    0000005c     rtsv7M4_T_le_v4SPD16_eabi.lib : close.c.obj (.text:close)
-                  000051b4    00000058     my_timer.obj (.text:Delayms)
-                  0000520c    00000058     rtsv7M4_T_le_v4SPD16_eabi.lib : hostread.c.obj (.text:HOSTread)
-                  00005264    00000058                                   : hostwrite.c.obj (.text:HOSTwrite)
-                  000052bc    00000058     sx1276-board.obj (.text:SX1276IoIrqInit)
-                  00005314    00000058     timer.obj (.text:TimerInsertTimer)
-                  0000536c    00000056     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:_pconv_f)
-                  000053c2    00000002     --HOLE-- [fill = 0]
-                  000053c4    00000054     my_timer.obj (.text:TimerATimerInit)
-                  00005418    00000054     rtsv7M4_T_le_v4SPD16_eabi.lib : ltoa.c.obj (.text:ltoa)
-                  0000546c    00000052                                   : _printfi.c.obj (.text:_ecpy)
-                  000054be    00000002     --HOLE-- [fill = 0]
-                  000054c0    00000050     my_RFM9x.obj (.text:SX1276SetChannel)
-                  00005510    0000004e     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_initCompare)
-                  0000555e    0000004c                              : timer_a.o (.text:Timer_A_getCounterValue)
-                  000055aa    0000004c     rtsv7M4_T_le_v4SPD16_eabi.lib : fflush.c.obj (.text:__TI_doflush)
-                  000055f6    00000002     --HOLE-- [fill = 0]
-                  000055f8    0000004c                                   : atoi.c.obj (.text:atoi)
-                  00005644    00000048     my_RFM9x.obj (.text:SX1276SetMaxPayloadLength)
-                  0000568c    00000048     rtsv7M4_T_le_v4SPD16_eabi.lib : exit.c.obj (.text:exit)
-                  000056d4    00000048                                   : fd_toi_t2.asm.obj (.text)
-                  0000571c    00000048     my_spi.obj (.text:spiRead_RFM)
-                  00005764    00000044     gpio-board.obj (.text:GpioMcuWrite)
-                  000057a8    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : hostclose.c.obj (.text:HOSTclose)
-                  000057ec    00000044                                   : hostunlink.c.obj (.text:HOSTunlink)
-                  00005830    00000044     my_RFM9x.obj (.text:SX1276StartCad)
-                  00005874    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
-                  000058b8    00000044                                   : getdevice.c.obj (.text:getdevice)
-                  000058fc    00000044                                   : fd_tou_t2.asm.obj (.text)
-                  00005940    00000044     my_spi.obj (.text:spiWrite_RFM)
-                  00005984    00000040     msp432p4xx_driverlib.lib : gpio.o (.text:GPIO_setAsOutputPin)
-                  000059c4    00000040     my_timer.obj (.text:SetAlarm)
-                  00005a04    00000040     msp432p4xx_driverlib.lib : spi.o (.text:is_A_Module)
-                  00005a44    00000040     my_spi.obj (.text:spi_open)
-                  00005a84    0000003e     rtsv7M4_T_le_v4SPD16_eabi.lib : _printfi.c.obj (.text:_fcpy)
-                  00005ac2    00000002     --HOLE-- [fill = 0]
-                  00005ac4    0000003c     my_RFM9x.obj (.text:SX1276OnDio4Irq)
-                  00005b00    0000003c     my_RFM9x.obj (.text:SX1276SetPublicNetwork)
-                  00005b3c    0000003c     my_timer.obj (.text:TimerAInteruptInit)
-                  00005b78    0000003c     timer.obj (.text:TimerSetValue)
-                  00005bb4    00000038     my_spi.obj (.text:RFM_spi_read_write)
-                  00005bec    00000038     my_RFM9x.obj (.text:SX1276SetSleep)
-                  00005c24    00000038     rtsv7M4_T_le_v4SPD16_eabi.lib : trgmsg.c.obj (.text:__TI_writemsg)
-                  00005c5c    00000036     timer.obj (.text:TimerInit)
-                  00005c92    00000036     timer.obj (.text:TimerSetTimeout)
-                  00005cc8    00000036     rtsv7M4_T_le_v4SPD16_eabi.lib : strncpy.c.obj (.text:strncpy)
-                  00005cfe    00000002     --HOLE-- [fill = 0]
-                  00005d00    00000034     my_RFM9x.obj (.text:SX1276SetStby)
-                  00005d34    00000034     timer.obj (.text:TimerExists)
-                  00005d68    00000034     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_configureContinuousMode)
-                  00005d9c    00000034     rtsv7M4_T_le_v4SPD16_eabi.lib : fopen.c.obj (.text:__TI_cleanup)
-                  00005dd0    00000034                                   : trgmsg.c.obj (.text:__TI_readmsg)
-                  00005e04    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
-                  00005e38    00000030     my_gpio.obj (.text:GpioInit)
-                  00005e68    00000030     my_timer.obj (.text:TA2_0_IRQHandler)
-                  00005e98    00000030     timer.obj (.text:TimerInsertNewHeadTimer)
-                  00005ec8    00000030     rtsv7M4_T_le_v4SPD16_eabi.lib : getdevice.c.obj (.text:finddevice)
-                  00005ef8    0000002e                                   : i_tofd_t2.asm.obj (.text)
-                  00005f26    00000002     --HOLE-- [fill = 0]
-                  00005f28    0000002c     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_clearCaptureCompareInterrupt)
-                  00005f54    0000002c                              : timer_a.o (.text:Timer_A_enableCaptureCompareInterrupt)
-                  00005f80    0000002c     my_timer.obj (.text:stopLoRaTimer)
-                  00005fac    0000002c     rtsv7M4_T_le_v4SPD16_eabi.lib : unlink.c.obj (.text:unlink)
-                  00005fd8    00000028     msp432p4xx_driverlib.lib : gpio.o (.text:GPIO_enableInterrupt)
-                  00006000    00000028                              : gpio.o (.text:GPIO_setOutputHighOnPin)
-                  00006028    00000028                              : gpio.o (.text:GPIO_setOutputLowOnPin)
-                  00006050    00000028                              : spi.o (.text:SPI_getInterruptStatus)
-                  00006078    00000028                              : timer_a.o (.text:Timer_A_setCompareValue)
-                  000060a0    00000028     rtsv7M4_T_le_v4SPD16_eabi.lib : memory.c.obj (.text:free_list_insert)
-                  000060c8    00000028                                   : lseek.c.obj (.text:lseek)
-                  000060f0    00000028                                   : write.c.obj (.text:write)
-                  00006118    00000026     msp432p4xx_driverlib.lib : spi.o (.text:SPI_transmitData)
-                  0000613e    00000026     timer.obj (.text:TimerGetElapsedTime)
-                  00006164    00000024     main.obj (.text:OnTxDone)
-                  00006188    00000024     sx1276-board.obj (.text:SX1276Reset)
-                  000061ac    00000024     my_timer.obj (.text:TA3_0_IRQHandler)
-                  000061d0    00000022     my_gpio.obj (.text:GpioFlashLED)
-                  000061f2    00000002     --HOLE-- [fill = 0]
-                  000061f4    00000020     my_rtc.obj (.text:RTC_C_IRQHandler)
-                  00006214    00000020     my_RFM9x.obj (.text:SX1276SetOpMode)
-                  00006234    00000020     my_timer.obj (.text:TA1_0_IRQHandler)
-                  00006254    00000020     rtsv7M4_T_le_v4SPD16_eabi.lib : memchr.c.obj (.text:memchr)
-                  00006274    00000020                                   : u_tofd_t2.asm.obj (.text)
-                  00006294    0000001c     my_timer.obj (.text:GetTimerElapsedTime)
-                  000062b0    0000001c     my_gpio.obj (.text:GpioSetInterrupt)
-                  000062cc    0000001c     msp432p4xx_driverlib.lib : spi.o (.text:SPI_enableModule)
-                  000062e8    0000001c                              : spi.o (.text:SPI_receiveData)
-                  00006304    0000001c     my_timer.obj (.text:SetTimerContext)
-                  00006320    0000001c     my_timer.obj (.text:StopAlarm)
-                  0000633c    0000001c     rtsv7M4_T_le_v4SPD16_eabi.lib : memory.c.obj (.text:free_list_remove)
-                  00006358    0000001c                                   : memccpy.c.obj (.text:memccpy)
-                  00006374    0000001a                                   : s_copysign.c.obj (.text:copysign)
-                  0000638e    00000018     msp432p4xx_driverlib.lib : spi.o (.text:EUSCI_A_SPI_getInterruptStatus)
-                  000063a6    00000018                              : spi.o (.text:EUSCI_B_SPI_getInterruptStatus)
-                  000063be    00000002     --HOLE-- [fill = 0]
-                  000063c0    00000018     main.obj (.text:OnRxError)
-                  000063d8    00000018     main.obj (.text:OnRxTimeout)
-                  000063f0    00000018     main.obj (.text:OnTxTimeout)
-                  00006408    00000018     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_clearTimer)
-                  00006420    00000018                              : timer_a.o (.text:Timer_A_disableInterrupt)
-                  00006438    00000018                              : timer_a.o (.text:Timer_A_enableInterrupt)
-                  00006450    00000018     my_timer.obj (.text:startTiming)
-                  00006468    00000018     rtsv7M4_T_le_v4SPD16_eabi.lib : strcmp.c.obj (.text:strcmp)
-                  00006480    00000016     msp432p4xx_driverlib.lib : spi.o (.text:EUSCI_A_SPI_enable)
-                  00006496    00000016                              : spi.o (.text:EUSCI_A_SPI_transmitData)
-                  000064ac    00000016                              : spi.o (.text:EUSCI_B_SPI_enable)
-                  000064c2    00000016                              : spi.o (.text:EUSCI_B_SPI_transmitData)
-                  000064d8    00000016     my_RFM9x.obj (.text:SX1276ReadFifo)
-                  000064ee    00000016     my_RFM9x.obj (.text:SX1276WriteFifo)
-                  00006504    00000016     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_clearInterruptFlag)
-                  0000651a    00000016                              : timer_a.o (.text:Timer_A_startCounter)
-                  00006530    00000016     rtsv7M4_T_le_v4SPD16_eabi.lib : strchr.c.obj (.text:strchr)
-                  00006546    00000014     board.obj (.text:BoardCriticalSectionBegin)
-                  0000655a    00000002     --HOLE-- [fill = 0]
-                  0000655c    00000014     board.obj (.text:GetBoardPowerSource)
-                  00006570    00000014     my_timer.obj (.text:GetTimerValue)
-                  00006584    00000014     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_stopTimer)
-                  00006598    00000014     rtsv7M4_T_le_v4SPD16_eabi.lib : strcpy.c.obj (.text:strcpy)
-                  000065ac    00000014                                   : strlen.c.obj (.text:strlen)
-                  000065c0    00000012     board.obj (.text:BoardCriticalSectionEnd)
-                  000065d2    00000012     rtsv7M4_T_le_v4SPD16_eabi.lib : wcslen.c.obj (.text:wcslen)
-                  000065e4    00000010     msp432p4xx_driverlib.lib : spi.o (.text:EUSCI_A_SPI_receiveData)
-                  000065f4    00000010                              : spi.o (.text:EUSCI_B_SPI_receiveData)
-                  00006604    00000010     my_gpio.obj (.text:GpioWrite)
-                  00006614    00000010     timer.obj (.text:TimerGetCurrentTime)
-                  00006624    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  00006632    00000002     --HOLE-- [fill = 0]
-                  00006634    0000000c     my_timer.obj (.text:GetTimerContext)
-                  00006640    0000000c     startup_msp432p401r_ccs.obj (.text:Reset_Handler)
-                  0000664c    0000000c     sx1276-board.obj (.text:SX1276CheckRfFrequency)
-                  00006658    0000000c     sx1276-board.obj (.text:SX1276GetPaSelect)
-                  00006664    0000000c     my_RFM9x.obj (.text:SX1276GetStatus)
-                  00006670    0000000c     my_timer.obj (.text:Tick2Ms)
-                  0000667c    0000000c     my_timer.obj (.text:TimerMs2Tick)
-                  00006688    0000000c     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init)
-                  00006694    0000000a     my_RFM9x.obj (.text:SX1276GetWakeupTime)
-                  0000669e    00000002     --HOLE-- [fill = 0]
-                  000066a0    00000008     rtsv7M4_T_le_v4SPD16_eabi.lib : errno.c.obj (.text:__aeabi_errno_addr)
-                  000066a8    00000008                                   : memory.c.obj (.text:malloc)
-                  000066b0    00000004     my_timer.obj (.text:GetMinimumTimeout)
-                  000066b4    00000004     sx1276-board.obj (.text:SX1276GetBoardTcxoWakeupTime)
-                  000066b8    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : printf.c.obj (.text:_outc)
-                  000066bc    00000004                                   : printf.c.obj (.text:_outs)
-                  000066c0    00000004                                   : pre_init.c.obj (.text:_system_pre_init)
-                  000066c4    00000004                                   : exit.c.obj (.text:abort:abort)
+.text      0    000000e8    0000562a     
+                  000000e8    000004e8     my_RFM9x.obj (.text:SX1276OnDio0Irq)
+                  000005d0    00000420     my_RFM9x.obj (.text:SX1276SetRxConfig)
+                  000009f0    00000400     my_RFM9x.obj (.text:SX1276GetTimeOnAir)
+                  00000df0    00000348     my_RFM9x.obj (.text:SX1276SetTxConfig)
+                  00001138    0000030a     my_RFM9x.obj (.text:SX1276SetRx)
+                  00001442    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  00001446    00000002     --HOLE-- [fill = 0]
+                  00001448    00000284     board.obj (.text:BoardUnusedIoInit)
+                  000016cc    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : exit.c.obj (.text:abort:abort)
+                  000016d0    00000260     my_RFM9x.obj (.text:SX1276OnDio1Irq)
+                  00001930    000001fa     gpio-board.obj (.text:GpioMcuInit)
+                  00001b2a    000001b6     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_add_t2.asm.obj (.text)
+                  00001ce0    00000198     my_RFM9x.obj (.text:SX1276OnDio2Irq)
+                  00001e78    00000192     my_RFM9x.obj (.text:SX1276Send)
+                  0000200a    00000006     --HOLE-- [fill = 0]
+                  00002010    0000018e     my_RFM9x.obj (.text:SX1276OnTimeoutIrq)
+                  0000219e    00000002     --HOLE-- [fill = 0]
+                  000021a0    0000016e     timer.obj (.text:TimerIrqHandler)
+                  0000230e    00000002     --HOLE-- [fill = 0]
+                  00002310    00000166     main.obj (.text:RadioInit)
+                  00002476    00000002     --HOLE-- [fill = 0]
+                  00002478    0000015c     sx1276-board.obj (.text:SX1276SetRfTxPower)
+                  000025d4    00000004     --HOLE-- [fill = 0]
+                  000025d8    00000158     gpio-board.obj (.text:GpioMcuSetInterrupt)
+                  00002730    00000144     msp432p4xx_driverlib.lib : timer_a.o (.text:privateTimer_AProcessClockSourceDivider)
+                  00002874    00000004     --HOLE-- [fill = 0]
+                  00002878    00000142     main.obj (.text:main)
+                  000029ba    00000006     --HOLE-- [fill = 0]
+                  000029c0    00000138     timer.obj (.text:TimerStop)
+                  00002af8    00000136     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_div_t2.asm.obj (.text)
+                  00002c2e    00000002     --HOLE-- [fill = 0]
+                  00002c30    00000110     bme280.obj (.text:bme280_set_regs)
+                  00002d40    000000fc     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_mul_t2.asm.obj (.text)
+                  00002e3c    000000f8                                   : s_ceil.c.obj (.text:ceil)
+                  00002f34    000000f8                                   : s_floor.c.obj (.text:floor)
+                  0000302c    00000004     --HOLE-- [fill = 0]
+                  00003030    000000ec     my_RFM9x.obj (.text:SX1276SetTx)
+                  0000311c    000000e0     msp432p4xx_driverlib.lib : cs.o (.text:CS_startLFXTWithTimeout)
+                  000031fc    00000004     --HOLE-- [fill = 0]
+                  00003200    000000da     bme280.obj (.text:parse_temp_press_calib_data)
+                  000032da    00000006     --HOLE-- [fill = 0]
+                  000032e0    000000d6     my_RFM9x.obj (.text:SX1276Init)
+                  000033b6    00000002     --HOLE-- [fill = 0]
+                  000033b8    000000c8     my_RFM9x.obj (.text:RxChainCalibration)
+                  00003480    000000c4     sx1276-board.obj (.text:SX1276IoInit)
+                  00003544    00000004     --HOLE-- [fill = 0]
+                  00003548    000000c4     my_RFM9x.obj (.text:SX1276SetModem)
+                  0000360c    000000c0     rtsv7M4_T_le_v4SPD16_eabi.lib : s_round.c.obj (.text:round)
+                  000036cc    00000004     --HOLE-- [fill = 0]
+                  000036d0    000000b0     my_rtc.obj (.text:RtcInit)
+                  00003780    000000b0     msp432p4xx_driverlib.lib : spi.o (.text:SPI_initMaster)
+                  00003830    000000aa     board.obj (.text:BoardInitMcu)
+                  000038da    00000006     --HOLE-- [fill = 0]
+                  000038e0    000000a8     bme280.obj (.text:bme280_init)
+                  00003988    000000a6     my_RFM9x.obj (.text:SX1276SetTxContinuousWave)
+                  00003a2e    00000002     --HOLE-- [fill = 0]
+                  00003a30    0000009e     system_msp432p401r.obj (.text:SystemInit)
+                  00003ace    00000002     --HOLE-- [fill = 0]
+                  00003ad0    0000009c     bme280.obj (.text:bme280_soft_reset)
+                  00003b6c    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
+                  00003c08    00000098     timer.obj (.text:TimerStart)
+                  00003ca0    00000094     msp432p4xx_driverlib.lib : rtc_c.o (.text:RTC_C_getEnabledInterruptStatus)
+                  00003d34    00000004     --HOLE-- [fill = 0]
+                  00003d38    00000090     my_RFM9x.obj (.text:SX1276IsChannelFree)
+                  00003dc8    00000086     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_cmp_t2.asm.obj (.text:__aeabi_cdcmple)
+                  00003e4e    00000086                                   : fd_cmp_t2.asm.obj (.text:__aeabi_cdrcmple)
+                  00003ed4    00000004     --HOLE-- [fill = 0]
+                  00003ed8    00000084     main.obj (.text:PORT2_IRQHandler)
+                  00003f5c    00000004     --HOLE-- [fill = 0]
+                  00003f60    00000080     main.obj (.text:OnRxDone)
+                  00003fe0    00000080     bme280.obj (.text:parse_humidity_calib_data)
+                  00004060    0000007e     my_spi.obj (.text:spi_read_write)
+                  000040de    0000007a     rtsv7M4_T_le_v4SPD16_eabi.lib : memset_t2.asm.obj (.text)
+                  00004158    00000078     my_RFM9x.obj (.text:GetFskBandwidthRegValue)
+                  000041d0    00000078     my_RFM9x.obj (.text:SX1276ReadBuffer)
+                  00004248    00000076     my_RFM9x.obj (.text:SX1276ReadRssi)
+                  000042be    00000002     --HOLE-- [fill = 0]
+                  000042c0    00000076     my_RFM9x.obj (.text:SX1276WriteBuffer)
+                  00004336    00000002     --HOLE-- [fill = 0]
+                  00004338    00000068     my_RFM9x.obj (.text:SX1276Random)
+                  000043a0    00000068     my_timer.obj (.text:TimerATimerInit)
+                  00004408    00000068     timer.obj (.text:TimerInsertTimer)
+                  00004470    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+                  000044d8    00000066     bme280.obj (.text:get_calib_data)
+                  0000453e    00000002     --HOLE-- [fill = 0]
+                  00004540    00000064     msp432p4xx_driverlib.lib : rtc_c.o (.text:RTC_C_enableInterrupt)
+                  000045a4    00000004     --HOLE-- [fill = 0]
+                  000045a8    00000064     sx1276-board.obj (.text:SX1276IoIrqInit)
+                  0000460c    00000004     --HOLE-- [fill = 0]
+                  00004610    00000064     bme280.obj (.text:bme280_get_regs)
+                  00004674    00000004     --HOLE-- [fill = 0]
+                  00004678    00000060     bme280.obj (.text:interleave_reg_addr)
+                  000046d8    0000005c     msp432p4xx_driverlib.lib : rtc_c.o (.text:RTC_C_getInterruptStatus)
+                  00004734    00000004     --HOLE-- [fill = 0]
+                  00004738    00000058     gpio-board.obj (.text:GpioMcuWrite)
+                  00004790    00000054     my_RFM9x.obj (.text:SX1276SetChannel)
+                  000047e4    00000004     --HOLE-- [fill = 0]
+                  000047e8    0000004e     my_timer.obj (.text:SetAlarm)
+                  00004836    0000004e     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_initCompare)
+                  00004884    00000004     --HOLE-- [fill = 0]
+                  00004888    0000004e     my_spi.obj (.text:spiRead_RFM)
+                  000048d6    00000002     --HOLE-- [fill = 0]
+                  000048d8    0000004c     my_RFM9x.obj (.text:SX1276SetMaxPayloadLength)
+                  00004924    0000004c     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_getCounterValue)
+                  00004970    0000004c     my_timer.obj (.text:getTiming)
+                  000049bc    00000004     --HOLE-- [fill = 0]
+                  000049c0    0000004c     my_spi.obj (.text:spiWrite_RFM)
+                  00004a0c    00000048     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_toi_t2.asm.obj (.text)
+                  00004a54    00000004     --HOLE-- [fill = 0]
+                  00004a58    00000048     my_spi.obj (.text:spi_open)
+                  00004aa0    00000046     my_RFM9x.obj (.text:SX1276StartCad)
+                  00004ae6    00000002     --HOLE-- [fill = 0]
+                  00004ae8    00000044     my_timer.obj (.text:Delayms)
+                  00004b2c    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  00004b70    00000044                                   : fd_tou_t2.asm.obj (.text)
+                  00004bb4    00000004     --HOLE-- [fill = 0]
+                  00004bb8    00000042     timer.obj (.text:TimerInsertNewHeadTimer)
+                  00004bfa    00000002     --HOLE-- [fill = 0]
+                  00004bfc    00000040     msp432p4xx_driverlib.lib : gpio.o (.text:GPIO_setAsOutputPin)
+                  00004c3c    00000004     --HOLE-- [fill = 0]
+                  00004c40    00000040     my_RFM9x.obj (.text:SX1276SetSleep)
+                  00004c80    00000040     msp432p4xx_driverlib.lib : spi.o (.text:is_A_Module)
+                  00004cc0    00000040     my_timer.obj (.text:stopLoRaTimer)
+                  00004d00    0000003c     my_RFM9x.obj (.text:SX1276SetPublicNetwork)
+                  00004d3c    00000004     --HOLE-- [fill = 0]
+                  00004d40    0000003c     timer.obj (.text:TimerSetTimeout)
+                  00004d7c    00000004     --HOLE-- [fill = 0]
+                  00004d80    0000003c     timer.obj (.text:TimerSetValue)
+                  00004dbc    00000004     --HOLE-- [fill = 0]
+                  00004dc0    0000003a     my_RFM9x.obj (.text:SX1276SetStby)
+                  00004dfa    00000006     --HOLE-- [fill = 0]
+                  00004e00    0000003a     timer.obj (.text:TimerExists)
+                  00004e3a    00000006     --HOLE-- [fill = 0]
+                  00004e40    00000036     my_RFM9x.obj (.text:SX1276OnDio4Irq)
+                  00004e76    00000002     --HOLE-- [fill = 0]
+                  00004e78    00000036     timer.obj (.text:TimerInit)
+                  00004eae    00000002     --HOLE-- [fill = 0]
+                  00004eb0    00000034     my_gpio.obj (.text:GpioInit)
+                  00004ee4    00000004     --HOLE-- [fill = 0]
+                  00004ee8    00000034     my_timer.obj (.text:TA2_0_IRQHandler)
+                  00004f1c    00000034     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_configureContinuousMode)
+                  00004f50    00000034     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  00004f84    00000004     --HOLE-- [fill = 0]
+                  00004f88    00000034     bme280.obj (.text:null_ptr_check)
+                  00004fbc    0000002e     rtsv7M4_T_le_v4SPD16_eabi.lib : i_tofd_t2.asm.obj (.text)
+                  00004fea    00000006     --HOLE-- [fill = 0]
+                  00004ff0    0000002c     sx1276-board.obj (.text:SX1276Reset)
+                  0000501c    00000004     --HOLE-- [fill = 0]
+                  00005020    0000002c     my_timer.obj (.text:TA3_0_IRQHandler)
+                  0000504c    00000004     --HOLE-- [fill = 0]
+                  00005050    0000002c     timer.obj (.text:TimerGetElapsedTime)
+                  0000507c    0000002c     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_clearCaptureCompareInterrupt)
+                  000050a8    0000002c                              : timer_a.o (.text:Timer_A_enableCaptureCompareInterrupt)
+                  000050d4    00000004     --HOLE-- [fill = 0]
+                  000050d8    0000002a     main.obj (.text:OnTxDone)
+                  00005102    00000006     --HOLE-- [fill = 0]
+                  00005108    0000002a     my_timer.obj (.text:StopAlarm)
+                  00005132    00000002     --HOLE-- [fill = 0]
+                  00005134    00000028     msp432p4xx_driverlib.lib : gpio.o (.text:GPIO_enableInterrupt)
+                  0000515c    00000028                              : gpio.o (.text:GPIO_setOutputHighOnPin)
+                  00005184    00000028                              : gpio.o (.text:GPIO_setOutputLowOnPin)
+                  000051ac    00000004     --HOLE-- [fill = 0]
+                  000051b0    00000028     my_gpio.obj (.text:GpioFlashLED)
+                  000051d8    00000028     my_rtc.obj (.text:RTC_C_IRQHandler)
+                  00005200    00000028     msp432p4xx_driverlib.lib : spi.o (.text:SPI_getInterruptStatus)
+                  00005228    00000028                              : timer_a.o (.text:Timer_A_setCompareValue)
+                  00005250    00000026                              : spi.o (.text:SPI_transmitData)
+                  00005276    00000002     --HOLE-- [fill = 0]
+                  00005278    00000024     my_timer.obj (.text:SetTimerContext)
+                  0000529c    00000004     --HOLE-- [fill = 0]
+                  000052a0    00000024     my_timer.obj (.text:TA0_0_IRQHandler)
+                  000052c4    00000004     --HOLE-- [fill = 0]
+                  000052c8    00000022     my_gpio.obj (.text:GpioSetInterrupt)
+                  000052ea    00000006     --HOLE-- [fill = 0]
+                  000052f0    00000020     my_timer.obj (.text:GetTimerElapsedTime)
+                  00005310    00000020     my_RFM9x.obj (.text:SX1276SetOpMode)
+                  00005330    00000020     rtsv7M4_T_le_v4SPD16_eabi.lib : u_tofd_t2.asm.obj (.text)
+                  00005350    0000001e     my_timer.obj (.text:startTiming)
+                  0000536e    00000002     --HOLE-- [fill = 0]
+                  00005370    0000001c     main.obj (.text:OnRxError)
+                  0000538c    00000004     --HOLE-- [fill = 0]
+                  00005390    0000001c     main.obj (.text:OnRxTimeout)
+                  000053ac    00000004     --HOLE-- [fill = 0]
+                  000053b0    0000001c     main.obj (.text:OnTxTimeout)
+                  000053cc    0000001c     msp432p4xx_driverlib.lib : spi.o (.text:SPI_enableModule)
+                  000053e8    0000001c                              : spi.o (.text:SPI_receiveData)
+                  00005404    00000004     --HOLE-- [fill = 0]
+                  00005408    0000001c     my_RFM9x.obj (.text:SX1276ReadFifo)
+                  00005424    00000004     --HOLE-- [fill = 0]
+                  00005428    0000001c     my_RFM9x.obj (.text:SX1276WriteFifo)
+                  00005444    0000001c     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  00005460    00000018     msp432p4xx_driverlib.lib : spi.o (.text:EUSCI_A_SPI_getInterruptStatus)
+                  00005478    00000018                              : spi.o (.text:EUSCI_B_SPI_getInterruptStatus)
+                  00005490    00000018                              : sysctl_a.o (.text:SysCtl_A_disableNMISource)
+                  000054a8    00000018                              : sysctl_a.o (.text:SysCtl_A_enableNMISource)
+                  000054c0    00000018                              : timer_a.o (.text:Timer_A_clearTimer)
+                  000054d8    00000018                              : timer_a.o (.text:Timer_A_disableInterrupt)
+                  000054f0    00000018                              : timer_a.o (.text:Timer_A_enableInterrupt)
+                  00005508    00000016                              : spi.o (.text:EUSCI_A_SPI_enable)
+                  0000551e    00000016                              : spi.o (.text:EUSCI_A_SPI_transmitData)
+                  00005534    00000016                              : spi.o (.text:EUSCI_B_SPI_enable)
+                  0000554a    00000016                              : spi.o (.text:EUSCI_B_SPI_transmitData)
+                  00005560    00000016     my_gpio.obj (.text:GpioWrite)
+                  00005576    00000016     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_clearInterruptFlag)
+                  0000558c    00000016                              : timer_a.o (.text:Timer_A_startCounter)
+                  000055a2    00000006     --HOLE-- [fill = 0]
+                  000055a8    00000014     board.obj (.text:BoardCriticalSectionBegin)
+                  000055bc    00000004     --HOLE-- [fill = 0]
+                  000055c0    00000014     board.obj (.text:GetBoardPowerSource)
+                  000055d4    00000004     --HOLE-- [fill = 0]
+                  000055d8    00000014     my_timer.obj (.text:GetTimerValue)
+                  000055ec    00000014     msp432p4xx_driverlib.lib : timer_a.o (.text:Timer_A_stopTimer)
+                  00005600    00000012     board.obj (.text:BoardCriticalSectionEnd)
+                  00005612    00000010     msp432p4xx_driverlib.lib : spi.o (.text:EUSCI_A_SPI_receiveData)
+                  00005622    00000010                              : spi.o (.text:EUSCI_B_SPI_receiveData)
+                  00005632    00000002     --HOLE-- [fill = 0]
+                  00005634    00000010                              : sysctl_a.o (.text:SysCtl_A_getNMISourceStatus)
+                  00005644    00000004     --HOLE-- [fill = 0]
+                  00005648    00000010     timer.obj (.text:TimerGetCurrentTime)
+                  00005658    0000000e     msp432p4xx_driverlib.lib : cs.o (.text:CS_startLFXT)
+                  00005666    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  00005674    00000004     --HOLE-- [fill = 0]
+                  00005678    0000000c     my_timer.obj (.text:GetTimerContext)
+                  00005684    00000004     --HOLE-- [fill = 0]
+                  00005688    0000000c     startup_msp432p401r_ccs.obj (.text:Reset_Handler)
+                  00005694    00000004     --HOLE-- [fill = 0]
+                  00005698    0000000c     sx1276-board.obj (.text:SX1276CheckRfFrequency)
+                  000056a4    00000004     --HOLE-- [fill = 0]
+                  000056a8    0000000c     sx1276-board.obj (.text:SX1276GetPaSelect)
+                  000056b4    00000004     --HOLE-- [fill = 0]
+                  000056b8    0000000c     my_RFM9x.obj (.text:SX1276GetStatus)
+                  000056c4    00000004     --HOLE-- [fill = 0]
+                  000056c8    0000000c     my_timer.obj (.text:Tick2Ms)
+                  000056d4    00000004     --HOLE-- [fill = 0]
+                  000056d8    0000000c     my_timer.obj (.text:TimerMs2Tick)
+                  000056e4    00000004     --HOLE-- [fill = 0]
+                  000056e8    0000000a     my_RFM9x.obj (.text:SX1276GetWakeupTime)
+                  000056f2    00000006     --HOLE-- [fill = 0]
+                  000056f8    00000004     my_timer.obj (.text:GetMinimumTimeout)
+                  000056fc    00000004     --HOLE-- [fill = 0]
+                  00005700    00000004     sx1276-board.obj (.text:SX1276GetBoardTcxoWakeupTime)
+                  00005704    00000004     --HOLE-- [fill = 0]
+                  00005708    00000002     startup_msp432p401r_ccs.obj (.text:Default_Handler)
+                  0000570a    00000006     --HOLE-- [fill = 0]
+                  00005710    00000002     my_systick.obj (.text:SysTick_Handler)
 
-.const     0    000066c8    000002d4     
-                  000066c8    00000101     rtsv7M4_T_le_v4SPD16_eabi.lib : ctype.c.obj (.const:.string:_ctypes_)
-                  000067c9    00000003     --HOLE-- [fill = 0]
-                  000067cc    000000b0     my_RFM9x.obj (.const:FskBandwidths)
-                  0000687c    0000006c     sx1276-board.obj (.const:Radio)
-                  000068e8    00000030     msp432p4xx_driverlib.lib : gpio.o (.const:GPIO_PORT_TO_BASE)
-                  00006918    00000030     my_RFM9x.obj (.const:RadioRegsInit)
-                  00006948    0000001c     my_spi.obj (.const:spiMasterConfig)
-                  00006964    00000018     my_timer.obj (.const:upConfig)
-                  0000697c    00000010     my_timer.obj (.const:$P$T1$2)
-                  0000698c    00000010     my_timer.obj (.const:contConfig0)
+.const     0    00005714    000001d4     
+                  00005714    000000b0     my_RFM9x.obj (.const:FskBandwidths)
+                  000057c4    0000006c     sx1276-board.obj (.const:Radio)
+                  00005830    00000030     msp432p4xx_driverlib.lib : gpio.o (.const:GPIO_PORT_TO_BASE)
+                  00005860    00000030     my_RFM9x.obj (.const:RadioRegsInit)
+                  00005890    0000001c     my_rtc.obj (.const:currentTime)
+                  000058ac    0000001c     my_spi.obj (.const:spiMasterConfig)
+                  000058c8    00000010     my_timer.obj (.const:$P$T1$2)
+                  000058d8    00000010     my_timer.obj (.const:contConfig0)
 
-.cinit     0    000069a0    00000098     
-                  000069a0    0000006f     (.cinit..data.load) [load image, compression = lzss]
-                  00006a0f    00000001     --HOLE-- [fill = 0]
-                  00006a10    0000000c     (__TI_handler_table)
-                  00006a1c    00000004     --HOLE-- [fill = 0]
-                  00006a20    00000008     (.cinit..bss.load) [load image, compression = zero_init]
-                  00006a28    00000010     (__TI_cinit_table)
+.cinit     0    000058e8    00000038     
+                  000058e8    00000013     (.cinit..data.load) [load image, compression = lzss]
+                  000058fb    00000001     --HOLE-- [fill = 0]
+                  000058fc    0000000c     (__TI_handler_table)
+                  00005908    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00005910    00000010     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
 
 .binit     0    00000000    00000000     
 
-.sysmem    0    20000000    00000800     UNINITIALIZED
-                  20000000    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : memory.c.obj (.sysmem)
-                  20000010    000007f0     --HOLE--
+.bss       0    20000000    000002ec     UNINITIALIZED
+                  20000000    00000104     (.common:SX1276)
+                  20000104    00000100     my_RFM9x.obj (.bss:RxTxBuffer)
+                  20000204    00000040     (.common:dev)
+                  20000244    0000001c     main.obj (.bss:RadioEvents)
+                  20000260    00000018     (.common:RxTimeoutSyncWord)
+                  20000278    00000018     (.common:RxTimeoutTimer)
+                  20000290    00000018     (.common:TxTimeoutTimer)
+                  200002a8    00000014     (.common:Led1)
+                  200002bc    00000014     (.common:Led2)
+                  200002d0    00000014     (.common:Led3)
+                  200002e4    00000004     my_timer.obj (.bss:TimerContext)
+                  200002e8    00000004     my_RFM9x.obj (.bss)
 
-.bss       0    20000800    00000474     UNINITIALIZED
-                  20000800    00000120     rtsv7M4_T_le_v4SPD16_eabi.lib : trgmsg.c.obj (.bss:_CIOBUF_)
-                  20000920    00000104     (.common:SX1276)
-                  20000a24    00000100     my_RFM9x.obj (.bss:RxTxBuffer)
-                  20000b24    000000a0     (.common:__TI_tmpnams)
-                  20000bc4    0000001c     main.obj (.bss:RadioEvents)
-                  20000be0    00000018     (.common:RxTimeoutSyncWord)
-                  20000bf8    00000018     (.common:RxTimeoutTimer)
-                  20000c10    00000018     (.common:TxTimeoutTimer)
-                  20000c28    00000014     (.common:Led1)
-                  20000c3c    00000014     (.common:Led2)
-                  20000c50    00000014     (.common:Led3)
-                  20000c64    00000008     (.common:parmbuf)
-                  20000c6c    00000004     my_timer.obj (.bss:TimerContext)
-                  20000c70    00000004     my_RFM9x.obj (.bss)
-
-.data      0    20000c74    0000023a     UNINITIALIZED
-                  20000c74    000000f0     rtsv7M4_T_le_v4SPD16_eabi.lib : defs.c.obj (.data:_ftable)
-                  20000d64    00000078                                   : host_device.c.obj (.data:_device)
-                  20000ddc    00000050                                   : host_device.c.obj (.data:_stream)
-                  20000e2c    00000040     main.obj (.data:Buffer)
-                  20000e6c    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : defs.c.obj (.data)
-                  20000e7c    0000000c                                   : exit.c.obj (.data:$O1$$)
-                  20000e88    0000000c     main.obj (.data)
-                  20000e94    00000008     rtsv7M4_T_le_v4SPD16_eabi.lib : _lock.c.obj (.data:$O1$$)
-                  20000e9c    00000008                                   : memory.c.obj (.data:$O1$$)
-                  20000ea4    00000004                                   : errno.c.obj (.data)
-                  20000ea8    00000004     timer.obj (.data)
-                  20000eac    00000001     board.obj (.data)
-                  20000ead    00000001     my_timer.obj (.data)
+.data      0    200002ec    00000056     UNINITIALIZED
+                  200002ec    00000040     main.obj (.data:Buffer)
+                  2000032c    0000000b     main.obj (.data)
+                  20000337    00000005     main.obj (.data:buffer)
+                  2000033c    00000004     timer.obj (.data)
+                  20000340    00000001     board.obj (.data)
+                  20000341    00000001     my_timer.obj (.data)
 
 .stack     0    2000fe00    00000200     UNINITIALIZED
                   2000fe00    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.stack)
@@ -340,20 +341,21 @@ MODULE SUMMARY
        Module                        code    ro data   rw data
        ------                        ----    -------   -------
     .\
-       my_RFM9x.obj                  7496    224       1184   
-       main.obj                      920     0         208    
-       timer.obj                     994     0         8      
-       board.obj                     718     0         122    
-       gpio-board.obj                800     0         0      
-       sx1276-board.obj              668     108       0      
-       my_timer.obj                  624     56        10     
-       my_spi.obj                    260     28        0      
-       my_gpio.obj                   126     0         0      
-       system_msp432p401r.obj        120     0         0      
-       my_rtc.obj                    32      0         0      
+       my_RFM9x.obj                  9082    224       1184   
+       main.obj                      1066    0         344    
+       timer.obj                     1292    0         8      
+       bme280.obj                    1292    0         0      
+       board.obj                     872     0         122    
+       gpio-board.obj                938     0         0      
+       sx1276-board.obj              716     108       0      
+       my_timer.obj                  722     32        10     
+       my_spi.obj                    352     28        0      
+       my_rtc.obj                    216     28        0      
+       system_msp432p401r.obj        158     0         0      
+       my_gpio.obj                   148     0         0      
        my_systick.obj                2       0         0      
     +--+-----------------------------+-------+---------+---------+
-       Total:                        12760   416       1532   
+       Total:                        16856   420       1668   
                                                               
     .\ccs\
        startup_msp432p401r_ccs.obj   14      228       0      
@@ -363,96 +365,53 @@ MODULE SUMMARY
     C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/ccs/msp432p4xx_driverlib.lib
        timer_a.o                     794     0         0      
        spi.o                         542     0         0      
-       rtc_c.o                       240     0         0      
+       rtc_c.o                       340     0         0      
+       cs.o                          238     0         0      
        gpio.o                        184     48        0      
+       sysctl_a.o                    64      0         0      
     +--+-----------------------------+-------+---------+---------+
-       Total:                        1760    48        0      
+       Total:                        2162    48        0      
                                                               
     C:\ti\ccs930\ccs\tools\compiler\ti-cgt-arm_18.12.5.LTS\lib\rtsv7M4_T_le_v4SPD16_eabi.lib
-       _printfi.c.obj                4851    0         0      
-       defs.c.obj                    0       0         832    
-       memory.c.obj                  696     0         16     
-       trgmsg.c.obj                  108     0         576    
        fd_add_t2.asm.obj             438     0         0      
-       host_device.c.obj             0       0         400    
        fd_div_t2.asm.obj             310     0         0      
-       fputs.c.obj                   276     0         0      
-       s_scalbn.c.obj                272     0         0      
        fd_cmp_t2.asm.obj             268     0         0      
-       ctype.c.obj                   0       257       0      
        fd_mul_t2.asm.obj             252     0         0      
        s_ceil.c.obj                  248     0         0      
        s_floor.c.obj                 248     0         0      
-       setvbuf.c.obj                 220     0         0      
        s_round.c.obj                 192     0         0      
        memcpy_t2.asm.obj             156     0         0      
-       ull_div_t2.asm.obj            150     0         0      
-       fputc.c.obj                   140     0         0      
        memset_t2.asm.obj             122     0         0      
-       fclose.c.obj                  116     0         0      
-       getdevice.c.obj               116     0         0      
-       hostopen.c.obj                96      0         16     
-       printf.c.obj                  112     0         0      
-       hostrename.c.obj              108     0         0      
        copy_decompress_lzss.c.obj    104     0         0      
-       hostlseek.c.obj               104     0         0      
-       exit.c.obj                    76      0         24     
-       fseek.c.obj                   100     0         0      
-       s_frexp.c.obj                 100     0         0      
-       _io_perm.c.obj                98      0         0      
-       close.c.obj                   92      0         0      
-       hostread.c.obj                88      0         0      
-       hostwrite.c.obj               88      0         0      
-       ltoa.c.obj                    84      0         0      
-       atoi.c.obj                    76      0         0      
-       fflush.c.obj                  76      0         0      
        fd_toi_t2.asm.obj             72      0         0      
        autoinit.c.obj                68      0         0      
        fd_tou_t2.asm.obj             68      0         0      
-       hostclose.c.obj               68      0         0      
-       hostunlink.c.obj              68      0         0      
-       strncpy.c.obj                 54      0         0      
        boot_cortex_m.c.obj           52      0         0      
-       fopen.c.obj                   52      0         0      
        i_tofd_t2.asm.obj             46      0         0      
-       unlink.c.obj                  44      0         0      
-       lseek.c.obj                   40      0         0      
-       write.c.obj                   40      0         0      
-       memchr.c.obj                  32      0         0      
        u_tofd_t2.asm.obj             32      0         0      
-       memccpy.c.obj                 28      0         0      
-       s_copysign.c.obj              26      0         0      
-       strcmp.c.obj                  24      0         0      
-       strchr.c.obj                  22      0         0      
-       strcpy.c.obj                  20      0         0      
-       strlen.c.obj                  20      0         0      
-       _lock.c.obj                   2       0         16     
-       wcslen.c.obj                  18      0         0      
-       errno.c.obj                   8       0         8      
+       copy_zero_init.c.obj          28      0         0      
        copy_decompress_none.c.obj    14      0         0      
-       copy_zero_init.c.obj          12      0         0      
+       exit.c.obj                    4       0         0      
        pre_init.c.obj                4       0         0      
-       div0.asm.obj                  2       0         0      
     +--+-----------------------------+-------+---------+---------+
-       Total:                        11517   257       1888   
+       Total:                        2726    0         0      
                                                               
-       Heap:                         0       0         4096   
        Stack:                        0       0         1024   
-       Linker Generated:             0       147       0      
+       Linker Generated:             0       55        0      
     +--+-----------------------------+-------+---------+---------+
-       Grand Total:                  26051   1096      8540   
+       Grand Total:                  21758   751       2692   
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 00006a28 records: 2, size/record: 8, table size: 16
-	.data: load addr=000069a0, load size=0000006f bytes, run addr=20000c74, run size=0000023a bytes, compression=lzss
-	.bss: load addr=00006a20, load size=00000008 bytes, run addr=20000800, run size=00000474 bytes, compression=zero_init
+__TI_cinit_table @ 00005910 records: 2, size/record: 8, table size: 16
+	.data: load addr=000058e8, load size=00000013 bytes, run addr=200002ec, run size=00000056 bytes, compression=lzss
+	.bss: load addr=00005908, load size=00000008 bytes, run addr=20000000, run size=000002ec bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00006a10 records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 000058fc records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_decompress_lzss
 	index: 1, handler: __TI_decompress_none
 	index: 2, handler: __TI_zero_init
@@ -462,331 +421,269 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                                 
 -------   ----                                 
-00000b33  ADC14_IRQHandler                     
-00000b33  AES256_IRQHandler                    
-00006547  BoardCriticalSectionBegin            
-000065c1  BoardCriticalSectionEnd              
-00004589  BoardInitMcu                         
-20000e2c  Buffer                               
-20000e90  BufferSize                           
-00000b33  BusFault_Handler                     
-000066c5  C$$EXIT                              
-00005c53  C$$IO$$                              
-00000b33  COMP_E0_IRQHandler                   
-00000b33  COMP_E1_IRQHandler                   
-00000b33  CS_IRQHandler                        
-20000e88  DIO0Flag                             
-20000e89  DIO1Flag                             
-20000e8a  DIO2Flag                             
-20000e8b  DIO3Flag                             
-20000e8c  DIO4Flag                             
-00000b33  DMA_ERR_IRQHandler                   
-00000b33  DMA_INT0_IRQHandler                  
-00000b33  DMA_INT1_IRQHandler                  
-00000b33  DMA_INT2_IRQHandler                  
-00000b33  DMA_INT3_IRQHandler                  
-00000b33  DebugMon_Handler                     
-00000b33  Default_Handler                      
-000051b5  Delayms                              
-00000b33  EUSCIA0_IRQHandler                   
-00000b33  EUSCIA1_IRQHandler                   
-00000b33  EUSCIA2_IRQHandler                   
-00000b33  EUSCIA3_IRQHandler                   
-00000b33  EUSCIB0_IRQHandler                   
-00000b33  EUSCIB1_IRQHandler                   
-00000b33  EUSCIB2_IRQHandler                   
-00000b33  EUSCIB3_IRQHandler                   
-00006481  EUSCI_A_SPI_enable                   
-0000638f  EUSCI_A_SPI_getInterruptStatus       
-000065e5  EUSCI_A_SPI_receiveData              
-00006497  EUSCI_A_SPI_transmitData             
-000064ad  EUSCI_B_SPI_enable                   
-000063a7  EUSCI_B_SPI_getInterruptStatus       
-000065f5  EUSCI_B_SPI_receiveData              
-000064c3  EUSCI_B_SPI_transmitData             
-00000b33  FLCTL_IRQHandler                     
-00000b33  FPU_IRQHandler                       
-000067cc  FskBandwidths                        
-00005fd9  GPIO_enableInterrupt                 
-00005985  GPIO_setAsOutputPin                  
-00006001  GPIO_setOutputHighOnPin              
-00006029  GPIO_setOutputLowOnPin               
-0000655d  GetBoardPowerSource                  
-00004ded  GetFskBandwidthRegValue              
-000066b1  GetMinimumTimeout                    
-00006635  GetTimerContext                      
-00006295  GetTimerElapsedTime                  
-00006571  GetTimerValue                        
-000061d1  GpioFlashLED                         
-00005e39  GpioInit                             
-00002195  GpioMcuInit                          
-00003209  GpioMcuSetInterrupt                  
-00005765  GpioMcuWrite                         
-000062b1  GpioSetInterrupt                     
-00006605  GpioWrite                            
-000057a9  HOSTclose                            
-00004c4d  HOSTlseek                            
-00004f7d  HOSTopen                             
-0000520d  HOSTread                             
-00004b75  HOSTrename                           
-000057ed  HOSTunlink                           
-00005265  HOSTwrite                            
-00000b33  HardFault_Handler                    
-20000c28  Led1                                 
-20000c3c  Led2                                 
-20000c50  Led3                                 
-00000b33  MemManage_Handler                    
-00000b33  NMI_Handler                          
-00004cb5  OnRxDone                             
-000063c1  OnRxError                            
-000063d9  OnRxTimeout                          
-00006165  OnTxDone                             
-000063f1  OnTxTimeout                          
-00000b33  PCM_IRQHandler                       
-00000b33  PORT1_IRQHandler                     
-000048b1  PORT2_IRQHandler                     
-000048b1  PORT2_IRQHandler                     
-00000b33  PORT3_IRQHandler                     
-00000b33  PORT4_IRQHandler                     
-00000b33  PORT5_IRQHandler                     
-00000b33  PORT6_IRQHandler                     
-00000b33  PSS_IRQHandler                       
-00000b33  PendSV_Handler                       
-00005bb5  RFM_spi_read_write                   
-000061f5  RTC_C_IRQHandler                     
-000061f5  RTC_C_IRQHandler                     
-000044f5  RTC_C_getEnabledInterruptStatus      
-000050fd  RTC_C_getInterruptStatus             
-0000687c  Radio                                
-00002511  RadioInit                            
-00006918  RadioRegsInit                        
-20000e8d  RadioTimeoutFlag                     
-00006641  Reset_Handler                        
-20000e92  RssiValue                            
-000041dd  RxChainCalibration                   
-20000be0  RxTimeoutSyncWord                    
-20000bf8  RxTimeoutTimer                       
-000062cd  SPI_enableModule                     
-00006051  SPI_getInterruptStatus               
-0000407b  SPI_initMaster                       
-000062e9  SPI_receiveData                      
-00006119  SPI_transmitData                     
-00000b33  SVC_Handler                          
-20000920  SX1276                               
-0000664d  SX1276CheckRfFrequency               
-000066b5  SX1276GetBoardTcxoWakeupTime         
-00006665  SX1276GetStatus                      
-00000eed  SX1276GetTimeOnAir                   
-00006695  SX1276GetWakeupTime                  
-00003f15  SX1276Init                           
-0000412d  SX1276IoInit                         
-000052bd  SX1276IoIrqInit                      
-00004831  SX1276IsChannelFree                  
-00001285  SX1276OnDio0Irq                      
-00002695  SX1276OnDio1Irq                      
-00002bf5  SX1276OnDio2Irq                      
-00005ac5  SX1276OnDio4Irq                      
-00002d35  SX1276OnTimeoutIrq                   
-0000509d  SX1276Random                         
-00004fdd  SX1276ReadBuffer                     
-000064d9  SX1276ReadFifo                       
-00004be1  SX1276ReadRssi                       
-00006189  SX1276Reset                          
-00002965  SX1276Send                           
-000054c1  SX1276SetChannel                     
-00005645  SX1276SetMaxPayloadLength            
-00004285  SX1276SetModem                       
-00006215  SX1276SetOpMode                      
-00005b01  SX1276SetPublicNetwork               
-00002811  SX1276SetRfTxPower                   
-000018c1  SX1276SetRx                          
-00000b35  SX1276SetRxConfig                    
-00005bed  SX1276SetSleep                       
-00005d01  SX1276SetStby                        
-00003ccd  SX1276SetTx                          
-000015d5  SX1276SetTxConfig                    
-00004325  SX1276SetTxContinuousWave            
-00005831  SX1276StartCad                       
-0000503d  SX1276WriteBuffer                    
-000064ef  SX1276WriteFifo                      
-000059c5  SetAlarm                             
-00006305  SetTimerContext                      
-20000e93  SnrValue                             
-20000e8e  State                                
-00006321  StopAlarm                            
-0000250f  SysTick_Handler                      
-0000250f  SysTick_Handler                      
-000049a9  SystemInit                           
-00000b33  T32_INT1_IRQHandler                  
-00000b33  T32_INT2_IRQHandler                  
-00000b33  T32_INTC_IRQHandler                  
-00000b33  TA0_0_IRQHandler                     
-00000b33  TA0_N_IRQHandler                     
-00006235  TA1_0_IRQHandler                     
-00006235  TA1_0_IRQHandler                     
-00000b33  TA1_N_IRQHandler                     
-00005e69  TA2_0_IRQHandler                     
-00005e69  TA2_0_IRQHandler                     
-00000b33  TA2_N_IRQHandler                     
-000061ad  TA3_0_IRQHandler                     
-000061ad  TA3_0_IRQHandler                     
-00000b33  TA3_N_IRQHandler                     
-00006671  Tick2Ms                              
-00005b3d  TimerAInteruptInit                   
-000053c5  TimerATimerInit                      
-00006615  TimerGetCurrentTime                  
-0000613f  TimerGetElapsedTime                  
-00005c5d  TimerInit                            
-20000ead  TimerInteruptFlag                    
-00003949  TimerIrqHandler                      
-0000667d  TimerMs2Tick                         
-00005b79  TimerSetValue                        
-000047ad  TimerStart                           
-00003b15  TimerStop                            
-00005f29  Timer_A_clearCaptureCompareInterrupt 
-00006505  Timer_A_clearInterruptFlag           
-00006409  Timer_A_clearTimer                   
-00005d69  Timer_A_configureContinuousMode      
-00006421  Timer_A_disableInterrupt             
-00005f55  Timer_A_enableCaptureCompareInterrupt
-00006439  Timer_A_enableInterrupt              
-0000555f  Timer_A_getCounterValue              
-00005511  Timer_A_initCompare                  
-00006079  Timer_A_setCompareValue              
-0000651b  Timer_A_startCounter                 
-00006585  Timer_A_stopTimer                    
-20000c10  TxTimeoutTimer                       
-00000b33  UsageFault_Handler                   
+00005709  ADC14_IRQHandler                     
+00005709  AES256_IRQHandler                    
+000055a9  BoardCriticalSectionBegin            
+00005601  BoardCriticalSectionEnd              
+00003831  BoardInitMcu                         
+200002ec  Buffer                               
+20000332  BufferSize                           
+00005709  BusFault_Handler                     
+000016cd  C$$EXIT                              
+00005709  COMP_E0_IRQHandler                   
+00005709  COMP_E1_IRQHandler                   
+00005709  CS_IRQHandler                        
+00005659  CS_startLFXT                         
+0000311d  CS_startLFXTWithTimeout              
+2000032c  DIO0Flag                             
+2000032d  DIO1Flag                             
+2000032e  DIO2Flag                             
+2000032f  DIO3Flag                             
+20000330  DIO4Flag                             
+00005709  DMA_ERR_IRQHandler                   
+00005709  DMA_INT0_IRQHandler                  
+00005709  DMA_INT1_IRQHandler                  
+00005709  DMA_INT2_IRQHandler                  
+00005709  DMA_INT3_IRQHandler                  
+00005709  DebugMon_Handler                     
+00005709  Default_Handler                      
+00004ae9  Delayms                              
+00005709  EUSCIA0_IRQHandler                   
+00005709  EUSCIA1_IRQHandler                   
+00005709  EUSCIA2_IRQHandler                   
+00005709  EUSCIA3_IRQHandler                   
+00005709  EUSCIB0_IRQHandler                   
+00005709  EUSCIB1_IRQHandler                   
+00005709  EUSCIB2_IRQHandler                   
+00005709  EUSCIB3_IRQHandler                   
+00005509  EUSCI_A_SPI_enable                   
+00005461  EUSCI_A_SPI_getInterruptStatus       
+00005613  EUSCI_A_SPI_receiveData              
+0000551f  EUSCI_A_SPI_transmitData             
+00005535  EUSCI_B_SPI_enable                   
+00005479  EUSCI_B_SPI_getInterruptStatus       
+00005623  EUSCI_B_SPI_receiveData              
+0000554b  EUSCI_B_SPI_transmitData             
+00005709  FLCTL_IRQHandler                     
+00005709  FPU_IRQHandler                       
+00005714  FskBandwidths                        
+00005135  GPIO_enableInterrupt                 
+00004bfd  GPIO_setAsOutputPin                  
+0000515d  GPIO_setOutputHighOnPin              
+00005185  GPIO_setOutputLowOnPin               
+000055c1  GetBoardPowerSource                  
+00004159  GetFskBandwidthRegValue              
+000056f9  GetMinimumTimeout                    
+00005679  GetTimerContext                      
+000052f1  GetTimerElapsedTime                  
+000055d9  GetTimerValue                        
+000051b1  GpioFlashLED                         
+00004eb1  GpioInit                             
+00001931  GpioMcuInit                          
+000025d9  GpioMcuSetInterrupt                  
+00004739  GpioMcuWrite                         
+000052c9  GpioSetInterrupt                     
+00005561  GpioWrite                            
+00005709  HardFault_Handler                    
+200002a8  Led1                                 
+200002bc  Led2                                 
+200002d0  Led3                                 
+00005709  MemManage_Handler                    
+00005709  NMI_Handler                          
+00003f61  OnRxDone                             
+00005371  OnRxError                            
+00005391  OnRxTimeout                          
+000050d9  OnTxDone                             
+000053b1  OnTxTimeout                          
+00005709  PCM_IRQHandler                       
+00005709  PORT1_IRQHandler                     
+00003ed9  PORT2_IRQHandler                     
+00003ed9  PORT2_IRQHandler                     
+00005709  PORT3_IRQHandler                     
+00005709  PORT4_IRQHandler                     
+00005709  PORT5_IRQHandler                     
+00005709  PORT6_IRQHandler                     
+00005709  PSS_IRQHandler                       
+00005709  PendSV_Handler                       
+000051d9  RTC_C_IRQHandler                     
+000051d9  RTC_C_IRQHandler                     
+00004541  RTC_C_enableInterrupt                
+00003ca1  RTC_C_getEnabledInterruptStatus      
+000046d9  RTC_C_getInterruptStatus             
+000057c4  Radio                                
+00002311  RadioInit                            
+00005860  RadioRegsInit                        
+00005689  Reset_Handler                        
+20000334  RssiValue                            
+000036d1  RtcInit                              
+000033b9  RxChainCalibration                   
+20000260  RxTimeoutSyncWord                    
+20000278  RxTimeoutTimer                       
+000053cd  SPI_enableModule                     
+00005201  SPI_getInterruptStatus               
+00003781  SPI_initMaster                       
+000053e9  SPI_receiveData                      
+00005251  SPI_transmitData                     
+00005709  SVC_Handler                          
+20000000  SX1276                               
+00005699  SX1276CheckRfFrequency               
+00005701  SX1276GetBoardTcxoWakeupTime         
+000056b9  SX1276GetStatus                      
+000009f1  SX1276GetTimeOnAir                   
+000056e9  SX1276GetWakeupTime                  
+000032e1  SX1276Init                           
+00003481  SX1276IoInit                         
+000045a9  SX1276IoIrqInit                      
+00003d39  SX1276IsChannelFree                  
+000000e9  SX1276OnDio0Irq                      
+000016d1  SX1276OnDio1Irq                      
+00001ce1  SX1276OnDio2Irq                      
+00004e41  SX1276OnDio4Irq                      
+00002011  SX1276OnTimeoutIrq                   
+00004339  SX1276Random                         
+000041d1  SX1276ReadBuffer                     
+00005409  SX1276ReadFifo                       
+00004249  SX1276ReadRssi                       
+00004ff1  SX1276Reset                          
+00001e79  SX1276Send                           
+00004791  SX1276SetChannel                     
+000048d9  SX1276SetMaxPayloadLength            
+00003549  SX1276SetModem                       
+00005311  SX1276SetOpMode                      
+00004d01  SX1276SetPublicNetwork               
+00002479  SX1276SetRfTxPower                   
+00001139  SX1276SetRx                          
+000005d1  SX1276SetRxConfig                    
+00004c41  SX1276SetSleep                       
+00004dc1  SX1276SetStby                        
+00003031  SX1276SetTx                          
+00000df1  SX1276SetTxConfig                    
+00003989  SX1276SetTxContinuousWave            
+00004aa1  SX1276StartCad                       
+000042c1  SX1276WriteBuffer                    
+00005429  SX1276WriteFifo                      
+000047e9  SetAlarm                             
+00005279  SetTimerContext                      
+20000335  SnrValue                             
+20000331  State                                
+00005109  StopAlarm                            
+00005491  SysCtl_A_disableNMISource            
+000054a9  SysCtl_A_enableNMISource             
+00005635  SysCtl_A_getNMISourceStatus          
+00005711  SysTick_Handler                      
+00005711  SysTick_Handler                      
+00003a31  SystemInit                           
+00005709  T32_INT1_IRQHandler                  
+00005709  T32_INT2_IRQHandler                  
+00005709  T32_INTC_IRQHandler                  
+000052a1  TA0_0_IRQHandler                     
+000052a1  TA0_0_IRQHandler                     
+00005709  TA0_N_IRQHandler                     
+00005709  TA1_0_IRQHandler                     
+00005709  TA1_N_IRQHandler                     
+00004ee9  TA2_0_IRQHandler                     
+00004ee9  TA2_0_IRQHandler                     
+00005709  TA2_N_IRQHandler                     
+00005021  TA3_0_IRQHandler                     
+00005021  TA3_0_IRQHandler                     
+00005709  TA3_N_IRQHandler                     
+000056c9  Tick2Ms                              
+000043a1  TimerATimerInit                      
+00005649  TimerGetCurrentTime                  
+00005051  TimerGetElapsedTime                  
+00004e79  TimerInit                            
+000021a1  TimerIrqHandler                      
+000056d9  TimerMs2Tick                         
+00004d81  TimerSetValue                        
+00003c09  TimerStart                           
+000029c1  TimerStop                            
+0000507d  Timer_A_clearCaptureCompareInterrupt 
+00005577  Timer_A_clearInterruptFlag           
+000054c1  Timer_A_clearTimer                   
+00004f1d  Timer_A_configureContinuousMode      
+000054d9  Timer_A_disableInterrupt             
+000050a9  Timer_A_enableCaptureCompareInterrupt
+000054f1  Timer_A_enableInterrupt              
+00004925  Timer_A_getCounterValue              
+00004837  Timer_A_initCompare                  
+00005229  Timer_A_setCompareValue              
+0000558d  Timer_A_startCounter                 
+000055ed  Timer_A_stopTimer                    
+20000290  TxTimeoutTimer                       
+00005709  UsageFault_Handler                   
 4000480c  WDTCTL_SYM                           
-00000b33  WDT_A_IRQHandler                     
-20000800  __CIOBUF_                            
+00005709  WDT_A_IRQHandler                     
 20010000  __STACK_END                          
 00000200  __STACK_SIZE                         
-00000800  __SYSMEM_SIZE                        
-00006a28  __TI_CINIT_Base                      
-00006a38  __TI_CINIT_Limit                     
-00006a10  __TI_Handler_Table_Base              
-00006a1c  __TI_Handler_Table_Limit             
-00005875  __TI_auto_init_nobinit_nopinit       
-00005d9d  __TI_cleanup                         
-20000e7c  __TI_cleanup_ptr                     
-00004a21  __TI_closefile                       
-00004d1d  __TI_decompress_lzss                 
-00006625  __TI_decompress_none                 
-000055ab  __TI_doflush                         
-20000e80  __TI_dtors_ptr                       
-20000e84  __TI_enable_exit_profile_output      
-20000e6c  __TI_ft_end                          
+00005910  __TI_CINIT_Base                      
+00005920  __TI_CINIT_Limit                     
+000058fc  __TI_Handler_Table_Base              
+00005908  __TI_Handler_Table_Limit             
+00004b2d  __TI_auto_init_nobinit_nopinit       
+00004471  __TI_decompress_lzss                 
+00005667  __TI_decompress_none                 
 ffffffff  __TI_pprof_out_hndl                  
-000000e5  __TI_printfi                         
 ffffffff  __TI_prof_data_size                  
 ffffffff  __TI_prof_data_start                 
-00005dd1  __TI_readmsg                         
 00000000  __TI_static_base__                   
-20000b24  __TI_tmpnams                         
-00005c25  __TI_writemsg                        
-00004f19  __TI_wrt_ok                          
-00006689  __TI_zero_init                       
-000046a1  __aeabi_cdcmpeq                      
-000046a1  __aeabi_cdcmple                      
-00004727  __aeabi_cdrcmple                     
-000056d5  __aeabi_d2iz                         
-000058fd  __aeabi_d2uiz                        
-00002363  __aeabi_dadd                         
-00002fad  __aeabi_ddiv                         
-0000365d  __aeabi_dmul                         
-00002359  __aeabi_dsub                         
-000066a1  __aeabi_errno_addr                   
-00005ef9  __aeabi_i2d                          
-0000412b  __aeabi_idiv0                        
-0000412b  __aeabi_ldiv0                        
-0000492d  __aeabi_memclr                       
-0000492d  __aeabi_memclr4                      
-0000492d  __aeabi_memclr8                      
-000043c1  __aeabi_memcpy                       
-000043c1  __aeabi_memcpy4                      
-000043c1  __aeabi_memcpy8                      
-0000492f  __aeabi_memset                       
-0000492f  __aeabi_memset4                      
-0000492f  __aeabi_memset8                      
-20000e78  __aeabi_stderr                       
-20000e70  __aeabi_stdin                        
-20000e74  __aeabi_stdout                       
-00006275  __aeabi_ui2d                         
-0000445d  __aeabi_uldivmod                     
+00005445  __TI_zero_init_nomemset              
+00003dc9  __aeabi_cdcmpeq                      
+00003dc9  __aeabi_cdcmple                      
+00003e4f  __aeabi_cdrcmple                     
+00004a0d  __aeabi_d2iz                         
+00004b71  __aeabi_d2uiz                        
+00001b35  __aeabi_dadd                         
+00002af9  __aeabi_ddiv                         
+00002d41  __aeabi_dmul                         
+00001b2b  __aeabi_dsub                         
+00004fbd  __aeabi_i2d                          
+000040df  __aeabi_memclr                       
+000040df  __aeabi_memclr4                      
+000040df  __aeabi_memclr8                      
+00003b6d  __aeabi_memcpy                       
+00003b6d  __aeabi_memcpy4                      
+00003b6d  __aeabi_memcpy8                      
+000040e1  __aeabi_memset                       
+000040e1  __aeabi_memset4                      
+000040e1  __aeabi_memset8                      
+00005331  __aeabi_ui2d                         
 ffffffff  __binit__                            
 ffffffff  __c_args__                           
 UNDEFED   __mpu_init                           
 2000fe00  __stack                              
-00005e05  _c_int00_noargs                      
-000066c8  _ctypes_                             
-20000d64  _device                              
-20000c74  _ftable                              
-20000e94  _lock                                
-000030e3  _nop                                 
-20000ddc  _stream                              
-20000000  _sys_memory                          
+00004f51  _c_int00_noargs                      
 UNDEFED   _system_post_cinit                   
-000066c1  _system_pre_init                     
-20000e98  _unlock                              
-000066c5  abort                                
-00003321  aligned_alloc                        
-000055f9  atoi                                 
+00001443  _system_pre_init                     
+000016cd  abort                                
 ffffffff  binit                                
-00003759  ceil                                 
-00003759  ceill                                
-00005159  close                                
-0000698c  contConfig0                          
-00006375  copysign                             
-00006375  copysignl                            
-20000ea4  errno                                
-0000568d  exit                                 
-00005ec9  finddevice                           
-00003851  floor                                
-00003851  floorl                               
-00004615  fputc                                
-00003439  fputs                                
-00003a31  free                                 
-00004e51  frexp                                
-00004e51  frexpl                               
-00004eb5  fseek                                
-000058b9  getdevice                            
+00004611  bme280_get_regs                      
+000038e1  bme280_init                          
+00002c31  bme280_set_regs                      
+00003ad1  bme280_soft_reset                    
+20000337  buffer                               
+00002e3d  ceil                                 
+00002e3d  ceill                                
+000058d8  contConfig0                          
+00005890  currentTime                          
+20000204  dev                                  
+00002f35  floor                                
+00002f35  floorl                               
+00004971  getTiming                            
 00000000  interruptVectors                     
-0000354d  ldexp                                
-0000354d  ldexpl                               
-000060c9  lseek                                
-00005419  ltoa                                 
-00003d91  main                                 
-000066a9  malloc                               
-00003321  memalign                             
-00006359  memccpy                              
-00006255  memchr                               
-000043c1  memcpy                               
-00004935  memset                               
-20000c64  parmbuf                              
-00004d85  printf                               
-00004615  putc                                 
-00005fad  remove                               
-00003e55  round                                
-00003e55  roundl                               
-0000354d  scalbn                               
-0000354d  scalbnl                              
-00003bf1  setvbuf                              
-00006948  spiMasterConfig                      
-0000571d  spiRead_RFM                          
-00005941  spiWrite_RFM                         
-00005a45  spi_open                             
-00006451  startTiming                          
-00005f81  stopLoRaTimer                        
-00006531  strchr                               
-00006469  strcmp                               
-00006599  strcpy                               
-000065ad  strlen                               
-00005cc9  strncpy                              
-00005fad  unlink                               
-00006964  upConfig                             
-000065d3  wcslen                               
-000060f1  write                                
+00002879  main                                 
+00003b6d  memcpy                               
+000040e7  memset                               
+0000360d  round                                
+0000360d  roundl                               
+20000336  rslt                                 
+000058ac  spiMasterConfig                      
+00004889  spiRead_RFM                          
+000049c1  spiWrite_RFM                         
+00004a59  spi_open                             
+00004061  spi_read_write                       
+00005351  startTiming                          
+00004cc1  stopLoRaTimer                        
+20000341  timerTick_ms                         
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -795,318 +692,256 @@ address   name
 -------   ----                                 
 00000000  __TI_static_base__                   
 00000000  interruptVectors                     
-000000e5  __TI_printfi                         
+000000e9  SX1276OnDio0Irq                      
 00000200  __STACK_SIZE                         
-00000800  __SYSMEM_SIZE                        
-00000b33  ADC14_IRQHandler                     
-00000b33  AES256_IRQHandler                    
-00000b33  BusFault_Handler                     
-00000b33  COMP_E0_IRQHandler                   
-00000b33  COMP_E1_IRQHandler                   
-00000b33  CS_IRQHandler                        
-00000b33  DMA_ERR_IRQHandler                   
-00000b33  DMA_INT0_IRQHandler                  
-00000b33  DMA_INT1_IRQHandler                  
-00000b33  DMA_INT2_IRQHandler                  
-00000b33  DMA_INT3_IRQHandler                  
-00000b33  DebugMon_Handler                     
-00000b33  Default_Handler                      
-00000b33  EUSCIA0_IRQHandler                   
-00000b33  EUSCIA1_IRQHandler                   
-00000b33  EUSCIA2_IRQHandler                   
-00000b33  EUSCIA3_IRQHandler                   
-00000b33  EUSCIB0_IRQHandler                   
-00000b33  EUSCIB1_IRQHandler                   
-00000b33  EUSCIB2_IRQHandler                   
-00000b33  EUSCIB3_IRQHandler                   
-00000b33  FLCTL_IRQHandler                     
-00000b33  FPU_IRQHandler                       
-00000b33  HardFault_Handler                    
-00000b33  MemManage_Handler                    
-00000b33  NMI_Handler                          
-00000b33  PCM_IRQHandler                       
-00000b33  PORT1_IRQHandler                     
-00000b33  PORT3_IRQHandler                     
-00000b33  PORT4_IRQHandler                     
-00000b33  PORT5_IRQHandler                     
-00000b33  PORT6_IRQHandler                     
-00000b33  PSS_IRQHandler                       
-00000b33  PendSV_Handler                       
-00000b33  SVC_Handler                          
-00000b33  T32_INT1_IRQHandler                  
-00000b33  T32_INT2_IRQHandler                  
-00000b33  T32_INTC_IRQHandler                  
-00000b33  TA0_0_IRQHandler                     
-00000b33  TA0_N_IRQHandler                     
-00000b33  TA1_N_IRQHandler                     
-00000b33  TA2_N_IRQHandler                     
-00000b33  TA3_N_IRQHandler                     
-00000b33  UsageFault_Handler                   
-00000b33  WDT_A_IRQHandler                     
-00000b35  SX1276SetRxConfig                    
-00000eed  SX1276GetTimeOnAir                   
-00001285  SX1276OnDio0Irq                      
-000015d5  SX1276SetTxConfig                    
-000018c1  SX1276SetRx                          
-00002195  GpioMcuInit                          
-00002359  __aeabi_dsub                         
-00002363  __aeabi_dadd                         
-0000250f  SysTick_Handler                      
-0000250f  SysTick_Handler                      
-00002511  RadioInit                            
-00002695  SX1276OnDio1Irq                      
-00002811  SX1276SetRfTxPower                   
-00002965  SX1276Send                           
-00002bf5  SX1276OnDio2Irq                      
-00002d35  SX1276OnTimeoutIrq                   
-00002fad  __aeabi_ddiv                         
-000030e3  _nop                                 
-00003209  GpioMcuSetInterrupt                  
-00003321  aligned_alloc                        
-00003321  memalign                             
-00003439  fputs                                
-0000354d  ldexp                                
-0000354d  ldexpl                               
-0000354d  scalbn                               
-0000354d  scalbnl                              
-0000365d  __aeabi_dmul                         
-00003759  ceil                                 
-00003759  ceill                                
-00003851  floor                                
-00003851  floorl                               
-00003949  TimerIrqHandler                      
-00003a31  free                                 
-00003b15  TimerStop                            
-00003bf1  setvbuf                              
-00003ccd  SX1276SetTx                          
-00003d91  main                                 
-00003e55  round                                
-00003e55  roundl                               
-00003f15  SX1276Init                           
-0000407b  SPI_initMaster                       
-0000412b  __aeabi_idiv0                        
-0000412b  __aeabi_ldiv0                        
-0000412d  SX1276IoInit                         
-000041dd  RxChainCalibration                   
-00004285  SX1276SetModem                       
-00004325  SX1276SetTxContinuousWave            
-000043c1  __aeabi_memcpy                       
-000043c1  __aeabi_memcpy4                      
-000043c1  __aeabi_memcpy8                      
-000043c1  memcpy                               
-0000445d  __aeabi_uldivmod                     
-000044f5  RTC_C_getEnabledInterruptStatus      
-00004589  BoardInitMcu                         
-00004615  fputc                                
-00004615  putc                                 
-000046a1  __aeabi_cdcmpeq                      
-000046a1  __aeabi_cdcmple                      
-00004727  __aeabi_cdrcmple                     
-000047ad  TimerStart                           
-00004831  SX1276IsChannelFree                  
-000048b1  PORT2_IRQHandler                     
-000048b1  PORT2_IRQHandler                     
-0000492d  __aeabi_memclr                       
-0000492d  __aeabi_memclr4                      
-0000492d  __aeabi_memclr8                      
-0000492f  __aeabi_memset                       
-0000492f  __aeabi_memset4                      
-0000492f  __aeabi_memset8                      
-00004935  memset                               
-000049a9  SystemInit                           
-00004a21  __TI_closefile                       
-00004b75  HOSTrename                           
-00004be1  SX1276ReadRssi                       
-00004c4d  HOSTlseek                            
-00004cb5  OnRxDone                             
-00004d1d  __TI_decompress_lzss                 
-00004d85  printf                               
-00004ded  GetFskBandwidthRegValue              
-00004e51  frexp                                
-00004e51  frexpl                               
-00004eb5  fseek                                
-00004f19  __TI_wrt_ok                          
-00004f7d  HOSTopen                             
-00004fdd  SX1276ReadBuffer                     
-0000503d  SX1276WriteBuffer                    
-0000509d  SX1276Random                         
-000050fd  RTC_C_getInterruptStatus             
-00005159  close                                
-000051b5  Delayms                              
-0000520d  HOSTread                             
-00005265  HOSTwrite                            
-000052bd  SX1276IoIrqInit                      
-000053c5  TimerATimerInit                      
-00005419  ltoa                                 
-000054c1  SX1276SetChannel                     
-00005511  Timer_A_initCompare                  
-0000555f  Timer_A_getCounterValue              
-000055ab  __TI_doflush                         
-000055f9  atoi                                 
-00005645  SX1276SetMaxPayloadLength            
-0000568d  exit                                 
-000056d5  __aeabi_d2iz                         
-0000571d  spiRead_RFM                          
-00005765  GpioMcuWrite                         
-000057a9  HOSTclose                            
-000057ed  HOSTunlink                           
-00005831  SX1276StartCad                       
-00005875  __TI_auto_init_nobinit_nopinit       
-000058b9  getdevice                            
-000058fd  __aeabi_d2uiz                        
-00005941  spiWrite_RFM                         
-00005985  GPIO_setAsOutputPin                  
-000059c5  SetAlarm                             
-00005a45  spi_open                             
-00005ac5  SX1276OnDio4Irq                      
-00005b01  SX1276SetPublicNetwork               
-00005b3d  TimerAInteruptInit                   
-00005b79  TimerSetValue                        
-00005bb5  RFM_spi_read_write                   
-00005bed  SX1276SetSleep                       
-00005c25  __TI_writemsg                        
-00005c53  C$$IO$$                              
-00005c5d  TimerInit                            
-00005cc9  strncpy                              
-00005d01  SX1276SetStby                        
-00005d69  Timer_A_configureContinuousMode      
-00005d9d  __TI_cleanup                         
-00005dd1  __TI_readmsg                         
-00005e05  _c_int00_noargs                      
-00005e39  GpioInit                             
-00005e69  TA2_0_IRQHandler                     
-00005e69  TA2_0_IRQHandler                     
-00005ec9  finddevice                           
-00005ef9  __aeabi_i2d                          
-00005f29  Timer_A_clearCaptureCompareInterrupt 
-00005f55  Timer_A_enableCaptureCompareInterrupt
-00005f81  stopLoRaTimer                        
-00005fad  remove                               
-00005fad  unlink                               
-00005fd9  GPIO_enableInterrupt                 
-00006001  GPIO_setOutputHighOnPin              
-00006029  GPIO_setOutputLowOnPin               
-00006051  SPI_getInterruptStatus               
-00006079  Timer_A_setCompareValue              
-000060c9  lseek                                
-000060f1  write                                
-00006119  SPI_transmitData                     
-0000613f  TimerGetElapsedTime                  
-00006165  OnTxDone                             
-00006189  SX1276Reset                          
-000061ad  TA3_0_IRQHandler                     
-000061ad  TA3_0_IRQHandler                     
-000061d1  GpioFlashLED                         
-000061f5  RTC_C_IRQHandler                     
-000061f5  RTC_C_IRQHandler                     
-00006215  SX1276SetOpMode                      
-00006235  TA1_0_IRQHandler                     
-00006235  TA1_0_IRQHandler                     
-00006255  memchr                               
-00006275  __aeabi_ui2d                         
-00006295  GetTimerElapsedTime                  
-000062b1  GpioSetInterrupt                     
-000062cd  SPI_enableModule                     
-000062e9  SPI_receiveData                      
-00006305  SetTimerContext                      
-00006321  StopAlarm                            
-00006359  memccpy                              
-00006375  copysign                             
-00006375  copysignl                            
-0000638f  EUSCI_A_SPI_getInterruptStatus       
-000063a7  EUSCI_B_SPI_getInterruptStatus       
-000063c1  OnRxError                            
-000063d9  OnRxTimeout                          
-000063f1  OnTxTimeout                          
-00006409  Timer_A_clearTimer                   
-00006421  Timer_A_disableInterrupt             
-00006439  Timer_A_enableInterrupt              
-00006451  startTiming                          
-00006469  strcmp                               
-00006481  EUSCI_A_SPI_enable                   
-00006497  EUSCI_A_SPI_transmitData             
-000064ad  EUSCI_B_SPI_enable                   
-000064c3  EUSCI_B_SPI_transmitData             
-000064d9  SX1276ReadFifo                       
-000064ef  SX1276WriteFifo                      
-00006505  Timer_A_clearInterruptFlag           
-0000651b  Timer_A_startCounter                 
-00006531  strchr                               
-00006547  BoardCriticalSectionBegin            
-0000655d  GetBoardPowerSource                  
-00006571  GetTimerValue                        
-00006585  Timer_A_stopTimer                    
-00006599  strcpy                               
-000065ad  strlen                               
-000065c1  BoardCriticalSectionEnd              
-000065d3  wcslen                               
-000065e5  EUSCI_A_SPI_receiveData              
-000065f5  EUSCI_B_SPI_receiveData              
-00006605  GpioWrite                            
-00006615  TimerGetCurrentTime                  
-00006625  __TI_decompress_none                 
-00006635  GetTimerContext                      
-00006641  Reset_Handler                        
-0000664d  SX1276CheckRfFrequency               
-00006665  SX1276GetStatus                      
-00006671  Tick2Ms                              
-0000667d  TimerMs2Tick                         
-00006689  __TI_zero_init                       
-00006695  SX1276GetWakeupTime                  
-000066a1  __aeabi_errno_addr                   
-000066a9  malloc                               
-000066b1  GetMinimumTimeout                    
-000066b5  SX1276GetBoardTcxoWakeupTime         
-000066c1  _system_pre_init                     
-000066c5  C$$EXIT                              
-000066c5  abort                                
-000066c8  _ctypes_                             
-000067cc  FskBandwidths                        
-0000687c  Radio                                
-00006918  RadioRegsInit                        
-00006948  spiMasterConfig                      
-00006964  upConfig                             
-0000698c  contConfig0                          
-00006a10  __TI_Handler_Table_Base              
-00006a1c  __TI_Handler_Table_Limit             
-00006a28  __TI_CINIT_Base                      
-00006a38  __TI_CINIT_Limit                     
-20000000  _sys_memory                          
-20000800  __CIOBUF_                            
-20000920  SX1276                               
-20000b24  __TI_tmpnams                         
-20000be0  RxTimeoutSyncWord                    
-20000bf8  RxTimeoutTimer                       
-20000c10  TxTimeoutTimer                       
-20000c28  Led1                                 
-20000c3c  Led2                                 
-20000c50  Led3                                 
-20000c64  parmbuf                              
-20000c74  _ftable                              
-20000d64  _device                              
-20000ddc  _stream                              
-20000e2c  Buffer                               
-20000e6c  __TI_ft_end                          
-20000e70  __aeabi_stdin                        
-20000e74  __aeabi_stdout                       
-20000e78  __aeabi_stderr                       
-20000e7c  __TI_cleanup_ptr                     
-20000e80  __TI_dtors_ptr                       
-20000e84  __TI_enable_exit_profile_output      
-20000e88  DIO0Flag                             
-20000e89  DIO1Flag                             
-20000e8a  DIO2Flag                             
-20000e8b  DIO3Flag                             
-20000e8c  DIO4Flag                             
-20000e8d  RadioTimeoutFlag                     
-20000e8e  State                                
-20000e90  BufferSize                           
-20000e92  RssiValue                            
-20000e93  SnrValue                             
-20000e94  _lock                                
-20000e98  _unlock                              
-20000ea4  errno                                
-20000ead  TimerInteruptFlag                    
+000005d1  SX1276SetRxConfig                    
+000009f1  SX1276GetTimeOnAir                   
+00000df1  SX1276SetTxConfig                    
+00001139  SX1276SetRx                          
+00001443  _system_pre_init                     
+000016cd  C$$EXIT                              
+000016cd  abort                                
+000016d1  SX1276OnDio1Irq                      
+00001931  GpioMcuInit                          
+00001b2b  __aeabi_dsub                         
+00001b35  __aeabi_dadd                         
+00001ce1  SX1276OnDio2Irq                      
+00001e79  SX1276Send                           
+00002011  SX1276OnTimeoutIrq                   
+000021a1  TimerIrqHandler                      
+00002311  RadioInit                            
+00002479  SX1276SetRfTxPower                   
+000025d9  GpioMcuSetInterrupt                  
+00002879  main                                 
+000029c1  TimerStop                            
+00002af9  __aeabi_ddiv                         
+00002c31  bme280_set_regs                      
+00002d41  __aeabi_dmul                         
+00002e3d  ceil                                 
+00002e3d  ceill                                
+00002f35  floor                                
+00002f35  floorl                               
+00003031  SX1276SetTx                          
+0000311d  CS_startLFXTWithTimeout              
+000032e1  SX1276Init                           
+000033b9  RxChainCalibration                   
+00003481  SX1276IoInit                         
+00003549  SX1276SetModem                       
+0000360d  round                                
+0000360d  roundl                               
+000036d1  RtcInit                              
+00003781  SPI_initMaster                       
+00003831  BoardInitMcu                         
+000038e1  bme280_init                          
+00003989  SX1276SetTxContinuousWave            
+00003a31  SystemInit                           
+00003ad1  bme280_soft_reset                    
+00003b6d  __aeabi_memcpy                       
+00003b6d  __aeabi_memcpy4                      
+00003b6d  __aeabi_memcpy8                      
+00003b6d  memcpy                               
+00003c09  TimerStart                           
+00003ca1  RTC_C_getEnabledInterruptStatus      
+00003d39  SX1276IsChannelFree                  
+00003dc9  __aeabi_cdcmpeq                      
+00003dc9  __aeabi_cdcmple                      
+00003e4f  __aeabi_cdrcmple                     
+00003ed9  PORT2_IRQHandler                     
+00003ed9  PORT2_IRQHandler                     
+00003f61  OnRxDone                             
+00004061  spi_read_write                       
+000040df  __aeabi_memclr                       
+000040df  __aeabi_memclr4                      
+000040df  __aeabi_memclr8                      
+000040e1  __aeabi_memset                       
+000040e1  __aeabi_memset4                      
+000040e1  __aeabi_memset8                      
+000040e7  memset                               
+00004159  GetFskBandwidthRegValue              
+000041d1  SX1276ReadBuffer                     
+00004249  SX1276ReadRssi                       
+000042c1  SX1276WriteBuffer                    
+00004339  SX1276Random                         
+000043a1  TimerATimerInit                      
+00004471  __TI_decompress_lzss                 
+00004541  RTC_C_enableInterrupt                
+000045a9  SX1276IoIrqInit                      
+00004611  bme280_get_regs                      
+000046d9  RTC_C_getInterruptStatus             
+00004739  GpioMcuWrite                         
+00004791  SX1276SetChannel                     
+000047e9  SetAlarm                             
+00004837  Timer_A_initCompare                  
+00004889  spiRead_RFM                          
+000048d9  SX1276SetMaxPayloadLength            
+00004925  Timer_A_getCounterValue              
+00004971  getTiming                            
+000049c1  spiWrite_RFM                         
+00004a0d  __aeabi_d2iz                         
+00004a59  spi_open                             
+00004aa1  SX1276StartCad                       
+00004ae9  Delayms                              
+00004b2d  __TI_auto_init_nobinit_nopinit       
+00004b71  __aeabi_d2uiz                        
+00004bfd  GPIO_setAsOutputPin                  
+00004c41  SX1276SetSleep                       
+00004cc1  stopLoRaTimer                        
+00004d01  SX1276SetPublicNetwork               
+00004d81  TimerSetValue                        
+00004dc1  SX1276SetStby                        
+00004e41  SX1276OnDio4Irq                      
+00004e79  TimerInit                            
+00004eb1  GpioInit                             
+00004ee9  TA2_0_IRQHandler                     
+00004ee9  TA2_0_IRQHandler                     
+00004f1d  Timer_A_configureContinuousMode      
+00004f51  _c_int00_noargs                      
+00004fbd  __aeabi_i2d                          
+00004ff1  SX1276Reset                          
+00005021  TA3_0_IRQHandler                     
+00005021  TA3_0_IRQHandler                     
+00005051  TimerGetElapsedTime                  
+0000507d  Timer_A_clearCaptureCompareInterrupt 
+000050a9  Timer_A_enableCaptureCompareInterrupt
+000050d9  OnTxDone                             
+00005109  StopAlarm                            
+00005135  GPIO_enableInterrupt                 
+0000515d  GPIO_setOutputHighOnPin              
+00005185  GPIO_setOutputLowOnPin               
+000051b1  GpioFlashLED                         
+000051d9  RTC_C_IRQHandler                     
+000051d9  RTC_C_IRQHandler                     
+00005201  SPI_getInterruptStatus               
+00005229  Timer_A_setCompareValue              
+00005251  SPI_transmitData                     
+00005279  SetTimerContext                      
+000052a1  TA0_0_IRQHandler                     
+000052a1  TA0_0_IRQHandler                     
+000052c9  GpioSetInterrupt                     
+000052f1  GetTimerElapsedTime                  
+00005311  SX1276SetOpMode                      
+00005331  __aeabi_ui2d                         
+00005351  startTiming                          
+00005371  OnRxError                            
+00005391  OnRxTimeout                          
+000053b1  OnTxTimeout                          
+000053cd  SPI_enableModule                     
+000053e9  SPI_receiveData                      
+00005409  SX1276ReadFifo                       
+00005429  SX1276WriteFifo                      
+00005445  __TI_zero_init_nomemset              
+00005461  EUSCI_A_SPI_getInterruptStatus       
+00005479  EUSCI_B_SPI_getInterruptStatus       
+00005491  SysCtl_A_disableNMISource            
+000054a9  SysCtl_A_enableNMISource             
+000054c1  Timer_A_clearTimer                   
+000054d9  Timer_A_disableInterrupt             
+000054f1  Timer_A_enableInterrupt              
+00005509  EUSCI_A_SPI_enable                   
+0000551f  EUSCI_A_SPI_transmitData             
+00005535  EUSCI_B_SPI_enable                   
+0000554b  EUSCI_B_SPI_transmitData             
+00005561  GpioWrite                            
+00005577  Timer_A_clearInterruptFlag           
+0000558d  Timer_A_startCounter                 
+000055a9  BoardCriticalSectionBegin            
+000055c1  GetBoardPowerSource                  
+000055d9  GetTimerValue                        
+000055ed  Timer_A_stopTimer                    
+00005601  BoardCriticalSectionEnd              
+00005613  EUSCI_A_SPI_receiveData              
+00005623  EUSCI_B_SPI_receiveData              
+00005635  SysCtl_A_getNMISourceStatus          
+00005649  TimerGetCurrentTime                  
+00005659  CS_startLFXT                         
+00005667  __TI_decompress_none                 
+00005679  GetTimerContext                      
+00005689  Reset_Handler                        
+00005699  SX1276CheckRfFrequency               
+000056b9  SX1276GetStatus                      
+000056c9  Tick2Ms                              
+000056d9  TimerMs2Tick                         
+000056e9  SX1276GetWakeupTime                  
+000056f9  GetMinimumTimeout                    
+00005701  SX1276GetBoardTcxoWakeupTime         
+00005709  ADC14_IRQHandler                     
+00005709  AES256_IRQHandler                    
+00005709  BusFault_Handler                     
+00005709  COMP_E0_IRQHandler                   
+00005709  COMP_E1_IRQHandler                   
+00005709  CS_IRQHandler                        
+00005709  DMA_ERR_IRQHandler                   
+00005709  DMA_INT0_IRQHandler                  
+00005709  DMA_INT1_IRQHandler                  
+00005709  DMA_INT2_IRQHandler                  
+00005709  DMA_INT3_IRQHandler                  
+00005709  DebugMon_Handler                     
+00005709  Default_Handler                      
+00005709  EUSCIA0_IRQHandler                   
+00005709  EUSCIA1_IRQHandler                   
+00005709  EUSCIA2_IRQHandler                   
+00005709  EUSCIA3_IRQHandler                   
+00005709  EUSCIB0_IRQHandler                   
+00005709  EUSCIB1_IRQHandler                   
+00005709  EUSCIB2_IRQHandler                   
+00005709  EUSCIB3_IRQHandler                   
+00005709  FLCTL_IRQHandler                     
+00005709  FPU_IRQHandler                       
+00005709  HardFault_Handler                    
+00005709  MemManage_Handler                    
+00005709  NMI_Handler                          
+00005709  PCM_IRQHandler                       
+00005709  PORT1_IRQHandler                     
+00005709  PORT3_IRQHandler                     
+00005709  PORT4_IRQHandler                     
+00005709  PORT5_IRQHandler                     
+00005709  PORT6_IRQHandler                     
+00005709  PSS_IRQHandler                       
+00005709  PendSV_Handler                       
+00005709  SVC_Handler                          
+00005709  T32_INT1_IRQHandler                  
+00005709  T32_INT2_IRQHandler                  
+00005709  T32_INTC_IRQHandler                  
+00005709  TA0_N_IRQHandler                     
+00005709  TA1_0_IRQHandler                     
+00005709  TA1_N_IRQHandler                     
+00005709  TA2_N_IRQHandler                     
+00005709  TA3_N_IRQHandler                     
+00005709  UsageFault_Handler                   
+00005709  WDT_A_IRQHandler                     
+00005711  SysTick_Handler                      
+00005711  SysTick_Handler                      
+00005714  FskBandwidths                        
+000057c4  Radio                                
+00005860  RadioRegsInit                        
+00005890  currentTime                          
+000058ac  spiMasterConfig                      
+000058d8  contConfig0                          
+000058fc  __TI_Handler_Table_Base              
+00005908  __TI_Handler_Table_Limit             
+00005910  __TI_CINIT_Base                      
+00005920  __TI_CINIT_Limit                     
+20000000  SX1276                               
+20000204  dev                                  
+20000260  RxTimeoutSyncWord                    
+20000278  RxTimeoutTimer                       
+20000290  TxTimeoutTimer                       
+200002a8  Led1                                 
+200002bc  Led2                                 
+200002d0  Led3                                 
+200002ec  Buffer                               
+2000032c  DIO0Flag                             
+2000032d  DIO1Flag                             
+2000032e  DIO2Flag                             
+2000032f  DIO3Flag                             
+20000330  DIO4Flag                             
+20000331  State                                
+20000332  BufferSize                           
+20000334  RssiValue                            
+20000335  SnrValue                             
+20000336  rslt                                 
+20000337  buffer                               
+20000341  timerTick_ms                         
 2000fe00  __stack                              
 20010000  __STACK_END                          
 4000480c  WDTCTL_SYM                           
@@ -1119,4 +954,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                           
 UNDEFED   _system_post_cinit                   
 
-[325 symbols]
+[263 symbols]

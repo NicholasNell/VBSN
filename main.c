@@ -64,6 +64,8 @@
 #include "sx1276-board.h"
 #include "timer.h"
 #include <stdio.h>
+#include "bme280.h"
+#include "bme280_defs.h"
 
 /*!
  * Constant values need to compute the RSSI value
@@ -72,7 +74,7 @@
 #define RSSI_OFFSET_HF                              -157
 
 #define RF_FREQUENCY 868500000  // Hz
-#define TX_OUTPUT_POWER 1	    // dBm
+#define TX_OUTPUT_POWER 14	    // dBm
 #define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
@@ -88,6 +90,8 @@
 #define LORA_IQ_INVERSION_ON false
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
+#define LORA_PAYLOAD_LEN 5
+#define LORA_RX_CONTINUOUS false
 
 uint8_t buffer[] = { 'H', 'E', 'L', 'L', 'O' };
 bool DIO0Flag = false;
@@ -96,13 +100,11 @@ bool DIO2Flag = false;
 bool DIO3Flag = false;
 bool DIO4Flag = false;
 
-extern bool RadioTimeoutFlag = false;
-
 typedef enum {
-	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT,
+	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT
 } States_t;
 
-#define RX_TIMEOUT_VALUE 1000
+#define RX_TIMEOUT_VALUE 0
 #define BUFFER_SIZE 64 // Define the payload size here
 
 States_t State = LOWPOWER;
@@ -137,10 +139,10 @@ void RadioInit( ) {
 
 	// detect radio hardware
 	while (Radio.Read( REG_VERSION) == 0x00) {
-		printf("Radio could not be detected!\n\r");
+//		printf("Radio could not be detected!\n\r");
 		Delayms(1000);
 	}
-	printf("RadioRegVersion: 0x%X\r\n", Radio.Read( REG_VERSION));
+//	printf("RadioRegVersion: 0x%X\r\n", Radio.Read( REG_VERSION));
 
 // set radio frequency channel
 	Radio.SetChannel( RF_FREQUENCY);
@@ -161,9 +163,9 @@ void RadioInit( ) {
 	LORA_SPREADING_FACTOR,
 	LORA_CODINGRATE, 0,
 	LORA_PREAMBLE_LENGTH, 255,
-	LORA_FIX_LENGTH_PAYLOAD_ON, 5,
+	LORA_FIX_LENGTH_PAYLOAD_ON, LORA_PAYLOAD_LEN,
 	LORA_CRC_ON, 0, 0,
-	LORA_IQ_INVERSION_ON, false);
+	LORA_IQ_INVERSION_ON, LORA_RX_CONTINUOUS);
 
 	Radio.SetMaxPayloadLength(MODEM_LORA, 255);
 	Radio.SetPublicNetwork(false, 0x55);
@@ -179,9 +181,9 @@ int main( void ) {
 	BoardInitMcu();
 	RadioInit();
 
-	uint32_t time = 0;
-	uint_fast16_t cnt = 0;
-	bool rxflag = true;
+	uint32_t timeold = getTiming();
+	uint32_t timenew = 0;
+
 	while (1) {
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -199,26 +201,13 @@ int main( void ) {
 			DIO4Flag = false;
 			SX1276OnDio4Irq();
 		}
-		else if (RadioTimeoutFlag) {
-			RadioTimeoutFlag = false;
-			Radio.Sleep();
-		}
-
-		if (rxflag) {
-			rxflag = false;
-			printf(">>>RX");
-			Radio.Rx(1000);
-		}
-
-
-
 	}
 }
 
 void PORT2_IRQHandler( void ) {
 	uint32_t status;
 
-	uint8_t i = Radio.Read( REG_LR_IRQFLAGS);
+//	uint8_t i = Radio.Read( REG_LR_IRQFLAGS);
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
@@ -257,7 +246,6 @@ void OnTxTimeout( void ) {
 	Radio.Sleep();
 	State = TX_TIMEOUT;
 }
-
 
 void OnRxTimeout( void ) {
 	Radio.Sleep();

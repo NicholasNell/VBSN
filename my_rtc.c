@@ -33,7 +33,7 @@ void RtcInit( void ) {
 	     * come in handy if the user ever wants to use the getMCLK/getACLK/etc
 	     * functions
 	     */
-	    CS_setExternalClockSourceFrequency(32000,48000000);
+//	    CS_setExternalClockSourceFrequency(32000,48000000);
 
 	    /* Starting LFXT in non-bypass mode without a timeout. */
 	    CS_startLFXT(CS_LFXT_DRIVE3);
@@ -80,6 +80,7 @@ void RTC_C_IRQHandler( void ) {
 	}
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
+		__no_operation();
 /*		Interrupts every
 		minute - Set
 		breakpoint here*/

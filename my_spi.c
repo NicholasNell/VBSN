@@ -50,8 +50,8 @@ void spiWrite_RFM(uint16_t addr, uint8_t val)
 {
     RFM95_NSS_LOW;
     uint8_t address = addr | RFM_SPI_WRITE_MASK;   //  read: mask 0x80 for write access; mask 0x7F for read access
-    RFM_spi_read_write(address);
-    val = RFM_spi_read_write(val);
+    spi_read_write(address);
+    val = spi_read_write(val);
     RFM95_NSS_HIGH;
 
 }
@@ -61,13 +61,13 @@ uint8_t spiRead_RFM(uint16_t addr)
     uint8_t val;
     RFM95_NSS_LOW;  // To start SPI coms to rmf95 nss must be pulled low
     uint8_t value_to_send = addr & ~RFM_SPI_WRITE_MASK;   //  read: mask 0x80 for write access; mask 0x7F
-    val = RFM_spi_read_write(value_to_send);
-    val = RFM_spi_read_write(0);
+    val = spi_read_write(value_to_send);
+    val = spi_read_write(0);
     RFM95_NSS_HIGH; // To stop SPI coms to rmf95 nss must be pulled high
     return val;
 }
 
-int RFM_spi_read_write(uint8_t pBuff)
+int spi_read_write(uint8_t pBuff)
 {
     int RXData;
     while (!(SPI_getInterruptStatus(EUSCI_B0_BASE, EUSCI_SPI_TRANSMIT_INTERRUPT)));

@@ -9,6 +9,7 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
+../bme280.c \
 ../board.c \
 ../gpio-board.c \
 ../main.c \
@@ -25,6 +26,7 @@ C_SRCS += \
 ../timer.c 
 
 C_DEPS += \
+./bme280.d \
 ./board.d \
 ./gpio-board.d \
 ./main.d \
@@ -41,6 +43,7 @@ C_DEPS += \
 ./timer.d 
 
 OBJS += \
+./bme280.obj \
 ./board.obj \
 ./gpio-board.obj \
 ./main.obj \
@@ -57,6 +60,7 @@ OBJS += \
 ./timer.obj 
 
 OBJS__QUOTED += \
+"bme280.obj" \
 "board.obj" \
 "gpio-board.obj" \
 "main.obj" \
@@ -73,6 +77,7 @@ OBJS__QUOTED += \
 "timer.obj" 
 
 C_DEPS__QUOTED += \
+"bme280.d" \
 "board.d" \
 "gpio-board.d" \
 "main.d" \
@@ -89,6 +94,7 @@ C_DEPS__QUOTED += \
 "timer.d" 
 
 C_SRCS__QUOTED += \
+"../bme280.c" \
 "../board.c" \
 "../gpio-board.c" \
 "../main.c" \

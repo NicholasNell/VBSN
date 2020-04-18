@@ -212,15 +212,15 @@ void TimerIrqHandler( void ) {
 }
 
 void TimerStop( TimerEvent_t *obj ) {
-	CRITICAL_SECTION_BEGIN( )
-	;
+//	CRITICAL_SECTION_BEGIN( )
+//	;
 
 	TimerEvent_t* prev = TimerListHead;
 	TimerEvent_t* cur = TimerListHead;
 
 	// List is empty or the obj to stop does not exist
 	if ((TimerListHead == NULL) || (obj == NULL)) {
-		CRITICAL_SECTION_END( );
+//		CRITICAL_SECTION_END( );
 		return;
 	}
 
@@ -270,7 +270,7 @@ void TimerStop( TimerEvent_t *obj ) {
 			}
 		}
 	}
-	CRITICAL_SECTION_END( );
+//	CRITICAL_SECTION_END( );
 }
 
 static bool TimerExists( TimerEvent_t *obj ) {

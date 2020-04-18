@@ -194,7 +194,7 @@ void SX1276Reset(void)
 {
     GpioWrite(&SX1276.Reset, 0);
 //    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
-    Delayms( 1 );
+	Delayms(5);
     GpioWrite(&SX1276.Reset, 1);
 //    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
     Delayms( 6 );

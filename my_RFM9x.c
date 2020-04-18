@@ -240,9 +240,8 @@ bool SX1276IsChannelFree(
 
 	SX1276SetOpMode( RF_OPMODE_RECEIVER);
 
-	Delayms(1);
+	Delayms(5);
 	carrierSenseTime = TimerGetCurrentTime();
-
 
 	// Perform carrier sense for maxCarrierSenseTime
 	while (TimerGetElapsedTime(carrierSenseTime) < maxCarrierSenseTime) {
@@ -282,7 +281,7 @@ uint32_t SX1276Random( void ) {
 	SX1276SetOpMode( RF_OPMODE_RECEIVER);
 
 	for (i = 0; i < 32; i++) {
-		Delayms(1);
+		Delayms(5);
 		// Unfiltered RSSI value reading. Only takes the LSB value
 		rnd |= ((uint32_t) spiRead_RFM( REG_LR_RSSIWIDEBAND) & 0x01) << i;
 	}
@@ -756,7 +755,7 @@ void SX1276Send( uint8_t *buffer, uint8_t size ) {
 			// FIFO operations can not take place in Sleep mode
 			if ((spiRead_RFM( REG_OPMODE) & ~RF_OPMODE_MASK) == RF_OPMODE_SLEEP) {
 				SX1276SetStby();
-				Delayms(1);
+				Delayms(5);
 			}
 			// Write payload buffer
 			SX1276WriteFifo(buffer, size);
@@ -872,9 +871,9 @@ void SX1276WriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size ) {
 	//NSS = 0;
 	RFM95_NSS_LOW;
 
-	RFM_spi_read_write(addr | 0x80);
+	spi_read_write(addr | 0x80);
 	for (i = 0; i < size; i++) {
-		RFM_spi_read_write(buffer[i]);
+		spi_read_write(buffer[i]);
 	}
 
 	//NSS = 1;
@@ -1136,10 +1135,10 @@ void SX1276ReadBuffer( uint16_t addr, uint8_t *buffer, uint8_t size ) {
 	//NSS = 0;
 	RFM95_NSS_LOW;
 
-	RFM_spi_read_write(addr & 0x7F);
+	spi_read_write(addr & 0x7F);
 
 	for (i = 0; i < size; i++) {
-		buffer[i] = RFM_spi_read_write(0);
+		buffer[i] = spi_read_write(0);
 	}
 
 	//NSS = 1;
@@ -1176,7 +1175,7 @@ void SX1276SetPublicNetwork( bool enable, uint16_t syncword ) {
 
 void SX1276SetTx( uint32_t timeout ) {
 	TimerStop(&RxTimeoutTimer);
-	TimerSetValue(&TxTimeoutTimer, timeout);
+	if (timeout > 0) TimerSetValue(&TxTimeoutTimer, timeout);
 
 	switch (SX1276.Settings.Modem) {
 		case MODEM_FSK: {
@@ -1243,7 +1242,7 @@ void SX1276SetTx( uint32_t timeout ) {
 	}
 
 	SX1276.Settings.State = RF_TX_RUNNING;
-	TimerStart(&TxTimeoutTimer);
+	if (timeout > 0) TimerStart(&TxTimeoutTimer);
 	SX1276SetOpMode( RF_OPMODE_TRANSMITTER);
 }
 
@@ -1717,7 +1716,6 @@ void SX1276OnDio4Irq( ) {
 		}
 			break;
 		case MODEM_LORA:
-			Radio.Sleep();
 			break;
 		default:
 			break;
@@ -1737,6 +1735,7 @@ void SX1276OnDio5Irq( ) {
 }
 
 void SX1276OnTimeoutIrq( void* context ) {
+	uint8_t i = 0;
 	switch (SX1276.Settings.State) {
 		case RF_RX_RUNNING:
 			if (SX1276.Settings.Modem == MODEM_FSK) {
@@ -1785,9 +1784,9 @@ void SX1276OnTimeoutIrq( void* context ) {
 
 			// Initialize radio default values
 			SX1276SetOpMode( RF_OPMODE_SLEEP);
-			uint8_t i = 0;
-			for (i = 0;
-					i < sizeof(RadioRegsInit) / sizeof(RadioRegisters_t); i++) {
+
+			for (i = 0; i < sizeof(RadioRegsInit) / sizeof(RadioRegisters_t);
+					i++) {
 				SX1276SetModem(RadioRegsInit[i].Modem);
 				spiWrite_RFM(RadioRegsInit[i].Addr, RadioRegsInit[i].Value);
 			}

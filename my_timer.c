@@ -24,18 +24,23 @@ static TimerContext_t TimerContext;
  Period (s) = (TIMER_PERIOD * DIVIDER) / (SMCLK = 3MHz)
  */
 /* Application Defines  */
-#define TIMER_PERIOD    375
-#define REFO 128E3
-#define TICK_TIME_A0_CONT (1.0 / (REFO / 128)) * 1000000.0  /* time in us per tick*/
 
+#define REFO 128E3
+#define TICK_TIME_A3_CONT (1.0 / (REFO / 128)) * 1000000.0  /* time in us per tick*/
+
+/************** DELAY MS **************/
+#define TIMER_PERIOD    375
+bool timerTick_ms = false;
+
+/************** DELAY MS **************/
 /* Timer_A UpMode Configuration Parameter */
 const Timer_A_UpModeConfig upConfig = {
 TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
 		TIMER_A_CLOCKSOURCE_DIVIDER_4,          // SMCLK/1 = 1.5MHz
 		TIMER_PERIOD,                           // 375 tick period
-		TIMER_A_TAIE_INTERRUPT_ENABLE,         // enable Timer interrupt
+		TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
 		TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,    // Enable CCR0 interrupt
-		TIMER_A_SKIP_CLEAR                         // Clear value
+		TIMER_A_DO_CLEAR                        // Clear value
 		};
 
 /* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from REFO at 32.765kHz / 16*/
@@ -45,44 +50,40 @@ const Timer_A_ContinuousModeConfig contConfig0 = {
 		TIMER_A_TAIE_INTERRUPT_ENABLE,
 		TIMER_A_SKIP_CLEAR };
 
-bool TimerInteruptFlag = false;
-extern bool RadioTimeoutFlag;
-
 void TimerAInteruptInit( void ) {
 
 	/* Configuring Timer_A1 for Up Mode */
-	MAP_Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
-	Timer_A_enableInterrupt(TIMER_A1_BASE);
-
-	/* Enabling interrupts and starting the timer */
-//    MAP_Interrupt_enableSleepOnIsrExit();
-	MAP_Interrupt_enableInterrupt(INT_TA1_0);
-
-	/* Enabling MASTER interrupts */
-	MAP_Interrupt_enableMaster();
+	MAP_Timer_A_configureUpMode(TIMER_A0_BASE, &upConfig);
+	//MAP_Interrupt_setPriority(INT_TA1_0,0x60);
+	MAP_Interrupt_enableInterrupt(INT_TA0_0);
 }
 
-void TA1_0_IRQHandler( void ) {
-	TimerInteruptFlag = true;
-	Timer_A_clearInterruptFlag(TIMER_A1_BASE);
-	Timer_A_clearCaptureCompareInterrupt(TIMER_A1_BASE,
+void TA0_0_IRQHandler( void ) {
+	timerTick_ms = true;
+
+	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A0_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 }
 
 void Delayms( uint32_t ms ) {
-	uint32_t count = 0;
-//    MAP_Timer_A_stopTimer(TIMER_A1_BASE);
-//    MAP_Timer_A_clearTimer(TIMER_A1_BASE);
-	MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
-
-	while (count < ms) {
-		if (TimerInteruptFlag) {
-			count++;
-			TimerInteruptFlag = false;
+	/*	int timercount = 0;
+	MAP_Timer_A_clearTimer(TIMER_A0_BASE);
+	MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE);
+	while (timercount < ms)
+	{
+		if (timerTick_ms)
+		{
+			timercount++;
+			timerTick_ms = false;
 		}
 	}
-	count = 0;
-	MAP_Timer_A_stopTimer(TIMER_A1_BASE);
+	timercount = 0;
+	 MAP_Timer_A_stopTimer(TIMER_A0_BASE);*/
+	uint32_t oldtime = getTiming();
+	uint32_t newtime = oldtime;
+	while (newtime - oldtime < ms * 1000) {
+		newtime = getTiming();
+	}
 }
 
 /*!
@@ -113,7 +114,7 @@ void startTiming( void ) {
  * \brief Stop the timer and returns time in us
  */
 uint32_t stopTiming( void ) {
-	float timeVal = Timer_A_getCounterValue(TIMER_A3_BASE) * TICK_TIME_A0_CONT;
+	float timeVal = Timer_A_getCounterValue(TIMER_A3_BASE) * TICK_TIME_A3_CONT;
 	Timer_A_stopTimer(TIMER_A3_BASE);
 	Timer_A_clearTimer(TIMER_A3_BASE);
 	return (uint32_t) timeVal;
@@ -124,7 +125,7 @@ uint32_t stopTiming( void ) {
  */
 uint32_t getTiming( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A3_BASE);
-	uint32_t timeVal = tickVal * TICK_TIME_A0_CONT;
+	uint32_t timeVal = tickVal * TICK_TIME_A3_CONT;
 	return timeVal;
 }
 
@@ -138,7 +139,7 @@ void startLoRaTimer( uint32_t timeout ) {
 	uint16_t timer_period = (uint16_t) time;
 
 	Timer_A_UpModeConfig upConfigA2 = {
-	TIMER_A_CLOCKSOURCE_ACLK, // SMCLK Clock Source
+	TIMER_A_CLOCKSOURCE_ACLK, // ACLK Clock Source
 			TIMER_A_CLOCKSOURCE_DIVIDER_12,          // SMCLK/1 = 1.5MHz
 			timer_period,                           // 375 tick period
 			TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
@@ -164,11 +165,8 @@ void TA2_0_IRQHandler( void ) {
 	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A2_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 	Timer_A_stopTimer(TIMER_A2_BASE);
-	RadioTimeoutFlag = true;
-//	SX1276SetSleep();
+
 }
-
-
 
 uint32_t TimerMs2Tick( uint32_t milliseconds ) {
 	return milliseconds;
@@ -248,11 +246,10 @@ void StartAlarm( uint32_t timeout ) {
 	TIMER_A3_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0, CCRTime);
 	/*
-	Timer_A_enableCaptureCompareInterrupt(
+	 Timer_A_enableCaptureCompareInterrupt(
 	 TIMER_A3_BASE,
-	TIMER_A_CAPTURECOMPARE_REGISTER_0);
+	 TIMER_A_CAPTURECOMPARE_REGISTER_0);
 	 */
-
 
 	/*uint16_t rtcAlarmSubSeconds = 0;
 	 uint16_t rtcAlarmSeconds = 0;
