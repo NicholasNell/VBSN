@@ -64,9 +64,7 @@
 #include "sx1276-board.h"
 #include "timer.h"
 #include <stdio.h>
-#include "bme280.h"
-#include "bme280_defs.h"
-#include <lib/RadioHead/RHMesh.h>
+
 
 /*!
  * Constant values need to compute the RSSI value

@@ -3,12 +3,11 @@
 // Copyright (C) 2011 Mike McCauley
 // $Id: RHDatagram.cpp,v 1.6 2014/05/23 02:20:17 mikem Exp $
 
-#include <RHDatagram.h>
+#include "RHDatagram.h"
 
-RHDatagram::RHDatagram(RHGenericDriver& driver, uint8_t thisAddress) 
-    :
-    _driver(driver),
-    _thisAddress(thisAddress)
+RHDatagram::RHDatagram(RHGenericDriver &driver, uint8_t thisAddress)
+    : _driver(driver),
+      _thisAddress(thisAddress)
 {
 }
 
@@ -18,7 +17,7 @@ bool RHDatagram::init()
 {
     bool ret = _driver.init();
     if (ret)
-	setThisAddress(_thisAddress);
+        setThisAddress(_thisAddress);
     return ret;
 }
 
@@ -30,21 +29,25 @@ void RHDatagram::setThisAddress(uint8_t thisAddress)
     _thisAddress = thisAddress;
 }
 
-bool RHDatagram::sendto(uint8_t* buf, uint8_t len, uint8_t address)
+bool RHDatagram::sendto(uint8_t *buf, uint8_t len, uint8_t address)
 {
     setHeaderTo(address);
     return _driver.send(buf, len);
 }
 
-bool RHDatagram::recvfrom(uint8_t* buf, uint8_t* len, uint8_t* from, uint8_t* to, uint8_t* id, uint8_t* flags)
+bool RHDatagram::recvfrom(uint8_t *buf, uint8_t *len, uint8_t *from, uint8_t *to, uint8_t *id, uint8_t *flags)
 {
     if (_driver.recv(buf, len))
     {
-	if (from)  *from =  headerFrom();
-	if (to)    *to =    headerTo();
-	if (id)    *id =    headerId();
-	if (flags) *flags = headerFlags();
-	return true;
+        if (from)
+            *from = headerFrom();
+        if (to)
+            *to = headerTo();
+        if (id)
+            *id = headerId();
+        if (flags)
+            *flags = headerFlags();
+        return true;
     }
     return false;
 }
@@ -118,6 +121,3 @@ uint8_t RHDatagram::headerFlags()
 {
     return _driver.headerFlags();
 }
-
-
-
