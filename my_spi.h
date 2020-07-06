@@ -19,5 +19,4 @@ uint8_t spiRead_RFM(uint16_t addr);
 void spiWrite_RFM(uint16_t addr, uint8_t val);
 int spi_read_write(uint8_t pBuff);
 
-
 #endif /* MY_SPI_H_ */

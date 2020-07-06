@@ -17,7 +17,7 @@ const eUSCI_SPI_MasterConfig spiMasterConfig =
 {
      EUSCI_B_SPI_CLOCKSOURCE_SMCLK,         // SMCLK clock.
      3000000,                                                            // SMCLK = DCO = 3MHz
-     1000000,                                                                 // SPICLK = 500kHz
+		1000000,                                                // SPICLK = 1MHz
      EUSCI_B_SPI_MSB_FIRST,                               // MSB first
      EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,   //phase
      EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,
@@ -78,3 +78,4 @@ int spi_read_write(uint8_t pBuff)
 
     return RXData;
 }
+

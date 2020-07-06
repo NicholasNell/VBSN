@@ -8,6 +8,9 @@
  */
 
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#define TX_INTERVAL 1
+uint8_t minutes = TX_INTERVAL;
+bool TxFlag = false;
 
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
@@ -75,22 +78,12 @@ void RTC_C_IRQHandler( void ) {
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
 
-	if (status & RTC_C_CLOCK_READ_READY_INTERRUPT) {
-
-	}
-
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
-		__no_operation();
-/*		Interrupts every
-		minute - Set
-		breakpoint here*/
-
-
+		minutes--;
+		if (minutes <= 0) {
+			minutes = TX_INTERVAL;
+			TxFlag = true;
+		}
 	}
-
-	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
-
-	}
-
 }
 

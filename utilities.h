@@ -153,20 +153,20 @@ int8_t Nibble2HexChar( uint8_t a );
 
 /*
  * ============================================================================
- * Following functions must be implemented inside the specific platform 
+ * Following functions must be implemented inside the specific platform
  * board.c file.
  * ============================================================================
  */
 /*!
  * Disable interrupts, begins critical section
- * 
+ *
  * \param [IN] mask Pointer to a variable where to store the CPU IRQ mask
  */
 void BoardCriticalSectionBegin( uint32_t *mask );
 
 /*!
  * Ends critical section
- * 
+ *
  * \param [IN] mask Pointer to a variable where the CPU IRQ mask was stored
  */
 void BoardCriticalSectionEnd( uint32_t *mask );

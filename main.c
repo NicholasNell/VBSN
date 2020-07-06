@@ -66,6 +66,7 @@
 #include <stdio.h>
 #include "bme280.h"
 #include "bme280_defs.h"
+#include <lib/RadioHead/RHMesh.h>
 
 /*!
  * Constant values need to compute the RSSI value
@@ -75,7 +76,9 @@
 
 #define RF_FREQUENCY 868500000  // Hz
 #define TX_OUTPUT_POWER 14	    // dBm
-#define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
+#define TX_TIMEOUT_VALUE 10000 	// ms
+#define RX_TIMEOUT_VALUE 10000	// ms
+#define LORA_BANDWIDTH 9        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
 // 	9: 500 kHz]
@@ -85,13 +88,19 @@
                                 //  3: 4/7, \
                                 //  4: 4/8]
 #define LORA_PREAMBLE_LENGTH 8  // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT 5   // Symbols
+#define LORA_SYMBOL_TIMEOUT 255   // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON false
 #define LORA_IQ_INVERSION_ON false
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
 #define LORA_PAYLOAD_LEN 5
 #define LORA_RX_CONTINUOUS false
+#define LORA_FREQ_HOP_ENABLED false
+#define LORA_FREQ_HOP_PERIOD false
+#define LORA_bandwidthAfc 0
+#define LORA_MAX_PAYLOAD_LEN 255
+#define LORA_PRIVATE_SYNCWORD 0x55
+#define LORA_IS_PUBLIC_NET false
 
 uint8_t buffer[] = { 'H', 'E', 'L', 'L', 'O' };
 bool DIO0Flag = false;
@@ -104,7 +113,7 @@ typedef enum {
 	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT
 } States_t;
 
-#define RX_TIMEOUT_VALUE 0
+
 #define BUFFER_SIZE 64 // Define the payload size here
 
 States_t State = LOWPOWER;
@@ -122,6 +131,8 @@ int8_t SnrValue = 0;
 extern Gpio_t Led1;
 extern Gpio_t Led2;
 extern Gpio_t Led3;
+
+extern bool TxFlag;
 
 /*!
  * Radio events function pointer
@@ -155,20 +166,20 @@ void RadioInit( ) {
 	LORA_CODINGRATE,
 	LORA_PREAMBLE_LENGTH,
 	LORA_FIX_LENGTH_PAYLOAD_ON,
-	LORA_CRC_ON, 0, 0,
-	LORA_IQ_INVERSION_ON, 0);
+	LORA_CRC_ON, LORA_FREQ_HOP_ENABLED, LORA_FREQ_HOP_PERIOD,
+	LORA_IQ_INVERSION_ON, TX_TIMEOUT_VALUE);
 
 	Radio.SetRxConfig(MODEM_LORA,
 	LORA_BANDWIDTH,
 	LORA_SPREADING_FACTOR,
-	LORA_CODINGRATE, 0,
-	LORA_PREAMBLE_LENGTH, 255,
+	LORA_CODINGRATE, LORA_bandwidthAfc,
+	LORA_PREAMBLE_LENGTH, LORA_SYMBOL_TIMEOUT,
 	LORA_FIX_LENGTH_PAYLOAD_ON, LORA_PAYLOAD_LEN,
-	LORA_CRC_ON, 0, 0,
+	LORA_CRC_ON, LORA_FREQ_HOP_ENABLED, LORA_FREQ_HOP_PERIOD,
 	LORA_IQ_INVERSION_ON, LORA_RX_CONTINUOUS);
 
-	Radio.SetMaxPayloadLength(MODEM_LORA, 255);
-	Radio.SetPublicNetwork(false, 0x55);
+	Radio.SetMaxPayloadLength(MODEM_LORA, LORA_MAX_PAYLOAD_LEN);
+	Radio.SetPublicNetwork(LORA_IS_PUBLIC_NET, LORA_PRIVATE_SYNCWORD);
 	Radio.Sleep();
 
 	State = LOWPOWER;
@@ -181,8 +192,8 @@ int main( void ) {
 	BoardInitMcu();
 	RadioInit();
 
-	uint32_t timeold = getTiming();
-	uint32_t timenew = 0;
+	Radio.Rx(1000);
+
 
 	while (1) {
 		if (DIO0Flag) {
@@ -200,6 +211,10 @@ int main( void ) {
 		else if (DIO4Flag) {
 			DIO4Flag = false;
 			SX1276OnDio4Irq();
+		}
+
+		if (TxFlag) {
+//			Radio.Send(buffer, 5);
 		}
 	}
 }
@@ -228,13 +243,13 @@ void PORT2_IRQHandler( void ) {
 
 void OnTxDone( void ) {
 	Radio.Sleep();
-	GpioFlashLED(&Led2, 100);
+//	GpioFlashLED(&Led2, 100);
 	State = TX;
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
-	GpioFlashLED(&Led3, 100);
+//	GpioFlashLED(&Led3, 100);
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
@@ -248,8 +263,10 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
+	GpioFlashLED(&Led3, 10);
 	Radio.Sleep();
 	State = RX_TIMEOUT;
+
 }
 
 void OnRxError( void ) {
