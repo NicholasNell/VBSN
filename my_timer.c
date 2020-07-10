@@ -50,6 +50,8 @@ const Timer_A_ContinuousModeConfig contConfig0 = {
 		TIMER_A_TAIE_INTERRUPT_ENABLE,
 		TIMER_A_SKIP_CLEAR };
 
+bool isTimerAcounterRunning = false;
+
 void TimerAInteruptInit( void ) {
 
 	/* Configuring Timer_A1 for Up Mode */
@@ -79,17 +81,21 @@ void Delayms( uint32_t ms ) {
 	}
 	timercount = 0;
 	 MAP_Timer_A_stopTimer(TIMER_A0_BASE);*/
-	uint32_t oldtime = getTiming();
+	if (!isTimerAcounterRunning) {
+		startTimerAcounter();
+	}
+
+	uint32_t oldtime = getTimerAcounterValue();
 	uint32_t newtime = oldtime;
 	while (newtime - oldtime < ms * 1000) {
-		newtime = getTiming();
+		newtime = getTimerAcounterValue();
 	}
 }
 
 /*!
  * \brief Sets up timer for TICK_TIME_A0_CONT us accuracy
  */
-void TimerATimerInit( void ) {
+void TimerACounterInit( void ) {
 	MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
 	MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_128);
 	/* Configure Timer_A0 for timing purposes */
@@ -104,29 +110,43 @@ void TimerATimerInit( void ) {
 /*!
  * \brief Starts Timing using Timer_A0
  */
-void startTiming( void ) {
+void startTimerAcounter( void ) {
 	Timer_A_stopTimer(TIMER_A3_BASE);
 //	Timer_A_clearTimer(TIMER_A3_BASE);
 	Timer_A_startCounter(TIMER_A3_BASE, TIMER_A_CONTINUOUS_MODE);
+	isTimerAcounterRunning = true;
 }
 
 /*!
  * \brief Stop the timer and returns time in us
  */
-uint32_t stopTiming( void ) {
+uint32_t stopTimerACounter( void ) {
 	float timeVal = Timer_A_getCounterValue(TIMER_A3_BASE) * TICK_TIME_A3_CONT;
 	Timer_A_stopTimer(TIMER_A3_BASE);
-	Timer_A_clearTimer(TIMER_A3_BASE);
+//	Timer_A_clearTimer(TIMER_A3_BASE);
+	isTimerAcounterRunning = false;
 	return (uint32_t) timeVal;
 }
 
 /*!
  * \brief Gets the current elapsed time in us. Max 65.535 sec
  */
-uint32_t getTiming( void ) {
+uint32_t getTimerAcounterValue( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A3_BASE);
 	uint32_t timeVal = tickVal * TICK_TIME_A3_CONT;
 	return timeVal;
+}
+
+/*!
+ *  \brief Sets the timer counter back to zero
+ *
+ */
+void resetTimerAcounterValue( void ) {
+	Timer_A_stopTimer(TIMER_A3_BASE);
+	isTimerAcounterRunning = false;
+	Timer_A_clearTimer(TIMER_A3_BASE);
+	TimerACounterInit();
+	startTimerAcounter();
 }
 
 /*!

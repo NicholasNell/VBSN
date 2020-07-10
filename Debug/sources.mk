@@ -113,5 +113,4 @@ PDE_DEPS__QUOTED :=
 SUBDIRS := \
 . \
 ccs \
-lib/RadioHead \
 

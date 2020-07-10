@@ -5,6 +5,9 @@
 SHELL = cmd.exe
 
 # Add inputs and outputs from these tool invocations to the build variables 
+CMD_SRCS += \
+../msp432p401r.cmd 
+
 C_SRCS += \
 ../board.c \
 ../gpio-board.c \

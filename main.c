@@ -76,12 +76,12 @@
 #define TX_OUTPUT_POWER 14	    // dBm
 #define TX_TIMEOUT_VALUE 10000 	// ms
 #define RX_TIMEOUT_VALUE 10000	// ms
-#define LORA_BANDWIDTH 9        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
+#define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
 // 	9: 500 kHz]
-#define LORA_SPREADING_FACTOR 12 // [SF7..SF12]
-#define LORA_CODINGRATE 4       // [1: 4/5, \
+#define LORA_SPREADING_FACTOR 7 // [SF7..SF12]
+#define LORA_CODINGRATE 1       // [1: 4/5, \
                                 //  2: 4/6, \
                                 //  3: 4/7, \
                                 //  4: 4/8]
@@ -91,7 +91,7 @@
 #define LORA_IQ_INVERSION_ON false
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
-#define LORA_PAYLOAD_LEN 5
+#define LORA_PAYLOAD_LEN 4
 #define LORA_RX_CONTINUOUS false
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false
@@ -108,7 +108,7 @@ bool DIO3Flag = false;
 bool DIO4Flag = false;
 
 typedef enum {
-	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT
+	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT, SLEEP
 } States_t;
 
 
@@ -126,8 +126,10 @@ uint8_t Buffer[BUFFER_SIZE] = { 0 };
 int8_t RssiValue = 0;
 int8_t SnrValue = 0;
 
-extern Gpio_t Led1;
-extern Gpio_t Led2;
+uint8_t txMsg[] = { 'P', 'I', 'N', 'G' };
+
+extern Gpio_t Led1;	//RED
+extern Gpio_t Led2;	//GREEN
 extern Gpio_t Led3;
 
 extern bool TxFlag;
@@ -180,7 +182,7 @@ void RadioInit( ) {
 	Radio.SetPublicNetwork(LORA_IS_PUBLIC_NET, LORA_PRIVATE_SYNCWORD);
 	Radio.Sleep();
 
-	State = LOWPOWER;
+	State = SLEEP;
 }
 
 int main( void ) {
@@ -190,8 +192,10 @@ int main( void ) {
 	BoardInitMcu();
 	RadioInit();
 
-	Radio.Rx(1000);
-
+	startTimerAcounter();
+//	Radio.Rx(0);
+//	State = RX;
+//	GpioToggle(&Led2);
 
 	while (1) {
 		if (DIO0Flag) {
@@ -211,9 +215,21 @@ int main( void ) {
 			SX1276OnDio4Irq();
 		}
 
-		if (TxFlag) {
-//			Radio.Send(buffer, 5);
+//		if (State == SLEEP) {
+//			Radio.Rx(0);
+//			State = RX;
+//		}
+
+		if (getTimerAcounterValue() >= 10 * 1000 * 1000) {
+			resetTimerAcounterValue();
+			GpioFlashLED(&Led1, 100);
+			Radio.Send(txMsg, LORA_PAYLOAD_LEN);
+			State = TX;
+			Delayms(1000);
+			Radio.Sleep();
+			State = SLEEP;
 		}
+
 	}
 }
 
@@ -242,17 +258,17 @@ void PORT2_IRQHandler( void ) {
 void OnTxDone( void ) {
 	Radio.Sleep();
 //	GpioFlashLED(&Led2, 100);
-	State = TX;
+	State = SLEEP;
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
-//	GpioFlashLED(&Led3, 100);
+	GpioFlashLED(&Led3, 100);
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
-	State = RX;
+	State = SLEEP;
 }
 
 void OnTxTimeout( void ) {

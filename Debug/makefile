@@ -25,17 +25,7 @@ ORDERED_OBJS += \
 "./system_msp432p401r.obj" \
 "./timer.obj" \
 "./ccs/startup_msp432p401r_ccs.obj" \
-"./lib/RadioHead/RHCRC.obj" \
-"./lib/RadioHead/RHDatagram.obj" \
-"./lib/RadioHead/RHEncryptedDriver.obj" \
-"./lib/RadioHead/RHGenericDriver.obj" \
-"./lib/RadioHead/RHGenericSPI.obj" \
-"./lib/RadioHead/RHHardwareSPI.obj" \
-"./lib/RadioHead/RHMesh.obj" \
-"./lib/RadioHead/RHReliableDatagram.obj" \
-"./lib/RadioHead/RHRouter.obj" \
-"./lib/RadioHead/RH_ASK.obj" \
-"./lib/RadioHead/RH_RF95.obj" \
+"../msp432p401r.cmd" \
 $(GEN_CMDS__FLAG) \
 -l"ti/display/lib/display.aem4f" \
 -l"ti/grlib/lib/ccs/m4f/grlib.a" \
@@ -54,10 +44,8 @@ RMDIR := RMDIR /S/Q
 -include sources.mk
 -include subdir_vars.mk
 -include ccs/subdir_vars.mk
--include lib/RadioHead/subdir_vars.mk
 -include subdir_rules.mk
 -include ccs/subdir_rules.mk
--include lib/RadioHead/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -188,9 +176,8 @@ Meesters.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "board.obj" "gpio-board.obj" "main.obj" "my_ALOHA.obj" "my_MAC.obj" "my_RFM9x.obj" "my_gpio.obj" "my_rtc.obj" "my_spi.obj" "my_systick.obj" "my_timer.obj" "sx1276-board.obj" "system_msp432p401r.obj" "timer.obj" "ccs\startup_msp432p401r_ccs.obj" "lib\RadioHead\RHCRC.obj" "lib\RadioHead\RHDatagram.obj" "lib\RadioHead\RHEncryptedDriver.obj" "lib\RadioHead\RHGenericDriver.obj" "lib\RadioHead\RHGenericSPI.obj" "lib\RadioHead\RHHardwareSPI.obj" "lib\RadioHead\RHMesh.obj" "lib\RadioHead\RHReliableDatagram.obj" "lib\RadioHead\RHRouter.obj" "lib\RadioHead\RH_ASK.obj" "lib\RadioHead\RH_RF95.obj" 
+	-$(RM) "board.obj" "gpio-board.obj" "main.obj" "my_ALOHA.obj" "my_MAC.obj" "my_RFM9x.obj" "my_gpio.obj" "my_rtc.obj" "my_spi.obj" "my_systick.obj" "my_timer.obj" "sx1276-board.obj" "system_msp432p401r.obj" "timer.obj" "ccs\startup_msp432p401r_ccs.obj" 
 	-$(RM) "board.d" "gpio-board.d" "main.d" "my_ALOHA.d" "my_MAC.d" "my_RFM9x.d" "my_gpio.d" "my_rtc.d" "my_spi.d" "my_systick.d" "my_timer.d" "sx1276-board.d" "system_msp432p401r.d" "timer.d" "ccs\startup_msp432p401r_ccs.d" 
-	-$(RM) "lib\RadioHead\RHCRC.d" "lib\RadioHead\RHDatagram.d" "lib\RadioHead\RHEncryptedDriver.d" "lib\RadioHead\RHGenericDriver.d" "lib\RadioHead\RHGenericSPI.d" "lib\RadioHead\RHHardwareSPI.d" "lib\RadioHead\RHMesh.d" "lib\RadioHead\RHReliableDatagram.d" "lib\RadioHead\RHRouter.d" "lib\RadioHead\RH_ASK.d" "lib\RadioHead\RH_RF95.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

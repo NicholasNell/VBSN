@@ -15,23 +15,23 @@ bool MACSend( uint8_t *buffer, uint8_t size ) {
 
 	SX1276SetSleep();  // Clear IRQ flags
 	SX1276Send(buffer, size);
-	startTiming();
+	startTimerAcounter();
 	uint8_t i = spiRead_RFM(REG_LR_IRQFLAGS);
 	while (!( i & RFLR_IRQFLAGS_TXDONE_MASK)) {
 		i = spiRead_RFM(REG_LR_IRQFLAGS);
-		if (getTiming() > 5E6) {
-			stopTiming();
+		if (getTimerAcounterValue() > 5E6) {
+			stopTimerACounter();
 			break;
 		}
 	}
-	stopTiming();
-	startTiming();
+	stopTimerACounter();
+	startTimerAcounter();
 	SX1276SetRx(500);
 	i = spiRead_RFM(REG_LR_IRQFLAGS);
 	while (!( i & RFLR_IRQFLAGS_RXDONE_MASK)) {
 		i = spiRead_RFM(REG_LR_IRQFLAGS);
-		if (getTiming() > 5E6) {
-			stopTiming();
+		if (getTimerAcounterValue() > 5E6) {
+			stopTimerACounter();
 			NotRXFlag = true;
 			break;
 		}

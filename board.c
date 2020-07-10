@@ -63,8 +63,8 @@ void BoardInitMcu( void ) {
 	BoardUnusedIoInit();
 
 //	TimerAInteruptInit();
-	TimerATimerInit();
-	startTiming();
+	TimerACounterInit();
+	startTimerAcounter();
 	RtcInit();
 
 	// LEDs

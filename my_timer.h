@@ -40,22 +40,30 @@ void Delayms( uint32_t ms );
 /*!
  * \brief Sets up timer for 10 us accuracy
  */
-void TimerATimerInit( void );
+void TimerACounterInit( void );
 
 /*!
  * \brief Starts Timing using Timer_A0
  */
-void startTiming( void );
+void startTimerAcounter( void );
 
 /*!
  * \brief Stop the timer and returns time in us
  */
-uint32_t stopTiming ( void );
+uint32_t stopTimerACounter ( void );
 
 /*!
  * \brief Gets the current elapsed time in us
  */
-uint32_t getTiming ( void );
+uint32_t getTimerAcounterValue ( void );
+
+
+
+/*!
+ *  \brief Sets the timer counter back to zero
+ *
+ */
+void resetTimerAcounterValue( void );
 
 /*!
  * \brief Start a timer which will interupt after timeout ms
