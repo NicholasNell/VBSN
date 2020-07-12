@@ -74,8 +74,8 @@
 
 #define RF_FREQUENCY 868500000  // Hz
 #define TX_OUTPUT_POWER 14	    // dBm
-#define TX_TIMEOUT_VALUE 10000 	// ms
-#define RX_TIMEOUT_VALUE 10000	// ms
+#define TX_TIMEOUT_VALUE 0 	// ms
+#define RX_TIMEOUT_VALUE 0	// ms
 #define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
@@ -92,7 +92,7 @@
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
 #define LORA_PAYLOAD_LEN 4
-#define LORA_RX_CONTINUOUS false
+#define LORA_RX_CONTINUOUS true
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false
 #define LORA_bandwidthAfc 0
@@ -138,6 +138,8 @@ extern bool TxFlag;
  * Radio events function pointer
  */
 static RadioEvents_t RadioEvents;
+
+#define BEACON false
 
 void RadioInit( ) {
 	// Radio initialization
@@ -193,9 +195,14 @@ int main( void ) {
 	RadioInit();
 
 	startTimerAcounter();
-//	Radio.Rx(0);
-//	State = RX;
-//	GpioToggle(&Led2);
+	if (!BEACON) {
+
+		Radio.Rx(0);
+
+		State = RX;
+//		GpioToggle(&Led2);
+	}
+
 
 	while (1) {
 		if (DIO0Flag) {
@@ -210,26 +217,25 @@ int main( void ) {
 			DIO2Flag = false;
 			SX1276OnDio2Irq();
 		}
-		else if (DIO4Flag) {
-			DIO4Flag = false;
-			SX1276OnDio4Irq();
-		}
 
-//		if (State == SLEEP) {
-//			Radio.Rx(0);
-//			State = RX;
-//		}
+		if (!BEACON) {
 
-		if (getTimerAcounterValue() >= 10 * 1000 * 1000) {
-			resetTimerAcounterValue();
-			GpioFlashLED(&Led1, 100);
-			Radio.Send(txMsg, LORA_PAYLOAD_LEN);
-			State = TX;
+//			if (State == RX) {
+			Radio.Rx(0);
+				State = RX;
 			Delayms(1000);
-			Radio.Sleep();
-			State = SLEEP;
+//			}
 		}
+		else {
+			if (getTimerAcounterValue() >= 5 * 1000 * 1000) {
+				resetTimerAcounterValue();
+				GpioFlashLED(&Led1, 100);
+				Radio.Send(txMsg, LORA_PAYLOAD_LEN);
+				State = TX;
 
+			}
+
+		}
 	}
 }
 
@@ -263,7 +269,7 @@ void OnTxDone( void ) {
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
-	GpioFlashLED(&Led3, 100);
+	GpioFlashLED(&Led2, 100);
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
@@ -279,7 +285,7 @@ void OnTxTimeout( void ) {
 void OnRxTimeout( void ) {
 	GpioFlashLED(&Led3, 10);
 	Radio.Sleep();
-	State = RX_TIMEOUT;
+	State = SLEEP;
 
 }
 
