@@ -19,9 +19,10 @@
 /*!
  * LED GPIO pins objects
  */
-Gpio_t Led1;
-Gpio_t Led2;
-Gpio_t Led3;
+Gpio_t Led_rgb_red;
+Gpio_t Led_rgb_green;
+Gpio_t Led_rgb_blue;
+Gpio_t Led_user_red;
 
 /*!
  * Initializes the unused GPIO to a know status
@@ -68,9 +69,30 @@ void BoardInitMcu( void ) {
 	RtcInit();
 
 	// LEDs
-	GpioInit(&Led1, LED_1, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
-	GpioInit(&Led2, LED_2, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
-	GpioInit(&Led3, LED_3, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
+	GpioInit(
+			&Led_rgb_red,
+			LED_RGB_RED,
+			PIN_OUTPUT,
+			PIN_PUSH_PULL,
+			PIN_NO_PULL,
+			0);
+	GpioInit(
+			&Led_rgb_green,
+			LED_RGB_GREEN,
+			PIN_OUTPUT,
+			PIN_PUSH_PULL,
+			PIN_NO_PULL,
+			0);
+	GpioInit(
+			&Led_rgb_blue,
+			LED_RGB_BLUE,
+			PIN_OUTPUT,
+			PIN_PUSH_PULL,
+			PIN_NO_PULL,
+			0);
+	GpioInit(&Led_user_red,
+	LED_USER_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
+
 
 //        TODO: Implement Clock Config
 //        SystemClockConfig( );
@@ -88,9 +110,10 @@ void BoardInitMcu( void ) {
 	SX1276IoInit();
 	SX1276IoIrqInit();
 
-	GpioWrite(&Led1, 0);
-	GpioWrite(&Led2, 0);
-	GpioWrite(&Led3, 0);
+	GpioWrite(&Led_rgb_red, 0);
+	GpioWrite(&Led_rgb_green, 0);
+	GpioWrite(&Led_rgb_blue, 0);
+	GpioWrite(&Led_user_red, 0);
 
 	/*	if (McuInitialized == false) {
 	 McuInitialized = true;

@@ -217,6 +217,14 @@ void SX1276SetModem( RadioModems_t modem ) {
 
 void SX1276SetChannel( uint32_t freq ) {
 	SX1276.Settings.Channel = freq;
+	if (freq >= 860000000) {// grant access to the high frequency band specific registers
+
+		spiWrite_RFM(
+				REG_LR_OPMODE,
+				spiRead_RFM(REG_LR_OPMODE)
+						& ~(1 << 3));
+	}
+
 	freq = (uint32_t) ((double) freq / (double) FREQ_STEP);
 	spiWrite_RFM( REG_FRFMSB, (uint8_t) ((freq >> 16) & 0xFF));
 	spiWrite_RFM( REG_FRFMID, (uint8_t) ((freq >> 8) & 0xFF));
@@ -555,12 +563,12 @@ void SX1276SetTxConfig(
 			else {
 				SX1276.Settings.LoRa.LowDatarateOptimize = 0x00;
 			}
-
 			if (SX1276.Settings.LoRa.FreqHopOn == true) {
-				spiWrite_RFM(
-						REG_LR_PLLHOP,
-						(spiRead_RFM( REG_LR_PLLHOP) & RFLR_PLLHOP_FASTHOP_MASK)
-								| RFLR_PLLHOP_FASTHOP_ON);
+//				REG_LR_PLLHOP (0x44) is only available in FSK mode!
+//				spiWrite_RFM(
+//						REG_LR_PLLHOP,
+//						(spiRead_RFM( REG_LR_PLLHOP) & RFLR_PLLHOP_FASTHOP_MASK)
+//								| RFLR_PLLHOP_FASTHOP_ON);
 				spiWrite_RFM( REG_LR_HOPPERIOD, SX1276.Settings.LoRa.HopPeriod);
 			}
 
@@ -1231,11 +1239,13 @@ void SX1276SetTx( uint32_t timeout ) {
 						RFLR_IRQFLAGS_CADDETECTED);
 
 				// DIO0=TxDone
+				uint8_t temp = spiRead_RFM(REG_LR_DIOMAPPING1);
 				spiWrite_RFM(
 						REG_DIOMAPPING1,
 						(spiRead_RFM( REG_DIOMAPPING1)
 								& RFLR_DIOMAPPING1_DIO0_MASK)
 								| RFLR_DIOMAPPING1_DIO0_01);
+				temp = spiRead_RFM(REG_LR_DIOMAPPING1);
 			}
 		}
 			break;

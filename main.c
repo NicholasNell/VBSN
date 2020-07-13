@@ -112,7 +112,7 @@ typedef enum {
 } States_t;
 
 
-#define BUFFER_SIZE 64 // Define the payload size here
+#define BUFFER_SIZE 256 // Define the payload size here
 
 States_t State = LOWPOWER;
 
@@ -128,9 +128,10 @@ int8_t SnrValue = 0;
 
 uint8_t txMsg[] = { 'P', 'I', 'N', 'G' };
 
-extern Gpio_t Led1;	//RED
-extern Gpio_t Led2;	//GREEN
-extern Gpio_t Led3;
+extern Gpio_t Led_rgb_red;	//RED
+extern Gpio_t Led_rgb_green;	//GREEN
+extern Gpio_t Led_rgb_blue;		//BLUE
+extern Gpio_t Led_user_red;
 
 extern bool TxFlag;
 
@@ -157,8 +158,7 @@ void RadioInit( ) {
 	}
 //	printf("RadioRegVersion: 0x%X\r\n", Radio.Read( REG_VERSION));
 
-// set radio frequency channel
-	Radio.SetChannel( RF_FREQUENCY);
+
 
 	Radio.SetTxConfig(MODEM_LORA,
 	TX_OUTPUT_POWER,
@@ -182,6 +182,8 @@ void RadioInit( ) {
 
 	Radio.SetMaxPayloadLength(MODEM_LORA, LORA_MAX_PAYLOAD_LEN);
 	Radio.SetPublicNetwork(LORA_IS_PUBLIC_NET, LORA_PRIVATE_SYNCWORD);
+	// set radio frequency channel
+	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
 
 	State = SLEEP;
@@ -192,7 +194,12 @@ int main( void ) {
 	MAP_WDT_A_holdTimer();
 
 	BoardInitMcu();
+	uint8_t temp = spiRead_RFM(REG_LR_HOPPERIOD);
 	RadioInit();
+
+	temp = spiRead_RFM(REG_LR_HOPPERIOD);
+
+
 
 	startTimerAcounter();
 	if (!BEACON) {
@@ -222,15 +229,18 @@ int main( void ) {
 
 //			if (State == RX) {
 			Radio.Rx(0);
-				State = RX;
-			Delayms(1000);
+			State = RX;
+
 //			}
 		}
 		else {
 			if (getTimerAcounterValue() >= 5 * 1000 * 1000) {
 				resetTimerAcounterValue();
-				GpioFlashLED(&Led1, 100);
+				GpioFlashLED(&Led_rgb_blue, 100);
+				Radio.Sleep();
 				Radio.Send(txMsg, LORA_PAYLOAD_LEN);
+				SX1276ReadFifo(Buffer, 255); // this fixes the issue where only every second message is sent somehow...
+				txMsg[3] += 1;
 				State = TX;
 
 			}
@@ -269,7 +279,7 @@ void OnTxDone( void ) {
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
-	GpioFlashLED(&Led2, 100);
+	GpioFlashLED(&Led_user_red, 100);
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
@@ -283,7 +293,7 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
-	GpioFlashLED(&Led3, 10);
+	GpioFlashLED(&Led_user_red, 10);
 	Radio.Sleep();
 	State = SLEEP;
 

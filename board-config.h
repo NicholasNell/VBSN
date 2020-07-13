@@ -24,9 +24,10 @@
 #define RADIO_MISO                                  P1_7
 #define RADIO_SCLK                                  P1_5
 
-#define LED_1                                       P2_0
-#define LED_2                                       P2_1
-#define LED_3                                       P2_2
+#define LED_RGB_RED                                 P2_0
+#define LED_RGB_GREEN                               P2_1
+#define LED_RGB_BLUE                                P2_2
+#define LED_USER_RED								P1_0
 
 #define BOARD_TCXO_WAKEUP_TIME                      1
 
