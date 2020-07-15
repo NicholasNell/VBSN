@@ -66,6 +66,7 @@
 #include <stdio.h>
 
 
+
 /*!
  * Constant values need to compute the RSSI value
  */
@@ -154,10 +155,12 @@ void RadioInit( ) {
 
 	// detect radio hardware
 	while (Radio.Read( REG_VERSION) == 0x00) {
-//		printf("Radio could not be detected!\n\r");
+		puts("Radio could not be detected!\n\r");
 		Delayms(1000);
 	}
-//	printf("RadioRegVersion: 0x%X\r\n", Radio.Read( REG_VERSION));
+
+	puts("RadioRegVersion: 0x");
+	puts((char*) Radio.Read( REG_VERSION));
 
 
 
@@ -195,6 +198,7 @@ int main( void ) {
 	MAP_WDT_A_holdTimer();
 
 	bool isMaster = true;
+	if (isMaster) puts("MASTER!");
 	uint8_t i;
 
 	BoardInitMcu();
