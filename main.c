@@ -73,10 +73,10 @@
 #define RSSI_OFFSET_HF                              -157
 
 #define RF_FREQUENCY 868500000  // Hz
-#define TX_OUTPUT_POWER 14	    // dBm
-#define TX_TIMEOUT_VALUE 0 	// ms
-#define RX_TIMEOUT_VALUE 0	// ms
-#define LORA_BANDWIDTH 7        //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
+#define TX_OUTPUT_POWER 10	    // dBm
+#define TX_TIMEOUT_VALUE 3000 	// ms
+#define RX_TIMEOUT_VALUE 1000 //ms
+#define LORA_BANDWIDTH 7       //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
 // 	9: 500 kHz]
@@ -86,7 +86,7 @@
                                 //  3: 4/7, \
                                 //  4: 4/8]
 #define LORA_PREAMBLE_LENGTH 8  // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT 255   // Symbols
+#define LORA_SYMBOL_TIMEOUT 0   // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON false
 #define LORA_IQ_INVERSION_ON false
 #define LORA_FREQ_DEV 0
@@ -108,25 +108,26 @@ bool DIO3Flag = false;
 bool DIO4Flag = false;
 
 typedef enum {
-	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT, SLEEP
+	LOWPOWER, RX, RX_TIMEOUT, RX_ERROR, TX, TX_TIMEOUT,
 } States_t;
 
 
-#define BUFFER_SIZE 256 // Define the payload size here
-
 States_t State = LOWPOWER;
 
+#define BUFFER_SIZE                                 64 // Define the payload size here
+
+const uint8_t PingMsg[] = "PING";
+const uint8_t PongMsg[] = "PONG";
+uint8_t tempBuffer[255] = { 0 };
 uint16_t BufferSize = BUFFER_SIZE;
-uint8_t Buffer[BUFFER_SIZE] = { 0 };
-/*		{ 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
- 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
- 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
- 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
- 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };*/
+uint8_t Buffer[BUFFER_SIZE];
+
+
+
 int8_t RssiValue = 0;
 int8_t SnrValue = 0;
 
-uint8_t txMsg[] = { 'P', 'I', 'N', 'G' };
+
 
 extern Gpio_t Led_rgb_red;	//RED
 extern Gpio_t Led_rgb_green;	//GREEN
@@ -186,32 +187,133 @@ void RadioInit( ) {
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
 
-	State = SLEEP;
+	State = LOWPOWER;
 }
 
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
+	bool isMaster = true;
+	uint8_t i;
+
 	BoardInitMcu();
-	uint8_t temp = spiRead_RFM(REG_LR_HOPPERIOD);
+
 	RadioInit();
 
-	temp = spiRead_RFM(REG_LR_HOPPERIOD);
+	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
 
-
-
-	startTimerAcounter();
-	if (!BEACON) {
-
-		Radio.Rx(0);
-
-		State = RX;
-//		GpioToggle(&Led2);
-	}
-
-
+	Radio.Rx(RX_TIMEOUT_VALUE);
 	while (1) {
+		switch (State) {
+			case RX:
+				if (isMaster == true) {
+					if (BufferSize > 0) {
+						if (strncmp(
+								(const char*) Buffer,
+								(const char*) PongMsg,
+								4) == 0) {
+							// Indicates on a LED that the received frame is a PONG
+							GpioToggle(&Led_rgb_green);
+
+							// Send the next PING frame
+							Buffer[0] = 'P';
+							Buffer[1] = 'I';
+							Buffer[2] = 'N';
+							Buffer[3] = 'G';
+							// We fill the buffer with numbers for the payload
+							for (i = 4; i < BufferSize; i++) {
+								Buffer[i] = i - 4;
+							}
+							Delayms(2);
+							Radio.Send(Buffer, BufferSize);
+							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
+						}
+						else if (strncmp(
+								(const char*) Buffer,
+								(const char*) PingMsg,
+								4) == 0) { // A master already exists then become a slave
+							isMaster = false;
+							GpioToggle(&Led_user_red); // Set LED off
+							Radio.Rx( RX_TIMEOUT_VALUE);
+						}
+						else // valid reception but neither a PING or a PONG message
+						{    // Set device as master ans start again
+							isMaster = true;
+							Radio.Rx( RX_TIMEOUT_VALUE);
+						}
+					}
+				}
+				else {
+					if (BufferSize > 0) {
+						if (strncmp(
+								(const char*) Buffer,
+								(const char*) PingMsg,
+								4) == 0) {
+							// Indicates on a LED that the received frame is a PING
+							GpioToggle(&Led_rgb_green);
+
+							// Send the reply to the PONG string
+							Buffer[0] = 'P';
+							Buffer[1] = 'O';
+							Buffer[2] = 'N';
+							Buffer[3] = 'G';
+							// We fill the buffer with numbers for the payload
+							for (i = 4; i < BufferSize; i++) {
+								Buffer[i] = i - 4;
+							}
+							Delayms(2);
+							Radio.Send(Buffer, BufferSize);
+							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
+						}
+						else // valid reception but not a PING as expected
+						{    // Set device as master and start again
+							isMaster = true;
+							Radio.Rx( RX_TIMEOUT_VALUE);
+						}
+					}
+				}
+				State = LOWPOWER;
+				break;
+			case TX:
+				// Indicates on a LED that we have sent a PING [Master]
+				// Indicates on a LED that we have sent a PONG [Slave]
+				GpioToggle(&Led_user_red);
+				Radio.Rx( RX_TIMEOUT_VALUE);
+				State = LOWPOWER;
+				break;
+			case RX_TIMEOUT:
+			case RX_ERROR:
+				if (isMaster == true) {
+					// Send the next PING frame
+					Buffer[0] = 'P';
+					Buffer[1] = 'I';
+					Buffer[2] = 'N';
+					Buffer[3] = 'G';
+					for (i = 4; i < BufferSize; i++) {
+						Buffer[i] = i - 4;
+					}
+					Delayms(2);
+					Radio.Send(Buffer, BufferSize);
+					SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
+				}
+				else {
+					Radio.Rx( RX_TIMEOUT_VALUE);
+				}
+				State = LOWPOWER;
+				break;
+			case TX_TIMEOUT:
+				Radio.Rx( RX_TIMEOUT_VALUE);
+				State = LOWPOWER;
+				break;
+			case LOWPOWER:
+			default:
+				// Set low power
+				break;
+		}
+
+//		BoardLowPowerHandler();
+
 		if (DIO0Flag) {
 			DIO0Flag = false;
 			SX1276OnDio0Irq();
@@ -225,18 +327,37 @@ int main( void ) {
 			SX1276OnDio2Irq();
 		}
 
-		if (!BEACON) {
+	}
+
+//	startTimerAcounter();
+
+
+	/*	while (1) {
+		if (DIO0Flag) {
+			DIO0Flag = false;
+			SX1276OnDio0Irq();
+		}
+		else if (DIO1Flag) {
+			DIO4Flag = false;
+			SX1276OnDio1Irq();
+		}
+		else if (DIO2Flag) {
+			DIO2Flag = false;
+			SX1276OnDio2Irq();
+		}
+
+	 if (!BEACON) {
 
 //			if (State == RX) {
-			Radio.Rx(0);
+			Radio.Rx();
 			State = RX;
 
 //			}
 		}
 		else {
-			if (getTimerAcounterValue() >= 5 * 1000 * 1000) {
+			if (getTimerAcounterValue() >= 5 * timeOnAir * 1000) {
 				resetTimerAcounterValue();
-				GpioFlashLED(&Led_rgb_blue, 100);
+				GpioFlashLED(&Led_rgb_blue, 5);
 				Radio.Sleep();
 				Radio.Send(txMsg, LORA_PAYLOAD_LEN);
 				SX1276ReadFifo(Buffer, 255); // this fixes the issue where only every second message is sent somehow...
@@ -245,8 +366,8 @@ int main( void ) {
 
 			}
 
-		}
-	}
+	 }
+	 }*/
 }
 
 void PORT2_IRQHandler( void ) {
@@ -273,18 +394,16 @@ void PORT2_IRQHandler( void ) {
 
 void OnTxDone( void ) {
 	Radio.Sleep();
-//	GpioFlashLED(&Led2, 100);
-	State = SLEEP;
+	State = TX;
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
-	GpioFlashLED(&Led_user_red, 100);
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
-	State = SLEEP;
+	State = RX;
 }
 
 void OnTxTimeout( void ) {
@@ -293,9 +412,8 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
-	GpioFlashLED(&Led_user_red, 10);
-	Radio.Sleep();
-	State = SLEEP;
+	Radio.Rx(RX_TIMEOUT_VALUE);
+	State = RX_TIMEOUT;
 
 }
 

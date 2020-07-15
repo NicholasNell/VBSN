@@ -47,8 +47,8 @@ void RtcInit( void ) {
 	    MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 
 	    /* Setup Calendar Alarm for 10:04pm (for the flux capacitor) */
-	    MAP_RTC_C_setCalendarAlarm(0x04, 0x22, RTC_C_ALARMCONDITION_OFF,
-	            RTC_C_ALARMCONDITION_OFF);
+//	    MAP_RTC_C_setCalendarAlarm(0x04, 0x22, RTC_C_ALARMCONDITION_OFF,
+//	            RTC_C_ALARMCONDITION_OFF);
 
 	    /* Specify an interrupt to assert every minute */
 	    MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);

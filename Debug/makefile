@@ -2,9 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-SHELL = cmd.exe
-
-CG_TOOL_ROOT := C:/ti/ccs1000/ccs/tools/compiler/ti-cgt-arm_20.2.0.LTS
+CG_TOOL_ROOT := /home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -37,8 +35,8 @@ $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
 
-RM := DEL /F
-RMDIR := RMDIR /S/Q
+RM := rm -rf
+RMDIR := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -162,22 +160,22 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 Meesters.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccs1000/ccs/tools/compiler/ti-cgt-arm_20.2.0.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -Ooff --opt_for_speed=3 --fp_mode=strict --define=__MSP432P401R__ --define=DeviceFamily_MSP432P401x -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"Meesters.map" --stack_size=512 -i"C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source" -i"C:/ti/ccs1000/ccs/tools/compiler/ti-cgt-arm_20.2.0.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Meesters_linkInfo.xml" --rom_model -o "Meesters.out" $(ORDERED_OBJS)
+	"/home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -Ooff --opt_for_speed=3 --fp_mode=strict --define=__MSP432P401R__ --define=DeviceFamily_MSP432P401x -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"Meesters.map" --stack_size=512 -i"/home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source" -i"/home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Meesters_linkInfo.xml" --rom_model -o "Meesters.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 Meesters.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/ti/ccs1000/ccs/tools/compiler/ti-cgt-arm_20.2.0.LTS/bin/armhex"  -o "Meesters.hex" $(EXE_OUTPUTS__QUOTED)
+	"/home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armhex"  -o "Meesters.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "board.obj" "gpio-board.obj" "main.obj" "my_ALOHA.obj" "my_MAC.obj" "my_RFM9x.obj" "my_gpio.obj" "my_rtc.obj" "my_spi.obj" "my_systick.obj" "my_timer.obj" "sx1276-board.obj" "system_msp432p401r.obj" "timer.obj" "ccs\startup_msp432p401r_ccs.obj" 
-	-$(RM) "board.d" "gpio-board.d" "main.d" "my_ALOHA.d" "my_MAC.d" "my_RFM9x.d" "my_gpio.d" "my_rtc.d" "my_spi.d" "my_systick.d" "my_timer.d" "sx1276-board.d" "system_msp432p401r.d" "timer.d" "ccs\startup_msp432p401r_ccs.d" 
+	-$(RM) "board.obj" "gpio-board.obj" "main.obj" "my_ALOHA.obj" "my_MAC.obj" "my_RFM9x.obj" "my_gpio.obj" "my_rtc.obj" "my_spi.obj" "my_systick.obj" "my_timer.obj" "sx1276-board.obj" "system_msp432p401r.obj" "timer.obj" "ccs/startup_msp432p401r_ccs.obj" 
+	-$(RM) "board.d" "gpio-board.d" "main.d" "my_ALOHA.d" "my_MAC.d" "my_RFM9x.d" "my_gpio.d" "my_rtc.d" "my_spi.d" "my_systick.d" "my_timer.d" "sx1276-board.d" "system_msp432p401r.d" "timer.d" "ccs/startup_msp432p401r_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
