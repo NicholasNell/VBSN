@@ -101,6 +101,8 @@
 #define LORA_PRIVATE_SYNCWORD 0x55
 #define LORA_IS_PUBLIC_NET false
 
+void printRegisters( void );
+
 uint8_t buffer[] = { 'H', 'E', 'L', 'L', 'O' };
 bool DIO0Flag = false;
 bool DIO1Flag = false;
@@ -159,9 +161,10 @@ void RadioInit( ) {
 		Delayms(1000);
 	}
 
-	puts("RadioRegVersion: 0x");
-	puts((char*) Radio.Read( REG_VERSION));
+	printf("RadioRegVersion: 0x%2X\n", Radio.Read(REG_VERSION));
 
+
+	printRegisters();
 
 
 	Radio.SetTxConfig(MODEM_LORA,
@@ -197,8 +200,8 @@ int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
-	bool isMaster = true;
-	if (isMaster) puts("MASTER!");
+	bool isMaster = false;
+	if (isMaster) printf("MASTER!\n");
 	uint8_t i;
 
 	BoardInitMcu();
@@ -231,7 +234,7 @@ int main( void ) {
 							}
 							Delayms(2);
 							Radio.Send(Buffer, BufferSize);
-							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
+//							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
 						}
 						else if (strncmp(
 								(const char*) Buffer,
@@ -268,7 +271,7 @@ int main( void ) {
 							}
 							Delayms(2);
 							Radio.Send(Buffer, BufferSize);
-							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
+//							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
 						}
 						else // valid reception but not a PING as expected
 						{    // Set device as master and start again
@@ -299,7 +302,7 @@ int main( void ) {
 					}
 					Delayms(2);
 					Radio.Send(Buffer, BufferSize);
-					SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
+//					SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
 				}
 				else {
 					Radio.Rx( RX_TIMEOUT_VALUE);
@@ -384,21 +387,26 @@ void PORT2_IRQHandler( void ) {
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN4) {
 		DIO0Flag = true;
+		puts("DIO0 Triggered");
 	}
 	else if (status & GPIO_PIN6) {
 		DIO1Flag = true;
+		puts("DIO1 Triggered");
 	}
 	else if (status & GPIO_PIN3) {
 		DIO4Flag = true;
+		puts("DIO4 Triggered");
 	}
 	else if (status & GPIO_PIN7) {
 		DIO2Flag = true;
+		puts("DIO2 Triggered");
 	}
 }
 
 void OnTxDone( void ) {
 	Radio.Sleep();
 	State = TX;
+	puts("TxDone");
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
@@ -408,21 +416,42 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	RssiValue = rssi;
 	SnrValue = snr;
 	State = RX;
+	puts("RxDone");
 }
 
 void OnTxTimeout( void ) {
 	Radio.Sleep();
 	State = TX_TIMEOUT;
+	puts("TxTimeout");
 }
 
 void OnRxTimeout( void ) {
-	Radio.Rx(RX_TIMEOUT_VALUE);
+	Radio.Sleep();
 	State = RX_TIMEOUT;
-
+	spiRead_RFM(REG_LR_IRQFLAGS);
+	puts("RxTimeout");
 }
 
 void OnRxError( void ) {
 	Radio.Sleep();
 	State = RX_ERROR;
+	puts("RxError");
 }
 
+void printRegisters( void ) {
+
+	uint8_t registers[] = { 0x01, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
+							0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014,
+							0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
+							0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24,
+							0x25, 0x26, 0x27, 0x4b };
+
+	uint8_t i;
+	for (i = 0; i < sizeof(registers); i++) {
+		printf("0x%2X", registers[i]);
+//		puts((uint8_t*) registers[i]);
+		printf(": ");
+//		puts((uint8_t*) spiRead_RFM(registers[i]));
+		printf("0x%2X\n", spiRead_RFM(registers[i]));
+	}
+}
