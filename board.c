@@ -15,6 +15,11 @@
 #include "board.h"
 #include "my_rtc.h"
 
+/*
+ * Core Clocks and External oscillators
+ */
+#define __LFXT 32768
+#define __HFXT 48000000
 
 /*!
  * LED GPIO pins objects
@@ -63,6 +68,8 @@ void BoardInitPeriph( void ) {
 void BoardInitMcu( void ) {
 	BoardUnusedIoInit();
 
+	SystemClockConfig();
+
 //	TimerAInteruptInit();
 	TimerACounterInit();
 	startTimerAcounter();
@@ -94,8 +101,7 @@ void BoardInitMcu( void ) {
 	LED_USER_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 
 
-//        TODO: Implement Clock Config
-//        SystemClockConfig( );
+
 
 	UsbIsConnected = true;
 
@@ -193,4 +199,17 @@ uint8_t GetBoardPowerSource( void ) {
 	else {
 		return USB_POWER;
 	}
+}
+
+void SystemClockConfig( void ) {
+	MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
+	MAP_CS_setExternalClockSourceFrequency(__LFXT, __HFXT);
+	MAP_FPU_enableModule(); // makes sure the FPU is enabled before DCO frequency tuning
+	MAP_CS_setDCOFrequency(1500000);
+
+	MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_128);
+	MAP_CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+	MAP_CS_initClockSignal(CS_HSMCLK, CS_MODOSC_SELECT, CS_CLOCK_DIVIDER_1);
+	MAP_CS_initClockSignal(CS_SMCLK, CS_MODOSC_SELECT, CS_CLOCK_DIVIDER_16);
+	MAP_CS_initClockSignal(CS_BCLK, CS_LFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 }

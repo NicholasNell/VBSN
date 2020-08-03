@@ -13,19 +13,21 @@
 #include <stdlib.h>
 #include "my_spi.h"
 
-const eUSCI_SPI_MasterConfig spiMasterConfig =
-{
-     EUSCI_B_SPI_CLOCKSOURCE_SMCLK,         // SMCLK clock.
-     3000000,                                                            // SMCLK = DCO = 3MHz
-		1000000,                                                // SPICLK = 1MHz
-     EUSCI_B_SPI_MSB_FIRST,                               // MSB first
-     EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,   //phase
-     EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,
-     EUSCI_B_SPI_3PIN
-};
+
 
 void spi_open(void)
 {
+
+	double smclkFreq = MAP_CS_getSMCLK();
+
+	eUSCI_SPI_MasterConfig spiMasterConfig = {
+	EUSCI_B_SPI_CLOCKSOURCE_SMCLK,         // SMCLK clock.
+			smclkFreq,                        // SMCLK = CS_modoclk /16
+			1000000,                                            // SPICLK = 1MHz
+			EUSCI_B_SPI_MSB_FIRST,                               // MSB first
+			EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,   //phase
+			EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,
+			EUSCI_B_SPI_3PIN };
 //    Setting up SPI mode and opening
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
                                                    GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);

@@ -105,6 +105,11 @@ void BoardGetUniqueId( uint8_t *id );
 void BoardLowPowerHandler( void );
 
 /*!
+ * \brief configures the system clock
+ */
+void SystemClockConfig( void );
+
+/*!
  * \brief Get the board power source
  *
  * \retval value  power source [0: USB_POWER, 1: BATTERY_POWER]

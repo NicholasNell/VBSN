@@ -93,17 +93,18 @@ void Delayms( uint32_t ms ) {
 }
 
 /*!
- * \brief Sets up timer for TICK_TIME_A0_CONT us accuracy
+ * \brief Sets up timer for \link TICK_TIME_A3_CONT \endlink us accuracy
  */
 void TimerACounterInit( void ) {
-	MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
-	MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_128);
-	/* Configure Timer_A0 for timing purposes */
-	Timer_A_enableInterrupt(TIMER_A3_BASE);
-	Timer_A_enableCaptureCompareInterrupt(
+
+	/* Configure Timer_A3 for timing purposes */
+	MAP_Timer_A_enableInterrupt(TIMER_A3_BASE);
+
+	MAP_Timer_A_enableCaptureCompareInterrupt(
 	TIMER_A3_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
-	Timer_A_configureContinuousMode(TIMER_A3_BASE, &contConfig0);
+
+	MAP_Timer_A_configureContinuousMode(TIMER_A3_BASE, &contConfig0);
 	MAP_Interrupt_enableInterrupt(INT_TA3_0);
 }
 

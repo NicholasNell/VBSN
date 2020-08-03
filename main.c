@@ -49,6 +49,8 @@
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <ti/drivers/GPIO.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
+
 
 /* Standard Includes */
 #include "main.h"
@@ -144,8 +146,6 @@ extern bool TxFlag;
  */
 static RadioEvents_t RadioEvents;
 
-#define BEACON false
-
 void RadioInit( ) {
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
@@ -164,7 +164,7 @@ void RadioInit( ) {
 	printf("RadioRegVersion: 0x%2X\n", Radio.Read(REG_VERSION));
 
 
-	printRegisters();
+//	printRegisters();
 
 
 	Radio.SetTxConfig(MODEM_LORA,
@@ -196,13 +196,14 @@ void RadioInit( ) {
 	State = LOWPOWER;
 }
 
+static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
+
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
-	bool isMaster = false;
-	if (isMaster) printf("MASTER!\n");
-	uint8_t i;
+	bool isRoot = false;
+	if (isRoot) printf("ROOT!\n");
 
 	BoardInitMcu();
 
@@ -210,117 +211,22 @@ int main( void ) {
 
 	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
 
-	Radio.Rx(RX_TIMEOUT_VALUE);
+	aclk = MAP_CS_getACLK();
+	mclk = MAP_CS_getMCLK();
+	smclk = MAP_CS_getSMCLK();
+	hsmclk = MAP_CS_getHSMCLK();
+	bclk = MAP_CS_getBCLK();
+
 	while (1) {
-		switch (State) {
-			case RX:
-				if (isMaster == true) {
-					if (BufferSize > 0) {
-						if (strncmp(
-								(const char*) Buffer,
-								(const char*) PongMsg,
-								4) == 0) {
-							// Indicates on a LED that the received frame is a PONG
-							GpioToggle(&Led_rgb_green);
 
-							// Send the next PING frame
-							Buffer[0] = 'P';
-							Buffer[1] = 'I';
-							Buffer[2] = 'N';
-							Buffer[3] = 'G';
-							// We fill the buffer with numbers for the payload
-							for (i = 4; i < BufferSize; i++) {
-								Buffer[i] = i - 4;
-							}
-							Delayms(2);
-							Radio.Send(Buffer, BufferSize);
-//							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
-						}
-						else if (strncmp(
-								(const char*) Buffer,
-								(const char*) PingMsg,
-								4) == 0) { // A master already exists then become a slave
-							isMaster = false;
-							GpioToggle(&Led_user_red); // Set LED off
-							Radio.Rx( RX_TIMEOUT_VALUE);
-						}
-						else // valid reception but neither a PING or a PONG message
-						{    // Set device as master ans start again
-							isMaster = true;
-							Radio.Rx( RX_TIMEOUT_VALUE);
-						}
-					}
-				}
-				else {
-					if (BufferSize > 0) {
-						if (strncmp(
-								(const char*) Buffer,
-								(const char*) PingMsg,
-								4) == 0) {
-							// Indicates on a LED that the received frame is a PING
-							GpioToggle(&Led_rgb_green);
-
-							// Send the reply to the PONG string
-							Buffer[0] = 'P';
-							Buffer[1] = 'O';
-							Buffer[2] = 'N';
-							Buffer[3] = 'G';
-							// We fill the buffer with numbers for the payload
-							for (i = 4; i < BufferSize; i++) {
-								Buffer[i] = i - 4;
-							}
-							Delayms(2);
-							Radio.Send(Buffer, BufferSize);
-//							SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
-						}
-						else // valid reception but not a PING as expected
-						{    // Set device as master and start again
-							isMaster = true;
-							Radio.Rx( RX_TIMEOUT_VALUE);
-						}
-					}
-				}
-				State = LOWPOWER;
-				break;
-			case TX:
-				// Indicates on a LED that we have sent a PING [Master]
-				// Indicates on a LED that we have sent a PONG [Slave]
-				GpioToggle(&Led_user_red);
-				Radio.Rx( RX_TIMEOUT_VALUE);
-				State = LOWPOWER;
-				break;
-			case RX_TIMEOUT:
-			case RX_ERROR:
-				if (isMaster == true) {
-					// Send the next PING frame
-					Buffer[0] = 'P';
-					Buffer[1] = 'I';
-					Buffer[2] = 'N';
-					Buffer[3] = 'G';
-					for (i = 4; i < BufferSize; i++) {
-						Buffer[i] = i - 4;
-					}
-					Delayms(2);
-					Radio.Send(Buffer, BufferSize);
-//					SX1276ReadFifo(tempBuffer, 255); // this fixes the issue where only every second message is sent somehow...
-				}
-				else {
-					Radio.Rx( RX_TIMEOUT_VALUE);
-				}
-				State = LOWPOWER;
-				break;
-			case TX_TIMEOUT:
-				Radio.Rx( RX_TIMEOUT_VALUE);
-				State = LOWPOWER;
-				break;
+		switch (state) {
 			case LOWPOWER:
+
+				break;
 			default:
-				// Set low power
 				break;
 		}
 
-//		BoardLowPowerHandler();
-
 		if (DIO0Flag) {
 			DIO0Flag = false;
 			SX1276OnDio0Irq();
@@ -333,48 +239,7 @@ int main( void ) {
 			DIO2Flag = false;
 			SX1276OnDio2Irq();
 		}
-
 	}
-
-//	startTimerAcounter();
-
-
-	/*	while (1) {
-		if (DIO0Flag) {
-			DIO0Flag = false;
-			SX1276OnDio0Irq();
-		}
-		else if (DIO1Flag) {
-			DIO4Flag = false;
-			SX1276OnDio1Irq();
-		}
-		else if (DIO2Flag) {
-			DIO2Flag = false;
-			SX1276OnDio2Irq();
-		}
-
-	 if (!BEACON) {
-
-//			if (State == RX) {
-			Radio.Rx();
-			State = RX;
-
-//			}
-		}
-		else {
-			if (getTimerAcounterValue() >= 5 * timeOnAir * 1000) {
-				resetTimerAcounterValue();
-				GpioFlashLED(&Led_rgb_blue, 5);
-				Radio.Sleep();
-				Radio.Send(txMsg, LORA_PAYLOAD_LEN);
-				SX1276ReadFifo(Buffer, 255); // this fixes the issue where only every second message is sent somehow...
-				txMsg[3] += 1;
-				State = TX;
-
-			}
-
-	 }
-	 }*/
 }
 
 void PORT2_IRQHandler( void ) {
