@@ -35,30 +35,9 @@ typedef enum {
 
 #define ALOHA_MAX_ATTEMPT 5
 
-typedef struct {
-		uint8_t fid;
-		uint8_t no;
-} HeaderStruct;
-
-typedef struct {
-		uint8_t pd0;
-		uint8_t pd1;
-} DataStruct;
-
-void createAlohaPacket(
-		uint8_t *output,
-		HeaderStruct *header,
-		DataStruct *data );
-
-bool dissectAlohaPacket(
-		uint8_t *input,
-		HeaderStruct *header,
-		DataStruct *data );
-
-
 bool sendALOHAmessage( uint8_t *buffer, uint8_t size );
 
-void sendAck( int id );
+void sendAck( uint8_t buffer[] );
 
 bool MACSend( uint8_t *buffer, uint8_t size );
 

@@ -67,8 +67,7 @@
 #include <stdio.h>
 #include "my_MAC.h"
 #include <utilities.h>
-
-
+#include <string.h>
 
 /*!
  * Constant values need to compute the RSSI value
@@ -90,13 +89,13 @@
                                 //  3: 4/7, \
                                 //  4: 4/8]
 #define LORA_PREAMBLE_LENGTH 16  // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT 1   // Symbols
+#define LORA_SYMBOL_TIMEOUT 1023   // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON false
 #define LORA_IQ_INVERSION_ON true
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
 #define LORA_PAYLOAD_LEN 4
-#define LORA_RX_CONTINUOUS true
+#define LORA_RX_CONTINUOUS false
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false
 #define LORA_bandwidthAfc 0
@@ -105,12 +104,17 @@
 #define LORA_IS_PUBLIC_NET false
 
 // Uncomment for debug outputs
-//#define DEBUG
+#define DEBUG
 
 void printRegisters( void );
 
-uint8_t Buffer[4] = { 'H', 'E', 'L', 0 };
+uint8_t Buffer[4] = { 0, 1, 2, 3 };
 volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
+uint8_t size;
+uint16_t delay;
+uint8_t attempts = 0;
+volatile AppStates_t State = LOWPOWER;
+
 
 bool DIO0Flag = false;
 bool DIO1Flag = false;
@@ -119,14 +123,8 @@ bool DIO3Flag = false;
 bool DIO4Flag = false;
 bool sendFlag = false;
 
-
-
-extern volatile AppStates_t State = LOWPOWER;
-
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
-
-
 
 extern Gpio_t Led_rgb_red;	//RED
 extern Gpio_t Led_rgb_green;	//GREEN
@@ -190,13 +188,11 @@ void RadioInit( ) {
 	State = LOWPOWER;
 }
 
-static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
-
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
-	bool isRoot = false;
+	bool isRoot = true;
 	if (isRoot) printf("ROOT!\n");
 
 	BoardInitMcu();
@@ -205,38 +201,26 @@ int main( void ) {
 
 	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
 
-	aclk = MAP_CS_getACLK();
-	mclk = MAP_CS_getMCLK();
-	smclk = MAP_CS_getSMCLK();
-	hsmclk = MAP_CS_getHSMCLK();
-	bclk = MAP_CS_getBCLK();
-	startTimerAcounter();
+
+//	startTimerAcounter();
+	Radio.Rx(6000);
 
 	while (1) {
-
-
-		if (getTimerAcounterValue() > 3000000) {
-
-
-			resetTimerAcounterValue();
-			GpioFlashLED(&Led_rgb_green, 10);
-			Radio.Send(Buffer, 4);
-			Buffer[3] += 1;
-
-		}
-
 
 		if (DIO0Flag) {
 			DIO0Flag = false;
 			SX1276OnDio0Irq();
 		}
 		else if (DIO1Flag) {
-			DIO4Flag = false;
+			DIO1Flag = false;
 			SX1276OnDio1Irq();
 		}
 		else if (DIO2Flag) {
 			DIO2Flag = false;
 			SX1276OnDio2Irq();
+		}
+		else if (DIO4Flag) {
+			DIO4Flag = false;
 		}
 	}
 }
@@ -266,7 +250,6 @@ void PORT2_IRQHandler( void ) {
 	}
 	else if (status & GPIO_PIN7) {
 		DIO2Flag = true;
-
 	}
 }
 
@@ -279,13 +262,12 @@ void OnTxDone( void ) {
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
-
+	Radio.Sleep();
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
 	State = RX;
-	Radio.Sleep();
 
 #ifdef DEBUG
 	puts("RxDone");
@@ -302,7 +284,7 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
-//	Radio.Sleep();
+	Radio.Sleep();
 	State = RX_TIMEOUT;
 #ifdef DEBUG
 	uint8_t temp = spiRead_RFM(0x12);

@@ -72,6 +72,7 @@ main.obj: ../timer.h
 main.obj: /home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include/stdio.h
 main.obj: /home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include/stdarg.h
 main.obj: ../my_MAC.h
+main.obj: /home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include/string.h
 
 ../main.c: 
 /home/nicholas/ti/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/driverlib.h: 
@@ -145,3 +146,4 @@ main.obj: ../my_MAC.h
 /home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include/stdio.h: 
 /home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include/stdarg.h: 
 ../my_MAC.h: 
+/home/nicholas/ti/ccs1010/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include/string.h: 
