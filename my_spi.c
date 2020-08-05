@@ -23,7 +23,7 @@ void spi_open(void)
 	eUSCI_SPI_MasterConfig spiMasterConfig = {
 	EUSCI_B_SPI_CLOCKSOURCE_SMCLK,         // SMCLK clock.
 			smclkFreq,                        // SMCLK = CS_modoclk /16
-			1000000,                                            // SPICLK = 1MHz
+			1500000,                                            // SPICLK = 1MHz
 			EUSCI_B_SPI_MSB_FIRST,                               // MSB first
 			EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,   //phase
 			EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,

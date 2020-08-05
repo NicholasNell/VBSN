@@ -757,8 +757,8 @@ void SX1276Send( uint8_t *buffer, uint8_t size ) {
 			spiWrite_RFM( REG_LR_PAYLOADLENGTH, size);
 
 			// Full buffer used for Tx
-			spiWrite_RFM( REG_LR_FIFOTXBASEADDR, 0);
-			spiWrite_RFM( REG_LR_FIFOADDRPTR, 0);
+			spiWrite_RFM( REG_LR_FIFOTXBASEADDR, 0x00);
+			spiWrite_RFM( REG_LR_FIFOADDRPTR, 0x00);
 
 			// FIFO operations can not take place in Sleep mode
 			if ((spiRead_RFM( REG_OPMODE) & ~RF_OPMODE_MASK) == RF_OPMODE_SLEEP) {
@@ -773,6 +773,7 @@ void SX1276Send( uint8_t *buffer, uint8_t size ) {
 	}
 
 	SX1276SetTx(txTimeout);
+	spiRead_RFM(0x0d);
 }
 
 void SX1276SetOpMode( uint8_t opMode ) {
@@ -1102,6 +1103,8 @@ void SX1276StartCad( void ) {
 	}
 }
 
+// Don't need this function, it only takes up space
+/*
 void SX1276SetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time ) {
 	uint32_t timeout = (uint32_t) (time * 1000);
 
@@ -1136,6 +1139,7 @@ void SX1276SetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time ) {
 	TimerStart(&TxTimeoutTimer);
 	SX1276SetOpMode( RF_OPMODE_TRANSMITTER);
 }
+ */
 
 void SX1276ReadBuffer( uint16_t addr, uint8_t *buffer, uint8_t size ) {
 	uint8_t i;
@@ -1239,13 +1243,11 @@ void SX1276SetTx( uint32_t timeout ) {
 						RFLR_IRQFLAGS_CADDETECTED);
 
 				// DIO0=TxDone
-				uint8_t temp = spiRead_RFM(REG_LR_DIOMAPPING1);
 				spiWrite_RFM(
 						REG_DIOMAPPING1,
 						(spiRead_RFM( REG_DIOMAPPING1)
 								& RFLR_DIOMAPPING1_DIO0_MASK)
 								| RFLR_DIOMAPPING1_DIO0_01);
-				temp = spiRead_RFM(REG_LR_DIOMAPPING1);
 			}
 		}
 			break;

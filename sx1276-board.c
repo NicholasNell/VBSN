@@ -51,7 +51,7 @@ const struct Radio_s Radio =
     SX1276SetStby,
     SX1276SetRx,
     SX1276StartCad,
-    SX1276SetTxContinuousWave,
+								NULL, // dont need contWave
     SX1276ReadRssi,
     spiWrite_RFM,
     spiRead_RFM,

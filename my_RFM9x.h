@@ -387,7 +387,7 @@ void SX1276StartCad( void );
  * \param [IN]: power      Sets the output power [dBm]
  * \param [IN]: time       Transmission mode timeout [s]
  */
-void SX1276SetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time );
+//void SX1276SetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time );
 
 /*!
  * \brief Reads the current RSSI value

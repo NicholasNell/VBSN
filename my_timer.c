@@ -31,6 +31,7 @@ static TimerContext_t TimerContext;
 /************** DELAY MS **************/
 #define TIMER_PERIOD    375
 bool timerTick_ms = false;
+extern bool sendFlag;
 
 /************** DELAY MS **************/
 /* Timer_A UpMode Configuration Parameter */
@@ -155,14 +156,15 @@ void resetTimerAcounterValue( void ) {
  * @param timeout, value in ms
  */
 void startLoRaTimer( uint32_t timeout ) {
+
 	float time = timeout / 1000.0;
 	time = time * 32765 / 12.0;
 	uint16_t timer_period = (uint16_t) time;
 
 	Timer_A_UpModeConfig upConfigA2 = {
 	TIMER_A_CLOCKSOURCE_ACLK, // ACLK Clock Source
-			TIMER_A_CLOCKSOURCE_DIVIDER_12,          // SMCLK/1 = 1.5MHz
-			timer_period,                           // 375 tick period
+			TIMER_A_CLOCKSOURCE_DIVIDER_1,          // SMCLK/1 = 1.5MHz
+			timeout,                           // 375 tick period
 			TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
 			TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,    // Enable CCR0 interrupt
 			TIMER_A_SKIP_CLEAR                         // Clear value
@@ -182,6 +184,7 @@ void stopLoRaTimer( ) {
 }
 
 void TA2_0_IRQHandler( void ) {
+	sendFlag = true;
 	Timer_A_clearInterruptFlag(TIMER_A2_BASE);
 	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A2_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
@@ -254,7 +257,8 @@ void SetAlarm( uint32_t timeout ) {
 	TIMER_A_CAPTURECOMPARE_REGISTER_0, CCRTime);
 }
 
-void StartAlarm( uint32_t timeout ) {
+void StartAlarm( uint32_t timeout, bool *flag ) {
+
 	Timer_A_CompareModeConfig CMC = {
 	TIMER_A_CAPTURECOMPARE_REGISTER_0,
 										TIMER_A_CAPTURECOMPARE_INTERRUPT_ENABLE,
@@ -364,6 +368,7 @@ void StartAlarm( uint32_t timeout ) {
 }
 
 void TA3_0_IRQHandler( void ) {
+
 	Timer_A_clearInterruptFlag(TIMER_A3_BASE);
 	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A3_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);

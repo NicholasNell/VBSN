@@ -69,7 +69,7 @@ void resetTimerAcounterValue( void );
  * \brief Start a timer which will interupt after timeout ms
  * @param timeout, value in ms
  */
-void startLoRaTimer(uint32_t timeout);
+void startLoRaTimer( uint32_t timeout );
 
 /*!
  *  Stopsthe LoRa module timer
@@ -149,8 +149,9 @@ void SetAlarm( uint32_t timeout );
  * \note  Alarm in RtcTimerContext.Time + timeout
  *
  * \param [IN] timeout Timeout value in ticks
+ * \param [IN] flag to be set when alarm expires
  */
-void StartAlarm( uint32_t timeout );
+void StartAlarm( uint32_t timeout, bool *flag );
 
 
 #endif /* MY_TIMER_H_ */

@@ -2,8 +2,6 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-SHELL = cmd.exe
-
 # Add inputs and outputs from these tool invocations to the build variables 
 CMD_SRCS += \
 ../msp432p401r.cmd 
@@ -12,7 +10,6 @@ C_SRCS += \
 ../board.c \
 ../gpio-board.c \
 ../main.c \
-../my_ALOHA.c \
 ../my_MAC.c \
 ../my_RFM9x.c \
 ../my_gpio.c \
@@ -28,7 +25,6 @@ C_DEPS += \
 ./board.d \
 ./gpio-board.d \
 ./main.d \
-./my_ALOHA.d \
 ./my_MAC.d \
 ./my_RFM9x.d \
 ./my_gpio.d \
@@ -44,7 +40,6 @@ OBJS += \
 ./board.obj \
 ./gpio-board.obj \
 ./main.obj \
-./my_ALOHA.obj \
 ./my_MAC.obj \
 ./my_RFM9x.obj \
 ./my_gpio.obj \
@@ -60,7 +55,6 @@ OBJS__QUOTED += \
 "board.obj" \
 "gpio-board.obj" \
 "main.obj" \
-"my_ALOHA.obj" \
 "my_MAC.obj" \
 "my_RFM9x.obj" \
 "my_gpio.obj" \
@@ -76,7 +70,6 @@ C_DEPS__QUOTED += \
 "board.d" \
 "gpio-board.d" \
 "main.d" \
-"my_ALOHA.d" \
 "my_MAC.d" \
 "my_RFM9x.d" \
 "my_gpio.d" \
@@ -92,7 +85,6 @@ C_SRCS__QUOTED += \
 "../board.c" \
 "../gpio-board.c" \
 "../main.c" \
-"../my_ALOHA.c" \
 "../my_MAC.c" \
 "../my_RFM9x.c" \
 "../my_gpio.c" \
