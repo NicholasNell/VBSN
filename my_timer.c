@@ -184,7 +184,6 @@ void stopLoRaTimer( ) {
 }
 
 void TA2_0_IRQHandler( void ) {
-	sendFlag = true;
 	Timer_A_clearInterruptFlag(TIMER_A2_BASE);
 	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A2_BASE,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);

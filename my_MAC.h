@@ -20,17 +20,15 @@
 #include <stdio.h>
 
 typedef enum {
-	SLEEP = 0, PENDING, RETRANSMIT, EXPIRED, ACK_RESP
-} AlohaState_t;
-
-typedef enum {
-	LOWPOWER = 0, IDLE,
-
-	RX, RX_TIMEOUT, RX_ERROR,
-
-	TX, TX_TIMEOUT,
-
-	CAD, CAD_DONE
+	SLEEP = 0,
+	TX,
+	RX,
+	TXDONE,
+	RXDONE,
+	TX_TIMEOUT,
+	RX_TIMEOUT,
+	RX_ERROR,
+	STATE_CHANGE
 } AppStates_t;
 
 #define ALOHA_MAX_ATTEMPT 5

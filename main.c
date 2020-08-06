@@ -106,14 +106,19 @@
 // Uncomment for debug outputs
 #define DEBUG
 
+// uncomment for each
+#define ROOT
+//#define SENS
+
 void printRegisters( void );
 
-uint8_t Buffer[4] = { 0, 1, 2, 3 };
+uint8_t RxBuffer[4] = { 0 };
+uint8_t TxBuffer[4] = { 0, 1, 2, 3 };
 volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
 uint8_t size;
 uint16_t delay;
 uint8_t attempts = 0;
-volatile AppStates_t State = LOWPOWER;
+volatile AppStates_t State = SLEEP;
 
 
 bool DIO0Flag = false;
@@ -121,7 +126,7 @@ bool DIO1Flag = false;
 bool DIO2Flag = false;
 bool DIO3Flag = false;
 bool DIO4Flag = false;
-bool sendFlag = false;
+bool waitingForAck = false;
 
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
@@ -185,15 +190,20 @@ void RadioInit( ) {
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
 
-	State = LOWPOWER;
 }
 
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
-	bool isRoot = true;
-	if (isRoot) printf("ROOT!\n");
+
+#ifdef ROOT
+	printf("ROOT!\n");
+	State = RX;
+#endif
+#ifdef SENS
+	printf("SENS!\n");
+#endif
 
 	BoardInitMcu();
 
@@ -203,10 +213,116 @@ int main( void ) {
 
 
 //	startTimerAcounter();
-	Radio.Rx(6000);
+//	Radio.Rx(6000);
 
 	while (1) {
 
+#ifdef SENS
+		switch (State) {
+			case SLEEP:
+				Delayms(10000);
+				State = TX;
+				break;
+			case TX:
+				if (waitingForAck) { // Ack not recieved
+					Radio.Send(TxBuffer, 4);
+					Delayms(timeOnAir);
+					State = STATE_CHANGE;
+
+				}
+				else {	//not waiting for ack therfore send new message
+					Radio.Send(TxBuffer, 4);
+					Delayms(timeOnAir);
+					waitingForAck = true;
+					State = STATE_CHANGE;
+				}
+				break;
+			case TXDONE:
+				State = RX;
+				Radio.Rx(1000);
+				break;
+			case RX:
+				Radio.Rx(100);
+				State= STATE_CHANGE;
+				break;
+			case RXDONE:
+			{
+				uint8_t isAck = RxBuffer[0];
+
+				switch (isAck) {
+					case 0x00:
+						State = TX; // not an ack, retransmit
+						break;
+					case 0x01:
+						GpioFlashLED(&Led_rgb_green, timeOnAir);
+						State = SLEEP; // is an ack, go to sleep
+						waitingForAck = false;
+						break;
+					default:
+						break;
+				}
+			}
+			case RX_TIMEOUT:
+				State = RX;
+				break;
+			case STATE_CHANGE:
+				//waiting for callback to change state
+				break;
+			default:
+				break;
+		}
+#endif
+#ifdef ROOT
+		switch (State) {
+			case RX:
+				Radio.Rx(1000);
+				State = STATE_CHANGE;
+				break;
+			case RX_TIMEOUT:
+				State = RX;
+				break;
+			case RXDONE: {
+				uint8_t isAck = RxBuffer[0];
+
+				switch (isAck) {
+					case 0x00:
+						State = TX;
+						break;
+					case 0x01:
+						State = SLEEP; // is an ack, go to sleep
+						break;
+					default:
+						break;
+				}
+			}
+				break;
+			case TX:
+				if (waitingForAck) {
+					State = RX;
+				}
+				else {
+					uint8_t tempSendBuf[4] = { 0 };
+					memcpy(tempSendBuf, TxBuffer, 4);
+					tempSendBuf[0] = 0x01;
+					Radio.Send(tempSendBuf, 4);
+					waitingForAck = true;
+					Delayms(timeOnAir);
+					State = STATE_CHANGE;
+				}
+				break;
+			case TXDONE:
+				State = SLEEP;
+				break;
+			case SLEEP:
+				Delayms(10000 - 2 * timeOnAir);
+				State = RX;
+				break;
+			case STATE_CHANGE:
+				break;
+			default:
+				break;
+		}
+#endif
 		if (DIO0Flag) {
 			DIO0Flag = false;
 			SX1276OnDio0Irq();
@@ -255,7 +371,7 @@ void PORT2_IRQHandler( void ) {
 
 void OnTxDone( void ) {
 	Radio.Sleep();
-	State = TX;
+	State = TXDONE;
 #ifdef DEBUG
 	puts("TxDone");
 #endif
@@ -264,10 +380,10 @@ void OnTxDone( void ) {
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	Radio.Sleep();
 	BufferSize = size;
-	memcpy(Buffer, payload, BufferSize);
+	memcpy(RxBuffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
-	State = RX;
+	State = RXDONE;
 
 #ifdef DEBUG
 	puts("RxDone");
@@ -287,8 +403,6 @@ void OnRxTimeout( void ) {
 	Radio.Sleep();
 	State = RX_TIMEOUT;
 #ifdef DEBUG
-	uint8_t temp = spiRead_RFM(0x12);
-	spiWrite_RFM(0x12, 0xFF);
 	puts("RxTimeout");
 	GpioFlashLED(&Led_rgb_red, 10);
 #endif
