@@ -231,7 +231,7 @@ int main( void ) {
 			SX1276OnDio0Irq();
 		}
 		else if (DIO1Flag) {
-			DIO4Flag = false;
+			DIO1Flag = false;
 			SX1276OnDio1Irq();
 		}
 		else if (DIO2Flag) {
