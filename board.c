@@ -72,6 +72,7 @@ void BoardInitMcu( void ) {
 
 //	TimerAInteruptInit();
 	TimerACounterInit();
+	DelayTimerInit();
 	startTimerAcounter();
 	RtcInit();
 

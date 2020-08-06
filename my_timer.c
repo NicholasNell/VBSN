@@ -31,6 +31,7 @@ static TimerContext_t TimerContext;
 /************** DELAY MS **************/
 #define TIMER_PERIOD    375
 bool timerTick_ms = false;
+bool isDelayTimerRunning = false;
 extern bool sendFlag;
 
 /************** DELAY MS **************/
@@ -46,8 +47,14 @@ TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
 
 /* Configure Timer_A0 as a continuous counter for timing using aux clock sourced from REFO at 32.765kHz / 16*/
 const Timer_A_ContinuousModeConfig contConfig0 = {
-		TIMER_A_CLOCKSOURCE_ACLK,
-		TIMER_A_CLOCKSOURCE_DIVIDER_1,
+		TIMER_A_CLOCKSOURCE_SMCLK,
+		TIMER_A_CLOCKSOURCE_DIVIDER_24,
+		TIMER_A_TAIE_INTERRUPT_ENABLE,
+		TIMER_A_SKIP_CLEAR };
+
+const Timer_A_ContinuousModeConfig contConfig1 = {
+		TIMER_A_CLOCKSOURCE_SMCLK,
+		TIMER_A_CLOCKSOURCE_DIVIDER_24,
 		TIMER_A_TAIE_INTERRUPT_ENABLE,
 		TIMER_A_SKIP_CLEAR };
 
@@ -82,14 +89,14 @@ void Delayms( uint32_t ms ) {
 	}
 	timercount = 0;
 	 MAP_Timer_A_stopTimer(TIMER_A0_BASE);*/
-	if (!isTimerAcounterRunning) {
-		startTimerAcounter();
+	if (!isDelayTimerRunning) {
+		startDelayTimer();
 	}
 
-	uint32_t oldtime = getTimerAcounterValue();
+	uint32_t oldtime = getDelayTimerValue();
 	uint32_t newtime = oldtime;
 	while (newtime - oldtime < ms * 1000) {
-		newtime = getTimerAcounterValue();
+		newtime = getDelayTimerValue();
 	}
 }
 
@@ -109,6 +116,47 @@ void TimerACounterInit( void ) {
 	MAP_Interrupt_enableInterrupt(INT_TA3_0);
 }
 
+void DelayTimerInit( void ) {
+	/* Configure Timer_A3 for timing purposes */
+	MAP_Timer_A_enableInterrupt(TIMER_A1_BASE);
+
+	MAP_Timer_A_enableCaptureCompareInterrupt(
+	TIMER_A1_BASE,
+	TIMER_A_CAPTURECOMPARE_REGISTER_0);
+
+	MAP_Timer_A_configureContinuousMode(TIMER_A1_BASE, &contConfig0);
+	MAP_Interrupt_enableInterrupt(INT_TA1_0);
+}
+
+void startDelayTimer( void ) {
+	Timer_A_stopTimer(TIMER_A1_BASE);
+//	Timer_A_clearTimer(TIMER_A3_BASE);
+	Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_CONTINUOUS_MODE);
+	isDelayTimerRunning = true;
+}
+
+uint32_t stopDelayTimer( void ) {
+	float timeVal = Timer_A_getCounterValue(TIMER_A1_BASE);
+	Timer_A_stopTimer(TIMER_A1_BASE);
+//	Timer_A_clearTimer(TIMER_A3_BASE);
+	isDelayTimerRunning = false;
+	return (uint32_t) timeVal;
+}
+
+uint32_t getDelayTimerValue( void ) {
+	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A1_BASE);
+	uint32_t timeVal = tickVal;
+	return timeVal;
+}
+
+void resetDelayTimerValue( void ) {
+	Timer_A_stopTimer(TIMER_A1_BASE);
+	Timer_A_clearTimer(TIMER_A1_BASE);
+	DelayTimerInit();
+	startDelayTimer();
+	isDelayTimerRunning = true;
+}
+
 /*!
  * \brief Starts Timing using Timer_A0
  */
@@ -123,7 +171,7 @@ void startTimerAcounter( void ) {
  * \brief Stop the timer and returns time in us
  */
 uint32_t stopTimerACounter( void ) {
-	float timeVal = Timer_A_getCounterValue(TIMER_A3_BASE) * TICK_TIME_A3_CONT;
+	float timeVal = Timer_A_getCounterValue(TIMER_A3_BASE);
 	Timer_A_stopTimer(TIMER_A3_BASE);
 //	Timer_A_clearTimer(TIMER_A3_BASE);
 	isTimerAcounterRunning = false;
@@ -135,7 +183,7 @@ uint32_t stopTimerACounter( void ) {
  */
 uint32_t getTimerAcounterValue( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(TIMER_A3_BASE);
-	uint32_t timeVal = tickVal * TICK_TIME_A3_CONT;
+	uint32_t timeVal = tickVal;
 	return timeVal;
 }
 
@@ -149,6 +197,7 @@ void resetTimerAcounterValue( void ) {
 	Timer_A_clearTimer(TIMER_A3_BASE);
 	TimerACounterInit();
 	startTimerAcounter();
+	isTimerAcounterRunning = true;
 }
 
 /*!
@@ -374,5 +423,13 @@ void TA3_0_IRQHandler( void ) {
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 //	Timer_A_stopTimer(TIMER_A3_BASE);
 	TimerIrqHandler();
+
+}
+void TA1_0_IRQHandler( void ) {
+
+	Timer_A_clearInterruptFlag(TIMER_A1_BASE);
+	MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A1_BASE,
+	TIMER_A_CAPTURECOMPARE_REGISTER_0);
+//	Timer_A_stopTimer(TIMER_A3_BASE);
 
 }

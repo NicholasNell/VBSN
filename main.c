@@ -90,22 +90,22 @@
                                 //  3: 4/7, \
                                 //  4: 4/8]
 #define LORA_PREAMBLE_LENGTH 16  // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT 1   // Symbols
+#define LORA_SYMBOL_TIMEOUT 1023   // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON false
 #define LORA_IQ_INVERSION_ON true
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
 #define LORA_PAYLOAD_LEN 4
-#define LORA_RX_CONTINUOUS true
+#define LORA_RX_CONTINUOUS false
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false
 #define LORA_bandwidthAfc 0
-#define LORA_MAX_PAYLOAD_LEN 125
+#define LORA_MAX_PAYLOAD_LEN 255
 #define LORA_PRIVATE_SYNCWORD 0x55
 #define LORA_IS_PUBLIC_NET false
 
 // Uncomment for debug outputs
-//#define DEBUG
+#define DEBUG
 
 void printRegisters( void );
 
@@ -118,6 +118,8 @@ bool DIO2Flag = false;
 bool DIO3Flag = false;
 bool DIO4Flag = false;
 bool sendFlag = false;
+
+uint32_t value;
 
 
 
@@ -211,20 +213,14 @@ int main( void ) {
 	hsmclk = MAP_CS_getHSMCLK();
 	bclk = MAP_CS_getBCLK();
 	startTimerAcounter();
+	value = getTimerAcounterValue();
 
 	while (1) {
 
-
-		if (getTimerAcounterValue() > 3000000) {
-
-
+		if (getTimerAcounterValue() > 100000) {
+			GpioToggle(&Led_rgb_red);
 			resetTimerAcounterValue();
-			GpioFlashLED(&Led_rgb_green, 10);
-			Radio.Send(Buffer, 4);
-			Buffer[3] += 1;
-
 		}
-
 
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -279,13 +275,13 @@ void OnTxDone( void ) {
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
-
+	Radio.Sleep();
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
 	State = RX;
-	Radio.Sleep();
+
 
 #ifdef DEBUG
 	puts("RxDone");
@@ -302,12 +298,15 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
-//	Radio.Sleep();
+	Radio.Sleep();
+	Radio.Rx(5000);
+//	value = getTimerAcounterValue() - value;
+
 	State = RX_TIMEOUT;
 #ifdef DEBUG
-	uint8_t temp = spiRead_RFM(0x12);
-	spiWrite_RFM(0x12, 0xFF);
+
 	puts("RxTimeout");
+	printf("timout in ms: %f\n", value / 1000.0);
 	GpioFlashLED(&Led_rgb_red, 10);
 #endif
 }

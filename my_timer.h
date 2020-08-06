@@ -153,5 +153,13 @@ void SetAlarm( uint32_t timeout );
  */
 void StartAlarm( uint32_t timeout, bool *flag );
 
+void startDelayTimer( void );
+
+uint32_t stopDelayTimer( void );
+
+uint32_t getDelayTimerValue( void );
+
+void resetDelayTimerValue( void );
+void DelayTimerInit( void );
 
 #endif /* MY_TIMER_H_ */
