@@ -18,14 +18,12 @@
 void spi_open(void)
 {
 
-	double smclkFreq = MAP_CS_getSMCLK();
+	double aclkFreq = MAP_CS_getACLK();
 
 	eUSCI_SPI_MasterConfig spiMasterConfig = {
-	EUSCI_B_SPI_CLOCKSOURCE_SMCLK,         // SMCLK clock.
-			smclkFreq,                        // SMCLK = CS_modoclk /16
-			1500000,                                            // SPICLK = 1MHz
-			EUSCI_B_SPI_MSB_FIRST,                               // MSB first
-			EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,   //phase
+			EUSCI_B_SPI_CLOCKSOURCE_ACLK, aclkFreq, 1500000,
+			EUSCI_B_SPI_MSB_FIRST,
+			EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,
 			EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,
 			EUSCI_B_SPI_3PIN };
 //    Setting up SPI mode and opening

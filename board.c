@@ -15,11 +15,6 @@
 #include "board.h"
 #include "my_rtc.h"
 
-/*
- * Core Clocks and External oscillators
- */
-#define __LFXT 32768
-#define __HFXT 48000000
 
 /*!
  * LED GPIO pins objects
@@ -203,14 +198,19 @@ uint8_t GetBoardPowerSource( void ) {
 }
 
 void SystemClockConfig( void ) {
-	MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
-	MAP_CS_setExternalClockSourceFrequency(__LFXT, __HFXT);
+	/*
+	 * What clock goes where??:
+	 * ACLK:	use with TIMER_A and SPI
+	 * SMCLK: 	use with SPI and TIMER_A
+	 */
+	MAP_CS_setReferenceOscillatorFrequency(REFO_FREQ);
+	MAP_CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ);
 	MAP_FPU_enableModule(); // makes sure the FPU is enabled before DCO frequency tuning
 	MAP_CS_setDCOFrequency(1500000);
 
-	MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_128);
-	MAP_CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-	MAP_CS_initClockSignal(CS_HSMCLK, CS_MODOSC_SELECT, CS_CLOCK_DIVIDER_1);
-	MAP_CS_initClockSignal(CS_SMCLK, CS_MODOSC_SELECT, CS_CLOCK_DIVIDER_16);
-	MAP_CS_initClockSignal(CS_BCLK, CS_LFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
+	MAP_CS_initClockSignal(CS_ACLK, ACLK_SOURCE, ACLK_DIV); //128kHz
+	MAP_CS_initClockSignal(CS_MCLK, MCLK_SOURCE, MCLK_DIV); // 1.5MHz
+	MAP_CS_initClockSignal(CS_HSMCLK, HSMCLK_SOURCE, HSMCLK_DIV); // 24MHz
+	MAP_CS_initClockSignal(CS_SMCLK, SMCLK_SOURCE, SMCLK_DIV);
+
 }

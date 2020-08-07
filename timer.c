@@ -292,7 +292,7 @@ void TimerReset( TimerEvent_t *obj ) {
 
 void TimerSetValue( TimerEvent_t *obj, uint32_t value ) {
 	uint32_t minValue = 0;
-	uint32_t ticks = TimerMs2Tick(value);
+	uint32_t ticks = LoRaTimerMs2Tick(value);
 
 	TimerStop(obj);
 
@@ -308,7 +308,7 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value ) {
 
 TimerTime_t TimerGetCurrentTime( void ) {
 	uint32_t now = GetTimerValue();
-	return Tick2Ms(now);
+	return LoRaTick2Ms(now);
 }
 
 TimerTime_t TimerGetElapsedTime( TimerTime_t past ) {
@@ -316,10 +316,10 @@ TimerTime_t TimerGetElapsedTime( TimerTime_t past ) {
 		return 0;
 	}
 	uint32_t nowInTicks = GetTimerValue();
-	uint32_t pastInTicks = TimerMs2Tick(past);
+	uint32_t pastInTicks = LoRaTimerMs2Tick(past);
 
 	// Intentional wrap around. Works Ok if tick duration below 1ms
-	return Tick2Ms(nowInTicks - pastInTicks);
+	return LoRaTick2Ms(nowInTicks - pastInTicks);
 }
 
 static void TimerSetTimeout( TimerEvent_t *obj ) {

@@ -193,7 +193,7 @@ void RadioInit( ) {
 }
 
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
-
+uint32_t newvalue;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -217,7 +217,8 @@ int main( void ) {
 
 	while (1) {
 
-		if (getTimerAcounterValue() > 100000) {
+
+		if (getTimerAcounterValue() > 1000000) {
 			GpioToggle(&Led_rgb_red);
 			resetTimerAcounterValue();
 		}

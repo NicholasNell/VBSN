@@ -39,6 +39,30 @@ enum BoardPowerSources
     BATTERY_POWER,
 };
 
+/*
+ * Clock Configuration:
+ */
+#define REFO_FREQ CS_REFO_128KHZ
+#define LFXT_FREQ 32768
+#define HFXT_FREQ 48000000
+
+//ACLK = 128kHz
+#define ACLK_SOURCE CS_REFOCLK_SELECT
+#define ACLK_DIV CS_CLOCK_DIVIDER_1
+
+//MCLK = 1.5MHz
+#define MCLK_SOURCE CS_DCOCLK_SELECT
+#define MCLK_DIV CS_CLOCK_DIVIDER_1
+
+//HSMCLK = 24MHz
+#define HSMCLK_SOURCE CS_MODOSC_SELECT
+#define HSMCLK_DIV CS_CLOCK_DIVIDER_1
+
+//SMCL = 24Mhz/16 = 1.5MHz
+#define SMCLK_SOURCE CS_MODOSC_SELECT
+#define SMCLK_DIV CS_CLOCK_DIVIDER_16
+
+
 /*!
  * \brief Initializes the mcu.
  */

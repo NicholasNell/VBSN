@@ -25,6 +25,10 @@ typedef struct {
     \brief Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
     Timer will be configured for ms interupts.
 */
+/*!
+ \brief Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
+ Timer will be configured for ms interupts.
+ */
 void TimerAInteruptInit( void );
 
 /*!
@@ -83,7 +87,7 @@ void stopLoRaTimer();
  * \param[IN] milliseconds Time in milliseconds
  * \retval returns time in timer ticks
  */
-uint32_t TimerMs2Tick( uint32_t milliseconds );
+uint32_t LoRaTimerMs2Tick( uint32_t milliseconds );
 
 /*!
  * \brief Sets the RTC timer reference, sets also the RTC_DateStruct and RTC_TimeStruct
@@ -125,7 +129,7 @@ uint32_t GetTimerValue( void );
  * \param[IN] time in timer ticks
  * \retval returns time in milliseconds
  */
-uint32_t Tick2Ms( uint32_t tick );
+uint32_t LoRaTick2Ms( uint32_t tick );
 
 /*!
  * \brief returns the wake up time in ticks
@@ -151,7 +155,7 @@ void SetAlarm( uint32_t timeout );
  * \param [IN] timeout Timeout value in ticks
  * \param [IN] flag to be set when alarm expires
  */
-void StartAlarm( uint32_t timeout, bool *flag );
+void StartAlarm( uint32_t timeout );
 
 void startDelayTimer( void );
 
