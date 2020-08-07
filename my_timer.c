@@ -33,6 +33,7 @@ static TimerContext_t TimerContext;
 
 bool timerTick_ms = false;
 bool isDelayTimerRunning = false;
+bool LoRaTimerRunning = false;
 extern bool sendFlag;
 
 #define DELAY_TIMER TIMER_A0_BASE
@@ -71,12 +72,12 @@ bool isTimerAcounterRunning = false;
 void Delayms( uint32_t ms ) {
 
 	if (!isDelayTimerRunning) startDelayTimer();
-	const float compareval = ms * DELAY_MS_TO_TICK;
-	uint32_t oldTickValue = getDelayTimerValue();
-	uint32_t newTickValue = oldTickValue;
-	while (newTickValue - oldTickValue < compareval) {
-		newTickValue = getDelayTimerValue();
+	uint32_t oldValue = getDelayTimerValue();
+	uint32_t newValue = oldValue;
+	while (newValue - oldValue < ms) {
+		newValue = getDelayTimerValue();
 	}
+	stopDelayTimer();
 }
 
 void DelayTimerInit( void ) {
@@ -87,7 +88,7 @@ void DelayTimerInit( void ) {
 
 void startDelayTimer( void ) {
 	Timer_A_stopTimer(DELAY_TIMER);
-//	Timer_A_clearTimer(TIMER_A3_BASE);
+	Timer_A_clearTimer(TIMER_A3_BASE);
 	Timer_A_startCounter(DELAY_TIMER, TIMER_A_CONTINUOUS_MODE);
 	isDelayTimerRunning = true;
 }
@@ -95,7 +96,7 @@ void startDelayTimer( void ) {
 uint32_t stopDelayTimer( void ) {
 	float timeVal = Timer_A_getCounterValue(DELAY_TIMER);
 	Timer_A_stopTimer(DELAY_TIMER);
-//	Timer_A_clearTimer(TIMER_A3_BASE);
+	Timer_A_clearTimer(TIMER_A3_BASE);
 	isDelayTimerRunning = false;
 	return (uint32_t) timeVal;
 }

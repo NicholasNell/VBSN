@@ -100,6 +100,7 @@ void TimerSetContext( TimerEvent_t *obj, void* context ) {
 void TimerStart( TimerEvent_t *obj ) {
 	uint32_t elapsedTime = 0;
 
+
 	CRITICAL_SECTION_BEGIN( )
 	;
 

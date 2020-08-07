@@ -96,7 +96,7 @@
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
 #define LORA_PAYLOAD_LEN 4
-#define LORA_RX_CONTINUOUS false
+#define LORA_RX_CONTINUOUS true
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false
 #define LORA_bandwidthAfc 0
@@ -207,21 +207,13 @@ int main( void ) {
 
 	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
 
-	aclk = MAP_CS_getACLK();
-	mclk = MAP_CS_getMCLK();
-	smclk = MAP_CS_getSMCLK();
-	hsmclk = MAP_CS_getHSMCLK();
-	bclk = MAP_CS_getBCLK();
 	startTimerAcounter();
 	value = getTimerAcounterValue();
-
+	Radio.Rx(0);
+	uint8_t temp = spiRead_RFM(REG_LR_IRQFLAGSMASK);
+	temp = spiRead_RFM(REG_LR_IRQFLAGSMASK);
+	__no_operation();
 	while (1) {
-
-
-		if (getTimerAcounterValue() > 1000000) {
-			GpioToggle(&Led_rgb_red);
-			resetTimerAcounterValue();
-		}
 
 		if (DIO0Flag) {
 			DIO0Flag = false;
@@ -299,15 +291,14 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
-	Radio.Sleep();
-	Radio.Rx(5000);
-//	value = getTimerAcounterValue() - value;
+
+	newvalue = getTimerAcounterValue();
+	resetTimerAcounterValue();
 
 	State = RX_TIMEOUT;
 #ifdef DEBUG
 
 	puts("RxTimeout");
-	printf("timout in ms: %f\n", value / 1000.0);
 	GpioFlashLED(&Led_rgb_red, 10);
 #endif
 }

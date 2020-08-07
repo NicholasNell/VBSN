@@ -891,7 +891,7 @@ void SX1276WriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size ) {
 
 void SX1276SetRx( uint32_t timeout ) {
 	bool rxContinuous = false;
-	TimerStop(&TxTimeoutTimer);
+	stopLoRaTimer();
 
 	switch (SX1276.Settings.Modem) {
 		case MODEM_FSK: {
@@ -1047,8 +1047,7 @@ void SX1276SetRx( uint32_t timeout ) {
 
 	SX1276.Settings.State = RF_RX_RUNNING;
 	if (timeout != 0) {
-		TimerSetValue(&RxTimeoutTimer, timeout);
-		TimerStart(&RxTimeoutTimer);
+		startLoRaTimer(timeout);
 	}
 
 	if (SX1276.Settings.Modem == MODEM_FSK) {
@@ -1186,8 +1185,7 @@ void SX1276SetPublicNetwork( bool enable, uint16_t syncword ) {
 }
 
 void SX1276SetTx( uint32_t timeout ) {
-	TimerStop(&RxTimeoutTimer);
-	if (timeout > 0) TimerSetValue(&TxTimeoutTimer, timeout);
+	stopLoRaTimer();
 
 	switch (SX1276.Settings.Modem) {
 		case MODEM_FSK: {
@@ -1254,7 +1252,7 @@ void SX1276SetTx( uint32_t timeout ) {
 	}
 
 	SX1276.Settings.State = RF_TX_RUNNING;
-	if (timeout > 0) TimerStart(&TxTimeoutTimer);
+	if (timeout > 0) startLoRaTimer(timeout);
 	SX1276SetOpMode( RF_OPMODE_TRANSMITTER);
 }
 
