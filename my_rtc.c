@@ -17,12 +17,7 @@ bool TxFlag = false;
 const RTC_C_Calendar currentTime =
 {
 	0x00,
-	0x03,
-	0x22,
-	0x06,
-	0x12,
-	0x11,
-	0x1955
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x0000
 };
 //![Simple RTC Config]
 
@@ -30,16 +25,9 @@ void RtcInit( void ) {
 	 /* Configuring pins for peripheral/crystal usage and LED for output */
 	    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
 	            GPIO_PIN0 | GPIO_PIN1, GPIO_PRIMARY_MODULE_FUNCTION);
-	    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
 
-	    /* Setting the external clock frequency. This API is optional, but will
-	     * come in handy if the user ever wants to use the getMCLK/getACLK/etc
-	     * functions
-	     */
-//	    CS_setExternalClockSourceFrequency(32000,48000000);
+	/* Starting LFXT in non-bypass mode without a timeout. */
 
-	    /* Starting LFXT in non-bypass mode without a timeout. */
-	    CS_startLFXT(CS_LFXT_DRIVE3);
 
 	    //![Simple RTC Example]
 	    /* Initializing RTC with current time as described in time in
@@ -69,7 +57,6 @@ void RtcInit( void ) {
 
 	    /* Enable interrupts and go to sleep. */
 	    MAP_Interrupt_enableInterrupt(INT_RTC_C);
-	    MAP_Interrupt_enableMaster();
 }
 
 void RTC_C_IRQHandler( void ) {
