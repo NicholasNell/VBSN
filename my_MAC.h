@@ -19,6 +19,9 @@
 #include "sx1276Regs-LoRa.h"
 #include <stdio.h>
 
+#define BROADCAST_ADDRESS 0xFF
+#define MAX_LEN 255
+
 typedef enum {
 	SLEEP = 0, PENDING, RETRANSMIT, EXPIRED, ACK_RESP
 } AlohaState_t;
@@ -33,34 +36,25 @@ typedef enum {
 	CAD, CAD_DONE
 } AppStates_t;
 
-#define ALOHA_MAX_ATTEMPT 5
+typedef enum {
+	SYNC = 0, ACK, DATA, RTS, CTS
+} MessageType_t;
 
 typedef struct {
-		uint8_t fid;
-		uint8_t no;
-} HeaderStruct;
+		uint8_t dest;
+		uint8_t source;
+		MessageType_t ID;
+		uint8_t len;
+		uint8_t hops;
+} header_t;
 
 typedef struct {
-		uint8_t pd0;
-		uint8_t pd1;
-} DataStruct;
+		header_t header;
+		uint8_t *data;
+} Datagram_t;
 
-void createAlohaPacket(
-		uint8_t *output,
-		HeaderStruct *header,
-		DataStruct *data );
+void createDatagram( );
 
-bool dissectAlohaPacket(
-		uint8_t *input,
-		HeaderStruct *header,
-		DataStruct *data );
-
-
-bool sendALOHAmessage( uint8_t *buffer, uint8_t size );
-
-void sendAck( int id );
-
-bool MACSend( uint8_t *buffer, uint8_t size );
 
 bool MACStateMachine( );
 
