@@ -206,8 +206,13 @@ int main( void ) {
 	RadioInit();
 
 	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
+	MAP_GPIO_setAsOutputPin(GPIO_PORT_P6, GPIO_PIN4);
 
 	while (1) {
+
+		Delayms(1000);
+		MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P6, GPIO_PIN4);
+
 
 
 		if (DIO0Flag) {

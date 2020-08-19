@@ -61,6 +61,14 @@ const Timer_A_ContinuousModeConfig contConfigDelay = {
 		TIMER_A_TAIE_INTERRUPT_DISABLE,
 		TIMER_A_SKIP_CLEAR };
 
+const Timer_A_UpModeConfig upDelayConfig = {
+		TIMER_A_CLOCKSOURCE_ACLK,
+		TIMER_A_CLOCKSOURCE_DIVIDER_64,
+		65535,
+		TIMER_A_TAIE_INTERRUPT_DISABLE,
+		TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,
+		TIMER_A_DO_CLEAR };
+
 const Timer_A_ContinuousModeConfig contConfigCounter = {
 		TIMER_A_CLOCKSOURCE_SMCLK,
 		TIMER_A_CLOCKSOURCE_DIVIDER_48,
@@ -72,27 +80,19 @@ bool isTimerAcounterRunning = false;
 void Delayms( uint32_t ms ) {
 
 	stopDelayTimer();
-	const Timer_A_UpModeConfig upDelayConfig = {
-			TIMER_A_CLOCKSOURCE_ACLK,
-			TIMER_A_CLOCKSOURCE_DIVIDER_64,
-			ms * DELAY_MS_TO_TICK,
-			TIMER_A_TAIE_INTERRUPT_DISABLE,
-			TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,
-			TIMER_A_DO_CLEAR };
-	MAP_Timer_A_configureUpMode(DELAY_TIMER, &upDelayConfig);
 	if (!isDelayTimerRunning) startDelayTimer();
 	uint32_t oldValue = getDelayTimerValue();
 	uint32_t newValue = oldValue;
 	while (newValue - oldValue < ms) {
 		newValue = getDelayTimerValue();
 	}
-	stopDelayTimer();
+//	stopDelayTimer();
 }
 
 void DelayTimerInit( void ) {
 	/* Configure Timer_A3 for timing purposes */
 //	MAP_Timer_A_configureContinuousMode(DELAY_TIMER, &contConfigDelay);
-
+	MAP_Timer_A_configureUpMode(DELAY_TIMER, &upDelayConfig);
 	MAP_Interrupt_enableInterrupt(DELAY_INT);
 }
 
@@ -114,9 +114,9 @@ uint32_t stopDelayTimer( void ) {
 }
 
 uint32_t getDelayTimerValue( void ) {
-	uint16_t tickVal = Timer_A_getCounterValue(DELAY_TIMER);
-	uint32_t timeVal = tickVal * DELAY_TICK_TO_MS;
-	return timeVal;
+//	uint16_t tickVal = ;
+//	uint32_t timeVal = tickVal *;
+	return Timer_A_getCounterValue(DELAY_TIMER) * DELAY_TICK_TO_MS;
 }
 
 void resetDelayTimerValue( void ) {
