@@ -51,7 +51,19 @@ typedef struct {
 typedef struct {
 		header_t header;
 		uint8_t *data;
-} Datagram_t;
+} datagram_t;
+
+typedef struct {
+		uint32_t sleepTime;
+		uint32_t listenTime;
+		uint8_t numNeighbours;
+		uint32_t syncTime;
+} schedule_t;
+
+typedef struct {
+		uint8_t neighbourID;
+		schedule_t scheduleTable[];
+} scheduleTable_t;
 
 void createDatagram( );
 
