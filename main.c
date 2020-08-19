@@ -208,25 +208,20 @@ int main( void ) {
 	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
 
 	while (1) {
-		startTimerAcounter();
-		value = getTimerAcounterValue();
-		Delayms(1000);
-		value = getTimerAcounterValue() - value;
-		GpioToggle(&Led_rgb_green);
 
 
-//		if (DIO0Flag) {
-//			DIO0Flag = false;
-//			SX1276OnDio0Irq();
-//		}
-//		else if (DIO1Flag) {
-//			DIO1Flag = false;
-//			SX1276OnDio1Irq();
-//		}
-//		else if (DIO2Flag) {
-//			DIO2Flag = false;
-//			SX1276OnDio2Irq();
-//		}
+		if (DIO0Flag) {
+			DIO0Flag = false;
+			SX1276OnDio0Irq();
+		}
+		else if (DIO1Flag) {
+			DIO1Flag = false;
+			SX1276OnDio1Irq();
+		}
+		else if (DIO2Flag) {
+			DIO2Flag = false;
+			SX1276OnDio2Irq();
+		}
 	}
 }
 

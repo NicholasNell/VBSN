@@ -72,6 +72,14 @@ bool isTimerAcounterRunning = false;
 void Delayms( uint32_t ms ) {
 
 	stopDelayTimer();
+	const Timer_A_UpModeConfig upDelayConfig = {
+			TIMER_A_CLOCKSOURCE_ACLK,
+			TIMER_A_CLOCKSOURCE_DIVIDER_64,
+			ms * DELAY_MS_TO_TICK,
+			TIMER_A_TAIE_INTERRUPT_DISABLE,
+			TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,
+			TIMER_A_DO_CLEAR };
+	MAP_Timer_A_configureUpMode(DELAY_TIMER, &upDelayConfig);
 	if (!isDelayTimerRunning) startDelayTimer();
 	uint32_t oldValue = getDelayTimerValue();
 	uint32_t newValue = oldValue;
@@ -83,21 +91,24 @@ void Delayms( uint32_t ms ) {
 
 void DelayTimerInit( void ) {
 	/* Configure Timer_A3 for timing purposes */
-	MAP_Timer_A_configureContinuousMode(DELAY_TIMER, &contConfigDelay);
+//	MAP_Timer_A_configureContinuousMode(DELAY_TIMER, &contConfigDelay);
+
 	MAP_Interrupt_enableInterrupt(DELAY_INT);
 }
 
 void startDelayTimer( void ) {
-	Timer_A_stopTimer(DELAY_TIMER);
-	Timer_A_clearTimer(TIMER_A3_BASE);
-	Timer_A_startCounter(DELAY_TIMER, TIMER_A_CONTINUOUS_MODE);
+
+
+	MAP_Timer_A_stopTimer(DELAY_TIMER);
+	MAP_Timer_A_clearTimer(TIMER_A3_BASE);
+	MAP_Timer_A_startCounter(DELAY_TIMER, TIMER_A_UP_MODE);
 	isDelayTimerRunning = true;
 }
 
 uint32_t stopDelayTimer( void ) {
-	float timeVal = Timer_A_getCounterValue(DELAY_TIMER);
-	Timer_A_stopTimer(DELAY_TIMER);
-	Timer_A_clearTimer(TIMER_A3_BASE);
+	float timeVal = MAP_Timer_A_getCounterValue(DELAY_TIMER);
+	MAP_Timer_A_stopTimer(DELAY_TIMER);
+	MAP_Timer_A_clearTimer(TIMER_A3_BASE);
 	isDelayTimerRunning = false;
 	return (uint32_t) timeVal;
 }
@@ -109,10 +120,11 @@ uint32_t getDelayTimerValue( void ) {
 }
 
 void resetDelayTimerValue( void ) {
-	Timer_A_stopTimer(DELAY_TIMER);
-	Timer_A_clearTimer(DELAY_TIMER);
+	MAP_Timer_A_stopTimer(DELAY_TIMER);
+	MAP_Timer_A_clearTimer(DELAY_TIMER);
 	DelayTimerInit();
-	startDelayTimer();
+	MAP_Timer_A_stopTimer(DELAY_TIMER);
+//	startDelayTimer();
 	isDelayTimerRunning = true;
 }
 
