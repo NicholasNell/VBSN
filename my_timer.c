@@ -64,13 +64,14 @@ const Timer_A_ContinuousModeConfig contConfigDelay = {
 const Timer_A_ContinuousModeConfig contConfigCounter = {
 		TIMER_A_CLOCKSOURCE_SMCLK,
 		TIMER_A_CLOCKSOURCE_DIVIDER_48,
-		TIMER_A_TAIE_INTERRUPT_DISABLE,
-		TIMER_A_SKIP_CLEAR };
+		TIMER_A_TAIE_INTERRUPT_ENABLE,      // Enable Overflow ISR
+		TIMER_A_DO_CLEAR };
 
 bool isTimerAcounterRunning = false;
 
 void Delayms( uint32_t ms ) {
 
+	stopDelayTimer();
 	if (!isDelayTimerRunning) startDelayTimer();
 	uint32_t oldValue = getDelayTimerValue();
 	uint32_t newValue = oldValue;
@@ -123,7 +124,6 @@ void TimerACounterInit( void ) {
 	/* Configure Timer_A3 for timing purposes */
 
 	MAP_Timer_A_configureContinuousMode(COUNTER_TIMER, &contConfigCounter);
-
 }
 
 
@@ -140,8 +140,10 @@ void startTimerAcounter( void ) {
 uint32_t stopTimerACounter( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(COUNTER_TIMER);
 	Timer_A_stopTimer(COUNTER_TIMER);
-//	Timer_A_clearTimer(TIMER_A3_BASE);
+	Timer_A_clearTimer(TIMER_A3_BASE);
 	isTimerAcounterRunning = false;
+	TimerACounterInit();
+
 	return (uint32_t) tickVal * COUNTER_TICK_TO_US;
 }
 
@@ -303,6 +305,7 @@ void TA2_0_IRQHandler( void ) {
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 //	Timer_A_stopTimer(TIMER_A3_BASE);
 	TimerIrqHandler();
+
 
 }
 

@@ -454,4 +454,9 @@ void SX1276OnDio4Irq( );
 
 void SX1276OnDio5Irq( );
 
+/*!
+ * \brief Tx & Rx timeout timer callback
+ */
+void SX1276OnTimeoutIrq( void *context );
+
 #endif /* MY_RFM9X_H_ */

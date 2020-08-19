@@ -207,26 +207,26 @@ int main( void ) {
 
 	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
 
-	startTimerAcounter();
-	value = getTimerAcounterValue();
-	Radio.Rx(0);
-	uint8_t temp = spiRead_RFM(REG_LR_IRQFLAGSMASK);
-	temp = spiRead_RFM(REG_LR_IRQFLAGSMASK);
-	__no_operation();
 	while (1) {
+		startTimerAcounter();
+		value = getTimerAcounterValue();
+		Delayms(1000);
+		value = getTimerAcounterValue() - value;
+		GpioToggle(&Led_rgb_green);
 
-		if (DIO0Flag) {
-			DIO0Flag = false;
-			SX1276OnDio0Irq();
-		}
-		else if (DIO1Flag) {
-			DIO1Flag = false;
-			SX1276OnDio1Irq();
-		}
-		else if (DIO2Flag) {
-			DIO2Flag = false;
-			SX1276OnDio2Irq();
-		}
+
+//		if (DIO0Flag) {
+//			DIO0Flag = false;
+//			SX1276OnDio0Irq();
+//		}
+//		else if (DIO1Flag) {
+//			DIO1Flag = false;
+//			SX1276OnDio1Irq();
+//		}
+//		else if (DIO2Flag) {
+//			DIO2Flag = false;
+//			SX1276OnDio2Irq();
+//		}
 	}
 }
 
@@ -292,7 +292,7 @@ void OnTxTimeout( void ) {
 
 void OnRxTimeout( void ) {
 
-	newvalue = getTimerAcounterValue();
+	newvalue = getTimerAcounterValue() - value;
 	resetTimerAcounterValue();
 
 	State = RX_TIMEOUT;

@@ -208,7 +208,7 @@ void SystemClockConfig( void ) {
 	MAP_CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ);
 	MAP_FPU_enableModule(); // makes sure the FPU is enabled before DCO frequency tuning
 	MAP_CS_setDCOFrequency(1500000);
-	MAP_CS_startLFXT(CS_LFXT_DRIVE3);
+//	MAP_CS_startLFXT(CS_LFXT_DRIVE3);
 
 	MAP_CS_initClockSignal(CS_ACLK, ACLK_SOURCE, ACLK_DIV); //128kHz
 	MAP_CS_initClockSignal(CS_MCLK, MCLK_SOURCE, MCLK_DIV); // 1.5MHz

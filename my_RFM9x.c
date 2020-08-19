@@ -56,10 +56,7 @@ void SX1276SetTx( uint32_t timeout );
  */
 void RxChainCalibration( void );
 
-/*!
- * \brief Tx & Rx timeout timer callback
- */
-void SX1276OnTimeoutIrq( void* context );
+
 
 /*!
  * \brief Sets the SX1276 operating mode

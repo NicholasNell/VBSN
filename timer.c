@@ -210,6 +210,8 @@ void TimerIrqHandler( void ) {
 	if ((TimerListHead != NULL) && (TimerListHead->IsNext2Expire == false)) {
 		TimerSetTimeout(TimerListHead);
 	}
+	SX1276OnTimeoutIrq();
+
 }
 
 void TimerStop( TimerEvent_t *obj ) {
