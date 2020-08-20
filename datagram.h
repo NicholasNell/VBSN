@@ -9,20 +9,28 @@
 #define DATAGRAM_H_
 
 #include "genericDriver.h"
+#include "my_MAC.h"
 #include <stdbool.h>
 #include <stdint.h>
 
 #define RH_MAX_MESSAGE_LEN 255
 
-/// Initialise this instance and the
-/// driver connected to it.
+typedef struct {
+		uint8_t dest;
+		uint8_t source;
+		MessageType_t ID;
+		schedule_t thisSchedule;
+		uint8_t len;
+		uint8_t hops;
+} header_t;
+
+typedef struct {
+		header_t header;
+		uint8_t *data;
+} datagram_t;
+
+
 bool datagramInit( );
 
-/// Sets the address of this node. Defaults to 0.
-/// This will be used to set the FROM address of all messages sent by this node.
-/// In a conventional multinode system, all nodes will have a unique address
-/// (which you could store in EEPROM).
-/// \param[in] thisAddress The address of this node
-void setThisAddress( uint8_t thisAddress );
 
 #endif /* DATAGRAM_H_ */

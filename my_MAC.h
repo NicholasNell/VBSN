@@ -48,20 +48,6 @@ typedef struct {
 } schedule_t;
 
 typedef struct {
-		uint8_t dest;
-		uint8_t source;
-		MessageType_t ID;
-		schedule_t thisSchedule;
-		uint8_t len;
-		uint8_t hops;
-} header_t;
-
-typedef struct {
-		header_t header;
-		uint8_t *data;
-} datagram_t;
-
-typedef struct {
 		uint8_t neighbourID;
 		schedule_t scheduleTable[];
 } scheduleTable_t;

@@ -12,18 +12,19 @@ void scheduleSetup( );
 
 void MacInit( ) {
 	nodeID = SX1276Random();
+	scheduleSetup();
 }
 
 bool MACStateMachine( ) {
 	return false;
 }
 
-void sceduleSetup( ) {
-	uint32_t len = sizeof(datagram_t);
-	mySchedule.listenTime = SX1276GetTimeOnAir(MODEM_LORA, len);
+void scheduleSetup( ) {
+	uint8_t len = sizeof(datagram_t);
+	mySchedule.listenTime = SX1276GetTimeOnAir(MODEM_LORA, 255);
 	mySchedule.numNeighbours = 0;
-	mySchedule.sleepTime = 0;
-	mySchedule.syncTime = 0;
+	mySchedule.sleepTime = 10000;
+	mySchedule.syncTime = SX1276GetTimeOnAir(MODEM_LORA, len);
 }
 
 

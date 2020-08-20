@@ -12,7 +12,5 @@ bool datagramInit( ) {
 	return false;
 }
 
-void setThisAddress( uint8_t thisAddress ) {
 
-}
 

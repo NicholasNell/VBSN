@@ -126,7 +126,7 @@ int main( void ) {
 
 	RadioInit();
 
-//	MacInit();
+	MacInit();
 
 	Radio.Rx(0);
 
@@ -186,7 +186,6 @@ void OnTxDone( void ) {
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
-//	Radio.Sleep();
 
 	SX1276clearIRQFlags();
 	BufferSize = size;
@@ -211,10 +210,7 @@ void OnTxTimeout( void ) {
 }
 
 void OnRxTimeout( void ) {
-
-	newvalue = getTimerAcounterValue() - value;
-	resetTimerAcounterValue();
-
+	SX1276clearIRQFlags();
 	State = RX_TIMEOUT;
 #ifdef DEBUG
 

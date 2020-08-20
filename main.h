@@ -50,7 +50,7 @@ Maintainer: Miguel Luis and Gregory Cristian
                                 //  3: 4/7, \
                                 //  4: 4/8]
 #define LORA_PREAMBLE_LENGTH 16  // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT 1023   // Symbols
+#define LORA_SYMBOL_TIMEOUT 1   // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON false
 #define LORA_IQ_INVERSION_ON true
 #define LORA_FREQ_DEV 0
@@ -64,7 +64,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define LORA_PRIVATE_SYNCWORD 0x55
 #define LORA_IS_PUBLIC_NET false
 
-uint8_t Buffer[4] = { 'H', 'E', 'L', 0 };
+uint8_t Buffer[4] = { 0 };
 volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
 
 bool DIO0Flag = false;
