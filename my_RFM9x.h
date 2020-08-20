@@ -459,4 +459,6 @@ void SX1276OnDio5Irq( );
  */
 void SX1276OnTimeoutIrq( void *context );
 
+void SX1276clearIRQFlags( void );
+
 #endif /* MY_RFM9X_H_ */

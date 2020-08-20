@@ -41,9 +41,17 @@ typedef enum {
 } MessageType_t;
 
 typedef struct {
+		uint32_t sleepTime;
+		uint32_t listenTime;
+		uint8_t numNeighbours;
+		uint32_t syncTime;
+} schedule_t;
+
+typedef struct {
 		uint8_t dest;
 		uint8_t source;
 		MessageType_t ID;
+		schedule_t thisSchedule;
 		uint8_t len;
 		uint8_t hops;
 } header_t;
@@ -54,19 +62,17 @@ typedef struct {
 } datagram_t;
 
 typedef struct {
-		uint32_t sleepTime;
-		uint32_t listenTime;
-		uint8_t numNeighbours;
-		uint32_t syncTime;
-} schedule_t;
-
-typedef struct {
 		uint8_t neighbourID;
 		schedule_t scheduleTable[];
 } scheduleTable_t;
 
-void createDatagram( );
+volatile uint32_t nodeID;
 
+volatile schedule_t mySchedule;
+
+
+
+void MacInit( );
 
 bool MACStateMachine( );
 

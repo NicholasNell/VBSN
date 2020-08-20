@@ -1813,3 +1813,7 @@ void SX1276OnTimeoutIrq( void* context ) {
 	}
 }
 
+void SX1276clearIRQFlags( void ) {
+	spiWrite_RFM(REG_LR_IRQFLAGS, 0x00);
+}
+

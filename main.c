@@ -57,7 +57,7 @@
 
 
 // Uncomment for debug outputs
-#define DEBUG
+//#define DEBUG
 
 void printRegisters( void );
 
@@ -126,7 +126,9 @@ int main( void ) {
 
 	RadioInit();
 
-	uint32_t timeOnAir = SX1276GetTimeOnAir(MODEM_LORA, 4);
+//	MacInit();
+
+	Radio.Rx(0);
 
 	while (1) {
 
@@ -184,7 +186,9 @@ void OnTxDone( void ) {
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
-	Radio.Sleep();
+//	Radio.Sleep();
+
+	SX1276clearIRQFlags();
 	BufferSize = size;
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
