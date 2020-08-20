@@ -6,11 +6,10 @@
  */
 #include "my_MAC.h"
 #include <string.h>
+#include "datagram.h"
 
 bool MACStateMachine( ) {
 	return false;
 }
 
-void createDatagram( ) {
 
-}

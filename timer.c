@@ -24,6 +24,7 @@
 #include "board.h"
 #include "timer.h"
 #include "my_timer.h"
+#include "my_RFM9x.h"
 
 /*!
  * Safely execute call back
@@ -210,7 +211,7 @@ void TimerIrqHandler( void ) {
 	if ((TimerListHead != NULL) && (TimerListHead->IsNext2Expire == false)) {
 		TimerSetTimeout(TimerListHead);
 	}
-	SX1276OnTimeoutIrq();
+	SX1276OnTimeoutIrq(cur->Context);
 
 }
 
