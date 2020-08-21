@@ -13,6 +13,7 @@ void scheduleSetup( );
 void MacInit( ) {
 	nodeID = SX1276Random();
 	scheduleSetup();
+	createDatagram();
 }
 
 bool MACStateMachine( ) {

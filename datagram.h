@@ -13,6 +13,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+extern uint8_t TXBuffer[255];
+
 #define RH_MAX_MESSAGE_LEN 255
 
 typedef struct {
@@ -31,6 +33,7 @@ typedef struct {
 
 
 bool datagramInit( );
+void createDatagram( );
 
 
 #endif /* DATAGRAM_H_ */
