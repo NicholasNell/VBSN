@@ -59,6 +59,8 @@
 // Uncomment for debug outputs
 //#define DEBUG
 
+uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
+
 void printRegisters( void );
 
 
@@ -129,6 +131,8 @@ int main( void ) {
 	MacInit();
 
 	Radio.Rx(0);
+//	Radio.Send(data, 5);
+
 
 	while (1) {
 

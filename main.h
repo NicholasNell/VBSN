@@ -40,22 +40,22 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define TX_OUTPUT_POWER 10	    // dBm
 #define TX_TIMEOUT_VALUE 3000 	// ms
 #define RX_TIMEOUT_VALUE 5000 //ms
-#define LORA_BANDWIDTH 7       //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
+#define LORA_BANDWIDTH 8       //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
 // 	9: 500 kHz]
-#define LORA_SPREADING_FACTOR 7 // [SF7..SF12]
-#define LORA_CODINGRATE 1       // [1: 4/5, \
+#define LORA_SPREADING_FACTOR 8 // [SF7..SF12]
+#define LORA_CODINGRATE 4       // [1: 4/5, \
                                 //  2: 4/6, \
                                 //  3: 4/7, \
                                 //  4: 4/8]
-#define LORA_PREAMBLE_LENGTH 16  // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT 1   // Symbols
+#define LORA_PREAMBLE_LENGTH 8  // Same for Tx and Rx
+#define LORA_SYMBOL_TIMEOUT 1023   // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON false
-#define LORA_IQ_INVERSION_ON true
+#define LORA_IQ_INVERSION_ON false
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
-#define LORA_PAYLOAD_LEN 4
+#define LORA_PAYLOAD_LEN 5
 #define LORA_RX_CONTINUOUS true
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false
@@ -64,7 +64,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define LORA_PRIVATE_SYNCWORD 0x55
 #define LORA_IS_PUBLIC_NET false
 
-uint8_t Buffer[4] = { 0 };
+uint8_t Buffer[11] = { 0 };
 volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
 
 bool DIO0Flag = false;

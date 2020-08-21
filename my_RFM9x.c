@@ -753,17 +753,21 @@ void SX1276Send( uint8_t *buffer, uint8_t size ) {
 			// Initializes the payload size
 			spiWrite_RFM( REG_LR_PAYLOADLENGTH, size);
 
-			// Full buffer used for Tx
-			spiWrite_RFM( REG_LR_FIFOTXBASEADDR, 0x00);
-			spiWrite_RFM( REG_LR_FIFOADDRPTR, 0x00);
+
 
 			// FIFO operations can not take place in Sleep mode
 			if ((spiRead_RFM( REG_OPMODE) & ~RF_OPMODE_MASK) == RF_OPMODE_SLEEP) {
 				SX1276SetStby();
 				Delayms(5);
 			}
+			// Full buffer used for Tx
+			spiWrite_RFM( REG_LR_FIFOTXBASEADDR, 0);
+			spiWrite_RFM( REG_LR_FIFOADDRPTR, 0);
+
 			// Write payload buffer
+
 			SX1276WriteFifo(buffer, size);
+
 			txTimeout = SX1276.Settings.LoRa.TxTimeout;
 		}
 			break;
@@ -1451,8 +1455,10 @@ void SX1276OnDio0Irq( ) {
 
 					SX1276.Settings.LoRaPacketHandler.Size = spiRead_RFM(
 					REG_LR_RXNBBYTES);
+
 					spiWrite_RFM(
 					REG_LR_FIFOADDRPTR, spiRead_RFM( REG_LR_FIFORXCURRENTADDR));
+//
 					SX1276ReadFifo(
 							RxTxBuffer,
 							SX1276.Settings.LoRaPacketHandler.Size);
