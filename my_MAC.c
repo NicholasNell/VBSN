@@ -5,15 +5,22 @@
  *      Author: Nicholas
  */
 #include "my_MAC.h"
-#include <string.h>
 #include "datagram.h"
 
 void scheduleSetup( );
 
+
 void MacInit( ) {
-	nodeID = SX1276Random();
+	do {
+	uint32_t temp = SX1276Random();
+	nodeID = (uint8_t) temp;
+	} while (nodeID == 0xFF);
+	_numNeighbours = 0;
+	_sleepTime = 10000;
 	scheduleSetup();
-	createDatagram();
+	uint8_t dat[] = { 'H', 'E', 'L', 'L', 'O' };
+	_dataLen = sizeof(dat);
+	MACSend(dat);
 }
 
 bool MACStateMachine( ) {
@@ -23,9 +30,18 @@ bool MACStateMachine( ) {
 void scheduleSetup( ) {
 	uint8_t len = sizeof(datagram_t);
 	mySchedule.listenTime = SX1276GetTimeOnAir(MODEM_LORA, 255);
-	mySchedule.numNeighbours = 0;
-	mySchedule.sleepTime = 10000;
+	mySchedule.numNeighbours = _numNeighbours;
+	mySchedule.sleepTime = _sleepTime;
 	mySchedule.syncTime = SX1276GetTimeOnAir(MODEM_LORA, len);
 }
+
+bool MACSend( uint8_t *data ) {
+
+	createDatagram(data);
+	datagramToArray();
+	Radio.Send(TXBuffer, 255);
+	return true;
+}
+
 
 

@@ -130,7 +130,7 @@ int main( void ) {
 
 	MacInit();
 
-	Radio.Rx(0);
+//	Radio.Rx(0);
 //	Radio.Send(data, 5);
 
 
