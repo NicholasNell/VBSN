@@ -25,18 +25,8 @@
 #define MAX_LEN 255
 
 typedef enum {
-	SLEEP = 0, PENDING, RETRANSMIT, EXPIRED, ACK_RESP
-} AlohaState_t;
-
-typedef enum {
-	LOWPOWER = 0, IDLE,
-
-	RX, RX_TIMEOUT, RX_ERROR,
-
-	TX, TX_TIMEOUT,
-
-	CAD, CAD_DONE
-} AppStates_t;
+	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR
+} MACState_t;
 
 typedef enum {
 	SYNC = 0, ACK, DATA, RTS, CTS
@@ -62,6 +52,8 @@ volatile uint16_t _sleepTime;
 
 volatile schedule_t mySchedule;
 
+volatile MACState_t MACState;
+
 
 
 void MacInit( );
@@ -69,5 +61,7 @@ void MacInit( );
 bool MACStateMachine( );
 
 bool MACSend( uint8_t *data, uint8_t len );
+
+bool MACRx( );
 
 #endif /* MY_MAC_H_ */

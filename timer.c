@@ -211,6 +211,7 @@ void TimerIrqHandler( void ) {
 	if ((TimerListHead != NULL) && (TimerListHead->IsNext2Expire == false)) {
 		TimerSetTimeout(TimerListHead);
 	}
+	stopLoRaTimer();
 	SX1276OnTimeoutIrq(cur->Context);
 
 }

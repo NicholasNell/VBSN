@@ -6,6 +6,7 @@
  */
 #include "my_MAC.h"
 #include "datagram.h"
+#include "my_timer.h"
 
 void scheduleSetup( );
 
@@ -43,5 +44,20 @@ bool MACSend( uint8_t *data, uint8_t len ) {
 	return true;
 }
 
-
-
+bool MACRx( ) {
+	Radio.Rx(0);
+	MACState = RX;
+	startLoRaTimer(5000);
+	while (true) {
+		if (MACState == RXTIMEOUT) {
+			return false;
+		}
+		else if (MACState == RXERROR) {
+			return false;
+		}
+		else if (MACState == RXDONE) {
+			return true;
+		}
+	}
+	return false;
+}

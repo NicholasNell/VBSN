@@ -111,8 +111,6 @@ void RadioInit( ) {
 	// set radio frequency channel
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
-
-	State = LOWPOWER;
 }
 
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
@@ -132,7 +130,7 @@ int main( void ) {
 	uint8_t dat[] = { 'H', 'E', 'L', 'L', 'O' };
 //	MACSend(dat, sizeof(dat));
 //
-	Radio.Rx(0);
+	MACRx();
 //	Radio.Send(data, 5);
 
 
@@ -185,7 +183,6 @@ void PORT2_IRQHandler( void ) {
 
 void OnTxDone( void ) {
 	Radio.Sleep();
-	State = TX;
 #ifdef DEBUG
 	puts("TxDone");
 #endif
@@ -198,9 +195,6 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	memcpy(Buffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
-	State = RX;
-
-
 #ifdef DEBUG
 	puts("RxDone");
 	GpioFlashLED(&Led_rgb_green, 10);
@@ -209,7 +203,6 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 
 void OnTxTimeout( void ) {
 	Radio.Sleep();
-	State = TX_TIMEOUT;
 #ifdef DEBUG
 	puts("TxTimeout");
 #endif
@@ -217,7 +210,7 @@ void OnTxTimeout( void ) {
 
 void OnRxTimeout( void ) {
 	SX1276clearIRQFlags();
-	State = RX_TIMEOUT;
+	MACState = RXTIMEOUT;
 #ifdef DEBUG
 
 	puts("RxTimeout");
@@ -227,7 +220,6 @@ void OnRxTimeout( void ) {
 
 void OnRxError( void ) {
 	Radio.Sleep();
-	State = RX_ERROR;
 #ifdef DEBUG
 	puts("RxError");
 #endif

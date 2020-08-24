@@ -77,8 +77,6 @@ bool sendFlag = false;
 
 uint32_t value;
 
-extern volatile AppStates_t State = LOWPOWER;
-
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
 

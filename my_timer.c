@@ -310,6 +310,9 @@ void TA1_0_IRQHandler( void ) {
 
 }
 
+/*
+ * LoRa Interrupt
+ */
 void TA2_0_IRQHandler( void ) {
 
 	Timer_A_clearInterruptFlag(LORA_TIMER);
