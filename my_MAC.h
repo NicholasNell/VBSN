@@ -68,6 +68,6 @@ void MacInit( );
 
 bool MACStateMachine( );
 
-bool MACSend( uint8_t *data );
+bool MACSend( uint8_t *data, uint8_t len );
 
 #endif /* MY_MAC_H_ */

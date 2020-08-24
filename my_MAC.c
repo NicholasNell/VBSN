@@ -18,9 +18,9 @@ void MacInit( ) {
 	_numNeighbours = 0;
 	_sleepTime = 10000;
 	scheduleSetup();
-	uint8_t dat[] = { 'H', 'E', 'L', 'L', 'O' };
-	_dataLen = sizeof(dat);
-	MACSend(dat);
+
+
+
 }
 
 bool MACStateMachine( ) {
@@ -35,11 +35,11 @@ void scheduleSetup( ) {
 	mySchedule.syncTime = SX1276GetTimeOnAir(MODEM_LORA, len);
 }
 
-bool MACSend( uint8_t *data ) {
-
+bool MACSend( uint8_t *data, uint8_t len ) {
+	_dataLen = len;
 	createDatagram(data);
 	datagramToArray();
-	Radio.Send(TXBuffer, 255);
+	Radio.Send(TXBuffer, sizeof(myDatagram.header) + _dataLen);
 	return true;
 }
 

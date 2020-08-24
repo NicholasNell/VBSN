@@ -55,7 +55,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define LORA_IQ_INVERSION_ON false
 #define LORA_FREQ_DEV 0
 #define LORA_CRC_ON true
-#define LORA_PAYLOAD_LEN 5
+#define LORA_PAYLOAD_LEN 255
 #define LORA_RX_CONTINUOUS true
 #define LORA_FREQ_HOP_ENABLED false
 #define LORA_FREQ_HOP_PERIOD false

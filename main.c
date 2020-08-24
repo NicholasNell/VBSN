@@ -129,8 +129,10 @@ int main( void ) {
 	RadioInit();
 
 	MacInit();
-
-//	Radio.Rx(0);
+	uint8_t dat[] = { 'H', 'E', 'L', 'L', 'O' };
+//	MACSend(dat, sizeof(dat));
+//
+	Radio.Rx(0);
 //	Radio.Send(data, 5);
 
 

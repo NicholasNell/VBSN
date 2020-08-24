@@ -31,10 +31,9 @@ header_t createHeader( ) {
 }
 
 void datagramToArray( ) {
-	uint8_t len = sizeof(myDatagram);
-	memcpy(TXBuffer, &myDatagram, len - 1);
+	uint8_t len = sizeof(myDatagram.header);
+	memcpy(TXBuffer, &myDatagram.header, len);
 	memcpy(TXBuffer + len, myDatagram.data, _dataLen);
-
 }
 
 
