@@ -128,8 +128,9 @@ int main( void ) {
 
 	MacInit();
 	uint8_t dat[] = { 'H', 'E', 'L', 'L', 'O' };
-//	MACSend(dat, sizeof(dat));
+	MACSend(dat, sizeof(dat));
 //
+
 	MACRx();
 //	Radio.Send(data, 5);
 
@@ -139,15 +140,15 @@ int main( void ) {
 
 		if (DIO0Flag) {
 			DIO0Flag = false;
-			SX1276OnDio0Irq();
+
 		}
 		else if (DIO1Flag) {
 			DIO1Flag = false;
-			SX1276OnDio1Irq();
+
 		}
 		else if (DIO2Flag) {
 			DIO2Flag = false;
-			SX1276OnDio2Irq();
+
 		}
 	}
 }
@@ -165,11 +166,11 @@ void PORT2_IRQHandler( void ) {
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN4) {
 		DIO0Flag = true;
-
+		SX1276OnDio0Irq();
 	}
 	else if (status & GPIO_PIN6) {
 		DIO1Flag = true;
-
+		SX1276OnDio1Irq();
 	}
 	else if (status & GPIO_PIN3) {
 		DIO4Flag = true;
@@ -177,12 +178,14 @@ void PORT2_IRQHandler( void ) {
 	}
 	else if (status & GPIO_PIN7) {
 		DIO2Flag = true;
-
+		SX1276OnDio2Irq();
 	}
 }
 
 void OnTxDone( void ) {
+
 	Radio.Sleep();
+	MACState = TXDONE;
 #ifdef DEBUG
 	puts("TxDone");
 #endif
@@ -192,9 +195,10 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 
 	SX1276clearIRQFlags();
 	BufferSize = size;
-	memcpy(Buffer, payload, BufferSize);
+	memcpy(RXBuffer, payload, BufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
+	MACState = RXDONE;
 #ifdef DEBUG
 	puts("RxDone");
 	GpioFlashLED(&Led_rgb_green, 10);
@@ -203,6 +207,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 
 void OnTxTimeout( void ) {
 	Radio.Sleep();
+	MACState = TXTIMEOUT;
 #ifdef DEBUG
 	puts("TxTimeout");
 #endif

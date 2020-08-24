@@ -36,6 +36,7 @@ datagram_t myDatagram;
 bool datagramInit( );
 void createDatagram( uint8_t *data );
 void datagramToArray( );
+void ArrayToDatagram( );
 
 
 #endif /* DATAGRAM_H_ */

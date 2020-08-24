@@ -21,7 +21,7 @@ void createDatagram( uint8_t *data ) {
 
 header_t createHeader( ) {
 	header_t header;
-	header.source = nodeID;
+	header.source = _nodeID;
 	header.dest = BROADCAST_ADDRESS;
 	header.messageType = SYNC;
 	header.thisSchedule = mySchedule;
@@ -34,6 +34,15 @@ void datagramToArray( ) {
 	uint8_t len = sizeof(myDatagram.header);
 	memcpy(TXBuffer, &myDatagram.header, len);
 	memcpy(TXBuffer + len, myDatagram.data, _dataLen);
+}
+
+void ArrayToDatagram( ) {
+	datagram_t *rxdatagram = 0;
+
+	uint8_t len = sizeof(myDatagram.header);
+//	memcpy(rxdatagram, RXBuffer, len);
+//	memcpy(rxdatagram + len, RXBuffer, rxdatagram->header.len);
+
 }
 
 

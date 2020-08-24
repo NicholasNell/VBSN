@@ -65,7 +65,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define LORA_IS_PUBLIC_NET false
 
 uint8_t TXBuffer[255] = { 0 };
-uint8_t Buffer[255] = { 0 };
+uint8_t RXBuffer[255] = { 0 };
 volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
 
 bool DIO0Flag = false;

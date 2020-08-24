@@ -33,18 +33,20 @@ typedef enum {
 } MessageType_t;
 
 typedef struct {
-		uint16_t sleepTime;
-		uint16_t listenTime;
-		uint8_t numNeighbours;
-		uint16_t syncTime;
+		uint8_t nodeID;	// Node ID to which this schedule belongs
+		uint16_t sleepTime;	// The time this node will sleep in ms
+		uint16_t listenTime;	// the time this node will listen in ms
+		uint8_t numNeighbours;// The number of neighbours this node has in nodes
+		uint16_t syncTime;// The time it takes to send a SYNC message in ms, node will use this to listen initially.
 } schedule_t;
 
 typedef struct {
-		uint8_t neighbourID;
+		uint8_t numNeighbours;
 		schedule_t scheduleTable[];
 } scheduleTable_t;
 
-volatile uint8_t nodeID;
+
+volatile uint8_t _nodeID;
 
 volatile uint8_t _dataLen;
 volatile uint8_t _numNeighbours;
@@ -53,8 +55,7 @@ volatile uint16_t _sleepTime;
 volatile schedule_t mySchedule;
 
 volatile MACState_t MACState;
-
-
+extern uint8_t RXBuffer[255];
 
 void MacInit( );
 
