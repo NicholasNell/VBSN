@@ -54,6 +54,13 @@
 
 /* Standard Includes */
 #include "main.h"
+#include <stdio.h>
+#include "board.h"
+#include "my_MAC.h"
+#include <string.h>
+#include "sx1276Regs-Fsk.h"
+#include "sx1276Regs-LoRa.h"
+#include "my_spi.h"
 
 
 // Uncomment for debug outputs
@@ -127,33 +134,9 @@ int main( void ) {
 	RadioInit();
 
 	MacInit();
-	uint8_t dat[200];
-	int i = 0;
-	for (i = 0; i < 200; i++) {
-		dat[i] = i;
-	}
-	MACSend(dat, sizeof(dat));
-//
-
-	MACRx();
-//	Radio.Send(data, 5);
-
 
 	while (1) {
 
-
-		if (DIO0Flag) {
-			DIO0Flag = false;
-
-		}
-		else if (DIO1Flag) {
-			DIO1Flag = false;
-
-		}
-		else if (DIO2Flag) {
-			DIO2Flag = false;
-
-		}
 	}
 }
 
@@ -169,19 +152,19 @@ void PORT2_IRQHandler( void ) {
 #endif
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN4) {
-		DIO0Flag = true;
+
 		SX1276OnDio0Irq();
 	}
 	else if (status & GPIO_PIN6) {
-		DIO1Flag = true;
+
 		SX1276OnDio1Irq();
 	}
 	else if (status & GPIO_PIN3) {
-		DIO4Flag = true;
+
 
 	}
 	else if (status & GPIO_PIN7) {
-		DIO2Flag = true;
+
 		SX1276OnDio2Irq();
 	}
 }

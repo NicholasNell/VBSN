@@ -8,11 +8,9 @@
 #ifndef DATAGRAM_H_
 #define DATAGRAM_H_
 
-#include <my_MAC.h>
 #include <stdbool.h>
 #include <stdint.h>
-
-extern uint8_t TXBuffer[255];
+#include "my_MAC.h"
 
 #define RH_MAX_MESSAGE_LEN 255
 
@@ -30,9 +28,7 @@ typedef struct {
 		uint8_t *data;
 } datagram_t;
 
-datagram_t myDatagram;
-uint8_t tempDataArray[];
-
+datagram_t rxdatagram;
 
 bool datagramInit( );
 void createDatagram( uint8_t *data );

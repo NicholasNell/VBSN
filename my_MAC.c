@@ -7,6 +7,14 @@
 #include "my_MAC.h"
 #include "datagram.h"
 #include "my_timer.h"
+#include "my_RFM9x.h"
+
+bool schedule_setup = false;
+volatile schedule_t mySchedule;
+extern datagram_t myDatagram;
+volatile MACappState_t MACState = SYNCRX;
+
+
 
 
 void scheduleSetup( );
@@ -21,13 +29,22 @@ void MacInit( ) {
 	_numNeighbours = 0;
 	_sleepTime = 10000;
 	scheduleSetup();
-
-
-
+	do {
+		_ranNum = SX1276Random();
+	} while (_ranNum > 32000 || _ranNum < 10000);
 }
 
 bool MACStateMachine( ) {
 	switch (MACState) {
+		case INIT_SETUP: {
+			if (MACRx(_ranNum)) {
+
+			}
+			else {
+
+			}
+		}
+			break;
 		case SYNCRX: {
 			bool rxSuccess = false;
 			if (schedule_setup) {
@@ -38,6 +55,8 @@ bool MACStateMachine( ) {
 			}
 
 			if (rxSuccess) {
+
+			}
 		}
 			break;
 		case SYNCTX:
@@ -47,6 +66,8 @@ bool MACStateMachine( ) {
 		case LISTEN:
 			break;
 		case SCHEDULE_SETUP:
+			break;
+		case SCHEDULE_ADOPT:
 			break;
 		default:
 			break;
@@ -100,4 +121,35 @@ bool MACRx( uint32_t timeout ) {
 
 void processRXBuffer( ) {
 	ArrayToDatagram();
+	switch (rxdatagram.header.messageType) {
+		case SYNC:
+		{
+			bool contains = false;
+			uint8_t i = 0;
+
+			for (i = 0; i < MAX_NEIGHBOURS; i++) {
+				if (rxdatagram.header.thisSchedule.nodeID
+						== scheduleTable[i].nodeID) {
+					contains = true;
+
+					break;
+				}
+			}
+			if (!contains) {
+				_numNeighbours += 1;
+				scheduleTable[_numNeighbours] = rxdatagram.header.thisSchedule;
+			}
+		}
+			break;
+		case ACK:
+			break;
+		case DATA:
+			break;
+		case RTS:
+			break;
+		case CTS:
+			break;
+		default:
+			break;
+	}
 }

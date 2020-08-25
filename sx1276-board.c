@@ -15,6 +15,7 @@
 #include "my_spi.h"
 #include "my_timer.h"
 #include "my_RFM9x.h"
+#include "sx1276Regs-Fsk.h"
 
 /*!
  * \brief Gets the board PA selection configuration

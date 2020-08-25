@@ -13,6 +13,10 @@
 #include "my_RFM9x.h"
 #include "sx1276-board.h"
 #include "timer.h"
+#include "sx1276Regs-Fsk.h"
+#include "sx1276Regs-LoRa.h"
+#include "my_spi.h"
+
 
 /*
  * Local types definition

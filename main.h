@@ -17,17 +17,9 @@ Maintainer: Miguel Luis and Gregory Cristian
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "my_timer.h"
-#include "my_spi.h"
 #include "my_RFM9x.h"
 #include "my_gpio.h"
-#include "board-config.h"
-#include "board.h"
-#include "sx1276-board.h"
-#include "timer.h"
-#include <stdio.h>
-#include "my_MAC.h"
-#include <utilities.h>
+
 
 
 /*!

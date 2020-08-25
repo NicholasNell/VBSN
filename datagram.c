@@ -7,6 +7,14 @@
 
 
 #include "datagram.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <my_MAC.h>
+
+datagram_t myDatagram;
+uint8_t tempDataArray[];
+extern schedule_t mySchedule;
+extern uint8_t TXBuffer[255];
 
 header_t createHeader( );
 
@@ -37,8 +45,6 @@ void datagramToArray( ) {
 }
 
 void ArrayToDatagram( ) {
-	datagram_t rxdatagram;
-
 	uint8_t len = sizeof(myDatagram.header);
 	memcpy(&rxdatagram.header, RXBuffer, len);
 	rxdatagram.data = tempDataArray;

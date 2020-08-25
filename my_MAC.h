@@ -10,15 +10,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <string.h>
-#include "my_gpio.h"
-#include "my_spi.h"
-#include "radio.h"
-#include "my_timer.h"
-#include "my_RFM9x.h"
-#include "sx1276Regs-Fsk.h"
-#include "sx1276Regs-LoRa.h"
-#include <stdio.h>
+
 
 
 #define BROADCAST_ADDRESS 0xFF
@@ -32,7 +24,7 @@ typedef enum {
 } MACRadioState_t;
 
 typedef enum {
-	SYNCRX, SLEEP, LISTEN, SYNCTX, SCHEDULE_SETUP
+	SYNCRX, SLEEP, LISTEN, SYNCTX, SCHEDULE_SETUP, SCHEDULE_ADOPT, INIT_SETUP
 } MACappState_t;
 
 typedef enum {
@@ -47,24 +39,16 @@ typedef struct {
 		uint16_t syncTime;// The time it takes to send a SYNC message in ms, node will use this to listen initially.
 } schedule_t;
 
-typedef struct {
-		uint8_t numNeighbours;
-		schedule_t scheduleTable[];
-} scheduleTable_t;
+schedule_t scheduleTable[255];
 
-
+uint32_t _ranNum;
 volatile uint8_t _nodeID;
-
 volatile uint8_t _dataLen;
 volatile uint8_t _numNeighbours;
 volatile uint16_t _sleepTime;
-
-volatile schedule_t mySchedule;
-
-volatile MACRadioState_t RadioState;
-volatile MACappState_t MACState = SYNCRX;
 extern uint8_t RXBuffer[255];
-bool schedule_setup = false;
+volatile MACRadioState_t RadioState;
+extern uint8_t TXBuffer[255];
 
 void MacInit( );
 

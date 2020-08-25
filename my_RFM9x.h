@@ -11,10 +11,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "my_gpio.h"
-#include "my_spi.h"
+//#include "my_spi.h"
 #include "radio.h"
-#include "sx1276Regs-Fsk.h"
-#include "sx1276Regs-LoRa.h"
+
 
 /*!
  * Radio wake-up time from sleep
