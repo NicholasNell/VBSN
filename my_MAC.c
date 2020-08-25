@@ -27,7 +27,31 @@ void MacInit( ) {
 }
 
 bool MACStateMachine( ) {
-	return false;
+	switch (MACState) {
+		case SYNCRX: {
+			bool rxSuccess = false;
+			if (schedule_setup) {
+				rxSuccess = MACRx(mySchedule.syncTime);
+			}
+			else {
+				rxSuccess = MACRx(DEFAULT_SYNC_TIME);
+			}
+
+			if (rxSuccess) {
+		}
+			break;
+		case SYNCTX:
+			break;
+		case SLEEP:
+			break;
+		case LISTEN:
+			break;
+		case SCHEDULE_SETUP:
+			break;
+		default:
+			break;
+	}
+	return true;
 }
 
 void scheduleSetup( ) {
@@ -45,29 +69,29 @@ bool MACSend( uint8_t *data, uint8_t len ) {
 	datagramToArray();
 	startLoRaTimer(5000);
 	Radio.Send(TXBuffer, sizeof(myDatagram.header) + _dataLen);
-	MACState = TX;
+	RadioState = TX;
 	while (true) {
-		if (MACState == TXDONE) {
+		if (RadioState == TXDONE) {
 			return true;
 		}
-		else if (MACState == TXTIMEOUT) {
+		else if (RadioState == TXTIMEOUT) {
 			return false;
 		}
 	}
 }
 
-bool MACRx( ) {
+bool MACRx( uint32_t timeout ) {
 	Radio.Rx(0);
-	MACState = RX;
-	startLoRaTimer(5000);
+	RadioState = RX;
+	startLoRaTimer(timeout);
 	while (true) {
-		if (MACState == RXTIMEOUT) {
+		if (RadioState == RXTIMEOUT) {
 			return false;
 		}
-		else if (MACState == RXERROR) {
+		else if (RadioState == RXERROR) {
 			return false;
 		}
-		else if (MACState == RXDONE) {
+		else if (RadioState == RXDONE) {
 			processRXBuffer();
 			return true;
 		}
@@ -76,13 +100,4 @@ bool MACRx( ) {
 
 void processRXBuffer( ) {
 	ArrayToDatagram();
-//	datagram_t receivedDatagram;
-//	receivedDatagram.header.source = RXBuffer[0];
-//	receivedDatagram.header.dest = RXBuffer[1];
-//	receivedDatagram.header.messageType = (MessageType_t) RXBuffer[2];
-//	receivedDatagram.header.thisSchedule.nodeID = RXBuffer[3];
-//	receivedDatagram.header.thisSchedule.sleepTime = (uint16_t) RXBuffer[4]
-//			+ (uint16_t) RXBuffer[5] << 8;
-//	__no_operation();
-
 }

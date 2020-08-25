@@ -23,10 +23,17 @@
 
 #define BROADCAST_ADDRESS 0xFF
 #define MAX_LEN 255
+#define DEFAULT_SYNC_TIME 70
+#define DEFAULT_RX_TIME 1000
+#define DEFAULT_SLEEP_TIME 20000
 
 typedef enum {
 	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR
-} MACState_t;
+} MACRadioState_t;
+
+typedef enum {
+	SYNCRX, SLEEP, LISTEN, SYNCTX, SCHEDULE_SETUP
+} MACappState_t;
 
 typedef enum {
 	SYNC = 0, ACK, DATA, RTS, CTS
@@ -54,8 +61,10 @@ volatile uint16_t _sleepTime;
 
 volatile schedule_t mySchedule;
 
-volatile MACState_t MACState;
+volatile MACRadioState_t RadioState;
+volatile MACappState_t MACState = SYNCRX;
 extern uint8_t RXBuffer[255];
+bool schedule_setup = false;
 
 void MacInit( );
 
@@ -63,6 +72,6 @@ bool MACStateMachine( );
 
 bool MACSend( uint8_t *data, uint8_t len );
 
-bool MACRx( );
+bool MACRx( uint32_t timeout );
 
 #endif /* MY_MAC_H_ */

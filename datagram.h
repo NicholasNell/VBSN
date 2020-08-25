@@ -31,6 +31,7 @@ typedef struct {
 } datagram_t;
 
 datagram_t myDatagram;
+uint8_t tempDataArray[];
 
 
 bool datagramInit( );

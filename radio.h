@@ -43,13 +43,12 @@ typedef enum
 /*!
  * Radio driver internal state machine states definition
  */
-typedef enum
-{
-    RF_IDLE = 0,   //!< The radio is idle
-    RF_RX_RUNNING, //!< The radio is in reception state
-    RF_TX_RUNNING, //!< The radio is in transmission state
-    RF_CAD,        //!< The radio is doing channel activity detection
-}RadioState_t;
+typedef enum {
+	RF_IDLE = 0,   //!< The radio is idle
+	RF_RX_RUNNING, //!< The radio is in reception state
+	RF_TX_RUNNING, //!< The radio is in transmission state
+	RF_CAD,        //!< The radio is doing channel activity detection
+} RadioState_t;
 
 /*!
  * \brief Radio driver callback functions
@@ -113,7 +112,7 @@ struct Radio_s
      *
      * \param status Radio status.[RF_IDLE, RF_RX_RUNNING, RF_TX_RUNNING]
      */
-    RadioState_t ( *GetStatus )( void );
+		RadioState_t (*GetStatus)( void );
     /*!
      * \brief Configures the radio with the given modem
      *

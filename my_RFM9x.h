@@ -99,7 +99,7 @@ typedef struct {
  * Radio Settings
  */
 typedef struct {
-	RadioState_t State;
+		RadioState_t State;
 	RadioModems_t Modem;
 	uint32_t Channel;
 	RadioFskSettings_t Fsk;

@@ -37,12 +37,12 @@ void datagramToArray( ) {
 }
 
 void ArrayToDatagram( ) {
-	datagram_t *rxdatagram = 0;
+	datagram_t rxdatagram;
 
 	uint8_t len = sizeof(myDatagram.header);
-//	memcpy(rxdatagram, RXBuffer, len);
-//	memcpy(rxdatagram + len, RXBuffer, rxdatagram->header.len);
-
+	memcpy(&rxdatagram.header, RXBuffer, len);
+	rxdatagram.data = tempDataArray;
+	memcpy(tempDataArray, RXBuffer + len, rxdatagram.header.len);
 }
 
 
