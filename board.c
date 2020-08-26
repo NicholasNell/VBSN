@@ -65,10 +65,8 @@ void BoardInitMcu( void ) {
 
 	SystemClockConfig();
 
-//	TimerAInteruptInit();
-	TimerACounterInit();
 	DelayTimerInit();
-	startTimerAcounter();
+
 
 	RtcInit();
 

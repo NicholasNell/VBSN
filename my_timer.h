@@ -49,7 +49,7 @@ void TimerACounterInit( void );
 /*!
  * \brief Starts Timing using Timer_A0
  */
-void startTimerAcounter( void );
+void startTimerAcounter( uint32_t period, bool *flag );
 
 /*!
  * \brief Stop the timer and returns time in us

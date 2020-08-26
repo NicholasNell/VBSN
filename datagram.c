@@ -39,7 +39,6 @@ header_t createHeader( MessageType_t messageType ) {
 	header.messageType = messageType;
 	header.thisSchedule = mySchedule;
 	header.len = _dataLen;
-	header.hops = 0;
 	return header;
 }
 

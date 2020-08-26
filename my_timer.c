@@ -35,6 +35,7 @@ bool timerTick_ms = false;
 bool isDelayTimerRunning = false;
 bool LoRaTimerRunning = false;
 extern bool sendFlag;
+bool *tempFlag;
 
 #define DELAY_TIMER TIMER_A0_BASE
 #define DELAY_INT INT_TA0_0
@@ -48,8 +49,8 @@ extern bool sendFlag;
 #define DELAY_TICK_TO_MS 0.5
 #define DELAY_MS_TO_TICK 1/DELAY_TICK_TO_MS
 
-#define COUNTER_TICK_TO_US 32
-#define COUNTER_US_TO_TICK 1/COUNTER_TICK_TO_US
+#define COUNTER_TICK_TO_MS 0.5
+#define COUNTER_MS_TO_TICK 1/COUNTER_TICK_TO_MS
 
 #define LORA_TICK_TO_MS 0.5
 #define LORA_MS_TO_TICK 1/LORA_TICK_TO_MS
@@ -69,9 +70,10 @@ const Timer_A_UpModeConfig upDelayConfig = {
 		TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,
 		TIMER_A_DO_CLEAR };
 
-const Timer_A_ContinuousModeConfig contConfigCounter = {
-		TIMER_A_CLOCKSOURCE_SMCLK,
-		TIMER_A_CLOCKSOURCE_DIVIDER_48,
+Timer_A_UpModeConfig upConfigCounter = {
+		TIMER_A_CLOCKSOURCE_ACLK,
+		TIMER_A_CLOCKSOURCE_DIVIDER_64,
+												1,
 		TIMER_A_TAIE_INTERRUPT_ENABLE,      // Enable Overflow ISR
 		TIMER_A_DO_CLEAR };
 
@@ -116,7 +118,7 @@ uint32_t stopDelayTimer( void ) {
 uint32_t getDelayTimerValue( void ) {
 //	uint16_t tickVal = ;
 //	uint32_t timeVal = tickVal *;
-	return Timer_A_getCounterValue(DELAY_TIMER) * DELAY_TICK_TO_MS;
+	return MAP_Timer_A_getCounterValue(DELAY_TIMER) * DELAY_TICK_TO_MS;
 }
 
 void resetDelayTimerValue( void ) {
@@ -134,15 +136,17 @@ void resetDelayTimerValue( void ) {
 void TimerACounterInit( void ) {
 
 	/* Configure Timer_A3 for timing purposes */
-
-	MAP_Timer_A_configureContinuousMode(COUNTER_TIMER, &contConfigCounter);
+	MAP_Timer_A_configureUpMode(COUNTER_TIMER, &upConfigCounter);
 }
 
 
-void startTimerAcounter( void ) {
-	Timer_A_stopTimer(COUNTER_TIMER);
+void startTimerAcounter( uint32_t period, bool *flag ) {
+	tempFlag = flag;
+	MAP_Timer_A_stopTimer(COUNTER_TIMER);
+	*upConfigCounter.timerPeriod = period * COUNTER_MS_TO_TICK;
+	TimerACounterInit();
 //	Timer_A_clearTimer(TIMER_A3_BASE);
-	Timer_A_startCounter(COUNTER_TIMER, TIMER_A_CONTINUOUS_MODE);
+	MAP_Timer_A_startCounter(COUNTER_TIMER, TIMER_A_UP_MODE);
 	isTimerAcounterRunning = true;
 }
 
@@ -151,12 +155,12 @@ void startTimerAcounter( void ) {
  */
 uint32_t stopTimerACounter( void ) {
 	uint16_t tickVal = Timer_A_getCounterValue(COUNTER_TIMER);
-	Timer_A_stopTimer(COUNTER_TIMER);
-	Timer_A_clearTimer(TIMER_A3_BASE);
+	MAP_Timer_A_stopTimer(COUNTER_TIMER);
+	MAP_Timer_A_clearTimer(COUNTER_TIMER);
 	isTimerAcounterRunning = false;
 	TimerACounterInit();
 
-	return (uint32_t) tickVal * COUNTER_TICK_TO_US;
+	return (uint32_t) tickVal * COUNTER_TICK_TO_MS;
 }
 
 /*!
@@ -165,7 +169,7 @@ uint32_t stopTimerACounter( void ) {
  */
 
 uint32_t getTimerAcounterValue( void ) {
-	return Timer_A_getCounterValue(COUNTER_TIMER) * COUNTER_TICK_TO_US;
+	return MAP_Timer_A_getCounterValue(COUNTER_TIMER) * COUNTER_TICK_TO_MS;
 }
 
 /*!
@@ -173,9 +177,9 @@ uint32_t getTimerAcounterValue( void ) {
  *
  */
 void resetTimerAcounterValue( void ) {
-	Timer_A_stopTimer(COUNTER_TIMER);
+	MAP_Timer_A_stopTimer(COUNTER_TIMER);
 	isTimerAcounterRunning = false;
-	Timer_A_clearTimer(COUNTER_TIMER);
+	MAP_Timer_A_clearTimer(COUNTER_TIMER);
 	TimerACounterInit();
 	startTimerAcounter();
 	isTimerAcounterRunning = true;
@@ -199,17 +203,17 @@ void startLoRaTimer( uint32_t timeout ) {
 										TIMER_A_DO_CLEAR         // Clear value
 			};
 
-	Interrupt_enableInterrupt(LORA_INT);
-	Timer_A_configureUpMode(LORA_TIMER, &upConfigA2);
-	Timer_A_startCounter(LORA_TIMER, TIMER_A_UP_MODE);
+	MAP_Interrupt_enableInterrupt(LORA_INT);
+	MAP_Timer_A_configureUpMode(LORA_TIMER, &upConfigA2);
+	MAP_Timer_A_startCounter(LORA_TIMER, TIMER_A_UP_MODE);
 }
 
 void stopLoRaTimer( ) {
-	Timer_A_clearInterruptFlag(LORA_TIMER);
+	MAP_Timer_A_clearInterruptFlag(LORA_TIMER);
 	MAP_Timer_A_clearCaptureCompareInterrupt(LORA_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
-	Timer_A_clearTimer(LORA_TIMER);
-	Timer_A_stopTimer(LORA_TIMER);
+	MAP_Timer_A_clearTimer(LORA_TIMER);
+	MAP_Timer_A_stopTimer(LORA_TIMER);
 }
 
 uint32_t LoRaTimerMs2Tick( uint32_t milliseconds ) {
@@ -217,13 +221,13 @@ uint32_t LoRaTimerMs2Tick( uint32_t milliseconds ) {
 }
 
 uint32_t SetTimerContext( void ) {
-	TimerContext.Time = (uint32_t) Timer_A_getCounterValue(LORA_TIMER);
+	TimerContext.Time = (uint32_t) MAP_Timer_A_getCounterValue(LORA_TIMER);
 	return (uint32_t) TimerContext.Time;
 }
 
 uint32_t GetTimerElapsedTime( void ) {
 
-	uint32_t calendarValue = (uint32_t) Timer_A_getCounterValue(LORA_TIMER);
+	uint32_t calendarValue = (uint32_t) MAP_Timer_A_getCounterValue(LORA_TIMER);
 
 	return ((uint32_t) (calendarValue - TimerContext.Time));
 }
@@ -234,15 +238,15 @@ uint32_t GetTimerContext( void ) {
 
 void StopAlarm( void ) {
 	// Disable the Alarm A interrupt
-	Timer_A_disableInterrupt(LORA_TIMER);
-	Timer_A_clearInterruptFlag(LORA_TIMER);
-	Timer_A_clearCaptureCompareInterrupt(
+	MAP_Timer_A_disableInterrupt(LORA_TIMER);
+	MAP_Timer_A_clearInterruptFlag(LORA_TIMER);
+	MAP_Timer_A_clearCaptureCompareInterrupt(
 	LORA_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 }
 
 uint32_t GetTimerValue( void ) {
-	uint32_t calendarValue = Timer_A_getCounterValue(LORA_TIMER);
+	uint32_t calendarValue = MAP_Timer_A_getCounterValue(LORA_TIMER);
 	return (calendarValue);
 }
 
@@ -269,10 +273,10 @@ void SetAlarm( uint32_t timeout ) {
 										TIMER_A_CAPTURECOMPARE_INTERRUPT_ENABLE,
 										TIMER_A_OUTPUTMODE_OUTBITVALUE };
 	//	Timer_A_enableInterrupt(TIMER_A3_BASE);
-	uint32_t nowTime = Timer_A_getCounterValue(LORA_TIMER);
+	uint32_t nowTime = MAP_Timer_A_getCounterValue(LORA_TIMER);
 	uint32_t CCRTime = nowTime + timeout;
-	Timer_A_initCompare(LORA_TIMER, &CMC);
-	Timer_A_setCompareValue(
+	MAPTimer_A_initCompare(LORA_TIMER, &CMC);
+	MAP_Timer_A_setCompareValue(
 	LORA_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0, CCRTime);
 }
@@ -284,10 +288,10 @@ void StartAlarm( uint32_t timeout ) {
 										TIMER_A_CAPTURECOMPARE_INTERRUPT_ENABLE,
 										TIMER_A_OUTPUTMODE_OUTBITVALUE };
 //	Timer_A_enableInterrupt(TIMER_A3_BASE);
-	uint32_t nowTime = Timer_A_getCounterValue(LORA_TIMER);
+	uint32_t nowTime = MAP_Timer_A_getCounterValue(LORA_TIMER);
 	uint32_t CCRTime = nowTime + timeout;
-	Timer_A_initCompare(LORA_TIMER, &CMC);
-	Timer_A_setCompareValue(
+	MAP_Timer_A_initCompare(LORA_TIMER, &CMC);
+	MAP_Timer_A_setCompareValue(
 	LORA_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0, CCRTime);
 
@@ -296,15 +300,16 @@ void StartAlarm( uint32_t timeout ) {
 
 void TA0_0_IRQHandler( void ) {
 
-	Timer_A_clearInterruptFlag(DELAY_TIMER);
+	MAP_Timer_A_clearInterruptFlag(DELAY_TIMER);
 	MAP_Timer_A_clearCaptureCompareInterrupt(DELAY_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 
 }
 
+//Counter interupt
 void TA1_0_IRQHandler( void ) {
-
-	Timer_A_clearInterruptFlag(COUNTER_TIMER);
+	*tempFlag = true;
+	MAP_Timer_A_clearInterruptFlag(COUNTER_TIMER);
 	MAP_Timer_A_clearCaptureCompareInterrupt(COUNTER_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 
@@ -315,7 +320,7 @@ void TA1_0_IRQHandler( void ) {
  */
 void TA2_0_IRQHandler( void ) {
 
-	Timer_A_clearInterruptFlag(LORA_TIMER);
+	MAP_Timer_A_clearInterruptFlag(LORA_TIMER);
 	MAP_Timer_A_clearCaptureCompareInterrupt(LORA_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
 //	Timer_A_stopTimer(TIMER_A3_BASE);

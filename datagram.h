@@ -20,7 +20,6 @@ typedef struct {
 		MessageType_t messageType;
 		schedule_t thisSchedule;
 		uint8_t len;
-		uint8_t hops;
 } header_t;
 
 typedef struct {

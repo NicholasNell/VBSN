@@ -15,16 +15,14 @@
 bool schedule_setup = false;
 volatile schedule_t mySchedule;
 extern datagram_t myDatagram;
-volatile MACappState_t MACState = INIT_SETUP;
+volatile MACappState_t MACState = SYNCRX;
 uint8_t emptyArray[0];
 extern SX1276_t SX1276;
 bool sleepFlag = false;
 bool syncFlag = false;
 bool RTSFlag = false;
 bool CTSFlag = false;
-
-
-
+bool hasData = false;
 
 static void scheduleSetup( );
 /*!
@@ -33,7 +31,8 @@ static void scheduleSetup( );
 static bool processRXBuffer( );
 
 static void syncSchedule( );
-
+static bool RxStateMachine( );
+static bool TxStateMachine( );
 
 void MacInit( ) {
 	do {
@@ -49,92 +48,17 @@ void MacInit( ) {
 }
 
 bool MACStateMachine( ) {
-	switch (MACState) {
-		case INIT_SETUP: {
-			if (MACRx(_ranNum)) {
-				MACState = SCHEDULE_ADOPT;
-			}
-			else {
-				MACState = SYNCTX;
-			}
-		}
-			break;
-		case SYNCRX: {
-
-			if (!syncFlag) {
-				if (MACRx(mySchedule.syncTime)) {
-
-				}
-				else {
-					SX1276SetSleep();
-					RadioState = RADIO_SLEEP;
-					SystickInit(
-							mySchedule.listenTime + mySchedule.sleepTime
-									+ mySchedule.listenTime,
-							&sleepFlag);
-					// set to sleep for the RTS time, CTS time, and
-				}
-			}
-			else {
-				MACState = LISTEN_RTS;
-				SystickInit(mySchedule.listenTime, &RTSFlag);
-				syncFlag = false;
-			}
-		}
-			break;
-		case SYNCTX:
-			if (MACSend(SYNC, emptyArray, 0)) {
-				SX1276SetSleep();
-				RadioState = RADIO_SLEEP;
-				SystickInit(mySchedule.sleepTime, &sleepFlag);
-				MACState = SLEEP;
-			}
-			break;
-		case SLEEP:
-			if (sleepFlag) {
-				SystickInit(mySchedule.syncTime, &syncFlag);
-				MACState = SYNCRX;
-				sleepFlag = false;
-			}
-			break;
-		case LISTEN_RTS:
-			if (!RTSFlag) {
-				if (MACRx(mySchedule.listenTime)) {
-
-				}
-			}
-			else {
-
-			}
-			break;
-		case SEND_CTS:
-			break;
-		case SCHEDULE_SETUP:
-			break;
-		case SCHEDULE_ADOPT:
-
-			break;
-		default:
-			break;
+	if (hasData) {
+		return TxStateMachine();
 	}
-	return true;
+	else {
+		return RxStateMachine();
+	}
 }
 
 static void scheduleSetup( ) {
 	uint8_t len = sizeof(datagram_t);
-	mySchedule.nodeID = _nodeID;
-	mySchedule.listenTime = SX1276GetTimeOnAir(
-			MODEM_LORA,
-			SX1276.Settings.LoRa.Bandwidth,
-			SX1276.Settings.LoRa.Datarate,
-			SX1276.Settings.LoRa.Coderate,
-			SX1276.Settings.LoRa.PreambleLen,
-			SX1276.Settings.LoRa.FixLen,
-			255,
-			SX1276.Settings.LoRa.CrcOn) * 10;
-	mySchedule.numNeighbours = _numNeighbours;
-	mySchedule.sleepTime = _sleepTime;
-	mySchedule.syncTime = SX1276GetTimeOnAir(
+	uint16_t timeOnAir = SX1276GetTimeOnAir(
 			MODEM_LORA,
 			SX1276.Settings.LoRa.Bandwidth,
 			SX1276.Settings.LoRa.Datarate,
@@ -142,7 +66,26 @@ static void scheduleSetup( ) {
 			SX1276.Settings.LoRa.PreambleLen,
 			SX1276.Settings.LoRa.FixLen,
 			len,
-			SX1276.Settings.LoRa.CrcOn) * 10;
+			SX1276.Settings.LoRa.CrcOn) * 5;
+	mySchedule.nodeID = _nodeID;
+	mySchedule.RTSTime = timeOnAir;
+	mySchedule.numNeighbours = _numNeighbours;
+	mySchedule.CTSTime = timeOnAir;
+	mySchedule.dataTime = SX1276GetTimeOnAir(
+			MODEM_LORA,
+			SX1276.Settings.LoRa.Bandwidth,
+			SX1276.Settings.LoRa.Datarate,
+			SX1276.Settings.LoRa.Coderate,
+			SX1276.Settings.LoRa.PreambleLen,
+			SX1276.Settings.LoRa.FixLen,
+			255,
+			SX1276.Settings.LoRa.CrcOn) * 5;
+	mySchedule.sleepTime = _sleepTime;
+	mySchedule.syncTime = timeOnAir;
+	_totalScheduleTime = mySchedule.RTSTime + mySchedule.CTSTime
+			+ mySchedule.dataTime + mySchedule.sleepTime + mySchedule.syncTime;
+	_scheduleTimeLeft = _totalScheduleTime;
+
 }
 
 bool MACSend( MessageType_t messageType, uint8_t *data, uint8_t len ) {
@@ -199,7 +142,6 @@ static bool processRXBuffer( ) {
 					_numNeighbours += 1;
 					scheduleTable[_numNeighbours] =
 							rxdatagram.header.thisSchedule;
-					syncSchedule();
 				}
 				else {
 
@@ -226,4 +168,83 @@ static bool processRXBuffer( ) {
 static void syncSchedule( ) {
 	mySchedule = rxdatagram.header.thisSchedule;
 	mySchedule.nodeID = _nodeID;
+}
+
+static bool RxStateMachine( ) {
+switch (MACState) {
+	case SYNCRX:
+		if (!syncFlag) {
+			if (MACRx(mySchedule.syncTime)) {
+
+			}
+			else {
+				SX1276SetSleep();
+				RadioState = RADIO_SLEEP;
+			}
+		}
+		else {
+			MACState = LISTEN_RTS;
+			SystickInit(mySchedule.RTSTime, &RTSFlag);
+			syncFlag = false;
+			}
+
+		break;
+	case SYNCTX:
+		if (MACSend(SYNC, emptyArray, 0)) {
+			SX1276SetSleep();
+			RadioState = RADIO_SLEEP;
+			SystickInit(mySchedule.sleepTime, &sleepFlag);
+			MACState = SLEEP;
+			}
+		break;
+	case SLEEP:
+		if (sleepFlag) {
+			SystickInit(mySchedule.syncTime, &syncFlag);
+			MACState = SYNCRX;
+			sleepFlag = false;
+			}
+		break;
+	case LISTEN_RTS:
+		if (!RTSFlag) {
+			if (MACRx(mySchedule.RTSTime)) {
+
+			}
+		}
+			else {
+
+		}
+		break;
+	case SEND_CTS:
+		break;
+	case SCHEDULE_SETUP:
+		break;
+	case SCHEDULE_ADOPT:
+		syncSchedule();
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
+static bool TxStateMachine( ) {
+switch (MACState) {
+	case SYNCRX:
+		break;
+	case SYNCTX:
+		break;
+	case SLEEP:
+		break;
+	case LISTEN_RTS:
+		break;
+	case SEND_CTS:
+		break;
+	case SCHEDULE_SETUP:
+		break;
+	case SCHEDULE_ADOPT:
+		break;
+	default:
+		break;
+}
+	return true;
 }

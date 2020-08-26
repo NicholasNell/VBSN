@@ -32,12 +32,12 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define TX_OUTPUT_POWER 0	    // dBm
 #define TX_TIMEOUT_VALUE 3000 	// ms
 #define RX_TIMEOUT_VALUE 5000 //ms
-#define LORA_BANDWIDTH 8       //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
+#define LORA_BANDWIDTH 9      //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,
 //	3: 20.8 kHz, 4: 31.25 kHz, 5: 41.7 kHz,
 //	6: 62.5 kHz, 7: 125 kHz,   8: 250 kHz,
 // 	9: 500 kHz]
-#define LORA_SPREADING_FACTOR 8 // [SF7..SF12]
-#define LORA_CODINGRATE 4       // [1: 4/5, \
+#define LORA_SPREADING_FACTOR 7 // [SF7..SF12]
+#define LORA_CODINGRATE 1       // [1: 4/5, \
                                 //  2: 4/6, \
                                 //  3: 4/7, \
                                 //  4: 4/8]
