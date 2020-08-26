@@ -40,11 +40,12 @@ void MacInit( ) {
 		_nodeID = temp;
 	} while (_nodeID == 0xFF);
 	_numNeighbours = 0;
-	_sleepTime = 10000;
+
 	scheduleSetup();
 	do {
 		_ranNum = (uint16_t) SX1276Random();
-	} while (_ranNum > 32000 || _ranNum < 10000);
+		_sleepTime = _ranNum;
+	} while (_ranNum > 32000 || _ranNum < 28000);
 }
 
 bool MACStateMachine( ) {

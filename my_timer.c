@@ -143,7 +143,7 @@ void TimerACounterInit( void ) {
 void startTimerAcounter( uint32_t period, bool *flag ) {
 	tempFlag = flag;
 	MAP_Timer_A_stopTimer(COUNTER_TIMER);
-	*upConfigCounter.timerPeriod = period * COUNTER_MS_TO_TICK;
+	upConfigCounter.timerPeriod = period * COUNTER_MS_TO_TICK;
 	TimerACounterInit();
 //	Timer_A_clearTimer(TIMER_A3_BASE);
 	MAP_Timer_A_startCounter(COUNTER_TIMER, TIMER_A_UP_MODE);
@@ -181,7 +181,7 @@ void resetTimerAcounterValue( void ) {
 	isTimerAcounterRunning = false;
 	MAP_Timer_A_clearTimer(COUNTER_TIMER);
 	TimerACounterInit();
-	startTimerAcounter();
+
 	isTimerAcounterRunning = true;
 }
 
@@ -275,7 +275,7 @@ void SetAlarm( uint32_t timeout ) {
 	//	Timer_A_enableInterrupt(TIMER_A3_BASE);
 	uint32_t nowTime = MAP_Timer_A_getCounterValue(LORA_TIMER);
 	uint32_t CCRTime = nowTime + timeout;
-	MAPTimer_A_initCompare(LORA_TIMER, &CMC);
+	MAP_Timer_A_initCompare(LORA_TIMER, &CMC);
 	MAP_Timer_A_setCompareValue(
 	LORA_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0, CCRTime);
