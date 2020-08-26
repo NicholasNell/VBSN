@@ -190,6 +190,18 @@ bool SX1276IsChannelFree(
 uint32_t SX1276Random( void );
 
 /*!
+ * \brief Generates a 8 bits random value based on the RSSI readings
+ *
+ * \remark This function sets the radio in LoRa modem mode and disables
+ *         all interrupts.
+ *         After calling this function either SX1276SetRxConfig or
+ *         SX1276SetTxConfig functions must be called.
+ *
+ * \retval randomValue    8 bits random value
+ */
+uint32_t SX1276Random8Bit( void );
+
+/*!
  * \brief Sets the reception parameters
  *
  * \remark When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
@@ -312,7 +324,15 @@ void SX1276SetTxConfig(
  *
  * \retval airTime        Computed airTime (ms) for the given packet payload length
  */
-uint32_t SX1276GetTimeOnAir( RadioModems_t modem, uint8_t pktLen );
+uint32_t SX1276GetTimeOnAir(
+		RadioModems_t modem,
+		uint32_t bandwidth,
+		uint32_t datarate,
+		uint8_t coderate,
+		uint16_t preambleLen,
+		bool fixLen,
+		uint8_t payloadLen,
+		bool crcOn );
 
 /*!
  * \brief Sends the buffer of size. Prepares the packet to be sent and sets

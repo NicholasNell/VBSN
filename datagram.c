@@ -16,22 +16,27 @@ uint8_t tempDataArray[];
 extern schedule_t mySchedule;
 extern uint8_t TXBuffer[255];
 
-header_t createHeader( );
+header_t createHeader( MessageType_t messageType );
 
 bool datagramInit( ) {
 	return false;
 }
 
-void createDatagram( uint8_t *data ) {
-	myDatagram.header = createHeader();
+void createDatagram( MessageType_t messageType, uint8_t *data ) {
+	myDatagram.header = createHeader(messageType);
 	myDatagram.data = data;
 }
 
-header_t createHeader( ) {
+header_t createHeader( MessageType_t messageType ) {
 	header_t header;
 	header.source = _nodeID;
+	if (messageType == SYNC) {
 	header.dest = BROADCAST_ADDRESS;
-	header.messageType = SYNC;
+	}
+	else {
+		header.dest = _destID;
+	}
+	header.messageType = messageType;
 	header.thisSchedule = mySchedule;
 	header.len = _dataLen;
 	header.hops = 0;
@@ -44,11 +49,23 @@ void datagramToArray( ) {
 	memcpy(TXBuffer + len, myDatagram.data, _dataLen);
 }
 
-void ArrayToDatagram( ) {
+// returns true if received message is not corrupt by checking node ID's against each other.
+// Also checks to see if the message was meant for this node.
+bool ArrayToDatagram( ) {
 	uint8_t len = sizeof(myDatagram.header);
 	memcpy(&rxdatagram.header, RXBuffer, len);
 	rxdatagram.data = tempDataArray;
 	memcpy(tempDataArray, RXBuffer + len, rxdatagram.header.len);
+
+	if ((rxdatagram.header.dest == _nodeID
+			|| rxdatagram.header.dest == BROADCAST_ADDRESS)
+			&& (rxdatagram.header.source
+					== rxdatagram.header.thisSchedule.nodeID)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 

@@ -106,6 +106,58 @@ static RadioEvents_t *RadioEvents;
  * Reception buffer
  */
 static uint8_t RxTxBuffer[RX_BUFFER_SIZE];
+
+/**
+ * Compute the numerator for GFSK time-on-air computation.
+ *
+ * \remark To get the actual time-on-air in second, this value has to be divided by the GFSK bitrate in bits per
+ * second.
+ *
+ * \param [in] preambleLen
+ * \param [in] fixLen
+ * \param [in] payloadLen
+ * \param [in] crcOn
+ *
+ * \returns GFSK time-on-air numerator
+ */
+static uint32_t SX1276GetGfskTimeOnAirNumerator(
+		uint16_t preambleLen,
+		bool fixLen,
+		uint8_t payloadLen,
+		bool crcOn );
+
+/**
+ * Compute the numerator for LoRa time-on-air computation.
+ *
+ * \remark To get the actual time-on-air in second, this value has to be divided by the LoRa bandwidth in Hertz.
+ *
+ * \param [in] bandwidth
+ * \param [in] datarate
+ * \param [in] coderate
+ * \param [in] preambleLen
+ * \param [in] fixLen
+ * \param [in] payloadLen
+ * \param [in] crcOn
+ *
+ * \returns LoRa time-on-air numerator
+ */
+static uint32_t SX1276GetLoRaTimeOnAirNumerator(
+		uint32_t bandwidth,
+		uint32_t datarate,
+		uint8_t coderate,
+		uint16_t preambleLen,
+		bool fixLen,
+		uint8_t payloadLen,
+		bool crcOn );
+
+/**
+ * Get the actual value in Hertz of a given LoRa bandwidth
+ *
+ * \param [in] bw LoRa bandwidth parameter
+ *
+ * \returns Actual LoRa bandwidth in Hertz
+ */
+static uint32_t SX1276GetLoRaBandwidthInHz( uint32_t bw );
 /*
  * Public global variables
  */
@@ -172,6 +224,75 @@ void SX1276Init( RadioEvents_t *events ) {
 //    uint8_t version = spiRead_RFM(REG_LR_VERSION);
 //    if(version != 0x12) return 0;
 
+}
+
+static uint32_t SX1276GetGfskTimeOnAirNumerator(
+		uint16_t preambleLen,
+		bool fixLen,
+		uint8_t payloadLen,
+		bool crcOn ) {
+	const uint8_t syncWordLength = 3;
+
+	return (preambleLen << 3) + ((fixLen == false) ? 8 : 0)
+			+ (syncWordLength << 3) + ((payloadLen + (0) + // Address filter size
+					((crcOn == true) ? 2 : 0)) << 3);
+}
+
+static uint32_t SX1276GetLoRaTimeOnAirNumerator(
+		uint32_t bandwidth,
+		uint32_t datarate,
+		uint8_t coderate,
+		uint16_t preambleLen,
+		bool fixLen,
+		uint8_t payloadLen,
+		bool crcOn ) {
+	int32_t crDenom = coderate + 4;
+	bool lowDatareOptimize = false;
+
+	// Ensure that the preamble length is at least 12 symbols when using SF5 or
+	// SF6
+	if ((datarate == 5) || (datarate == 6)) {
+		if (preambleLen < 12) {
+			preambleLen = 12;
+		}
+	}
+
+	if (((bandwidth == 0) && ((datarate == 11) || (datarate == 12)))
+			|| ((bandwidth == 1) && (datarate == 12))) {
+		lowDatareOptimize = true;
+	}
+
+	int32_t ceilDenominator;
+	int32_t ceilNumerator = (payloadLen << 3) + (crcOn ? 16 : 0)
+			- (4 * datarate) + (fixLen ? 0 : 20);
+
+	if (datarate <= 6) {
+		ceilDenominator = 4 * datarate;
+	}
+	else {
+		ceilNumerator += 8;
+
+		if (lowDatareOptimize == true) {
+			ceilDenominator = 4 * (datarate - 2);
+		}
+		else {
+			ceilDenominator = 4 * datarate;
+		}
+	}
+
+	if (ceilNumerator < 0) {
+		ceilNumerator = 0;
+	}
+
+	// Perform integral ceil()
+	int32_t intermediate = ((ceilNumerator + ceilDenominator - 1)
+			/ ceilDenominator) * crDenom + preambleLen + 12;
+
+	if (datarate <= 6) {
+		intermediate += 2;
+	}
+
+	return (uint32_t) ((4 * intermediate + 1) * (1 << (datarate - 2)));
 }
 
 RadioState_t SX1276GetStatus( void ) {
@@ -264,6 +385,40 @@ bool SX1276IsChannelFree(
 
 	SX1276SetSleep();
 	return status;
+}
+
+uint32_t SX1276Random8Bit( void ) {
+	uint8_t i;
+	uint8_t rnd = 0;
+
+	/*
+	 * Radio setup for random number generation
+	 */
+	// Set LoRa modem ON
+	SX1276SetModem(MODEM_LORA);
+
+	// Disable LoRa modem interrupts
+	spiWrite_RFM( REG_LR_IRQFLAGSMASK, RFLR_IRQFLAGS_RXTIMEOUT |
+	RFLR_IRQFLAGS_RXDONE |
+	RFLR_IRQFLAGS_PAYLOADCRCERROR |
+	RFLR_IRQFLAGS_VALIDHEADER |
+	RFLR_IRQFLAGS_TXDONE |
+	RFLR_IRQFLAGS_CADDONE |
+	RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL |
+	RFLR_IRQFLAGS_CADDETECTED);
+
+	// Set radio in continuous reception
+	SX1276SetOpMode( RF_OPMODE_RECEIVER);
+
+	for (i = 0; i < 8; i++) {
+		Delayms(5);
+		// Unfiltered RSSI value reading. Only takes the LSB value
+		rnd |= ((uint8_t) spiRead_RFM( REG_LR_RSSIWIDEBAND) & 0x01) << i;
+	}
+
+	SX1276SetSleep();
+
+	return rnd;
 }
 
 uint32_t SX1276Random( void ) {
@@ -618,90 +773,63 @@ void SX1276SetTxConfig(
 	}
 }
 
-uint32_t SX1276GetTimeOnAir( RadioModems_t modem, uint8_t pktLen ) {
-	uint32_t airTime = 0;
+uint32_t SX1276GetTimeOnAir(
+		RadioModems_t modem,
+		uint32_t bandwidth,
+		uint32_t datarate,
+		uint8_t coderate,
+		uint16_t preambleLen,
+		bool fixLen,
+		uint8_t payloadLen,
+		bool crcOn ) {
+	uint32_t numerator = 0;
+	uint32_t denominator = 1;
 
 	switch (modem) {
 		case MODEM_FSK: {
-			airTime =
-					(uint32_t) round(
-							(8
-									* (SX1276.Settings.Fsk.PreambleLen
-											+ ((spiRead_RFM( REG_SYNCCONFIG)
-													& ~RF_SYNCCONFIG_SYNCSIZE_MASK)
-													+ 1)
-											+ ((SX1276.Settings.Fsk.FixLen
-													== 0x01) ? 0.0 : 1.0)
-											+ (((spiRead_RFM( REG_PACKETCONFIG1)
-													& ~RF_PACKETCONFIG1_ADDRSFILTERING_MASK)
-													!= 0x00) ? 1.0 : 0) + pktLen
-											+ ((SX1276.Settings.Fsk.CrcOn
-													== 0x01) ? 2.0 : 0))
-									/ SX1276.Settings.Fsk.Datarate) * 1000);
+			numerator = 1000U
+					* SX1276GetGfskTimeOnAirNumerator(
+							preambleLen,
+							fixLen,
+							payloadLen,
+							crcOn);
+			denominator = datarate;
 		}
 			break;
 		case MODEM_LORA: {
-			double bw = 0.0;
-			// REMARK: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
-			switch (SX1276.Settings.LoRa.Bandwidth) {
-				case 0: // 7.8 kHz
-					bw = 7800;
-					break;
-				case 1: // 10.4 kHz
-					bw = 10400;
-					break;
-				case 2: // 15.6 kHz
-					bw = 15600;
-					break;
-				case 3: // 20.8 kHz
-					bw = 20800;
-					break;
-				case 4: // 31.2 kHz
-					bw = 31200;
-					break;
-				case 5: // 41.4 kHz
-					bw = 41400;
-					break;
-				case 6: // 62.5 kHz
-					bw = 62500;
-					break;
-				case 7: // 125 kHz
-					bw = 125000;
-					break;
-				case 8: // 250 kHz
-					bw = 250000;
-					break;
-				case 9: // 500 kHz
-					bw = 500000;
-					break;
-			}
-
-			// Symbol rate : time for one symbol (secs)
-			double rs = bw / (1 << SX1276.Settings.LoRa.Datarate);
-			double ts = 1 / rs;
-			// time of preamble
-			double tPreamble = (SX1276.Settings.LoRa.PreambleLen + 4.25) * ts;
-			// Symbol length of payload and time
-			double tmp =
-					ceil(
-							(8 * pktLen - 4 * SX1276.Settings.LoRa.Datarate + 28
-									+ 16 * SX1276.Settings.LoRa.CrcOn
-									- (SX1276.Settings.LoRa.FixLen ? 20 : 0))
-									/ (double) (4
-											* (SX1276.Settings.LoRa.Datarate
-													- ((SX1276.Settings.LoRa.LowDatarateOptimize
-															> 0) ? 2 : 0))))
-							* (SX1276.Settings.LoRa.Coderate + 4);
-			double nPayload = 8 + ((tmp > 0) ? tmp : 0);
-			double tPayload = nPayload * ts;
-			// Time on air
-			double tOnAir = tPreamble + tPayload;
-			// return ms secs
-			airTime = (uint32_t) floor(tOnAir * 1000 + 0.999);
+			numerator = 1000U
+					* SX1276GetLoRaTimeOnAirNumerator(
+							bandwidth,
+							datarate,
+							coderate,
+							preambleLen,
+							fixLen,
+							payloadLen,
+							crcOn);
+			denominator = SX1276GetLoRaBandwidthInHz(bandwidth);
 		}
 			break;
 	}
-	return airTime;
+	// Perform integral ceil()
+	return (numerator + denominator - 1) / denominator;
+}
+
+static uint32_t SX1276GetLoRaBandwidthInHz( uint32_t bw ) {
+	uint32_t bandwidthInHz = 0;
+
+	switch (bw) {
+		case 7: // 125 kHz
+			bandwidthInHz = 125000UL;
+			break;
+		case 8: // 250 kHz
+			bandwidthInHz = 250000UL;
+			break;
+		case 9: // 500 kHz
+			bandwidthInHz = 500000UL;
+			break;
+	}
+
+	return bandwidthInHz;
 }
 
 void SX1276Send( uint8_t *buffer, uint8_t size ) {

@@ -136,7 +136,7 @@ int main( void ) {
 	MacInit();
 
 	while (1) {
-
+		if (MACStateMachine()) ;
 	}
 }
 

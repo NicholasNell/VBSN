@@ -31,9 +31,9 @@ typedef struct {
 datagram_t rxdatagram;
 
 bool datagramInit( );
-void createDatagram( uint8_t *data );
+void createDatagram( MessageType_t messageType, uint8_t *data );
 void datagramToArray( );
-void ArrayToDatagram( );
+bool ArrayToDatagram( );
 
 
 #endif /* DATAGRAM_H_ */

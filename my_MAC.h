@@ -14,17 +14,25 @@
 
 
 #define BROADCAST_ADDRESS 0xFF
-#define MAX_LEN 255
+#define MAX_MESSAGE_LEN 255
 #define DEFAULT_SYNC_TIME 70
 #define DEFAULT_RX_TIME 1000
 #define DEFAULT_SLEEP_TIME 20000
+#define MAX_NEIGHBOURS 255
 
 typedef enum {
-	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR
+	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR, RADIO_SLEEP
 } MACRadioState_t;
 
 typedef enum {
-	SYNCRX, SLEEP, LISTEN, SYNCTX, SCHEDULE_SETUP, SCHEDULE_ADOPT, INIT_SETUP
+	SYNCRX,
+	SLEEP,
+	LISTEN_RTS,
+	SEND_CTS,
+	SYNCTX,
+	SCHEDULE_SETUP,
+	SCHEDULE_ADOPT,
+	INIT_SETUP
 } MACappState_t;
 
 typedef enum {
@@ -39,22 +47,23 @@ typedef struct {
 		uint16_t syncTime;// The time it takes to send a SYNC message in ms, node will use this to listen initially.
 } schedule_t;
 
-schedule_t scheduleTable[255];
+schedule_t scheduleTable[MAX_NEIGHBOURS];
 
 uint32_t _ranNum;
 volatile uint8_t _nodeID;
 volatile uint8_t _dataLen;
 volatile uint8_t _numNeighbours;
 volatile uint16_t _sleepTime;
-extern uint8_t RXBuffer[255];
+volatile uint8_t _destID;
+extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
 volatile MACRadioState_t RadioState;
-extern uint8_t TXBuffer[255];
+extern uint8_t TXBuffer[MAX_MESSAGE_LEN];
 
 void MacInit( );
 
 bool MACStateMachine( );
 
-bool MACSend( uint8_t *data, uint8_t len );
+bool MACSend( MessageType_t messageType, uint8_t *data, uint8_t len );
 
 bool MACRx( uint32_t timeout );
 
