@@ -120,8 +120,6 @@ void RadioInit( ) {
 	Radio.Sleep();
 }
 
-static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
-uint32_t newvalue;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -135,8 +133,9 @@ int main( void ) {
 
 	MacInit();
 
+	Radio.Send(data, 5);
 	while (1) {
-		if (MACStateMachine()) ;
+		__no_operation();
 	}
 }
 
@@ -179,7 +178,6 @@ void OnTxDone( void ) {
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
-
 	SX1276clearIRQFlags();
 	BufferSize = size;
 	memcpy(RXBuffer, payload, BufferSize);

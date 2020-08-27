@@ -73,9 +73,10 @@ const Timer_A_UpModeConfig upDelayConfig = {
 Timer_A_UpModeConfig upConfigCounter = {
 		TIMER_A_CLOCKSOURCE_ACLK,
 		TIMER_A_CLOCKSOURCE_DIVIDER_64,
-												1,
-		TIMER_A_TAIE_INTERRUPT_ENABLE,      // Enable Overflow ISR
-		TIMER_A_DO_CLEAR };
+		1,
+											TIMER_A_TAIE_INTERRUPT_DISABLE,
+											TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,
+											TIMER_A_DO_CLEAR };
 
 bool isTimerAcounterRunning = false;
 
@@ -144,8 +145,8 @@ void startTimerAcounter( uint32_t period, bool *flag ) {
 	tempFlag = flag;
 	MAP_Timer_A_stopTimer(COUNTER_TIMER);
 	upConfigCounter.timerPeriod = period * COUNTER_MS_TO_TICK;
-	TimerACounterInit();
-//	Timer_A_clearTimer(TIMER_A3_BASE);
+	MAP_Timer_A_configureUpMode(COUNTER_TIMER, &upConfigCounter);
+	MAP_Interrupt_enableInterrupt(COUNTER_INT);
 	MAP_Timer_A_startCounter(COUNTER_TIMER, TIMER_A_UP_MODE);
 	isTimerAcounterRunning = true;
 }
@@ -158,7 +159,6 @@ uint32_t stopTimerACounter( void ) {
 	MAP_Timer_A_stopTimer(COUNTER_TIMER);
 	MAP_Timer_A_clearTimer(COUNTER_TIMER);
 	isTimerAcounterRunning = false;
-	TimerACounterInit();
 
 	return (uint32_t) tickVal * COUNTER_TICK_TO_MS;
 }
@@ -309,6 +309,7 @@ void TA0_0_IRQHandler( void ) {
 //Counter interupt
 void TA1_0_IRQHandler( void ) {
 	*tempFlag = true;
+	stopTimerACounter();
 	MAP_Timer_A_clearInterruptFlag(COUNTER_TIMER);
 	MAP_Timer_A_clearCaptureCompareInterrupt(COUNTER_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);

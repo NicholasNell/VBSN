@@ -38,14 +38,11 @@ void MacInit( ) {
 	do {
 		uint8_t temp = SX1276Random8Bit();
 		_nodeID = temp;
+		_ranNum = (uint16_t) (temp * 1000);
 	} while (_nodeID == 0xFF);
 	_numNeighbours = 0;
-
+	_sleepTime = _ranNum;
 	scheduleSetup();
-	do {
-		_ranNum = (uint16_t) SX1276Random();
-		_sleepTime = _ranNum;
-	} while (_ranNum > 32000 || _ranNum < 28000);
 }
 
 bool MACStateMachine( ) {
@@ -185,7 +182,7 @@ switch (MACState) {
 		}
 		else {
 			MACState = LISTEN_RTS;
-			SystickInit(mySchedule.RTSTime, &RTSFlag);
+				startTimerAcounter(mySchedule.RTSTime, &RTSFlag);
 			syncFlag = false;
 			}
 
@@ -194,13 +191,13 @@ switch (MACState) {
 		if (MACSend(SYNC, emptyArray, 0)) {
 			SX1276SetSleep();
 			RadioState = RADIO_SLEEP;
-			SystickInit(mySchedule.sleepTime, &sleepFlag);
+				startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
 			MACState = SLEEP;
 			}
 		break;
 	case SLEEP:
 		if (sleepFlag) {
-			SystickInit(mySchedule.syncTime, &syncFlag);
+				startTimerAcounter(mySchedule.syncTime, &syncFlag);
 			MACState = SYNCRX;
 			sleepFlag = false;
 			}
