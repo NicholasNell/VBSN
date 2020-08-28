@@ -15,14 +15,15 @@
 bool schedule_setup = false;
 volatile schedule_t mySchedule;
 extern datagram_t myDatagram;
-volatile MACappState_t MACState = SYNCRX;
+volatile MACappState_t MACState = MAC_SLEEP;
 uint8_t emptyArray[0];
 extern SX1276_t SX1276;
-bool sleepFlag = false;
+bool sleepFlag = true;
 bool syncFlag = false;
 bool RTSFlag = false;
 bool CTSFlag = false;
 bool hasData = false;
+bool rxDataFlag = false;
 
 static void scheduleSetup( );
 /*!
@@ -90,7 +91,7 @@ bool MACSend( MessageType_t messageType, uint8_t *data, uint8_t len ) {
 	_dataLen = len;
 	createDatagram(messageType, data);
 	datagramToArray();
-	startLoRaTimer(5000);
+//	startLoRaTimer(5000);
 	Radio.Send(TXBuffer, sizeof(myDatagram.header) + _dataLen);
 	RadioState = TX;
 	while (true) {
@@ -169,60 +170,114 @@ static void syncSchedule( ) {
 }
 
 static bool RxStateMachine( ) {
-switch (MACState) {
-	case SYNCRX:
-		if (!syncFlag) {
-			if (MACRx(mySchedule.syncTime)) {
-
+	while (true) {
+		switch (MACState) {
+			case SYNCRX:
+			{
+				bool rxData = MACRx(mySchedule.syncTime);
+				if (syncFlag) {
+					syncFlag = false;
+					if (rxData) {
+						MACState = LISTEN_RTS;
+						startTimerAcounter(mySchedule.RTSTime, &RTSFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.RTSTime + mySchedule.CTSTime
+										+ mySchedule.dataTime
+										+ mySchedule.sleepTime,
+								&sleepFlag);
+						return false;
+					}
+				}
 			}
-			else {
+				break;
+			case MAC_SLEEP:
+				if (sleepFlag) {
+					startTimerAcounter(mySchedule.syncTime, &syncFlag);
+					MACState = SYNCRX;
+					sleepFlag = false;
+				}
+				return false;
+			break;
+			case LISTEN_RTS:
+			{
+				bool rxData = MACRx(mySchedule.RTSTime);
+				if (RTSFlag) {
+					RTSFlag = false;
+					if (rxData) {
+						MACState = SEND_CTS;
+						startTimerAcounter(mySchedule.CTSTime, &CTSFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.CTSTime + mySchedule.dataTime
+										+ mySchedule.sleepTime,
+								&sleepFlag);
+						return false;
+					}
+				}
+			}
+				break;
+			case SEND_CTS:
+			{
+				bool txData = MACSend(CTS, emptyArray, 0);
+				if (CTSFlag) {
+					CTSFlag = false;
+					if (txData) {
+						MACState = RXDATA;
+						startTimerAcounter(mySchedule.dataTime, &rxDataFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.dataTime
+										+ mySchedule.sleepTime,
+								&sleepFlag);
+
+						return false;
+					}
+				}
+			}
+				break;
+			case RXDATA:
+			{
+				bool rxData = MACRx(mySchedule.dataTime);
+				if (rxDataFlag) {
+					rxDataFlag = false;
+					if (rxData) {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
+						return true;
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
+						return false;
+					}
+				}
+			}
+				break;
+			default:
 				SX1276SetSleep();
 				RadioState = RADIO_SLEEP;
-			}
+				MACState = MAC_SLEEP;
+				return false;
+				break;
 		}
-		else {
-			MACState = LISTEN_RTS;
-				startTimerAcounter(mySchedule.RTSTime, &RTSFlag);
-			syncFlag = false;
-			}
-
-		break;
-	case SYNCTX:
-		if (MACSend(SYNC, emptyArray, 0)) {
-			SX1276SetSleep();
-			RadioState = RADIO_SLEEP;
-				startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
-			MACState = SLEEP;
-			}
-		break;
-	case SLEEP:
-		if (sleepFlag) {
-				startTimerAcounter(mySchedule.syncTime, &syncFlag);
-			MACState = SYNCRX;
-			sleepFlag = false;
-			}
-		break;
-	case LISTEN_RTS:
-		if (!RTSFlag) {
-			if (MACRx(mySchedule.RTSTime)) {
-
-			}
-		}
-			else {
-
-		}
-		break;
-	case SEND_CTS:
-		break;
-	case SCHEDULE_SETUP:
-		break;
-	case SCHEDULE_ADOPT:
-		syncSchedule();
-		break;
-	default:
-		break;
 	}
-	return true;
 }
 
 static bool TxStateMachine( ) {
@@ -231,7 +286,7 @@ switch (MACState) {
 		break;
 	case SYNCTX:
 		break;
-	case SLEEP:
+	case MAC_SLEEP:
 		break;
 	case LISTEN_RTS:
 		break;

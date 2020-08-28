@@ -169,7 +169,7 @@ void PORT2_IRQHandler( void ) {
 }
 
 void OnTxDone( void ) {
-
+	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = TXDONE;
 #ifdef DEBUG

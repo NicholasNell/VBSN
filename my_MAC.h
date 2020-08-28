@@ -26,12 +26,13 @@ typedef enum {
 
 typedef enum {
 	SYNCRX,
-	SLEEP,
+	MAC_SLEEP,
 	LISTEN_RTS,
 	SEND_CTS,
 	SYNCTX,
 	SCHEDULE_SETUP,
-	SCHEDULE_ADOPT
+	SCHEDULE_ADOPT,
+	RXDATA
 } MACappState_t;
 
 typedef enum {
