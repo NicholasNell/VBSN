@@ -30,21 +30,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
 /******************************************************************************
- * MSP432 Empty Project
- *
- * Description: An empty project that uses DriverLib
- *
- *                MSP432P401
- *             ------------------
- *         /|\|                  |
- *          | |                  |
- *          --|RST               |
- *            |                  |
- *            |                  |
- *            |                  |
- *            |                  |
- *            |                  |
- * Author:
+
+ * Author: Nicholas
  *******************************************************************************/
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -62,15 +49,12 @@
 #include "sx1276Regs-LoRa.h"
 #include "my_spi.h"
 
-
 // Uncomment for debug outputs
 //#define DEBUG
 
 uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
 
 void printRegisters( void );
-
-
 
 void RadioInit( ) {
 	// Radio initialization
@@ -86,12 +70,7 @@ void RadioInit( ) {
 		puts("Radio could not be detected!\n\r");
 		Delayms(1000);
 	}
-
 	printf("RadioRegVersion: 0x%2X\n", Radio.Read(REG_VERSION));
-
-
-//	printRegisters();
-
 
 	Radio.SetTxConfig(MODEM_LORA,
 	TX_OUTPUT_POWER,
@@ -135,7 +114,6 @@ int main( void ) {
 
 //	MACSend(SYNC, data, 0);
 	while (1) {
-
 		if (MACRx(100)) {
 			GpioWrite(&Led_rgb_blue, 1);
 			GpioWrite(&Led_rgb_red, 0);
@@ -149,29 +127,21 @@ int main( void ) {
 
 void PORT2_IRQHandler( void ) {
 	uint32_t status;
-
-//	uint8_t i = Radio.Read( REG_LR_IRQFLAGS);
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
 #ifdef DEBUG
 	puts("LoRa Interrupt Triggered");
 #endif
-	/* Toggling the output on the LED */
 	if (status & GPIO_PIN4) {
-
 		SX1276OnDio0Irq();
 	}
 	else if (status & GPIO_PIN6) {
-
 		SX1276OnDio1Irq();
 	}
 	else if (status & GPIO_PIN3) {
-
-
 	}
 	else if (status & GPIO_PIN7) {
-
 		SX1276OnDio2Irq();
 	}
 }
@@ -236,9 +206,7 @@ void printRegisters( void ) {
 	uint8_t i;
 	for (i = 0; i < sizeof(registers); i++) {
 		printf("0x%2X", registers[i]);
-//		puts((uint8_t*) registers[i]);
 		printf(": ");
-//		puts((uint8_t*) spiRead_RFM(registers[i]));
 		printf("0x%2X\n", spiRead_RFM(registers[i]));
 	}
 }
