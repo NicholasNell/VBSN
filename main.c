@@ -133,9 +133,17 @@ int main( void ) {
 
 	MacInit();
 
-	Radio.Send(data, 5);
+//	MACSend(SYNC, data, 0);
 	while (1) {
-		__no_operation();
+
+		if (MACRx(100)) {
+			GpioWrite(&Led_rgb_blue, 1);
+			GpioWrite(&Led_rgb_red, 0);
+		}
+		else {
+			GpioWrite(&Led_rgb_blue, 0);
+			GpioWrite(&Led_rgb_red, 1);
+		}
 	}
 }
 
@@ -179,6 +187,7 @@ void OnTxDone( void ) {
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	SX1276clearIRQFlags();
+	Radio.Sleep();
 	BufferSize = size;
 	memcpy(RXBuffer, payload, BufferSize);
 	RssiValue = rssi;
@@ -200,6 +209,7 @@ void OnTxTimeout( void ) {
 
 void OnRxTimeout( void ) {
 	SX1276clearIRQFlags();
+	Radio.Sleep();
 	RadioState = RXTIMEOUT;
 #ifdef DEBUG
 

@@ -948,7 +948,7 @@ void SX1276SetSleep( void ) {
 	SX1276SetOpMode( RF_OPMODE_SLEEP);
 
 	SX1276.Settings.State = RF_IDLE;
-	Delayms(99);
+//	Delayms(99);
 }
 
 void SX1276SetStby( void ) {
