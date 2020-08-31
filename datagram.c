@@ -37,7 +37,7 @@ header_t createHeader( MessageType_t messageType ) {
 		header.dest = _destID;
 	}
 	header.messageType = messageType;
-	header.thisSchedule = mySchedule;
+	header.nextWake = 10000;
 	header.len = _dataLen;
 	return header;
 }

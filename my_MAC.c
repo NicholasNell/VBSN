@@ -11,7 +11,7 @@
 #include "my_systick.h"
 
 
-
+volatile bool hasData = false;
 bool schedule_setup = false;
 volatile schedule_t mySchedule;
 extern datagram_t myDatagram;
@@ -22,8 +22,7 @@ bool sleepFlag = true;
 bool syncFlag = false;
 bool RTSFlag = false;
 bool CTSFlag = false;
-bool hasData = false;
-bool rxDataFlag = false;
+bool DataFlag = false;
 
 static void scheduleSetup( );
 /*!
@@ -36,14 +35,20 @@ static bool RxStateMachine( );
 static bool TxStateMachine( );
 
 void MacInit( ) {
-	do {
-		uint8_t temp = SX1276Random8Bit();
-		_nodeID = temp;
-		_ranNum = (uint16_t) (temp * 1000);
-	} while (_nodeID == 0xFF);
+//	do {
+//		uint8_t temp = SX1276Random8Bit();
+//		_nodeID = temp;
+//		_ranNum = (uint16_t) (temp * 1000);
+//	} while (_nodeID == 0xFF);
 	_numNeighbours = 0;
-	_sleepTime = _ranNum;
+	_sleepTime = 10000;
 	scheduleSetup();
+}
+
+void MACreadySend( uint8_t *dataToSend, uint8_t dataLen ) {
+	hasData = true;
+	_dataLen = dataLen;
+	memcpy(txDataArray, dataToSend, _dataLen);
 }
 
 bool MACStateMachine( ) {
@@ -127,6 +132,7 @@ static bool processRXBuffer( ) {
 	if (ArrayToDatagram()) {
 		switch (rxdatagram.header.messageType) {
 			case SYNC: {
+				schedule_setup = true;
 				bool containsNode = false;
 				uint8_t i = 0;
 
@@ -172,9 +178,14 @@ static void syncSchedule( ) {
 static bool RxStateMachine( ) {
 	while (true) {
 		switch (MACState) {
-			case SYNCRX:
+			case SYNC_MAC:
 			{
 				bool rxData = MACRx(mySchedule.syncTime);
+				if (!schedule_setup) {
+					while (!MACRx(mySchedule.syncTime)) {
+
+					}
+				}
 				if (syncFlag) {
 					syncFlag = false;
 					if (rxData) {
@@ -198,7 +209,7 @@ static bool RxStateMachine( ) {
 			case MAC_SLEEP:
 				if (sleepFlag) {
 					startTimerAcounter(mySchedule.syncTime, &syncFlag);
-					MACState = SYNCRX;
+					MACState = SYNC_MAC;
 					sleepFlag = false;
 				}
 				return false;
@@ -232,7 +243,7 @@ static bool RxStateMachine( ) {
 					CTSFlag = false;
 					if (txData) {
 						MACState = RXDATA;
-						startTimerAcounter(mySchedule.dataTime, &rxDataFlag);
+						startTimerAcounter(mySchedule.dataTime, &DataFlag);
 					}
 					else {
 						SX1276SetSleep();
@@ -251,8 +262,8 @@ static bool RxStateMachine( ) {
 			case RXDATA:
 			{
 				bool rxData = MACRx(mySchedule.dataTime);
-				if (rxDataFlag) {
-					rxDataFlag = false;
+				if (DataFlag) {
+					DataFlag = false;
 					if (rxData) {
 						SX1276SetSleep();
 						RadioState = RADIO_SLEEP;
@@ -281,23 +292,105 @@ static bool RxStateMachine( ) {
 }
 
 static bool TxStateMachine( ) {
-switch (MACState) {
-	case SYNCRX:
-		break;
-	case SYNCTX:
-		break;
-	case MAC_SLEEP:
-		break;
-	case LISTEN_RTS:
-		break;
-	case SEND_CTS:
-		break;
-	case SCHEDULE_SETUP:
-		break;
-	case SCHEDULE_ADOPT:
-		break;
-	default:
-		break;
-}
+	while (true) {
+		switch (MACState) {
+			case SYNC_MAC: {
+				bool txData = MACSend(SYNC, emptyArray, 0);
+				if (syncFlag) {
+					syncFlag = false;
+					if (txData) {
+						MACState = SEND_RTS;
+						startTimerAcounter(mySchedule.RTSTime, &RTSFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.RTSTime + mySchedule.CTSTime
+										+ mySchedule.dataTime
+										+ mySchedule.sleepTime,
+								&sleepFlag);
+						return false;
+					}
+				}
+				}
+				break;
+			case MAC_SLEEP: {
+				if (sleepFlag) {
+					startTimerAcounter(mySchedule.syncTime, &syncFlag);
+					MACState = SYNC_MAC;
+					sleepFlag = false;
+				}
+
+				return false;
+			}
+				break;
+			case SEND_RTS: {
+				bool txData = MACSend(RTS, emptyArray, 0);
+				if (RTSFlag) {
+					RTSFlag = false;
+					if (txData) {
+						MACState = LISTEN_CTS;
+						startTimerAcounter(mySchedule.CTSTime, &CTSFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.CTSTime + mySchedule.dataTime
+										+ mySchedule.sleepTime,
+								&sleepFlag);
+						return false;
+					}
+				}
+				}
+				break;
+			case LISTEN_CTS: {
+				bool rxData = MACRx(mySchedule.CTSTime);
+				if (CTSFlag) {
+					CTSFlag = false;
+					if (rxData) {
+						MACState = TXDATA;
+						startTimerAcounter(mySchedule.dataTime, &DataFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.dataTime + mySchedule.sleepTime,
+								&sleepFlag);
+						return false;
+					}
+				}
+				}
+				break;
+			case TXDATA: {
+				bool txData = MACSend(DATA, txDataArray, _dataLen);
+				if (DataFlag) {
+					DataFlag = false;
+					if (txData) {
+						MACState = MAC_SLEEP;
+						startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
+					}
+					else {
+						SX1276SetSleep();
+						RadioState = RADIO_SLEEP;
+						MACState = MAC_SLEEP;
+						startTimerAcounter(	//Sleep for the rest of the schedule period;
+								mySchedule.sleepTime,
+								&sleepFlag);
+						return false;
+					}
+				}
+				}
+				break;
+			default:
+				break;
+		}
+	}
 	return true;
+
 }

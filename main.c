@@ -111,18 +111,30 @@ int main( void ) {
 	RadioInit();
 
 	MacInit();
+	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 //	MACSend(SYNC, data, 0);
 	while (1) {
-		if (MACRx(100)) {
-			GpioWrite(&Led_rgb_blue, 1);
-			GpioWrite(&Led_rgb_red, 0);
-		}
-		else {
-			GpioWrite(&Led_rgb_blue, 0);
-			GpioWrite(&Led_rgb_red, 1);
+		if (MACStateMachine()) {
+
 		}
 	}
+}
+
+void PORT1_IRQHandler( void ) {
+	uint32_t status;
+
+	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
+
+	/* Toggling the output on the LED */
+	if (status & GPIO_PIN1) {
+		MACreadySend(data, 5);
+	}
+
 }
 
 void PORT2_IRQHandler( void ) {

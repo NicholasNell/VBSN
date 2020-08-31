@@ -25,14 +25,17 @@ typedef enum {
 } MACRadioState_t;
 
 typedef enum {
-	SYNCRX,
+	SYNC_MAC,
 	MAC_SLEEP,
 	LISTEN_RTS,
 	SEND_CTS,
 	SYNCTX,
 	SCHEDULE_SETUP,
 	SCHEDULE_ADOPT,
-	RXDATA
+	RXDATA,
+	TXDATA,
+	SEND_RTS,
+	LISTEN_CTS
 } MACappState_t;
 
 typedef enum {
@@ -62,8 +65,11 @@ volatile uint32_t _scheduleTimeLeft;
 extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
 volatile MACRadioState_t RadioState;
 extern uint8_t TXBuffer[MAX_MESSAGE_LEN];
+uint8_t txDataArray[MAX_MESSAGE_LEN];
 
 void MacInit( );
+
+void MACreadySend( uint8_t *dataToSend, uint8_t datalen );
 
 bool MACStateMachine( );
 

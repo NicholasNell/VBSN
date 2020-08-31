@@ -18,7 +18,7 @@ typedef struct {
 		uint8_t dest;
 		uint8_t source;
 		MessageType_t messageType;
-		schedule_t thisSchedule;
+		uint16_t nextWake;
 		uint8_t len;
 } header_t;
 
