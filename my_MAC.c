@@ -56,12 +56,9 @@ void MACreadySend( uint8_t *dataToSend, uint8_t dataLen ) {
 }
 
 bool MACStateMachine( ) {
-	if (hasData) {
-		return TxStateMachine();
-	}
-	else {
+
 		return RxStateMachine();
-	}
+
 }
 
 static void scheduleSetup( ) {
@@ -98,9 +95,11 @@ bool MACRx( uint32_t timeout ) {
 			return false;
 		}
 		else if (RadioState == RXDONE) {
-			if (processRXBuffer())
-				return true;
-			else return false;
+//			if (processRXBuffer())
+//				return true;
+//			else return false;
+			processRXBuffer();
+			return true;
 		}
 	}
 }
@@ -109,6 +108,7 @@ static bool processRXBuffer( ) {
 	if (ArrayToDatagram()) {
 		switch (rxdatagram.header.messageType) {
 		 case SYNC: {
+//				syncSchedule();
 				bool containsNode = false;
 				uint8_t i = 0;
 				for (i = 0; i < _numNeighbours; i++) {
@@ -122,12 +122,9 @@ static bool processRXBuffer( ) {
 				}
 		 }
 		 break;
-		 case ACK:
-		 break;
 		 case DATA:
 		 break;
 		 case RTS:
-		 CTSFlag = true;
 		 break;
 		 case CTS:
 		 break;
@@ -190,11 +187,74 @@ static bool RxStateMachine( ) {
 		case SYNC_MAC:
 			if (hasData) {
 				if (MACSend(SYNC, emptyArray, 0)) {
-
+					MACState = MAC_RTS;
+				}
+				else {
+					MACState = MAC_SLEEP;
 				}
 			}
 			else {
-				MAC
+				if (MACRx(1000)) {
+					MACState = MAC_RTS;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
+			}
+			break;
+		case MAC_RTS:
+			if (hasData) {
+				if (MACSend(RTS, emptyArray, 0)) {
+					MACState = MAC_CTS;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
+			}
+			else {
+				if (MACRx(1000)) {
+					MACState = MAC_CTS;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
+			}
+			break;
+		case MAC_CTS:
+			if (hasData) {
+				if (MACRx(1000)) {
+					MACState = MAC_DATA;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
+			}
+			else {
+				if (MACSend(CTS, emptyArray, 0)) {
+					MACState = MAC_DATA;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
+			}
+			break;
+		case MAC_DATA:
+			if (hasData) {
+				if (MACSend(DATA, txDataArray, 5)) {
+					MACState = MAC_SLEEP;
+					hasData = false;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
+			}
+			else {
+				if (MACRx(1000)) {
+					MACState = MAC_SLEEP;
+				}
+				else {
+					MACState = MAC_SLEEP;
+				}
 			}
 			break;
 		}

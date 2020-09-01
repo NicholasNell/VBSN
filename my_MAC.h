@@ -27,7 +27,7 @@ typedef enum {
 typedef enum {
 	SYNC_MAC,
 	MAC_SLEEP,
-	NODE_DISC
+	NODE_DISC, MAC_RTS, MAC_CTS, MAC_DATA
 } MACappState_t;
 
 typedef enum {

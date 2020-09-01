@@ -34,7 +34,7 @@ header_t createHeader( MessageType_t messageType ) {
 	header.dest = 0xFF;
 	}
 	else {
-		header.dest = _destID;
+		header.dest = neighbourTable[0];
 	}
 
 	header.messageType = messageType;
