@@ -31,13 +31,14 @@ header_t createHeader( MessageType_t messageType ) {
 	header_t header;
 	header.source = _nodeID;
 	if (messageType == SYNC) {
-	header.dest = BROADCAST_ADDRESS;
+	header.dest = 0xFF;
 	}
 	else {
 		header.dest = _destID;
 	}
+
 	header.messageType = messageType;
-	header.nextWake = 10000;
+	header.nextWake = mySchedule.sleepTime;
 	header.len = _dataLen;
 	return header;
 }
@@ -58,8 +59,7 @@ bool ArrayToDatagram( ) {
 
 	if ((rxdatagram.header.dest == _nodeID
 			|| rxdatagram.header.dest == BROADCAST_ADDRESS)
-			&& (rxdatagram.header.source
-					== rxdatagram.header.thisSchedule.nodeID)) {
+			) {
 		return true;
 	}
 	else {

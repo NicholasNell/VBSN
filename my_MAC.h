@@ -27,15 +27,7 @@ typedef enum {
 typedef enum {
 	SYNC_MAC,
 	MAC_SLEEP,
-	LISTEN_RTS,
-	SEND_CTS,
-	SYNCTX,
-	SCHEDULE_SETUP,
-	SCHEDULE_ADOPT,
-	RXDATA,
-	TXDATA,
-	SEND_RTS,
-	LISTEN_CTS
+	NODE_DISC
 } MACappState_t;
 
 typedef enum {
@@ -44,16 +36,16 @@ typedef enum {
 
 typedef struct {
 		uint8_t nodeID;	// Node ID to which this schedule belongs
-		uint16_t sleepTime;	// The time this node will sleep in ms
-		uint16_t RTSTime;	// the time this node will listen in ms
-		uint16_t CTSTime;
-		uint16_t dataTime;
-		uint8_t numNeighbours;// The number of neighbours this node has in nodes
-		uint16_t syncTime;// The time it takes to send a SYNC message in ms, node will use this to listen initially.
+		uint16_t sleepTime;	// Time until next wake period
 } schedule_t;
 
 schedule_t scheduleTable[MAX_NEIGHBOURS];
 
+uint8_t neighbourTable[MAX_NEIGHBOURS];
+uint16_t _RTSTime;	// the time this node will listen in ms
+uint16_t _CTSTime;
+uint16_t _dataTime;
+uint16_t _syncTime;	// The time it takes to send a SYNC message in ms, node will use this to listen initially.
 uint32_t _ranNum;
 volatile uint8_t _nodeID;
 volatile uint8_t _dataLen;
