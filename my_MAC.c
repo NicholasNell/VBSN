@@ -43,7 +43,7 @@ void MacInit( ) {
 	do {
 		uint8_t temp = SX1276Random8Bit();
 		_nodeID = temp;
-		_ranNum = (uint16_t) (temp * 125);
+		_ranNum = (uint16_t) (temp * 86) + 10000;
 	} while (_nodeID == 0xFF);
 	_numNeighbours = 0;
 	_sleepTime = _ranNum;
@@ -149,9 +149,7 @@ static bool RxStateMachine( ) {
 			case NODE_DISC: {
 				bool rxSyncMsg = MACRx(_sleepTime);
 				if (rxSyncMsg) {
-					GpioWrite(&Led_rgb_blue, 1);
-					GpioWrite(&Led_rgb_green, 0);
-				GpioWrite(&Led_rgb_red, 0);
+
 					syncSchedule();
 				MACSend(SYNC, emptyArray, 00);
 					MACState = MAC_SLEEP;
@@ -161,9 +159,7 @@ static bool RxStateMachine( ) {
 					scheduleSetup();
 				startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
 				if (MACSend(SYNC, emptyArray, 00)) {
-						GpioWrite(&Led_rgb_green, 1);
-						GpioWrite(&Led_rgb_blue, 0);
-					GpioWrite(&Led_rgb_red, 0);
+
 					MACRx(100);
 						MACState = MAC_SLEEP;
 					SX1276SetSleep();
@@ -177,82 +173,93 @@ static bool RxStateMachine( ) {
 			case MAC_SLEEP:
 				if (sleepFlag) {
 					sleepFlag = false;
-				GpioWrite(&Led_rgb_blue, 0);
-				GpioWrite(&Led_rgb_green, 0);
-				GpioWrite(&Led_rgb_red, 1);
 				startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
 				MACState = SYNC_MAC;
 				}
 				break;
 		case SYNC_MAC:
 			if (hasData) {
+				Delayms(10);
 				if (MACSend(SYNC, emptyArray, 0)) {
 					MACState = MAC_RTS;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			else {
-				if (MACRx(1000)) {
+				if (MACRx(100)) {
 					MACState = MAC_RTS;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			break;
 		case MAC_RTS:
 			if (hasData) {
+				Delayms(100);
 				if (MACSend(RTS, emptyArray, 0)) {
 					MACState = MAC_CTS;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			else {
-				if (MACRx(1000)) {
+				if (MACRx(100)) {
 					MACState = MAC_CTS;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			break;
 		case MAC_CTS:
 			if (hasData) {
-				if (MACRx(1000)) {
+				if (MACRx(100)) {
 					MACState = MAC_DATA;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			else {
+				Delayms(10);
 				if (MACSend(CTS, emptyArray, 0)) {
 					MACState = MAC_DATA;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			break;
 		case MAC_DATA:
 			if (hasData) {
+				Delayms(10);
 				if (MACSend(DATA, txDataArray, 5)) {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 					hasData = false;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
 			else {
-				if (MACRx(1000)) {
+				if (MACRx(200)) {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 				else {
+					SX1276SetSleep();
 					MACState = MAC_SLEEP;
 				}
 			}
