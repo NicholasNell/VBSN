@@ -1,17 +1,17 @@
 /*
  / _____)             _              | |
-( (____  _____ ____ _| |_ _____  ____| |__
+ ( (____  _____ ____ _| |_ _____  ____| |__
  \____ \| ___ |    (_   _) ___ |/ ___)  _ \
  _____) ) ____| | | || |_| ____( (___| | | |
-(______/|_____)_|_|_| \__)_____)\____)_| |_|
-    ( C )2014 Semtech
+ (______/|_____)_|_|_| \__)_____)\____)_| |_|
+ ( C )2014 Semtech
 
-Description: Contains the callbacks for the IRQs and any application related details
+ Description: Contains the callbacks for the IRQs and any application related details
 
-License: Revised BSD License, see LICENSE.TXT file include in the project
+ License: Revised BSD License, see LICENSE.TXT file include in the project
 
-Maintainer: Miguel Luis and Gregory Cristian
-*/
+ Maintainer: Miguel Luis and Gregory Cristian
+ */
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
@@ -19,8 +19,6 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include <stdbool.h>
 #include "my_RFM9x.h"
 #include "my_gpio.h"
-
-
 
 /*!
  * Constant values need to compute the RSSI value
@@ -87,26 +85,26 @@ static RadioEvents_t RadioEvents;
 /*!
  * \brief Function to be executed on Radio Tx Done event
  */
-void OnTxDone( void );
+void OnTxDone(void);
 
 /*!
  * \brief Function to be executed on Radio Rx Done event
  */
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
+void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
 
 /*!
  * \brief Function executed on Radio Tx Timeout event
  */
-void OnTxTimeout( void );
+void OnTxTimeout(void);
 
 /*!
  * \brief Function executed on Radio Rx Timeout event
  */
-void OnRxTimeout( void );
+void OnRxTimeout(void);
 
 /*!
  * \brief Function executed on Radio Rx Error event
  */
-void OnRxError( void );
+void OnRxError(void);
 
 #endif // __MAIN_H__

@@ -38,7 +38,6 @@
 #include <ti/drivers/GPIO.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 
-
 /* Standard Includes */
 #include "main.h"
 #include <stdio.h>
@@ -54,9 +53,9 @@
 
 uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
 
-void printRegisters( void );
+void printRegisters(void);
 
-void RadioInit( ) {
+void RadioInit() {
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
 	RadioEvents.RxDone = OnRxDone;
@@ -66,7 +65,7 @@ void RadioInit( ) {
 	Radio.Init(&RadioEvents);
 
 	// detect radio hardware
-	while (Radio.Read( REG_VERSION) == 0x00) {
+	while (Radio.Read(REG_VERSION) == 0x00) {
 		puts("Radio could not be detected!\n\r");
 		Delayms(1000);
 	}
@@ -99,12 +98,13 @@ void RadioInit( ) {
 	Radio.Sleep();
 }
 
-int main( void ) {
+int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
 	bool isRoot = false;
-	if (isRoot) printf("ROOT!\n");
+	if (isRoot)
+		printf("ROOT!\n");
 
 	BoardInitMcu();
 
@@ -117,6 +117,7 @@ int main( void ) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 //	MACSend(SYNC, data, 0);
+
 	while (1) {
 		if (MACStateMachine()) {
 
@@ -124,7 +125,7 @@ int main( void ) {
 	}
 }
 
-void PORT1_IRQHandler( void ) {
+void PORT1_IRQHandler(void) {
 	uint32_t status;
 
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
@@ -137,7 +138,7 @@ void PORT1_IRQHandler( void ) {
 
 }
 
-void PORT2_IRQHandler( void ) {
+void PORT2_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
@@ -147,18 +148,15 @@ void PORT2_IRQHandler( void ) {
 #endif
 	if (status & GPIO_PIN4) {
 		SX1276OnDio0Irq();
-	}
-	else if (status & GPIO_PIN6) {
+	} else if (status & GPIO_PIN6) {
 		SX1276OnDio1Irq();
-	}
-	else if (status & GPIO_PIN3) {
-	}
-	else if (status & GPIO_PIN7) {
+	} else if (status & GPIO_PIN3) {
+	} else if (status & GPIO_PIN7) {
 		SX1276OnDio2Irq();
 	}
 }
 
-void OnTxDone( void ) {
+void OnTxDone(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = TXDONE;
@@ -167,7 +165,7 @@ void OnTxDone( void ) {
 #endif
 }
 
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
+void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	BufferSize = size;
@@ -181,7 +179,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 #endif
 }
 
-void OnTxTimeout( void ) {
+void OnTxTimeout(void) {
 	Radio.Sleep();
 	RadioState = TXTIMEOUT;
 #ifdef DEBUG
@@ -189,7 +187,7 @@ void OnTxTimeout( void ) {
 #endif
 }
 
-void OnRxTimeout( void ) {
+void OnRxTimeout(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXTIMEOUT;
@@ -200,20 +198,19 @@ void OnRxTimeout( void ) {
 #endif
 }
 
-void OnRxError( void ) {
+void OnRxError(void) {
 	Radio.Sleep();
 #ifdef DEBUG
 	puts("RxError");
 #endif
 }
 
-void printRegisters( void ) {
+void printRegisters(void) {
 
 	uint8_t registers[] = { 0x01, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
-							0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014,
-							0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
-							0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24,
-							0x25, 0x26, 0x27, 0x4b };
+			0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014, 0x15, 0x16, 0x17,
+			0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22,
+			0x23, 0x24, 0x25, 0x26, 0x27, 0x4b };
 
 	uint8_t i;
 	for (i = 0; i < sizeof(registers); i++) {

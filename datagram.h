@@ -15,24 +15,22 @@
 #define RH_MAX_MESSAGE_LEN 255
 
 typedef struct {
-		uint8_t dest;
-		uint8_t source;
-		MessageType_t messageType;
-		uint16_t nextWake;
-		uint8_t len;
+	uint8_t dest;
+	uint8_t source;
+	MessageType_t messageType;
+	uint16_t nextWake;
+	uint8_t len;
 } header_t;
 
 typedef struct {
-		header_t header;
-		uint8_t *data;
+	header_t header;
+	uint8_t *data;
 } datagram_t;
 
 datagram_t rxdatagram;
-
-bool datagramInit( );
-void createDatagram( MessageType_t messageType, uint8_t *data );
-void datagramToArray( );
-bool ArrayToDatagram( );
-
+bool datagramInit();
+void createDatagram(MessageType_t messageType, uint8_t *data);
+void datagramToArray();
+bool ArrayToDatagram();
 
 #endif /* DATAGRAM_H_ */
