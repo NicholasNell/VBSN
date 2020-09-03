@@ -35,7 +35,8 @@ bool timerTick_ms = false;
 bool isDelayTimerRunning = false;
 bool LoRaTimerRunning = false;
 extern bool sendFlag;
-bool *tempFlag;
+bool *timerAtempFlag;
+bool *timer32tempFlag;
 
 #define DELAY_TIMER TIMER_A0_BASE
 #define DELAY_INT INT_TA0_0
@@ -55,6 +56,9 @@ bool *tempFlag;
 #define LORA_TICK_TO_MS 0.5
 #define LORA_MS_TO_TICK 1/LORA_TICK_TO_MS
 
+#define TIMER32_TICK_TO_US (1000000.0/1500000.00)
+#define TIMER32_US_TO_TICK 1.0/TIMER32_TICK_TO_US
+
 // max delay of 32.768 seconds with resolution of 0.5ms
 const Timer_A_ContinuousModeConfig contConfigDelay = {
 TIMER_A_CLOCKSOURCE_ACLK,
@@ -70,7 +74,6 @@ TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE,
 TIMER_A_DO_CLEAR };
 
 Timer_A_UpModeConfig upConfigCounter = {
-
 TIMER_A_CLOCKSOURCE_ACLK,
 TIMER_A_CLOCKSOURCE_DIVIDER_64, 1,
 TIMER_A_TAIE_INTERRUPT_DISABLE,
@@ -90,6 +93,28 @@ void Delayms(uint32_t ms) {
 		newValue = getDelayTimerValue();
 	}
 //	stopDelayTimer();
+}
+
+/*!
+ * \brief Timer with max value of approx. 47.5 minutes.
+ * @param period timer count in ms
+ * @param flag	flag to be set true
+ */
+void startTimer32Counter(uint32_t period, bool *flag) {
+	timer32tempFlag = flag;
+	MAP_Timer32_initModule(TIMER32_0_BASE, TIMER32_PRESCALER_1, TIMER32_32BIT,
+	TIMER32_PERIODIC_MODE);
+	MAP_Interrupt_enableInterrupt(INT_T32_INT1);
+	MAP_Timer32_setCount(TIMER32_0_BASE, period * TIMER32_US_TO_TICK * 1000);
+	MAP_Timer32_enableInterrupt(TIMER32_0_BASE);
+	MAP_Timer32_startTimer(TIMER32_0_BASE, false);
+}
+
+/* Timer32 ISR */
+void T32_INT1_IRQHandler(void) {
+	MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN2);
+	*timer32tempFlag = true;
+	MAP_Timer32_clearInterruptFlag(TIMER32_BASE);
 }
 
 void DelayTimerInit(void) {
@@ -140,7 +165,7 @@ void TimerACounterInit(void) {
 }
 
 void startTimerAcounter(uint32_t period, bool *flag) {
-	tempFlag = flag;
+	timerAtempFlag = flag;
 	MAP_Timer_A_stopTimer(COUNTER_TIMER);
 	upConfigCounter.timerPeriod = period * COUNTER_MS_TO_TICK;
 	MAP_Timer_A_configureUpMode(COUNTER_TIMER, &upConfigCounter);
@@ -302,11 +327,10 @@ void TA0_0_IRQHandler(void) {
 
 //Counter interupt
 void TA1_0_IRQHandler(void) {
-	*tempFlag = true;
+	*timerAtempFlag = true;
 //	stopTimerACounter();
 	MAP_Timer_A_clearCaptureCompareInterrupt(COUNTER_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);
-	GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN2);
 }
 
 /*

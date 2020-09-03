@@ -19,10 +19,7 @@ volatile MACappState_t MACState = NODE_DISC;
 uint8_t emptyArray[0];
 extern SX1276_t SX1276;
 bool sleepFlag = true;
-bool syncFlag = false;
-bool RTSFlag = false;
-bool CTSFlag = false;
-bool DataFlag = false;
+bool discFlag = false;
 
 extern Gpio_t Led_rgb_green;
 extern Gpio_t Led_rgb_blue;
@@ -143,31 +140,37 @@ static bool RxStateMachine() {
 	while (true) {
 		switch (MACState) {
 		case NODE_DISC: {
-			bool rxSyncMsg = MACRx(_sleepTime);
-			if (rxSyncMsg) {
-				syncSchedule();
-				MACSend(SYNC, emptyArray, 00);
-				MACState = MAC_SLEEP;
-				SX1276SetSleep();
-			} else {
-				scheduleSetup();
-				startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
-				if (MACSend(SYNC, emptyArray, 00)) {
-					MACRx(100);
-					MACState = MAC_SLEEP;
-					SX1276SetSleep();
-				} else {
-					MACState = NODE_DISC;
+			bool rxSyncMsg = MACRx(MAX_SLEEP_TIME);
+			startTimerAcounter(MAX_SLEEP_TIME, &discFlag);
+			while (!discFlag) {
+				if (rxSyncMsg) {
+					rxSyncMsg = false;
+					rxSyncMsg = MACRx(MAX_SLEEP_TIME);
 				}
 			}
+			return true;
+//			if (rxSyncMsg) {
+//				syncSchedule();
+//				MACSend(SYNC, emptyArray, 00);
+//				MACState = MAC_SLEEP;
+//				SX1276SetSleep();
+//			} else {
+//				scheduleSetup();
+//				startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
+//				if (MACSend(SYNC, emptyArray, 00)) {
+//					MACRx(100);
+//					MACState = MAC_SLEEP;
+//					SX1276SetSleep();
+//				} else {
+//					MACState = NODE_DISC;
+//				}
+//			}
 		}
 			break;
 		case MAC_SLEEP:
 			if (sleepFlag) {
 				sleepFlag = false;
-//			startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
 				MACState = SYNC_MAC;
-
 			} else {
 				return false;
 			}

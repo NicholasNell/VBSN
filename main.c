@@ -97,7 +97,7 @@ void RadioInit() {
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
 }
-
+bool myFlag = false;
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -117,11 +117,17 @@ int main(void) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 //	MACSend(SYNC, data, 0);
+	SX1276SetRx(0);
 
 	while (1) {
-		if (MACStateMachine()) {
-
+		if (myFlag) {
+			myFlag = false;
+			startTimer32Counter(1000, NULL);
 		}
+		MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN2);
+//		if (MACStateMachine()) {
+//
+//		}
 	}
 }
 
@@ -133,7 +139,8 @@ void PORT1_IRQHandler(void) {
 
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN1) {
-		MACreadySend(data, 5);
+//		MACreadySend(data, 5);
+
 	}
 
 }
@@ -167,6 +174,7 @@ void OnTxDone(void) {
 
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
+	myFlag = true;
 	Radio.Sleep();
 	BufferSize = size;
 	memcpy(RXBuffer, payload, BufferSize);

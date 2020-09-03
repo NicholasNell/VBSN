@@ -6,7 +6,7 @@
  */
 
 #include "my_systick.h"
-bool *tempFlag;
+bool *timerAtempFlag;
 
 /*!
  *
@@ -15,7 +15,7 @@ bool *tempFlag;
  */
 void SystickInit( uint32_t period, bool *flag ) {
 
-	tempFlag = flag;
+	timerAtempFlag = flag;
     MAP_SysTick_enableModule();
 	uint32_t value = period * 15 * 100;
 	MAP_SysTick_setPeriod(value);
@@ -23,6 +23,6 @@ void SystickInit( uint32_t period, bool *flag ) {
 }
 
 void SysTick_Handler( void ) {
-	*tempFlag = true;
+	*timerAtempFlag = true;
 	SysTick_disableModule();
 }
