@@ -85,8 +85,7 @@ bool isTimerAcounterRunning = false;
 void Delayms(uint32_t ms) {
 
 	stopDelayTimer();
-	if (!isDelayTimerRunning)
-		startDelayTimer();
+	startDelayTimer();
 	uint32_t oldValue = getDelayTimerValue();
 	uint32_t newValue = oldValue;
 	while (newValue - oldValue < ms) {
@@ -112,9 +111,12 @@ void startTimer32Counter(uint32_t period, bool *flag) {
 
 /* Timer32 ISR */
 void T32_INT1_IRQHandler(void) {
-	MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN2);
 	*timer32tempFlag = true;
 	MAP_Timer32_clearInterruptFlag(TIMER32_BASE);
+}
+
+uint32_t timer32GetTicksRemaining() {
+	return TIMER32_1->VALUE;
 }
 
 void DelayTimerInit(void) {
@@ -135,7 +137,7 @@ void startDelayTimer(void) {
 uint32_t stopDelayTimer(void) {
 	float timeVal = MAP_Timer_A_getCounterValue(DELAY_TIMER);
 	MAP_Timer_A_stopTimer(DELAY_TIMER);
-	MAP_Timer_A_clearTimer(TIMER_A3_BASE);
+	MAP_Timer_A_clearTimer(DELAY_TIMER);
 	isDelayTimerRunning = false;
 	return (uint32_t) timeVal;
 }

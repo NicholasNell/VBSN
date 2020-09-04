@@ -69,7 +69,7 @@ void RadioInit() {
 		puts("Radio could not be detected!\n\r");
 		Delayms(1000);
 	}
-	printf("RadioRegVersion: 0x%2X\n", Radio.Read(REG_VERSION));
+//	printf("RadioRegVersion: 0x%2X\n", Radio.Read(REG_VERSION));
 
 	Radio.SetTxConfig(MODEM_LORA,
 	TX_OUTPUT_POWER,
@@ -116,18 +116,13 @@ int main(void) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
-//	MACSend(SYNC, data, 0);
-	SX1276SetRx(0);
-
 	while (1) {
-		if (myFlag) {
-			myFlag = false;
-			startTimer32Counter(1000, NULL);
-		}
-		MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN2);
-//		if (MACStateMachine()) {
-//
-//		}
+		Radio.Rx(0);
+		Delayms(5000);
+		Radio.Sleep();
+		Delayms(25000);
+		Radio.Send(data, 5);
+		Delayms(100);
 	}
 }
 
@@ -140,7 +135,6 @@ void PORT1_IRQHandler(void) {
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN1) {
 //		MACreadySend(data, 5);
-
 	}
 
 }
@@ -174,8 +168,7 @@ void OnTxDone(void) {
 
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
-	myFlag = true;
-	Radio.Sleep();
+//	Radio.Sleep();
 	BufferSize = size;
 	memcpy(RXBuffer, payload, BufferSize);
 	RssiValue = rssi;

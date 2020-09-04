@@ -13,9 +13,8 @@
 
 #define BROADCAST_ADDRESS 0xFF
 #define MAX_MESSAGE_LEN 255
-#define DEFAULT_SYNC_TIME 70
 #define DEFAULT_RX_TIME 1000
-#define MAX_SLEEP_TIME 32000
+#define SLEEP_TIME 60 * 2 * 1000
 #define MAX_NEIGHBOURS 255
 
 typedef enum {
@@ -32,7 +31,7 @@ typedef enum {
 
 typedef struct {
 	uint8_t nodeID;	// Node ID to which this schedule belongs
-	uint16_t sleepTime;	// Time until next wake period
+	uint32_t sleepTime;	// Time until next wake period
 } schedule_t;
 
 schedule_t scheduleTable[MAX_NEIGHBOURS];
@@ -46,7 +45,7 @@ uint32_t _ranNum;
 volatile uint8_t _nodeID;
 volatile uint8_t _dataLen;
 volatile uint8_t _numNeighbours;
-volatile uint16_t _sleepTime;
+volatile uint32_t _sleepTime;
 volatile uint8_t _destID;
 uint32_t _totalScheduleTime;
 volatile uint32_t _scheduleTimeLeft;

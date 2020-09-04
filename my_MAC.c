@@ -41,7 +41,8 @@ void MacInit() {
 		_ranNum = (uint16_t) (temp * 86) + 10000;
 	} while (_nodeID == 0xFF);
 	_numNeighbours = 0;
-	_sleepTime = _ranNum;
+	_sleepTime = SLEEP_TIME;
+	scheduleSetup();
 }
 
 void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
@@ -60,7 +61,6 @@ bool MACStateMachine() {
 static void scheduleSetup() {
 	mySchedule.nodeID = _nodeID;
 	mySchedule.sleepTime = _sleepTime;
-	startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
 }
 
 bool MACSend(MessageType_t messageType, uint8_t *data, uint8_t len) {
@@ -140,12 +140,12 @@ static bool RxStateMachine() {
 	while (true) {
 		switch (MACState) {
 		case NODE_DISC: {
-			bool rxSyncMsg = MACRx(MAX_SLEEP_TIME);
-			startTimerAcounter(MAX_SLEEP_TIME, &discFlag);
+			bool rxSyncMsg = MACRx(SLEEP_TIME);
+			startTimer32Counter(SLEEP_TIME, &discFlag);
 			while (!discFlag) {
 				if (rxSyncMsg) {
 					rxSyncMsg = false;
-					rxSyncMsg = MACRx(MAX_SLEEP_TIME);
+					rxSyncMsg = MACRx(SLEEP_TIME);
 				}
 			}
 			return true;
@@ -165,25 +165,33 @@ static bool RxStateMachine() {
 //					MACState = NODE_DISC;
 //				}
 //			}
-		}
 			break;
+		}
 		case MAC_SLEEP:
 			if (sleepFlag) {
 				sleepFlag = false;
 				MACState = SYNC_MAC;
+
 			} else {
 				return false;
 			}
 			break;
 		case SYNC_MAC:
+			Delayms(10);
+			if (MACSend(SYNC, emptyArray, 0)) {
+				MACState = MAC_RTS;
+			} else {
+				SX1276SetSleep();
+				MACState = MAC_SLEEP;
+			}
 			if (hasData) {
-				Delayms(10);
-				if (MACSend(SYNC, emptyArray, 0)) {
-					MACState = MAC_RTS;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
+//				Delayms(10);
+//				if (MACSend(SYNC, emptyArray, 0)) {
+//					MACState = MAC_RTS;
+//				} else {
+//					SX1276SetSleep();
+//					MACState = MAC_SLEEP;
+//				}
 			} else {
 				if (MACRx(100)) {
 					MACState = MAC_RTS;

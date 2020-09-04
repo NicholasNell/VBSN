@@ -165,5 +165,6 @@ void resetDelayTimerValue(void);
 void DelayTimerInit(void);
 
 void startTimer32Counter(uint32_t period, bool *flag);
+uint32_t timer32GetTicksRemaining();
 
 #endif /* MY_TIMER_H_ */
