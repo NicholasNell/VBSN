@@ -47,6 +47,7 @@
 #include "sx1276Regs-Fsk.h"
 #include "sx1276Regs-LoRa.h"
 #include "my_spi.h"
+#include "bme280.h"
 
 // Uncomment for debug outputs
 //#define DEBUG
@@ -54,6 +55,32 @@
 uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
 
 void printRegisters(void);
+void bme280Init();
+void user_delay_ms(uint32_t period, void *intf_ptr);
+
+void user_delay_ms(uint32_t period, void *intf_ptr) {
+	/*
+	 * Return control or wait,
+	 * for a period amount of milliseconds
+	 */
+	Delayms(period / 1000.0);
+}
+
+void bme280Init() {
+	struct bme280_dev dev;
+	int8_t rslt = BME280_OK;
+
+	/* Sensor_0 interface over SPI with native chip select line */
+	uint8_t dev_addr = 0;
+
+	dev.intf_ptr = &dev_addr;
+	dev.intf = BME280_SPI_INTF;
+	dev.read = user_spi_read_bme280;
+	dev.write = user_spi_write_bme280;
+	dev.delay_us = user_delay_ms;
+
+	rslt = bme280_init(&dev);
+}
 
 void RadioInit() {
 	// Radio initialization
@@ -111,18 +138,15 @@ int main(void) {
 	RadioInit();
 
 	MacInit();
+
+	bme280Init();
+
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
-
 	while (1) {
-		Radio.Rx(0);
-		Delayms(5000);
-		Radio.Sleep();
-		Delayms(25000);
-		Radio.Send(data, 5);
-		Delayms(100);
+
 	}
 }
 
@@ -135,6 +159,7 @@ void PORT1_IRQHandler(void) {
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN1) {
 //		MACreadySend(data, 5);
+		RTC_C_setCalibrationData(RTC_C_CALIBRATION_UP1PPM, 240);
 	}
 
 }

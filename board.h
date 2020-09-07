@@ -24,8 +24,7 @@
 #define __BOARD_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include <stdint.h>
@@ -33,17 +32,15 @@ extern "C"
 /*!
  * Possible power sources
  */
-enum BoardPowerSources
-{
-    USB_POWER = 0,
-    BATTERY_POWER,
+enum BoardPowerSources {
+	USB_POWER = 0, BATTERY_POWER,
 };
 
 /*
  * Clock Configuration:
  */
 #define REFO_FREQ CS_REFO_128KHZ
-#define LFXT_FREQ 32768
+#define LFXT_FREQ 32000
 #define HFXT_FREQ 48000000
 
 //ACLK = 128kHz
@@ -62,41 +59,40 @@ enum BoardPowerSources
 #define SMCLK_SOURCE CS_MODOSC_SELECT
 #define SMCLK_DIV CS_CLOCK_DIVIDER_16
 
-
 /*!
  * \brief Initializes the mcu.
  */
-void BoardInitMcu( void );
+void BoardInitMcu(void);
 
 /*!
  * \brief Resets the mcu.
  */
-void BoardResetMcu( void );
+void BoardResetMcu(void);
 
 /*!
  * \brief Initializes the boards peripherals.
  */
-void BoardInitPeriph( void );
+void BoardInitPeriph(void);
 
 /*!
  * \brief De-initializes the target board peripherals to decrease power
  *        consumption.
  */
-void BoardDeInitMcu( void );
+void BoardDeInitMcu(void);
 
 /*!
  * \brief Gets the current potentiometer level value
  *
  * \retval value  Potentiometer level ( value in percent )
  */
-uint8_t BoardGetPotiLevel( void );
+uint8_t BoardGetPotiLevel(void);
 
 /*!
  * \brief Measure the Battery voltage
  *
  * \retval value  battery voltage in volts
  */
-uint32_t BoardGetBatteryVoltage( void );
+uint32_t BoardGetBatteryVoltage(void);
 
 /*!
  * \brief Get the current battery level
@@ -107,45 +103,45 @@ uint32_t BoardGetBatteryVoltage( void );
  *                               254: fully charged,
  *                               255: Error]
  */
-uint8_t BoardGetBatteryLevel( void );
+uint8_t BoardGetBatteryLevel(void);
 
 /*!
  * Returns a pseudo random seed generated using the MCU Unique ID
  *
  * \retval seed Generated pseudo random seed
  */
-uint32_t BoardGetRandomSeed( void );
+uint32_t BoardGetRandomSeed(void);
 
 /*!
  * \brief Gets the board 64 bits unique ID
  *
  * \param [IN] id Pointer to an array that will contain the Unique ID
  */
-void BoardGetUniqueId( uint8_t *id );
+void BoardGetUniqueId(uint8_t *id);
 
 /*!
  * \brief Manages the entry into ARM cortex deep-sleep mode
  */
-void BoardLowPowerHandler( void );
+void BoardLowPowerHandler(void);
 
 /*!
  * \brief configures the system clock
  */
-void SystemClockConfig( void );
+void SystemClockConfig(void);
 
 /*!
  * \brief Get the board power source
  *
  * \retval value  power source [0: USB_POWER, 1: BATTERY_POWER]
  */
-uint8_t GetBoardPowerSource( void );
+uint8_t GetBoardPowerSource(void);
 
 /*!
  * \brief Get the board version
  *
  * \retval value  Version
  */
-Version_t BoardGetVersion( void );
+Version_t BoardGetVersion(void);
 
 #ifdef __cplusplus
 }

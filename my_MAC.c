@@ -32,7 +32,7 @@ static void scheduleSetup();
 static bool processRXBuffer();
 
 static void syncSchedule();
-static bool RxStateMachine();
+static bool stateMachine();
 
 void MacInit() {
 	do {
@@ -53,7 +53,7 @@ void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
 
 bool MACStateMachine() {
 	if (sleepFlag) {
-		RxStateMachine();
+		stateMachine();
 	}
 	return true;
 }
@@ -136,7 +136,7 @@ static void syncSchedule() {
 	startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
 }
 
-static bool RxStateMachine() {
+static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
 		case NODE_DISC: {

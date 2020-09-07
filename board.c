@@ -131,7 +131,7 @@ static void BoardUnusedIoInit(void) {
 	MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, PIN_ALL16);
 	MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, PIN_ALL16);
 	MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, PIN_ALL16);
-	MAP_GPIO_setAsOutputPin(GPIO_PORT_P4, PIN_ALL16);
+//	MAP_GPIO_setAsOutputPin(GPIO_PORT_P4, PIN_ALL16);
 	MAP_GPIO_setAsOutputPin(GPIO_PORT_P5, PIN_ALL16);
 	MAP_GPIO_setAsOutputPin(GPIO_PORT_P6, PIN_ALL16);
 	MAP_GPIO_setAsOutputPin(GPIO_PORT_P7, PIN_ALL16);
@@ -148,7 +148,7 @@ static void BoardUnusedIoInit(void) {
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P1, PIN_ALL16);
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P2, PIN_ALL16);
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P3, PIN_ALL16);
-	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, PIN_ALL16);
+//	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, PIN_ALL16);
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, PIN_ALL16);
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P6, PIN_ALL16);
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P7, PIN_ALL16);
@@ -178,14 +178,15 @@ void SystemClockConfig(void) {
 	 * SMCLK: 	use with SPI and TIMER_A
 	 */
 	MAP_CS_setReferenceOscillatorFrequency(REFO_FREQ);
-	MAP_CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ);
+	MAP_CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ); //LFXT_FREQ
+//	MAP_CS_startLFXT(CS_LFXT_DRIVE0);
 	MAP_FPU_enableModule(); // makes sure the FPU is enabled before DCO frequency tuning
 	MAP_CS_setDCOFrequency(1500000);
-//	MAP_CS_startLFXT(CS_LFXT_DRIVE3);
 
 	MAP_CS_initClockSignal(CS_ACLK, ACLK_SOURCE, ACLK_DIV); //128kHz
 	MAP_CS_initClockSignal(CS_MCLK, MCLK_SOURCE, MCLK_DIV); // 1.5MHz
 	MAP_CS_initClockSignal(CS_HSMCLK, HSMCLK_SOURCE, HSMCLK_DIV); // 24MHz
 	MAP_CS_initClockSignal(CS_SMCLK, SMCLK_SOURCE, SMCLK_DIV);
+	MAP_CS_initClockSignal(CS_BCLK, CS_LFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 
 }
