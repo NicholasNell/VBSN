@@ -48,6 +48,7 @@
 #include "sx1276Regs-LoRa.h"
 #include "my_spi.h"
 #include "bme280.h"
+#include "MAX44009.h"
 
 // Uncomment for debug outputs
 //#define DEBUG
@@ -165,16 +166,14 @@ int main(void) {
 	MacInit();
 
 	bme280Init();
-
+	initMAX();
+	float lux = getLight();
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 	while (1) {
-		Radio.Send(data, 5);
-		Delayms(5000);
-		__no_operation();
 	}
 }
 

@@ -14,6 +14,7 @@
 #include "sx1276-board.h"
 #include "board.h"
 #include "my_rtc.h"
+#include "my_i2c.h"
 
 /*!
  * LED GPIO pins objects
@@ -66,6 +67,8 @@ void BoardInitMcu(void) {
 
 	DelayTimerInit();
 	RtcInit();
+
+	i2cInit();
 
 	// LEDs
 	GpioInit(&Led_rgb_red,
