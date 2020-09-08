@@ -65,10 +65,27 @@ void user_delay_ms(uint32_t period, void *intf_ptr) {
 	 */
 	Delayms(period / 1000.0);
 }
+struct bme280_data comp_data;
+struct bme280_dev dev;
+uint32_t req_delay;
 
 void bme280Init() {
-	struct bme280_dev dev;
+	P5->DIR |= BIT5;
+	P5->OUT |= BIT5;
+	BME280_CS_HIGH;
+
 	int8_t rslt = BME280_OK;
+
+	uint8_t settings_sel;
+
+	/* Recommended mode of operation: Indoor navigation */
+	dev.settings.osr_h = BME280_OVERSAMPLING_1X;
+	dev.settings.osr_p = BME280_OVERSAMPLING_1X;
+	dev.settings.osr_t = BME280_OVERSAMPLING_1X;
+	dev.settings.filter = BME280_FILTER_COEFF_OFF;
+
+	settings_sel = BME280_OSR_PRESS_SEL | BME280_OSR_TEMP_SEL
+			| BME280_OSR_HUM_SEL | BME280_FILTER_SEL;
 
 	/* Sensor_0 interface over SPI with native chip select line */
 	uint8_t dev_addr = 0;
@@ -80,6 +97,14 @@ void bme280Init() {
 	dev.delay_us = user_delay_ms;
 
 	rslt = bme280_init(&dev);
+	rslt = bme280_set_sensor_settings(settings_sel, &dev);
+	/*Calculate the minimum delay required between consecutive measurement based upon the sensor enabled
+	 *  and the oversampling configuration. */
+	req_delay = bme280_cal_meas_delay(&dev.settings);
+	rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, &dev);
+	dev.delay_us(req_delay, &dev.intf_ptr);
+	rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &dev);
+	bme280_set_sensor_mode(BME280_SLEEP_MODE, &dev);
 }
 
 void RadioInit() {
@@ -145,8 +170,11 @@ int main(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
-	while (1) {
 
+	while (1) {
+		Radio.Send(data, 5);
+		Delayms(5000);
+		__no_operation();
 	}
 }
 
@@ -159,7 +187,9 @@ void PORT1_IRQHandler(void) {
 	/* Toggling the output on the LED */
 	if (status & GPIO_PIN1) {
 //		MACreadySend(data, 5);
-		RTC_C_setCalibrationData(RTC_C_CALIBRATION_UP1PPM, 240);
+		bme280_set_sensor_mode(BME280_FORCED_MODE, &dev);
+		dev.delay_us(req_delay, dev.intf_ptr);
+		bme280_get_sensor_data(BME280_ALL, &comp_data, &dev);
 	}
 
 }

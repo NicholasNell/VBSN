@@ -51,8 +51,6 @@ void RtcInit(void) {
 					| RTC_C_CLOCK_ALARM_INTERRUPT);
 
 	/* Start RTC Clock */
-	P4->DIR |= BIT3;
-	P4->OUT &= ~BIT3;
 	MAP_RTC_C_startClock();
 
 	//![Simple RTC Example]
@@ -63,8 +61,6 @@ void RtcInit(void) {
 
 void RTC_C_IRQHandler(void) {
 	uint32_t status;
-	P4->OUT |= BIT3;
-	P4->OUT &= ~BIT3;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
 

@@ -22,7 +22,7 @@ void spi_open(void) {
 	EUSCI_B_SPI_MSB_FIRST,
 	EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,
 	EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH,
-	EUSCI_B_SPI_3PIN };
+	EUSCI_SPI_3PIN }; //EUSCI_SPI_4PIN_UCxSTE_ACTIVE_HIGH
 //    Setting up SPI mode and opening
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
 	GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
@@ -87,7 +87,7 @@ int8_t user_spi_read_bme280(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
 	uint8_t val;
 	BME280_CS_LOW;
 	int i = 0;
-	spi_read_write(reg_addr & 0x7F);
+	spi_read_write(reg_addr | 0x80);
 
 	for (i = 0; i < len; i++) {
 		reg_data[i] = spi_read_write(0);
@@ -121,7 +121,7 @@ int8_t user_spi_write_bme280(uint8_t reg_addr, const uint8_t *reg_data,
 	uint8_t val;
 	BME280_CS_LOW;
 	int i = 0;
-	spi_read_write(reg_addr | 0x80);
+	spi_read_write(reg_addr & ~0x80);
 	for (i = 0; i < len; i++) {
 		spi_read_write(reg_data[i]);
 	}
