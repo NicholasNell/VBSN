@@ -25,7 +25,7 @@ void initMAX() {
 
 }
 
-float getLight() {
+void getLight(float *lux) {
 	uint8_t RXData[2];
 	I2C_masterSendSingleByte(EUSCI_B1_BASE, MAX44009_LUX_HIGH_BYTE);
 	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
@@ -45,5 +45,5 @@ float getLight() {
 	int exponent = (RXData[0] & 0xF0) >> 4;
 	int mantissa = ((RXData[0] & 0x0F) << 4) | (RXData[1] & 0x0F);
 	float luminance = pow(2, exponent) * mantissa * 0.045;
-	return luminance;
+	*lux = luminance;
 }

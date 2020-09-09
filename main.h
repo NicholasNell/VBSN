@@ -77,6 +77,7 @@ extern Gpio_t Led_user_red;
 
 struct bme280_data bme280Data;
 struct bme280_dev bme280Dev;
+float lux;
 
 extern bool TxFlag;
 

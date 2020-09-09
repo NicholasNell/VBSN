@@ -56,7 +56,6 @@
 uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
 
 void printRegisters(void);
-float lux;
 void RadioInit() {
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
@@ -117,12 +116,15 @@ int main(void) {
 	bme280UserInit(&bme280Dev, &bme280Data);
 	bme280GetData(&bme280Dev, &bme280Data);
 	initMAX();
-	lux = getLight();
+	getLight(&lux);
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 	while (1) {
+
+		bme280GetData(&bme280Dev, &bme280Data);
+		getLight(&lux);
 	}
 }
 
@@ -138,7 +140,7 @@ void PORT1_IRQHandler(void) {
 //		MACreadySend(data, 5);
 
 		bme280GetData(&bme280Dev, &bme280Data);
-		lux = getLight();
+		getLight(&lux);
 
 	}
 }
