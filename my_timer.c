@@ -94,6 +94,14 @@ void Delayms(uint32_t ms) {
 //	stopDelayTimer();
 }
 
+void user_delay_ms(uint32_t period, void *intf_ptr) {
+	/*
+	 * Return control or wait,
+	 * for a period amount of milliseconds
+	 */
+	Delayms(period / 1000.0);
+}
+
 /*!
  * \brief Timer with max value of approx. 47.5 minutes.
  * @param period timer count in ms

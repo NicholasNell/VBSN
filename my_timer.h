@@ -21,6 +21,8 @@ typedef struct {
 	uint32_t Time;         // Reference time
 } TimerContext_t;
 
+void user_delay_ms(uint32_t period, void *intf_ptr); // only use for bme280
+
 /*!
  \brief Initialise timer_a to count up mode. Trigger interupt when TAR equals CCR0.
  Timer will be configured for ms interupts.

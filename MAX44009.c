@@ -8,8 +8,11 @@
 #include "MAX44009.h"
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <math.h>
+#include "my_timer.h"
 
 void initMAX() {
+	MAX44009_ON
+	Delayms(800);
 	I2C_setSlaveAddress(EUSCI_B1_BASE, MAX44009_ADDR); // Make sure correct i2c slave selected
 	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
 	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
@@ -42,5 +45,5 @@ float getLight() {
 	int exponent = (RXData[0] & 0xF0) >> 4;
 	int mantissa = ((RXData[0] & 0x0F) << 4) | (RXData[1] & 0x0F);
 	float luminance = pow(2, exponent) * mantissa * 0.045;
-
+	return luminance;
 }
