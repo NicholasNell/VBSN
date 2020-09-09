@@ -49,6 +49,7 @@
 #include "my_spi.h"
 #include "bme280.h"
 #include "MAX44009.h"
+#include "my_UART.h"
 
 // Uncomment for debug outputs
 //#define DEBUG
@@ -112,6 +113,7 @@ int main(void) {
 	RadioInit();
 
 	MacInit();
+	UARTinit();
 
 	bme280UserInit(&bme280Dev, &bme280Data);
 	bme280GetData(&bme280Dev, &bme280Data);
