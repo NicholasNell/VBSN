@@ -122,9 +122,7 @@ int main(void) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 	while (1) {
-
-		bme280GetData(&bme280Dev, &bme280Data);
-		getLight(&lux);
+		myFlag = PCM_shutdownDevice(PCM_LPM35_VCORE0);
 	}
 }
 
