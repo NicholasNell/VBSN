@@ -48,7 +48,7 @@ void spiWrite_RFM(uint16_t addr, uint8_t val) {
 	spi_read_write(address);
 	val = spi_read_write(val);
 	RFM95_NSS_HIGH;
-	spiRead_RFM(0x01);
+//	spiRead_RFM(0x01);
 
 }
 

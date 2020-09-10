@@ -51,7 +51,7 @@
 #include "MAX44009.h"
 #include "my_UART.h"
 
-// Uncomment for debug outputs
+// Uncomment for debug out sendUARTpc
 //#define DEBUG
 
 uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
@@ -68,10 +68,9 @@ void RadioInit() {
 
 	// detect radio hardware
 	while (Radio.Read(REG_VERSION) == 0x00) {
-		puts("Radio could not be detected!\n\r");
+		sendUARTpc("Radio could not be detected!\n\r");
 		Delayms(1000);
 	}
-//	printf("RadioRegVersion: 0x%2X\n", Radio.Read(REG_VERSION));
 
 	Radio.SetTxConfig(MODEM_LORA,
 	TX_OUTPUT_POWER,
@@ -109,11 +108,12 @@ int main(void) {
 		printf("ROOT!\n");
 
 	BoardInitMcu();
+	UARTinitGPS();
+	UARTinitPC();
 
 	RadioInit();
 
 	MacInit();
-	UARTinit();
 
 	bme280UserInit(&bme280Dev, &bme280Data);
 	bme280GetData(&bme280Dev, &bme280Data);
@@ -123,8 +123,10 @@ int main(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
+
 	while (1) {
-		myFlag = PCM_shutdownDevice(PCM_LPM35_VCORE0);
+		checkUartActivity();
+
 	}
 }
 
@@ -137,10 +139,11 @@ void PORT1_IRQHandler(void) {
 	/* Toggling the output on the LED */
 
 	if (status & GPIO_PIN1) {
+		myFlag = true;
 //		MACreadySend(data, 5);
-
-		bme280GetData(&bme280Dev, &bme280Data);
-		getLight(&lux);
+//		Radio.Send("Hello There", 11);
+//		bme280GetData(&bme280Dev, &bme280Data);
+//		getLight(&lux);
 
 	}
 }
@@ -151,7 +154,7 @@ void PORT2_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
 #ifdef DEBUG
-	puts("LoRa Interrupt Triggered");
+	sendUARTpc("LoRa Interrupt Triggered: ");
 #endif
 	if (status & GPIO_PIN4) {
 		SX1276OnDio0Irq();
@@ -168,7 +171,7 @@ void OnTxDone(void) {
 	Radio.Sleep();
 	RadioState = TXDONE;
 #ifdef DEBUG
-	puts("TxDone");
+	sendUARTpc("TxDone\n");
 #endif
 }
 
@@ -181,7 +184,7 @@ void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SnrValue = snr;
 	RadioState = RXDONE;
 #ifdef DEBUG
-	puts("RxDone");
+	sendUARTpc("RxDone\n");
 	GpioFlashLED(&Led_rgb_green, 10);
 #endif
 }
@@ -190,7 +193,7 @@ void OnTxTimeout(void) {
 	Radio.Sleep();
 	RadioState = TXTIMEOUT;
 #ifdef DEBUG
-	puts("TxTimeout");
+	sendUARTpc("TxTimeout\n");
 #endif
 }
 
@@ -200,7 +203,7 @@ void OnRxTimeout(void) {
 	RadioState = RXTIMEOUT;
 #ifdef DEBUG
 
-	puts("RxTimeout");
+	sendUARTpc("RxTimeout\n");
 	GpioFlashLED(&Led_rgb_red, 10);
 #endif
 }
@@ -208,7 +211,7 @@ void OnRxTimeout(void) {
 void OnRxError(void) {
 	Radio.Sleep();
 #ifdef DEBUG
-	puts("RxError");
+	sendUARTpc("RxError\n");
 #endif
 }
 
@@ -221,8 +224,10 @@ void printRegisters(void) {
 
 	uint8_t i;
 	for (i = 0; i < sizeof(registers); i++) {
-		printf("0x%2X", registers[i]);
-		printf(": ");
-		printf("0x%2X\n", spiRead_RFM(registers[i]));
+
+		send_uart_integer(registers[i]);
+		sendUARTpc(": ");
+		send_uart_integer(spiRead_RFM(registers[i]));
+		sendUARTpc("\n");
 	}
 }
