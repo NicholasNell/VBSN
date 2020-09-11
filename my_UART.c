@@ -5,20 +5,30 @@
  *      Author: njnel
  */
 
+#include <bme280.h>
+#include <bme280_defs.h>
 #include <my_RFM9x.h>
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
-#include "my_UART.h"
-#include <string.h>
-#include <stdint.h>
+#include <MAX44009.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ti/devices/msp432p4xx/driverlib/gpio.h>
+#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
+#include <ti/devices/msp432p4xx/driverlib/uart.h>
+#include <ti/devices/msp432p4xx/inc/msp432p401r.h>
+#include "my_UART.h"
 
 #define SIZE_BUFFER 80
 
 uint8_t counter_read = 0; //UART receive buffer counter
 bool UartActivity = false;
 char UartRX[SIZE_BUFFER]; //Uart receive buffer
+extern struct bme280_data bme280Data;
+extern struct bme280_dev bme280Dev;\
+extern float lux;
 
+// http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 //UART configured for 9600 Baud
 const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
 		9,                                     // BRDIV = 9
@@ -94,14 +104,6 @@ void UartCommands() {
 			sendUARTpc("Setting Debug Mode\n");
 			break;
 		case 'S': {
-//			uint8_t len = 1;
-//			len = UartRX[2] - '0';
-//			uint8_t data[255];
-//			memcpy(data, &UartRX[4], len);
-//			SX1276Send(data, len);
-//			sendUARTpc("Sending data: \"");
-//			sendUARTpc((char*) data);
-//			sendUARTpc("\" on radio.\n");
 			const char s[2] = ",";
 			char *token;
 			token = strtok(UartRX, s); // UartRX[0]
@@ -114,11 +116,59 @@ void UartCommands() {
 		}
 			break;
 		case 'T': {
+			bme280GetData(&bme280Dev, &bme280Data);
 			char buffer[10];
-			sprintf(buffer, "%.2f", 1.0);
+			sprintf(buffer, "%.2f", bme280Data.temperature);
 			sendUARTpc("Current temperature: ");
 			sendUARTpc(buffer);
-			sendUARTpc(" deg C\n");
+			sendUARTpc(" °C\n");
+		}
+			break;
+		case 'P': {
+			bme280GetData(&bme280Dev, &bme280Data);
+			char buffer[10];
+			sprintf(buffer, "%.2f", bme280Data.pressure);
+			sendUARTpc("Current pressure: ");
+			sendUARTpc(buffer);
+			sendUARTpc(" Pa\n");
+		}
+			break;
+		case 'H': {
+			bme280GetData(&bme280Dev, &bme280Data);
+			char buffer[10];
+			sprintf(buffer, "%.2f", bme280Data.humidity);
+			sendUARTpc("Current relative humidity: ");
+			sendUARTpc(buffer);
+			sendUARTpc(" %\n");
+		}
+			break;
+		case 'L': {
+			getLight(&lux);
+			char buffer[10];
+			sprintf(buffer, "%.2f", lux);
+			sendUARTpc("Current light intensity: ");
+			sendUARTpc(buffer);
+			sendUARTpc(" lux\n");
+		}
+			break;
+		case 'A': {
+			getLight(&lux);
+			bme280GetData(&bme280Dev, &bme280Data);
+			sendUARTpc("All sensor data: ");
+			char buffer[10];
+			sprintf(buffer, "%.2f", lux);
+			sendUARTpc("| L: ");
+			sendUARTpc(buffer);
+			sprintf(buffer, "%.2f", bme280Data.temperature);
+			sendUARTpc("| T: ");
+			sendUARTpc(buffer);
+			sprintf(buffer, "%.2f", bme280Data.humidity);
+			sendUARTpc("| H: ");
+			sendUARTpc(buffer);
+			sprintf(buffer, "%.2f", bme280Data.pressure);
+			sendUARTpc("| P: ");
+			sendUARTpc(buffer);
+			sendUARTpc("|\n");
 		}
 			break;
 		default:

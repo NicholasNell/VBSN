@@ -181,6 +181,7 @@ int main(void) {
 	while (1) {
 		checkUartActivity();
 		Delayms(10);
+		PCM_gotoLPM0();
 	}
 }
 
