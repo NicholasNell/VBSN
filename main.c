@@ -153,6 +153,7 @@ void RadioInit() {
 	Radio.Sleep();
 }
 bool myFlag = false;
+RTC_C_Calendar cal;
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -173,15 +174,16 @@ int main(void) {
 	bme280GetData(&bme280Dev, &bme280Data);
 	initMAX();
 	getLight(&lux);
+
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
-
 	while (1) {
+		cal = RTC_C_getCalendarTime();
 		checkUartActivity();
 		Delayms(10);
-		PCM_gotoLPM0();
+//		PCM_gotoLPM0();
 	}
 }
 

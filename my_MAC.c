@@ -148,13 +148,6 @@ static bool processRXBuffer() {
 		return false;
 }
 
-//static void syncSchedule() {
-//	mySchedule.sleepTime = rxdatagram.header.nextWake;
-//	_sleepTime = mySchedule.sleepTime;
-//	mySchedule.nodeID = _nodeID;
-//	startTimerAcounter(mySchedule.sleepTime, &sleepFlag);
-//}
-
 static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
@@ -202,7 +195,6 @@ static bool stateMachine() {
 					MACState = MAC_SLEEP;
 				}
 			}
-			GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN2);
 			break;
 		case MAC_RTS:
 			if (hasData) {
