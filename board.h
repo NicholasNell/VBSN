@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "utilities.h"
+//#include "utilities.h"
 /*!
  * Possible power sources
  */
@@ -135,13 +135,6 @@ void SystemClockConfig(void);
  * \retval value  power source [0: USB_POWER, 1: BATTERY_POWER]
  */
 uint8_t GetBoardPowerSource(void);
-
-/*!
- * \brief Get the board version
- *
- * \retval value  Version
- */
-Version_t BoardGetVersion(void);
 
 #ifdef __cplusplus
 }

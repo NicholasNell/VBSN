@@ -57,9 +57,6 @@ extern "C" {
 /* Header includes */
 #include "bme280_defs.h"
 
-#define BME280_ON {P5->DIR |= BIT5; P5->OUT |= BIT5;}
-#define BME280_OFF {P5->OUT &= ~BIT5;BME280_CS_LOW;} // need to make sure cs is pulled low before powering off to prevent damage to the chip
-
 int8_t bme280UserInit(struct bme280_dev *dev, struct bme280_data *comp_data);
 void bme280GetData(struct bme280_dev *dev, struct bme280_data *comp_data);
 

@@ -35,8 +35,8 @@ bool timerTick_ms = false;
 bool isDelayTimerRunning = false;
 bool LoRaTimerRunning = false;
 extern bool sendFlag;
-bool *timerAtempFlag;
-bool *timer32tempFlag;
+static bool *timerAtempFlag;
+static bool *timer32tempFlag;
 
 #define DELAY_TIMER TIMER_A0_BASE
 #define DELAY_INT INT_TA0_0

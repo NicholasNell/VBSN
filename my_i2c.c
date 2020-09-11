@@ -17,16 +17,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-/* Slave Address for I2C Slave */
-#define SLAVE_ADDRESS       0x4A //light sensor
-#define NUM_OF_REC_BYTES    2
-
-/* Variables */
-const uint8_t TXData[] = { 0x04 };
-static uint8_t RXData[NUM_OF_REC_BYTES];
-static volatile uint32_t xferIndex;
-static volatile bool stopSent;
-
 /* I2C Master Configuration Parameter */
 const eUSCI_I2C_MasterConfig i2cConfig = {
 EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
@@ -49,16 +39,12 @@ void i2cInit() {
 	I2C_initMaster(EUSCI_B1_BASE, &i2cConfig);
 
 	/* Specify slave address */
-	I2C_setSlaveAddress(EUSCI_B1_BASE, SLAVE_ADDRESS);
+	I2C_setSlaveAddress(EUSCI_B1_BASE, SLAVE_ADDRESS_LIGHT_SENSOR);
 
 	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
 	/* Enable I2C Module to start operations */
 	I2C_enableModule(EUSCI_B1_BASE);
 //	Interrupt_enableInterrupt(INT_EUSCIB1);
-}
-
-void i2cSend(uint8_t *TXDdata) {
-
 }
 
 #endif /* MY_I2C_C_ */

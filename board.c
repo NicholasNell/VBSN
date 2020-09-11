@@ -82,7 +82,6 @@ void BoardInitMcu(void) {
 
 	UsbIsConnected = true;
 
-//        TODO: Fix Board power source (Will need external IO pin to detect bat voltage)
 	if (GetBoardPowerSource() == BATTERY_POWER) {
 		// Disables OFF mode - Enables lowest power mode (STOP)
 //            PCM_setPowerState(PCM_LPM3);

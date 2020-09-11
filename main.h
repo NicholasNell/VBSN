@@ -17,8 +17,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "my_RFM9x.h"
-#include "my_gpio.h"
 
 /*!
  * Constant values need to compute the RSSI value
@@ -53,62 +51,5 @@
 #define LORA_MAX_PAYLOAD_LEN 255
 #define LORA_PRIVATE_SYNCWORD 0x55
 #define LORA_IS_PUBLIC_NET false
-
-uint8_t TXBuffer[255] = { 0 };
-uint8_t RXBuffer[255] = { 0 };
-volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
-
-bool DIO0Flag = false;
-bool DIO1Flag = false;
-bool DIO2Flag = false;
-bool DIO3Flag = false;
-bool DIO4Flag = false;
-bool sendFlag = false;
-
-uint32_t value;
-
-volatile int8_t RssiValue = 0;
-volatile int8_t SnrValue = 0;
-
-extern Gpio_t Led_rgb_red;	//RED
-extern Gpio_t Led_rgb_green;	//GREEN
-extern Gpio_t Led_rgb_blue;		//BLUE
-extern Gpio_t Led_user_red;
-
-struct bme280_data bme280Data;
-struct bme280_dev bme280Dev;
-float lux;
-
-extern bool TxFlag;
-
-/*!
- * Radio events function pointer
- */
-static RadioEvents_t RadioEvents;
-
-/*!
- * \brief Function to be executed on Radio Tx Done event
- */
-void OnTxDone(void);
-
-/*!
- * \brief Function to be executed on Radio Rx Done event
- */
-void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
-
-/*!
- * \brief Function executed on Radio Tx Timeout event
- */
-void OnTxTimeout(void);
-
-/*!
- * \brief Function executed on Radio Rx Timeout event
- */
-void OnRxTimeout(void);
-
-/*!
- * \brief Function executed on Radio Rx Error event
- */
-void OnRxError(void);
 
 #endif // __MAIN_H__

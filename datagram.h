@@ -27,7 +27,6 @@ typedef struct {
 	uint8_t *data;
 } datagram_t;
 
-datagram_t rxdatagram;
 bool datagramInit();
 void createDatagram(MessageType_t messageType, uint8_t *data);
 void datagramToArray();

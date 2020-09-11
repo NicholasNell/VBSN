@@ -12,8 +12,13 @@
 
 datagram_t myDatagram;
 uint8_t tempDataArray[];
-extern schedule_t mySchedule;
+datagram_t rxdatagram;
+extern volatile schedule_t mySchedule;
 extern uint8_t TXBuffer[255];
+extern volatile uint8_t _dataLen;
+extern volatile uint8_t _nodeID;
+extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
+extern uint8_t neighbourTable[MAX_NEIGHBOURS];
 
 header_t createHeader(MessageType_t messageType);
 

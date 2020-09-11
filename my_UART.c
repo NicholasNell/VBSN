@@ -82,14 +82,14 @@ void checkUartActivity() {
 
 void UartCommands() {
 	counter_read = 0;
-	if (returnUartActivity()) {
+	if (UartActivity) {
 		UartActivity = false;
 		switch (UartRX[0]) {
 		case 'N':
 
 			sendUARTpc("Setting Normal Mode\n");
 			break;
-		case 'T':
+		case 'D':
 
 			sendUARTpc("Setting Debug Mode\n");
 			break;
@@ -111,6 +111,14 @@ void UartCommands() {
 			SX1276Send((uint8_t*) token, len);
 			sendUARTpc("Sending data on radio: ");
 			sendUARTpc(token);
+		}
+			break;
+		case 'T': {
+			char buffer[10];
+			sprintf(buffer, "%.2f", 1.0);
+			sendUARTpc("Current temperature: ");
+			sendUARTpc(buffer);
+			sendUARTpc(" deg C\n");
 		}
 			break;
 		default:

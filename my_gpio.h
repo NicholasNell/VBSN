@@ -28,23 +28,20 @@
 #define __MY_GPIO_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include <stdint.h>
 #include "pinName-board.h"
 #include "pinName-ioe.h"
-#include "my_timer.h"
 
 /*!
  * Board GPIO pin names
  */
-typedef enum
-{
-    MCU_PINS,
-    // Not connected
-    NC = (int)0xFFFFFFFF
+typedef enum {
+	MCU_PINS,
+	// Not connected
+	NC = (int)0xFFFFFFFF
 }PinNames;
 
 /*!
@@ -52,10 +49,10 @@ typedef enum
  */
 typedef enum
 {
-    PIN_INPUT = 0,
-    PIN_OUTPUT,
-    PIN_ALTERNATE_FCT,
-    PIN_ANALOGIC
+	PIN_INPUT = 0,
+	PIN_OUTPUT,
+	PIN_ALTERNATE_FCT,
+	PIN_ANALOGIC
 }PinModes;
 
 /*!
@@ -63,9 +60,9 @@ typedef enum
  */
 typedef enum
 {
-    PIN_NO_PULL = 0,
-    PIN_PULL_UP,
-    PIN_PULL_DOWN
+	PIN_NO_PULL = 0,
+	PIN_PULL_UP,
+	PIN_PULL_DOWN
 }PinTypes;
 
 /*!
@@ -73,8 +70,8 @@ typedef enum
  */
 typedef enum
 {
-    PIN_PUSH_PULL = 0,
-    PIN_OPEN_DRAIN
+	PIN_PUSH_PULL = 0,
+	PIN_OPEN_DRAIN
 }PinConfigs;
 
 /*!
@@ -82,10 +79,10 @@ typedef enum
  */
 typedef enum
 {
-    NO_IRQ = 0,
-    IRQ_RISING_EDGE,
-    IRQ_FALLING_EDGE,
-    IRQ_RISING_FALLING_EDGE
+	NO_IRQ = 0,
+	IRQ_RISING_EDGE,
+	IRQ_FALLING_EDGE,
+	IRQ_RISING_FALLING_EDGE
 }IrqModes;
 
 /*!
@@ -93,11 +90,11 @@ typedef enum
  */
 typedef enum
 {
-    IRQ_VERY_LOW_PRIORITY = 0,
-    IRQ_LOW_PRIORITY,
-    IRQ_MEDIUM_PRIORITY,
-    IRQ_HIGH_PRIORITY,
-    IRQ_VERY_HIGH_PRIORITY
+	IRQ_VERY_LOW_PRIORITY = 0,
+	IRQ_LOW_PRIORITY,
+	IRQ_MEDIUM_PRIORITY,
+	IRQ_HIGH_PRIORITY,
+	IRQ_VERY_HIGH_PRIORITY
 }IrqPriorities;
 
 /*!
@@ -110,13 +107,13 @@ typedef void( GpioIrqHandler )( void* context );
  */
 typedef struct
 {
-    PinNames  pin;
-    uint16_t pinIndex;
-    void *port;
-    uint16_t portIndex;
-    PinTypes pull;
-    void* Context;
-    void* IrqHandler;
+	PinNames pin;
+	uint16_t pinIndex;
+	void *port;
+	uint16_t portIndex;
+	PinTypes pull;
+	void* Context;
+	void* IrqHandler;
 }Gpio_t;
 
 /*!

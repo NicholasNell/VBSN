@@ -238,10 +238,10 @@ void Default_Handler(void) {
 	/* Fault trap exempt from ULP advisor */
 #pragma diag_push
 #pragma CHECK_ULP("-2.1")
-
+	sendUARTpc("ERROR!!");
 	/* Enter an infinite loop. */
 	while (1) {
-		sendUARTpc("ERROR!!");
+
 	}
 
 #pragma diag_pop

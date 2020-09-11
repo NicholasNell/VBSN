@@ -52,6 +52,8 @@
 /********************************************************/
 /*! @name       Common macros               */
 /********************************************************/
+#define BME280_ON {P5->DIR |= BIT5; P5->OUT |= BIT5;}
+#define BME280_OFF {P5->OUT &= ~BIT5;BME280_CS_LOW;} // need to make sure cs is pulled low before powering off to prevent damage to the chip
 
 #if !defined(UINT8_C) && !defined(INT8_C)
 #define INT8_C(x)    S8_C(x)

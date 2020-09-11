@@ -24,8 +24,7 @@
 #define __UTILITIES_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include <stdint.h>
@@ -72,26 +71,11 @@ extern "C"
 #define POW2( n ) ( 1 << n )
 
 /*!
- * Version
- */
-typedef union Version_u
-{
-    struct Version_s
-    {
-        uint8_t Rfu;
-        uint8_t Revision;
-        uint8_t Minor;
-        uint8_t Major;
-    }Fields;
-    uint32_t Value;
-}Version_t;
-
-/*!
  * \brief Initializes the pseudo random generator initial value
  *
  * \param [IN] seed Pseudo random generator initial value
  */
-void srand1( uint32_t seed );
+void srand1(uint32_t seed);
 
 /*!
  * \brief Computes a random number between min and max
@@ -100,7 +84,7 @@ void srand1( uint32_t seed );
  * \param [IN] max range maximum value
  * \retval random random value in range min..max
  */
-int32_t randr( int32_t min, int32_t max );
+int32_t randr(int32_t min, int32_t max);
 
 /*!
  * \brief Copies size elements of src array to dst array
@@ -111,7 +95,7 @@ int32_t randr( int32_t min, int32_t max );
  * \param [IN]  src  Source array
  * \param [IN]  size Number of bytes to be copied
  */
-void memcpy1( uint8_t *dst, const uint8_t *src, uint16_t size );
+void memcpy1(uint8_t *dst, const uint8_t *src, uint16_t size);
 
 /*!
  * \brief Copies size elements of src array to dst array reversing the byte order
@@ -120,7 +104,7 @@ void memcpy1( uint8_t *dst, const uint8_t *src, uint16_t size );
  * \param [IN]  src  Source array
  * \param [IN]  size Number of bytes to be copied
  */
-void memcpyr( uint8_t *dst, const uint8_t *src, uint16_t size );
+void memcpyr(uint8_t *dst, const uint8_t *src, uint16_t size);
 
 /*!
  * \brief Set size elements of dst array with value
@@ -131,7 +115,7 @@ void memcpyr( uint8_t *dst, const uint8_t *src, uint16_t size );
  * \param [IN]  value Default value
  * \param [IN]  size  Number of bytes to be copied
  */
-void memset1( uint8_t *dst, uint8_t value, uint16_t size );
+void memset1(uint8_t *dst, uint8_t value, uint16_t size);
 
 /*!
  * \brief Converts a nibble to an hexadecimal character
@@ -139,7 +123,7 @@ void memset1( uint8_t *dst, uint8_t value, uint16_t size );
  * \param [IN] a   Nibble to be converted
  * \retval hexChar Converted hexadecimal character
  */
-int8_t Nibble2HexChar( uint8_t a );
+int8_t Nibble2HexChar(uint8_t a);
 
 /*!
  * Begins critical section
@@ -162,14 +146,14 @@ int8_t Nibble2HexChar( uint8_t a );
  *
  * \param [IN] mask Pointer to a variable where to store the CPU IRQ mask
  */
-void BoardCriticalSectionBegin( uint32_t *mask );
+void BoardCriticalSectionBegin(uint32_t *mask);
 
 /*!
  * Ends critical section
  *
  * \param [IN] mask Pointer to a variable where the CPU IRQ mask was stored
  */
-void BoardCriticalSectionEnd( uint32_t *mask );
+void BoardCriticalSectionEnd(uint32_t *mask);
 
 #ifdef __cplusplus
 }

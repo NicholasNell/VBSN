@@ -34,7 +34,6 @@ void spi_open(void) {
 	SPI_initMaster(EUSCI_B0_BASE, &spiMasterConfig);
 
 	SPI_enableModule(EUSCI_B0_BASE);
-
 }
 
 void spi_close(void) {
@@ -84,7 +83,7 @@ int8_t user_spi_read_bme280(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
 	 * | (don't care)   | (don't care)        | HIGH        |
 	 * |----------------+---------------------|-------------|
 	 */
-	uint8_t val;
+
 	BME280_CS_LOW;
 	int i = 0;
 	spi_read_write(reg_addr | 0x80);
@@ -118,7 +117,7 @@ int8_t user_spi_write_bme280(uint8_t reg_addr, const uint8_t *reg_data,
 	 * | (don't care)   | (don't care)        | HIGH        |
 	 * |----------------+---------------------|-------------|
 	 */
-	uint8_t val;
+
 	BME280_CS_LOW;
 	int i = 0;
 	spi_read_write(reg_addr & ~0x80);

@@ -6,23 +6,23 @@
  */
 
 #include "my_systick.h"
-bool *timerAtempFlag;
+static bool *timerAtempFlag;
 
 /*!
  *
  * @param period value in ms
  * @param flag	flag to be set
  */
-void SystickInit( uint32_t period, bool *flag ) {
+void SystickInit(uint32_t period, bool *flag) {
 
 	timerAtempFlag = flag;
-    MAP_SysTick_enableModule();
+	MAP_SysTick_enableModule();
 	uint32_t value = period * 15 * 100;
 	MAP_SysTick_setPeriod(value);
-    MAP_SysTick_enableInterrupt();
+	MAP_SysTick_enableInterrupt();
 }
 
-void SysTick_Handler( void ) {
+void SysTick_Handler(void) {
 	*timerAtempFlag = true;
 	SysTick_disableModule();
 }

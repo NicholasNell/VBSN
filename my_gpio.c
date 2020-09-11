@@ -25,37 +25,41 @@
  * \author    Gregory Cristian ( Semtech )
  */
 #include "gpio-board.h"
+#include <my_gpio.h>
+#include "my_timer.h"
 
-void GpioInit( Gpio_t *obj, PinNames pin, PinModes mode,  PinConfigs config, PinTypes type, uint32_t value ) {
-    GpioMcuInit( obj, pin, mode, config, type, value );
+void GpioInit(Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config,
+		PinTypes type, uint32_t value) {
+	GpioMcuInit(obj, pin, mode, config, type, value);
 }
 
-void GpioSetContext( Gpio_t *obj, void* context ) {
-    GpioMcuSetContext( obj, context );
+void GpioSetContext(Gpio_t *obj, void *context) {
+	GpioMcuSetContext(obj, context);
 }
 
-void GpioSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority) {
-    GpioMcuSetInterrupt( obj, irqMode, irqPriority );
+void GpioSetInterrupt(Gpio_t *obj, IrqModes irqMode,
+		IrqPriorities irqPriority) {
+	GpioMcuSetInterrupt(obj, irqMode, irqPriority);
 }
 
-void GpioRemoveInterrupt( Gpio_t *obj ) {
-    GpioMcuRemoveInterrupt( obj );
+void GpioRemoveInterrupt(Gpio_t *obj) {
+	GpioMcuRemoveInterrupt(obj);
 }
 
-void GpioWrite( Gpio_t *obj, uint32_t value ) {
-    GpioMcuWrite( obj, value );
+void GpioWrite(Gpio_t *obj, uint32_t value) {
+	GpioMcuWrite(obj, value);
 }
 
-void GpioToggle( Gpio_t *obj ) {
-    GpioMcuToggle( obj );
+void GpioToggle(Gpio_t *obj) {
+	GpioMcuToggle(obj);
 }
 
-uint32_t GpioRead( Gpio_t *obj ) {
-    return GpioMcuRead( obj );
+uint32_t GpioRead(Gpio_t *obj) {
+	return GpioMcuRead(obj);
 }
 
-void GpioFlashLED( Gpio_t *obj, uint8_t delay ) {
-    GpioWrite(obj, 1);
-    Delayms(delay);
-    GpioWrite(obj, 0);
+void GpioFlashLED(Gpio_t *obj, uint8_t delay) {
+	GpioWrite(obj, 1);
+	Delayms(delay);
+	GpioWrite(obj, 0);
 }

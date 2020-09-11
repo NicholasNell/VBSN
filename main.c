@@ -50,13 +50,67 @@
 #include "bme280.h"
 #include "MAX44009.h"
 #include "my_UART.h"
+#include "my_RFM9x.h"
+#include "my_gpio.h"
+#include <my_timer.h>
 
 // Uncomment for debug out sendUARTpc
 //#define DEBUG
 
-uint8_t data[] = { 'H', 'E', 'L', 'L', 'O' };
+uint8_t TXBuffer[255] = { 0 };
+uint8_t RXBuffer[255] = { 0 };
+volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
+
+uint32_t value;
+
+volatile int8_t RssiValue = 0;
+volatile int8_t SnrValue = 0;
+
+struct bme280_data bme280Data;
+struct bme280_dev bme280Dev;
+float lux;
+
+extern bool TxFlag;
+
+/*!
+ * Radio events function pointer
+ */
+static RadioEvents_t RadioEvents;
+
+extern Gpio_t Led_rgb_red;	//RED
+extern Gpio_t Led_rgb_green;	//GREEN
+extern Gpio_t Led_rgb_blue;		//BLUE
+extern Gpio_t Led_user_red;
+
+extern volatile MACRadioState_t RadioState;
 
 void printRegisters(void);
+
+/*!
+ * \brief Function to be executed on Radio Tx Done event
+ */
+void OnTxDone(void);
+
+/*!
+ * \brief Function to be executed on Radio Rx Done event
+ */
+void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
+
+/*!
+ * \brief Function executed on Radio Tx Timeout event
+ */
+void OnTxTimeout(void);
+
+/*!
+ * \brief Function executed on Radio Rx Timeout event
+ */
+void OnRxTimeout(void);
+
+/*!
+ * \brief Function executed on Radio Rx Error event
+ */
+void OnRxError(void);
+
 void RadioInit() {
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
@@ -108,7 +162,7 @@ int main(void) {
 		printf("ROOT!\n");
 
 	BoardInitMcu();
-	UARTinitGPS();
+//	UARTinitGPS();
 	UARTinitPC();
 
 	RadioInit();
@@ -126,7 +180,7 @@ int main(void) {
 
 	while (1) {
 		checkUartActivity();
-
+		Delayms(10);
 	}
 }
 
