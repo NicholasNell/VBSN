@@ -180,13 +180,8 @@ int main(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
-	uint8_t i = 0;
 	while (1) {
 
-		if (UartActivityGps) {
-			Radio.Send((uint8_t*) UartRxGPS, counter_read_gps);
-			UartGPSCommands();
-		}
 	}
 }
 

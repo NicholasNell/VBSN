@@ -58,6 +58,8 @@ void UARTinitGPS() {
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
 
+	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0,0,0,,,0,0*0B\r\n");
+
 }
 void UARTinitPC() {
 	/* Selecting P1.2 and P1.3 in UART mode */
@@ -223,12 +225,22 @@ void UartGPSCommands() {
 
 	if (UartActivityGps) {
 		const char s[2] = ",";
-		char *token;
-		token = strtok(UartRxGPS, s);
+		const char a[2] = "*";
+		char *CSV;
+		char *CMD;
+		CSV = strtok(UartRxGPS, s); //1
 		UartActivityGps = false;
 
-		if (!memcmp(token, "$GNGGA", 6)) {
-//			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+		if (!memcmp(CSV, "$GNGLL", 6)) {
+			CMD = strtok(UartRxGPS, a);
+			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+			if (strpbrk(CMD, "A")) {
+				char *temp;
+				memcpy(temp, CSV, 2);
+				uint8_t hr = atoi(temp);
+				memcpy(temp, CSV + 8, 2);
+			}
+
 		} else if (false) {
 
 		} else {
@@ -249,6 +261,7 @@ void EUSCIA3_IRQHandler(void) {
 	if (UartRxGPS[counter_read_gps - 1] == 0x0A
 			&& UartRxGPS[counter_read_gps - 2] == 0x0D) {
 		UartActivityGps = true;
+		UartGPSCommands();
 	}
 
 	if (counter_read_gps == SIZE_BUFFER_GPS) {
