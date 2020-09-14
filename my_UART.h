@@ -13,6 +13,8 @@
 void UARTinitGPS();
 void UARTinitPC();
 void sendUARTpc(char *buffer);
+void sendUARTgps(char *buffer);
+void UartGPSCommands();
 void send_uart_integer(uint32_t integer);
 void send_uart_integer_nextLine(uint32_t integer);
 void resetUARTArray();

@@ -20,12 +20,17 @@
 #include "my_UART.h"
 
 #define SIZE_BUFFER 80
+#define SIZE_BUFFER_GPS 255
 
-uint8_t counter_read = 0; //UART receive buffer counter
+uint8_t counter_read_pc = 0; //UART receive buffer counter
+uint8_t counter_read_gps = 0;
+bool UartActivityGps = false;
 bool UartActivity = false;
 char UartRX[SIZE_BUFFER]; //Uart receive buffer
+char UartRxGPS[SIZE_BUFFER_GPS]; //Uart receive buffer
 extern struct bme280_data bme280Data;
-extern struct bme280_dev bme280Dev;\
+extern struct bme280_dev bme280Dev;
+
 extern float lux;
 
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
@@ -52,8 +57,8 @@ void UARTinitGPS() {
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
-}
 
+}
 void UARTinitPC() {
 	/* Selecting P1.2 and P1.3 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
@@ -74,6 +79,15 @@ void sendUARTpc(char *buffer) {
 	}
 	uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
 	GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
+}
+
+void sendUARTgps(char *buffer) {
+	int count = 0;
+	while (strlen(buffer) > count) {
+		MAP_UART_transmitData(EUSCI_A3_BASE, buffer[count++]);
+	}
+	uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P9);
+	GPIO_clearInterruptFlag(GPIO_PORT_P9, status);
 	// write_string_toSD(buffer);
 }
 
@@ -91,7 +105,7 @@ void checkUartActivity() {
 }
 
 void UartCommands() {
-	counter_read = 0;
+	counter_read_pc = 0;
 	if (UartActivity) {
 		UartActivity = false;
 		switch (UartRX[0]) {
@@ -188,18 +202,57 @@ void send_uart_integer_nextLine(uint32_t integer) {
 
 void resetUARTArray() {
 	memset(UartRX, 0x00, SIZE_BUFFER);
-	counter_read = 0;
+	counter_read_pc = 0;
 }
 
 bool returnUartActivity() {
 	return UartActivity;
 }
 
+void UartGPSCommands() {
+	/*const char s[2] = ",";
+	 char *token;
+	 token = strtok(UartRX, s); // UartRX[0]
+	 token = strtok(NULL, s);
+	 uint8_t len = atoi(token);
+	 token = strtok(NULL, s);
+	 SX1276Send((uint8_t*) token, len);
+	 sendUARTpc("Sending data on radio: ");
+	 sendUARTpc(token);
+	 */
+
+	if (UartActivityGps) {
+		const char s[2] = ",";
+		char *token;
+		token = strtok(UartRxGPS, s);
+		UartActivityGps = false;
+
+		if (!memcmp(token, "$GNGGA", 6)) {
+//			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+		} else if (false) {
+
+		} else {
+
+		}
+		memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+		counter_read_gps = 0;
+	}
+}
+
 void EUSCIA3_IRQHandler(void) {
 	uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A3_BASE);
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
+		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(EUSCI_A3_BASE);
+		counter_read_gps++;
+	}
+	if (UartRxGPS[counter_read_gps - 1] == 0x0A
+			&& UartRxGPS[counter_read_gps - 2] == 0x0D) {
+		UartActivityGps = true;
+	}
 
+	if (counter_read_gps == SIZE_BUFFER_GPS) {
+		counter_read_gps = 0;
 	}
 
 }
@@ -209,16 +262,17 @@ void EUSCIA0_IRQHandler(void) {
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
-		UartRX[counter_read] = MAP_UART_receiveData(EUSCI_A0_BASE);
-		counter_read++;
+		UartRX[counter_read_pc] = MAP_UART_receiveData(EUSCI_A0_BASE);
+		counter_read_pc++;
 	}
-	if (UartRX[counter_read - 1] == 0x0A && UartRX[counter_read - 2] == 0x0D) {
+	if (UartRX[counter_read_pc - 1] == 0x0A
+			&& UartRX[counter_read_pc - 2] == 0x0D) {
 		UartActivity = true;
 		UartCommands();
 	}
 
-	if (counter_read == 80) {
-		counter_read = 0;
+	if (counter_read_pc == SIZE_BUFFER) {
+		counter_read_pc = 0;
 	}
 
 }

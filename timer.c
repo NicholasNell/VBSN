@@ -56,7 +56,7 @@ static TimerEvent_t *TimerListHead = NULL;
  * \param [IN]  obj Timer object to be become the new head
  * \param [IN]  remainingTime Remaining time of the previous head to be replaced
  */
-static void TimerInsertNewHeadTimer( TimerEvent_t *obj );
+static void TimerInsertNewHeadTimer(TimerEvent_t *obj);
 
 /*!
  * \brief Adds a timer to the list.
@@ -67,14 +67,14 @@ static void TimerInsertNewHeadTimer( TimerEvent_t *obj );
  * \param [IN]  obj Timer object to be added to the list
  * \param [IN]  remainingTime Remaining time of the running head after which the object may be added
  */
-static void TimerInsertTimer( TimerEvent_t *obj );
+static void TimerInsertTimer(TimerEvent_t *obj);
 
 /*!
  * \brief Sets a timeout with the duration "timestamp"
  *
  * \param [IN] timestamp Delay duration
  */
-static void TimerSetTimeout( TimerEvent_t *obj );
+static void TimerSetTimeout(TimerEvent_t *obj);
 
 /*!
  * \brief Check if the Object to be added is not already in the list
@@ -82,9 +82,9 @@ static void TimerSetTimeout( TimerEvent_t *obj );
  * \param [IN] timestamp Delay duration
  * \retval true (the object is already in the list) or false
  */
-static bool TimerExists( TimerEvent_t *obj );
+static bool TimerExists(TimerEvent_t *obj);
 
-void TimerInit( TimerEvent_t *obj, void (*callback)( void *context ) ) {
+void TimerInit(TimerEvent_t *obj, void (*callback)(void *context)) {
 	obj->Timestamp = 0;
 	obj->ReloadValue = 0;
 	obj->IsStarted = false;
@@ -94,19 +94,17 @@ void TimerInit( TimerEvent_t *obj, void (*callback)( void *context ) ) {
 	obj->Next = NULL;
 }
 
-void TimerSetContext( TimerEvent_t *obj, void* context ) {
+void TimerSetContext(TimerEvent_t *obj, void *context) {
 	obj->Context = context;
 }
 
-void TimerStart( TimerEvent_t *obj ) {
+void TimerStart(TimerEvent_t *obj) {
 	uint32_t elapsedTime = 0;
 
-
-	CRITICAL_SECTION_BEGIN( )
-	;
+	CRITICAL_SECTION_BEGIN();
 
 	if ((obj == NULL) || (TimerExists(obj) == true)) {
-		CRITICAL_SECTION_END( );
+		CRITICAL_SECTION_END();
 		return;
 	}
 
@@ -118,31 +116,28 @@ void TimerStart( TimerEvent_t *obj ) {
 		SetTimerContext();
 		// Inserts a timer at time now + obj->Timestamp
 		TimerInsertNewHeadTimer(obj);
-	}
-	else {
+	} else {
 		elapsedTime = GetTimerElapsedTime();
 		obj->Timestamp += elapsedTime;
 
 		if (obj->Timestamp < TimerListHead->Timestamp) {
 			TimerInsertNewHeadTimer(obj);
-		}
-		else {
+		} else {
 			TimerInsertTimer(obj);
 		}
 	}
-	CRITICAL_SECTION_END( );
+	CRITICAL_SECTION_END();
 }
 
-static void TimerInsertTimer( TimerEvent_t *obj ) {
-	TimerEvent_t* cur = TimerListHead;
-	TimerEvent_t* next = TimerListHead->Next;
+static void TimerInsertTimer(TimerEvent_t *obj) {
+	TimerEvent_t *cur = TimerListHead;
+	TimerEvent_t *next = TimerListHead->Next;
 
 	while (cur->Next != NULL) {
 		if (obj->Timestamp > next->Timestamp) {
 			cur = next;
 			next = next->Next;
-		}
-		else {
+		} else {
 			cur->Next = obj;
 			obj->Next = next;
 			return;
@@ -152,8 +147,8 @@ static void TimerInsertTimer( TimerEvent_t *obj ) {
 	obj->Next = NULL;
 }
 
-static void TimerInsertNewHeadTimer( TimerEvent_t *obj ) {
-	TimerEvent_t* cur = TimerListHead;
+static void TimerInsertNewHeadTimer(TimerEvent_t *obj) {
+	TimerEvent_t *cur = TimerListHead;
 
 	if (cur != NULL) {
 		cur->IsNext2Expire = false;
@@ -164,13 +159,13 @@ static void TimerInsertNewHeadTimer( TimerEvent_t *obj ) {
 	TimerSetTimeout(TimerListHead);
 }
 
-bool TimerIsStarted( TimerEvent_t *obj ) {
+bool TimerIsStarted(TimerEvent_t *obj) {
 	return obj->IsStarted;
 }
 
-void TimerIrqHandler( void ) {
-	TimerEvent_t* cur;
-	TimerEvent_t* next;
+void TimerIrqHandler(void) {
+	TimerEvent_t *cur;
+	TimerEvent_t *next;
 
 	uint32_t old = GetTimerContext();
 	uint32_t now = SetTimerContext();
@@ -183,8 +178,7 @@ void TimerIrqHandler( void ) {
 			next = cur->Next;
 			if (next->Timestamp > deltaContext) {
 				next->Timestamp -= deltaContext;
-			}
-			else {
+			} else {
 				next->Timestamp = 0;
 			}
 		}
@@ -212,16 +206,16 @@ void TimerIrqHandler( void ) {
 		TimerSetTimeout(TimerListHead);
 	}
 	stopLoRaTimer();
-	SX1276OnTimeoutIrq(cur->Context);
+	SX1276OnTimeoutIrq();
 
 }
 
-void TimerStop( TimerEvent_t *obj ) {
+void TimerStop(TimerEvent_t *obj) {
 //	CRITICAL_SECTION_BEGIN( )
 //	;
 
-	TimerEvent_t* prev = TimerListHead;
-	TimerEvent_t* cur = TimerListHead;
+	TimerEvent_t *prev = TimerListHead;
+	TimerEvent_t *cur = TimerListHead;
 
 	// List is empty or the obj to stop does not exist
 	if ((TimerListHead == NULL) || (obj == NULL)) {
@@ -239,37 +233,31 @@ void TimerStop( TimerEvent_t *obj ) {
 			if (TimerListHead->Next != NULL) {
 				TimerListHead = TimerListHead->Next;
 				TimerSetTimeout(TimerListHead);
-			}
-			else {
+			} else {
 				StopAlarm();
 				TimerListHead = NULL;
 			}
-		}
-		else // Stop the head before it is started
+		} else // Stop the head before it is started
 		{
 			if (TimerListHead->Next != NULL) {
 				TimerListHead = TimerListHead->Next;
-			}
-			else {
+			} else {
 				TimerListHead = NULL;
 			}
 		}
-	}
-	else // Stop an object within the list
+	} else // Stop an object within the list
 	{
 		while (cur != NULL) {
 			if (cur == obj) {
 				if (cur->Next != NULL) {
 					cur = cur->Next;
 					prev->Next = cur;
-				}
-				else {
+				} else {
 					cur = NULL;
 					prev->Next = cur;
 				}
 				break;
-			}
-			else {
+			} else {
 				prev = cur;
 				cur = cur->Next;
 			}
@@ -278,8 +266,8 @@ void TimerStop( TimerEvent_t *obj ) {
 //	CRITICAL_SECTION_END( );
 }
 
-static bool TimerExists( TimerEvent_t *obj ) {
-	TimerEvent_t* cur = TimerListHead;
+static bool TimerExists(TimerEvent_t *obj) {
+	TimerEvent_t *cur = TimerListHead;
 
 	while (cur != NULL) {
 		if (cur == obj) {
@@ -290,12 +278,12 @@ static bool TimerExists( TimerEvent_t *obj ) {
 	return false;
 }
 
-void TimerReset( TimerEvent_t *obj ) {
+void TimerReset(TimerEvent_t *obj) {
 	TimerStop(obj);
 	TimerStart(obj);
 }
 
-void TimerSetValue( TimerEvent_t *obj, uint32_t value ) {
+void TimerSetValue(TimerEvent_t *obj, uint32_t value) {
 	uint32_t minValue = 0;
 	uint32_t ticks = LoRaTimerMs2Tick(value);
 
@@ -311,12 +299,12 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value ) {
 	obj->ReloadValue = ticks;
 }
 
-TimerTime_t TimerGetCurrentTime( void ) {
+TimerTime_t TimerGetCurrentTime(void) {
 	uint32_t now = GetTimerValue();
 	return LoRaTick2Ms(now);
 }
 
-TimerTime_t TimerGetElapsedTime( TimerTime_t past ) {
+TimerTime_t TimerGetElapsedTime(TimerTime_t past) {
 	if (past == 0) {
 		return 0;
 	}
@@ -327,7 +315,7 @@ TimerTime_t TimerGetElapsedTime( TimerTime_t past ) {
 	return LoRaTick2Ms(nowInTicks - pastInTicks);
 }
 
-static void TimerSetTimeout( TimerEvent_t *obj ) {
+static void TimerSetTimeout(TimerEvent_t *obj) {
 	int32_t minTicks = GetMinimumTimeout();
 	obj->IsNext2Expire = true;
 

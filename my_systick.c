@@ -24,5 +24,5 @@ void SystickInit(uint32_t period, bool *flag) {
 
 void SysTick_Handler(void) {
 	*timerAtempFlag = true;
-	SysTick_disableModule();
+	MAP_SysTick_disableModule();
 }

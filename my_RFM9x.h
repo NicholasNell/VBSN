@@ -444,7 +444,7 @@ void SX1276OnDio5Irq();
 /*!
  * \brief Tx & Rx timeout timer callback
  */
-void SX1276OnTimeoutIrq(void *context);
+void SX1276OnTimeoutIrq();
 
 void SX1276clearIRQFlags(void);
 

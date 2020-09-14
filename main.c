@@ -152,8 +152,9 @@ void RadioInit() {
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
 }
-bool myFlag = false;
-RTC_C_Calendar cal;
+extern bool UartActivityGps;
+extern uint8_t UartRxGPS[];
+extern uint8_t counter_read_gps;
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -163,7 +164,7 @@ int main(void) {
 		printf("ROOT!\n");
 
 	BoardInitMcu();
-//	UARTinitGPS();
+	UARTinitGPS();
 	UARTinitPC();
 
 	RadioInit();
@@ -179,11 +180,13 @@ int main(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
+	uint8_t i = 0;
 	while (1) {
-		cal = RTC_C_getCalendarTime();
-		checkUartActivity();
-		Delayms(10);
-//		PCM_gotoLPM0();
+
+		if (UartActivityGps) {
+			Radio.Send((uint8_t*) UartRxGPS, counter_read_gps);
+			UartGPSCommands();
+		}
 	}
 }
 
@@ -194,13 +197,7 @@ void PORT1_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	/* Toggling the output on the LED */
-
 	if (status & GPIO_PIN1) {
-		myFlag = true;
-//		MACreadySend(data, 5);
-//		Radio.Send("Hello There", 11);
-//		bme280GetData(&bme280Dev, &bme280Data);
-//		getLight(&lux);
 
 	}
 }

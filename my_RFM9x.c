@@ -862,7 +862,7 @@ void SX1276SetSleep(void) {
 	SX1276SetOpMode( RF_OPMODE_SLEEP);
 
 	SX1276.Settings.State = RF_IDLE;
-//	Delayms(99);
+	Delayms(50);
 }
 
 void SX1276SetStby(void) {
@@ -1740,7 +1740,7 @@ void SX1276OnDio5Irq() {
 	}
 }
 
-void SX1276OnTimeoutIrq(void *context) {
+void SX1276OnTimeoutIrq() {
 	uint8_t i = 0;
 	switch (SX1276.Settings.State) {
 	case RF_RX_RUNNING:

@@ -60,11 +60,6 @@ void RtcInit(void) {
 	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
 	MAP_RTC_C_startClock();
 	MAP_Interrupt_enableInterrupt(INT_RTC_C);
-	P4->DIR |= BIT3;
-	P4->SEL1 |= BIT3;
-	P4->SEL0 &= ~BIT3;
-	RTC_C_setCalibrationFrequency(RTC_C_CALIBRATIONFREQ_512HZ);
-	RTC_C_setCalibrationData(RTC_C_CALIBRATION_UP1PPM, 90);
 }
 
 void RTC_C_IRQHandler(void) {
