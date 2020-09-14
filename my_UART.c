@@ -212,8 +212,10 @@ void EUSCIA0_IRQHandler(void) {
 		UartRX[counter_read] = MAP_UART_receiveData(EUSCI_A0_BASE);
 		counter_read++;
 	}
-	if (UartRX[counter_read - 1] == 0x0A && UartRX[counter_read - 2] == 0x0D)
+	if (UartRX[counter_read - 1] == 0x0A && UartRX[counter_read - 2] == 0x0D) {
 		UartActivity = true;
+		UartCommands();
+	}
 
 	if (counter_read == 80) {
 		counter_read = 0;
