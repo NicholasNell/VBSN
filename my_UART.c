@@ -7,7 +7,10 @@
 
 #include <bme280.h>
 #include <bme280_defs.h>
+#include <my_gpio.h>
+#include <my_gps.h>
 #include <my_RFM9x.h>
+#include <my_timer.h>
 #include <MAX44009.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +24,8 @@
 
 #define SIZE_BUFFER 80
 #define SIZE_BUFFER_GPS 255
+#define GPS_ON
+#define GPS_OFF
 
 uint8_t counter_read_pc = 0; //UART receive buffer counter
 uint8_t counter_read_gps = 0;
@@ -30,9 +35,10 @@ char UartRX[SIZE_BUFFER]; //Uart receive buffer
 char UartRxGPS[SIZE_BUFFER_GPS]; //Uart receive buffer
 extern struct bme280_data bme280Data;
 extern struct bme280_dev bme280Dev;
+locationData gpsData;
 
 extern float lux;
-
+extern Gpio_t Led_rgb_blue;
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 //UART configured for 9600 Baud
 const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
@@ -48,17 +54,28 @@ const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCL
 		};
 
 void UARTinitGPS() {
+	GPS_ON
+	gpsData.lat = 0.0;
+	gpsData.latHem = 0x1;
+	gpsData.lon = 0.0;
+	gpsData.lonHem = 0x0;
+	Delayms(1000);
 	/* Selecting P1.2 and P1.3 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9,
 	GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
 	MAP_UART_initModule(EUSCI_A3_BASE, &uartConfig);
 	MAP_UART_enableModule(EUSCI_A3_BASE);
+	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
+	Delayms(1000);
+	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");	// only enable GLL for now
+	Delayms(100);
+	sendUARTgps("$PCAS11,1*1C\r\n");	// set in stationary mode
+	Delayms(100);
+	sendUARTgps("$PCAS00*01\r\n");	// save configuration to gps flash
 
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
-
-	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0,0,0,,,0,0*0B\r\n");
 
 }
 void UARTinitPC() {
@@ -90,7 +107,7 @@ void sendUARTgps(char *buffer) {
 	}
 	uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P9);
 	GPIO_clearInterruptFlag(GPIO_PORT_P9, status);
-	// write_string_toSD(buffer);
+// write_string_toSD(buffer);
 }
 
 void send_uart_integer(uint32_t integer) {
@@ -224,24 +241,29 @@ void UartGPSCommands() {
 	 */
 
 	if (UartActivityGps) {
-		const char s[2] = ",";
+//		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+
+		const char c[2] = ",";
 		const char a[2] = "*";
-		char *CSV;
+		char *dummyGPS =
+				"$GNGLL\03355.70225,S,01851.99155,E,065407.000,A,A*54\r\n";
 		char *CMD;
-		CSV = strtok(UartRxGPS, s); //1
+		CMD = strtok(UartRxGPS, a); //1
+//		sendUARTpc(CMD);
+//		sendUARTpc("\r\n");
 		UartActivityGps = false;
 
-		if (!memcmp(CSV, "$GNGLL", 6)) {
-			CMD = strtok(UartRxGPS, a);
-			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+		if (!memcmp(CMD, "$GNGLL", 6)) {
+//			$--GLL,ddmm.mm,a,dddmm.mm,a,hhmmss.ss,A,x*hh<CR><LF>
+//			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 			if (strpbrk(CMD, "A")) {
-				char *temp;
-				memcpy(temp, CSV, 2);
+				char *temp = { 0 };
+				memcpy(temp, CMD, 2);
 				uint8_t hr = atoi(temp);
-				memcpy(temp, CSV + 8, 2);
+//				memcpy(temp, CSV + 8, 2);
 			}
 
-		} else if (false) {
+		} else if (!memcmp(CMD, "$GNZDA", 6)) {
 
 		} else {
 
@@ -256,6 +278,7 @@ void EUSCIA3_IRQHandler(void) {
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
 		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(EUSCI_A3_BASE);
+		MAP_UART_transmitData(EUSCI_A0_BASE, UartRxGPS[counter_read_gps]);
 		counter_read_gps++;
 	}
 	if (UartRxGPS[counter_read_gps - 1] == 0x0A

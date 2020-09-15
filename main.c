@@ -164,8 +164,8 @@ int main(void) {
 		printf("ROOT!\n");
 
 	BoardInitMcu();
-	UARTinitGPS();
 	UARTinitPC();
+	UARTinitGPS();
 
 	RadioInit();
 
@@ -180,6 +180,7 @@ int main(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
+
 	while (1) {
 
 	}
