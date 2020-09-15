@@ -39,6 +39,8 @@ locationData gpsData;
 
 extern float lux;
 extern Gpio_t Led_rgb_blue;
+extern bool setTimeFlag;
+extern RTC_C_Calendar currentTime;
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 //UART configured for 9600 Baud
 const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
@@ -56,9 +58,7 @@ const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCL
 void UARTinitGPS() {
 	GPS_ON
 	gpsData.lat = 0.0;
-	gpsData.latHem = 0x1;
 	gpsData.lon = 0.0;
-	gpsData.lonHem = 0x0;
 	Delayms(1000);
 	/* Selecting P1.2 and P1.3 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9,
@@ -67,7 +67,8 @@ void UARTinitGPS() {
 	MAP_UART_enableModule(EUSCI_A3_BASE);
 	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(1000);
-	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");	// only enable GLL for now
+//	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");	// only enable GLL for now
+	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
 	Delayms(100);
 	sendUARTgps("$PCAS11,1*1C\r\n");	// set in stationary mode
 	Delayms(100);
@@ -241,14 +242,14 @@ void UartGPSCommands() {
 	 */
 
 	if (UartActivityGps) {
-//		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 
 		const char c[2] = ",";
 		const char a[2] = "*";
-		char *dummyGPS =
-				"$GNGLL\03355.70225,S,01851.99155,E,065407.000,A,A*54\r\n";
+//		char *dummyGPS =
+//				"$GNGLL,3355.70225,S,01851.99155,E,065407.000,A,A*54\r\n";
 		char *CMD;
-		CMD = strtok(UartRxGPS, a); //1
+		CMD = strtok(UartRxGPS, a);
 //		sendUARTpc(CMD);
 //		sendUARTpc("\r\n");
 		UartActivityGps = false;
@@ -257,13 +258,98 @@ void UartGPSCommands() {
 //			$--GLL,ddmm.mm,a,dddmm.mm,a,hhmmss.ss,A,x*hh<CR><LF>
 //			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 			if (strpbrk(CMD, "A")) {
-				char *temp = { 0 };
-				memcpy(temp, CMD, 2);
-				uint8_t hr = atoi(temp);
-//				memcpy(temp, CSV + 8, 2);
+				float deg = 0.0;
+				float min = 0.0;
+				CMD = strtok(UartRxGPS, c);
+				CMD = strtok(NULL, c);
+
+				char tempDeg[2] = { 0 };
+				tempDeg[0] = CMD[0];
+				tempDeg[1] = CMD[1];
+				deg = atoi(tempDeg);
+
+				char tempMin[8] = { 0 };
+				memcpy(tempMin, &CMD[2], 8);
+				min = atof(tempMin);
+
+				min = min / 60.0;
+				deg += min;
+				gpsData.lat = deg;
+				CMD = strtok(NULL, c);
+
+				if (strpbrk(CMD, "N")) {
+
+				} else if (strpbrk(CMD, "S")) {
+					gpsData.lat *= -1;
+				}
+
+				CMD = strtok(NULL, c);
+
+				char temp[3] = { 0 };
+				memcpy(temp, CMD, 3);
+				deg = 0;
+				deg = atoi(temp);
+
+				memset(tempMin, 0, 8);
+				memcpy(tempMin, &CMD[3], 8);
+				min = atof(tempMin);
+
+				min = min / 60.0;
+				deg += min;
+				gpsData.lon = deg;
+
+				CMD = strtok(NULL, c);
+
+				if (strpbrk(CMD, "E")) {
+
+				} else if (strpbrk(CMD, "W")) {
+					gpsData.lon *= -1;
+
+				}
+//				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
+
+				char s[23];
+				sprintf(s, "%f,%f", gpsData.lat, gpsData.lon);
+				SX1276Send((uint8_t*) s, strlen(s));
 			}
 
 		} else if (!memcmp(CMD, "$GNZDA", 6)) {
+//				$--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh
+			CMD = strtok(UartRxGPS, c);
+			CMD = strtok(NULL, c);
+			uint8_t hr;
+			uint8_t min;
+			uint8_t sec;
+			uint8_t day;
+			uint8_t month;
+			uint16_t year;
+
+			char s[5];
+			memset(s, 0, 5);
+			sprintf(s, "%c%c", CMD[0], CMD[1]);
+			hr = strtol(s, NULL, 16);
+			memset(s, 0, 5);
+			sprintf(s, "%c%c", CMD[2], CMD[3]);
+			min = strtol(s, NULL, 16);
+			memset(s, 0, 5);
+			sprintf(s, "%c%c", CMD[4], CMD[5]);
+			sec = strtol(s, NULL, 16);
+			CMD = strtok(NULL, c);
+			day = strtol(CMD, NULL, 16);
+			CMD = strtok(NULL, c);
+			month = strtol(CMD, NULL, 16);
+			;
+			CMD = strtok(NULL, c);
+			year = strtol(CMD, NULL, 16);
+			setTimeFlag = true;
+			currentTime.dayOfmonth = day;
+			currentTime.hours = hr;
+			currentTime.minutes = min;
+			currentTime.month = month;
+			currentTime.year = year;
+			currentTime.seconds = sec + 0x01;
+			RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
+			sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
 
 		} else {
 
@@ -278,7 +364,7 @@ void EUSCIA3_IRQHandler(void) {
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
 		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(EUSCI_A3_BASE);
-		MAP_UART_transmitData(EUSCI_A0_BASE, UartRxGPS[counter_read_gps]);
+//		MAP_UART_transmitData(EUSCI_A0_BASE, UartRxGPS[counter_read_gps]);
 		counter_read_gps++;
 	}
 	if (UartRxGPS[counter_read_gps - 1] == 0x0A

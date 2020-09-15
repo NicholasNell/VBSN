@@ -180,8 +180,9 @@ void SystemClockConfig(void) {
 	 * SMCLK: 	use with SPI and TIMER_A
 	 */
 	MAP_CS_setReferenceOscillatorFrequency(REFO_FREQ);
-	MAP_CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ); //LFXT_FREQ
-//	MAP_CS_startLFXT(CS_LFXT_DRIVE3);
+	CS_setExternalClockSourceFrequency(32768, HFXT_FREQ); //LFXT_FREQ
+	/* Starting LFXT in non-bypass mode without a timeout. */
+//	CS_startLFXT(CS_LFXT_DRIVE2);
 	MAP_FPU_enableModule(); // makes sure the FPU is enabled before DCO frequency tuning
 	MAP_CS_setDCOFrequency(1500000);
 

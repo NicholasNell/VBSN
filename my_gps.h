@@ -13,9 +13,7 @@
 
 typedef struct {
 	float lat;
-	uint8_t latHem :1;
 	float lon;
-	uint8_t lonHem :1;
 } locationData;
 
 #endif /* MY_GPS_H_ */
