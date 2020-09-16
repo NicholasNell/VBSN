@@ -15,20 +15,39 @@
 #define RH_MAX_MESSAGE_LEN 255
 
 typedef struct {
-	uint8_t dest;
-	uint8_t source;
-	MessageType_t messageType;
-	uint16_t nextWake;
-	uint8_t len;
+	uint8_t dest; // Where the message needs to go (MAC LAYER, not final destination);
+	uint8_t source;	// Where the message came from, not original source
+	uint8_t msgID;	// Msg ID. Unique message number.
+	uint8_t flags;	// message type:
+					//	RTS:	0x1
+					// 	CTS:	0x2
+					// 	SYNC:	0x3
+					// 	Data:	0x4
+					// 	Ack:	0x5
 } header_t;
 
 typedef struct {
+	uint8_t min; // Minute of the hour this node starts its cycle (i.e: min=1; will sleep until 20 and send a data packet on 21;)
+} syncPacket_t;
+
+typedef struct {
+	float lat;
+	float lon;
+	float temp;
+	float hum;
+	float press;
+	float lux;
+	float tim;
+	float soilMoisture;
+} msgData_t;
+
+typedef struct {
 	header_t header;
-	uint8_t *data;
+	msgData_t data;
 } datagram_t;
 
 bool datagramInit();
-void createDatagram(MessageType_t messageType, uint8_t *data);
+void createDatagram();
 void datagramToArray();
 bool ArrayToDatagram();
 

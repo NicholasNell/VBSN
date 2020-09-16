@@ -34,25 +34,26 @@
  * Author: Nicholas
  *******************************************************************************/
 /* DriverLib Includes */
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
-#include <ti/drivers/GPIO.h>
-#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 
-/* Standard Includes */
-#include "main.h"
-#include <stdio.h>
-#include "board.h"
-#include "my_MAC.h"
-#include <string.h>
-#include "sx1276Regs-Fsk.h"
-#include "sx1276Regs-LoRa.h"
-#include "my_spi.h"
-#include "bme280.h"
-#include "MAX44009.h"
-#include "my_UART.h"
-#include "my_RFM9x.h"
-#include "my_gpio.h"
+#include <bme280.h>
+#include <bme280_defs.h>
+#include <board.h>
+#include <datagram.h>
+#include <main.h>
+#include <my_gpio.h>
+#include <my_MAC.h>
+#include <my_RFM9x.h>
+#include <my_spi.h>
 #include <my_timer.h>
+#include <my_UART.h>
+#include <MAX44009.h>
+#include <radio.h>
+#include <stdio.h>
+#include <string.h>
+#include <sx1276Regs-Fsk.h>
+#include <ti/devices/msp432p4xx/driverlib/gpio.h>
+#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 
 // Uncomment for debug out sendUARTpc
 //#define DEBUG
@@ -152,12 +153,12 @@ void RadioInit() {
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
 }
-extern bool UartActivityGps;
-extern uint8_t UartRxGPS[];
-extern uint8_t counter_read_gps;
+
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
+
+	uint8_t size;
 
 	bool isRoot = false;
 	if (isRoot)
@@ -182,6 +183,9 @@ int main(void) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 	while (1) {
+		Radio.Rx(1000);
+		Delayms(30000);
+		Delayms(30000);
 
 	}
 }

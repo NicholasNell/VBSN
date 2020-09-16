@@ -25,10 +25,6 @@ typedef enum {
 	SYNC_MAC, MAC_SLEEP, NODE_DISC, MAC_RTS, MAC_CTS, MAC_DATA
 } MACappState_t;
 
-typedef enum {
-	SYNC = 0, ACK, DATA, RTS, CTS
-} MessageType_t;
-
 typedef struct {
 	uint8_t nodeID;	// Node ID to which this schedule belongs
 	uint32_t sleepTime;	// Time until next wake period
@@ -40,7 +36,7 @@ void MACreadySend(uint8_t *dataToSend, uint8_t datalen);
 
 bool MACStateMachine();
 
-bool MACSend(MessageType_t messageType, uint8_t *data, uint8_t len);
+bool MACSend();
 
 bool MACRx(uint32_t timeout);
 

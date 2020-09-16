@@ -82,20 +82,8 @@ static void scheduleSetup() {
 	mySchedule.sleepTime = _sleepTime;
 }
 
-bool MACSend(MessageType_t messageType, uint8_t *data, uint8_t len) {
-	_dataLen = len;
-	createDatagram(messageType, data);
-	datagramToArray();
-//	startLoRaTimer(5000);
-	Radio.Send(TXBuffer, sizeof(myDatagram.header) + _dataLen);
-	RadioState = TX;
-	while (true) {
-		if (RadioState == TXDONE) {
-			return true;
-		} else if (RadioState == TXTIMEOUT) {
-			return false;
-		}
-	}
+bool MACSend() {
+
 }
 
 bool MACRx(uint32_t timeout) {
@@ -118,8 +106,8 @@ bool MACRx(uint32_t timeout) {
 
 static bool processRXBuffer() {
 	if (ArrayToDatagram()) {
-		switch (rxdatagram.header.messageType) {
-		case SYNC: {
+		switch (rxdatagram.header.flags) {
+		case 0x01: {
 //				syncSchedule();
 			bool containsNode = false;
 			uint8_t i = 0;
@@ -134,11 +122,11 @@ static bool processRXBuffer() {
 			}
 		}
 			break;
-		case DATA:
+		case 0x02:
 			break;
-		case RTS:
+		case 0x03:
 			break;
-		case CTS:
+		case 0x04:
 			break;
 		default:
 			break;
@@ -151,107 +139,19 @@ static bool processRXBuffer() {
 static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
-		case NODE_DISC: {
-			bool rxSyncMsg = MACRx(SLEEP_TIME);
-			startTimer32Counter(SLEEP_TIME, &discFlag);
-			while (!discFlag) {
-				if (rxSyncMsg) {
-					rxSyncMsg = false;
-					rxSyncMsg = MACRx(SLEEP_TIME);
-				}
-			}
-			return true;
-		}
+		case NODE_DISC:
+			break;
 		case MAC_SLEEP:
-			if (sleepFlag) {
-				sleepFlag = false;
-				MACState = SYNC_MAC;
-
-			} else {
-				return false;
-			}
 			break;
 		case SYNC_MAC:
-			Delayms(10);
-			if (MACSend(SYNC, emptyArray, 0)) {
-				MACState = MAC_RTS;
-			} else {
-				SX1276SetSleep();
-				MACState = MAC_SLEEP;
-			}
-			if (hasData) {
-//				Delayms(10);
-//				if (MACSend(SYNC, emptyArray, 0)) {
-//					MACState = MAC_RTS;
-//				} else {
-//					SX1276SetSleep();
-//					MACState = MAC_SLEEP;
-//				}
-			} else {
-				if (MACRx(100)) {
-					MACState = MAC_RTS;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			}
 			break;
 		case MAC_RTS:
-			if (hasData) {
-				Delayms(10);
-				if (MACSend(RTS, emptyArray, 0)) {
-					MACState = MAC_CTS;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			} else {
-				if (MACRx(100)) {
-					MACState = MAC_CTS;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			}
 			break;
 		case MAC_CTS:
-			if (hasData) {
-				if (MACRx(100)) {
-					MACState = MAC_DATA;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			} else {
-				Delayms(10);
-				if (MACSend(CTS, emptyArray, 0)) {
-					MACState = MAC_DATA;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			}
 			break;
 		case MAC_DATA:
-			if (hasData) {
-				Delayms(10);
-				if (MACSend(DATA, txDataArray, 5)) {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-					hasData = false;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			} else {
-				if (MACRx(200)) {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				} else {
-					SX1276SetSleep();
-					MACState = MAC_SLEEP;
-				}
-			}
+			break;
+		default:
 			break;
 		}
 	}
