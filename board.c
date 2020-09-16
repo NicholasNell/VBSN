@@ -179,16 +179,20 @@ void SystemClockConfig(void) {
 	 * ACLK:	use with TIMER_A and SPI
 	 * SMCLK: 	use with SPI and TIMER_A
 	 */
-	MAP_CS_setReferenceOscillatorFrequency(REFO_FREQ);
-	CS_setExternalClockSourceFrequency(32768, HFXT_FREQ); //LFXT_FREQ
+	/* Configuring pins for peripheral/crystal usage and LED for output */
+	MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
+	GPIO_PIN0 | GPIO_PIN1, GPIO_PRIMARY_MODULE_FUNCTION);
+	CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ); //LFXT_FREQ
 	/* Starting LFXT in non-bypass mode without a timeout. */
-//	CS_startLFXT(CS_LFXT_DRIVE2);
+	CS_startLFXT(CS_LFXT_DRIVE3);
+	MAP_CS_setReferenceOscillatorFrequency(REFO_FREQ);
+
 	MAP_FPU_enableModule(); // makes sure the FPU is enabled before DCO frequency tuning
 	MAP_CS_setDCOFrequency(1500000);
 
 	MAP_CS_initClockSignal(CS_ACLK, ACLK_SOURCE, ACLK_DIV); //128kHz
 	MAP_CS_initClockSignal(CS_MCLK, MCLK_SOURCE, MCLK_DIV); // 1.5MHz
-	MAP_CS_initClockSignal(CS_HSMCLK, HSMCLK_SOURCE, HSMCLK_DIV); // 24MHz
+//	MAP_CS_initClockSignal(CS_HSMCLK, HSMCLK_SOURCE, HSMCLK_DIV); // 24MHz
 	MAP_CS_initClockSignal(CS_SMCLK, SMCLK_SOURCE, SMCLK_DIV);
 	MAP_CS_initClockSignal(CS_BCLK, CS_LFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 

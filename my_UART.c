@@ -250,8 +250,6 @@ void UartGPSCommands() {
 //				"$GNGLL,3355.70225,S,01851.99155,E,065407.000,A,A*54\r\n";
 		char *CMD;
 		CMD = strtok(UartRxGPS, a);
-//		sendUARTpc(CMD);
-//		sendUARTpc("\r\n");
 		UartActivityGps = false;
 
 		if (!memcmp(CMD, "$GNGLL", 6)) {
@@ -306,7 +304,7 @@ void UartGPSCommands() {
 					gpsData.lon *= -1;
 
 				}
-//				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
+				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
 
 				char s[23];
 				sprintf(s, "%f,%f", gpsData.lat, gpsData.lon);
@@ -316,7 +314,19 @@ void UartGPSCommands() {
 		} else if (!memcmp(CMD, "$GNZDA", 6)) {
 //				$--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh
 			CMD = strtok(UartRxGPS, c);
+			if (!memcmp(CMD, "*", sizeof(CMD))) {
+				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+				counter_read_gps = 0;
+				return;
+			}
 			CMD = strtok(NULL, c);
+			if (!memcmp(CMD, "*", sizeof(CMD))) {
+				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+				counter_read_gps = 0;
+				return;
+			}
 			uint8_t hr;
 			uint8_t min;
 			uint8_t sec;
@@ -335,11 +345,29 @@ void UartGPSCommands() {
 			sprintf(s, "%c%c", CMD[4], CMD[5]);
 			sec = strtol(s, NULL, 16);
 			CMD = strtok(NULL, c);
+			if (!memcmp(CMD, "*", sizeof(CMD))) {
+				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+				counter_read_gps = 0;
+				return;
+			}
 			day = strtol(CMD, NULL, 16);
 			CMD = strtok(NULL, c);
+			if (!memcmp(CMD, "*", sizeof(CMD))) {
+				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+				counter_read_gps = 0;
+				return;
+			}
 			month = strtol(CMD, NULL, 16);
-			;
+
 			CMD = strtok(NULL, c);
+			if (!memcmp(CMD, "*", sizeof(CMD))) {
+				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+				counter_read_gps = 0;
+				return;
+			}
 			year = strtol(CMD, NULL, 16);
 			setTimeFlag = true;
 			currentTime.dayOfmonth = day;
@@ -347,8 +375,10 @@ void UartGPSCommands() {
 			currentTime.minutes = min;
 			currentTime.month = month;
 			currentTime.year = year;
-			currentTime.seconds = sec + 0x01;
+			currentTime.seconds = sec;
+			MAP_RTC_C_holdClock();
 			RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
+			MAP_RTC_C_startClock();
 			sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
 
 		} else {
