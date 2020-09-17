@@ -24,6 +24,7 @@ typedef struct {
 					// 	SYNC:	0x3
 					// 	Data:	0x4
 					// 	Ack:	0x5
+					// 	Disc:  	0x6
 } header_t;
 
 typedef struct {

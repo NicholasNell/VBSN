@@ -40,6 +40,7 @@
 #include <board.h>
 #include <datagram.h>
 #include <main.h>
+#include <my_flash.h>
 #include <my_gpio.h>
 #include <my_MAC.h>
 #include <my_rtc.h>
@@ -49,6 +50,7 @@
 #include <my_UART.h>
 #include <MAX44009.h>
 #include <radio.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <sx1276Regs-Fsk.h>
@@ -90,6 +92,7 @@ extern Gpio_t Led_rgb_green;	//GREEN
 extern Gpio_t Led_rgb_blue;		//BLUE
 extern Gpio_t Led_user_red;
 
+extern uint8_t _nodeID;
 // MAC layer state
 extern volatile MACRadioState_t RadioState;
 
@@ -203,6 +206,11 @@ int main(void) {
 //
 //	}
 	// Initialise the MAC protocol
+//	flashEraseAll();
+	_nodeID = 0xFF;
+	uint32_t sectorNum = 0;
+	uint32_t bankNum = 0;
+
 	MacInit();
 
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);

@@ -4,6 +4,7 @@
  *  Created on: 02 Apr 2020
  *      Author: Nicholas
  */
+#include <my_flash.h>
 #include <my_gps.h>
 #include <my_UART.h>
 #include <stdio.h>
@@ -37,7 +38,7 @@ uint16_t _CTSTime;
 uint16_t _dataTime;
 uint16_t _syncTime;	// The time it takes to send a SYNC message in ms, node will use this to listen initially.
 uint32_t _ranNum;
-volatile uint8_t _nodeID;
+uint8_t _nodeID;
 volatile uint8_t _dataLen;
 volatile uint8_t _numNeighbours;
 volatile uint32_t _sleepTime;
@@ -59,11 +60,21 @@ static bool processRXBuffer();
 static bool stateMachine();
 
 void MacInit() {
-	uint8_t tempLat = (int32_t) (gpsData.lat * 1000000) % (int32_t) gpsData.lon;
-	uint8_t tempLon = (int32_t) (gpsData.lon * 1000000) % (int32_t) gpsData.lat;
-	_nodeID = tempLat + tempLon;
-	if (_nodeID == 0xff) {
-		_nodeID = _nodeID % tempLat;
+	uint8_t tempID;
+	readVarFromFlash(&tempID, 1, NODE_ID_LOCATION);
+	if (tempID == 0xFF || tempID == 0x00) {
+		uint8_t tempLat = (int32_t) (gpsData.lat * 1000000)
+				% (int32_t) gpsData.lon;
+		uint8_t tempLon = (int32_t) (gpsData.lon * 1000000)
+				% (int32_t) gpsData.lat;
+		_nodeID = tempLat + tempLon;
+		if (_nodeID == 0xff) {
+			_nodeID = _nodeID % tempLat;
+		}
+		_nodeID = 12;
+		writeVarToFlash(&_nodeID, 1, NODE_ID_LOCATION);
+	} else {
+		_nodeID = tempID;
 	}
 	_numNeighbours = 0;
 	_sleepTime = SLEEP_TIME;
