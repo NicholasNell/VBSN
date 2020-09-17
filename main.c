@@ -42,6 +42,7 @@
 #include <main.h>
 #include <my_gpio.h>
 #include <my_MAC.h>
+#include <my_rtc.h>
 #include <my_RFM9x.h>
 #include <my_spi.h>
 #include <my_timer.h>
@@ -58,31 +59,38 @@
 // Uncomment for debug out sendUARTpc
 //#define DEBUG
 
-uint8_t TXBuffer[255] = { 0 };
+//uint8_t TXBuffer[255] = { 0 };
 uint8_t RXBuffer[255] = { 0 };
 volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
-
-uint32_t value;
 
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
 
+// Sensor Data Variables
 struct bme280_data bme280Data;
 struct bme280_dev bme280Dev;
 float lux;
 
-extern bool TxFlag;
+// Sensor Availability:
+bool bme280Working = false;
+bool lightSensorWorking = false;
+bool gpsWorking = false;
+
+// Radio Module status flag:
+bool rfm95Working = false;
 
 /*!
  * Radio events function pointer
  */
 static RadioEvents_t RadioEvents;
 
+// MSP432 Developments board LED's
 extern Gpio_t Led_rgb_red;	//RED
 extern Gpio_t Led_rgb_green;	//GREEN
 extern Gpio_t Led_rgb_blue;		//BLUE
 extern Gpio_t Led_user_red;
 
+// MAC layer state
 extern volatile MACRadioState_t RadioState;
 
 void printRegisters(void);
@@ -119,13 +127,18 @@ void RadioInit() {
 	RadioEvents.TxTimeout = OnTxTimeout;
 	RadioEvents.RxTimeout = OnRxTimeout;
 	RadioEvents.RxError = OnRxError;
-	Radio.Init(&RadioEvents);
 
 	// detect radio hardware
-	while (Radio.Read(REG_VERSION) == 0x00) {
+	if (Radio.Read(REG_VERSION) == 0x00) {
 		sendUARTpc("Radio could not be detected!\n\r");
-		Delayms(1000);
+		rfm95Working = false;
+		BoardResetMcu();
+		return;
+	} else {
+		rfm95Working = true;
 	}
+
+	Radio.Init(&RadioEvents);
 
 	Radio.SetTxConfig(MODEM_LORA,
 	TX_OUTPUT_POWER,
@@ -158,24 +171,39 @@ int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
-	uint8_t size;
-
 	bool isRoot = false;
 	if (isRoot)
 		printf("ROOT!\n");
 
+	// Initialise all ports and communication protocols
 	BoardInitMcu();
+
+	// Initialise UART to PC
 	UARTinitPC();
+
+	//Initialise UART to GPS;
 	UARTinitGPS();
 
+	// Initialise the RFM95 Radio Module
 	RadioInit();
 
-	MacInit();
+	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
+		bme280GetData(&bme280Dev, &bme280Data);
+		bme280Working = true;
+	} else {
+		bme280Working = false;
+	}
 
-	bme280UserInit(&bme280Dev, &bme280Data);
-	bme280GetData(&bme280Dev, &bme280Data);
-	initMAX();
-	getLight(&lux);
+	lightSensorWorking = initMAX();
+	if (lightSensorWorking) {
+		getLight(&lux);
+	}
+
+//	while (!gpsWorking) {
+//
+//	}
+	// Initialise the MAC protocol
+	MacInit();
 
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
@@ -183,9 +211,6 @@ int main(void) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 	while (1) {
-		Radio.Rx(1000);
-		Delayms(30000);
-		Delayms(30000);
 
 	}
 }
@@ -196,7 +221,6 @@ void PORT1_IRQHandler(void) {
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
-	/* Toggling the output on the LED */
 	if (status & GPIO_PIN1) {
 
 	}

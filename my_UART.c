@@ -9,6 +9,7 @@
 #include <bme280_defs.h>
 #include <my_gpio.h>
 #include <my_gps.h>
+#include <my_rtc.h>
 #include <my_RFM9x.h>
 #include <my_timer.h>
 #include <MAX44009.h>
@@ -41,6 +42,8 @@ extern float lux;
 extern Gpio_t Led_rgb_blue;
 extern bool setTimeFlag;
 extern RTC_C_Calendar currentTime;
+
+extern bool gpsWorking;
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 //UART configured for 9600 Baud
 const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
@@ -60,12 +63,12 @@ void UARTinitGPS() {
 	gpsData.lat = 0.0;
 	gpsData.lon = 0.0;
 	Delayms(1000);
-	/* Selecting P1.2 and P1.3 in UART mode */
+	/* Selecting P9.6 and P9.7 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9,
 	GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
 	MAP_UART_initModule(EUSCI_A3_BASE, &uartConfig);
 	MAP_UART_enableModule(EUSCI_A3_BASE);
-	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
+//	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(1000);
 //	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");	// only enable GLL for now
 	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
@@ -256,6 +259,7 @@ void UartGPSCommands() {
 //			$--GLL,ddmm.mm,a,dddmm.mm,a,hhmmss.ss,A,x*hh<CR><LF>
 //			SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 			if (strpbrk(CMD, "A")) {
+				gpsWorking = true;
 				float deg = 0.0;
 				float min = 0.0;
 				CMD = strtok(UartRxGPS, c);
@@ -304,6 +308,8 @@ void UartGPSCommands() {
 					gpsData.lon *= -1;
 
 				}
+				sendUARTgps("$PCAS00*01\r\n"); // save configuration to gps flash
+
 				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
 
 				char s[23];
@@ -377,9 +383,9 @@ void UartGPSCommands() {
 			currentTime.year = year;
 			currentTime.seconds = sec;
 			MAP_RTC_C_holdClock();
-			RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
-			MAP_RTC_C_startClock();
-			sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+			RtcInit();
+
+//			sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
 
 		} else {
 

@@ -46,6 +46,7 @@ void RTC_C_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
+	MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN2);
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 		minutes--;

@@ -4,6 +4,9 @@
  *  Created on: 02 Apr 2020
  *      Author: Nicholas
  */
+#include <my_gps.h>
+#include <my_UART.h>
+#include <stdio.h>
 #include "my_MAC.h"
 #include "datagram.h"
 #include "my_timer.h"
@@ -44,6 +47,8 @@ volatile MACRadioState_t RadioState;
 extern uint8_t TXBuffer[MAX_MESSAGE_LEN];
 uint8_t txDataArray[MAX_MESSAGE_LEN];
 
+extern locationData gpsData;
+
 static void scheduleSetup();
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -54,13 +59,18 @@ static bool processRXBuffer();
 static bool stateMachine();
 
 void MacInit() {
-	do {
-		uint8_t temp = SX1276Random8Bit();
-		_nodeID = temp;
-		_ranNum = (uint16_t) (temp * 86) + 10000;
-	} while (_nodeID == 0xFF);
+	uint8_t tempLat = (int32_t) (gpsData.lat * 1000000) % (int32_t) gpsData.lon;
+	uint8_t tempLon = (int32_t) (gpsData.lon * 1000000) % (int32_t) gpsData.lat;
+	_nodeID = tempLat + tempLon;
+	if (_nodeID == 0xff) {
+		_nodeID = _nodeID % tempLat;
+	}
 	_numNeighbours = 0;
 	_sleepTime = SLEEP_TIME;
+	SX1276Send((uint8_t*) "MACINIT", 7);
+	char s[3] = { 0 };
+	sprintf(s, "%d", _nodeID);
+	SX1276Send((uint8_t*) _nodeID, 1);
 	scheduleSetup();
 }
 

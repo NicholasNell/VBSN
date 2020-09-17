@@ -66,7 +66,6 @@ void BoardInitMcu(void) {
 	SystemClockConfig();
 
 	DelayTimerInit();
-	RtcInit();
 
 	i2cInit();
 
@@ -80,13 +79,6 @@ void BoardInitMcu(void) {
 	GpioInit(&Led_user_red,
 	LED_USER_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 
-	UsbIsConnected = true;
-
-	if (GetBoardPowerSource() == BATTERY_POWER) {
-		// Disables OFF mode - Enables lowest power mode (STOP)
-//            PCM_setPowerState(PCM_LPM3);
-	}
-
 	SX1276IoInit();
 	SX1276IoIrqInit();
 
@@ -95,9 +87,6 @@ void BoardInitMcu(void) {
 	GpioWrite(&Led_rgb_blue, 0);
 	GpioWrite(&Led_user_red, 0);
 
-	/*	if (McuInitialized == false) {
-	 McuInitialized = true;
-	 }*/
 }
 
 void BoardResetMcu(void) {
@@ -179,7 +168,7 @@ void SystemClockConfig(void) {
 	 * ACLK:	use with TIMER_A and SPI
 	 * SMCLK: 	use with SPI and TIMER_A
 	 */
-	/* Configuring pins for peripheral/crystal usage and LED for output */
+	/* Configuring pins for peripheral/crystal usage */
 	MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
 	GPIO_PIN0 | GPIO_PIN1, GPIO_PRIMARY_MODULE_FUNCTION);
 	CS_setExternalClockSourceFrequency(LFXT_FREQ, HFXT_FREQ); //LFXT_FREQ

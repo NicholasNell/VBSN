@@ -8,6 +8,8 @@
 #ifndef MAX44009_H_
 #define MAX44009_H_
 
+#include <stdbool.h>
+
 // Register Defines
 #define MAX44009_ADDR 0x4A
 #define MAX44009_INT_STATUS 0x00
@@ -30,7 +32,7 @@
 #define MAX44009_ON {MAX44009_POWER_PORT->DIR |= MAX44009_POWER_PIN;	MAX44009_POWER_PORT->OUT |= MAX44009_POWER_PIN;}
 #define MAX44009_OFF {MAX44009_POWER_PORT->OUT &= ~MAX44009_POWER_PIN;}
 
-void initMAX();
+bool initMAX();
 void getLight(float *lux);
 
 #endif /* MAX44009_H_ */
