@@ -7,6 +7,7 @@
 
 #include <bme280.h>
 #include <bme280_defs.h>
+#include <math.h>
 #include <my_gpio.h>
 #include <my_gps.h>
 #include <my_rtc.h>
@@ -69,7 +70,8 @@ void UARTinitGPS() {
 	MAP_UART_enableModule(EUSCI_A3_BASE);
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(1000);
-	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n"); // only enable GLL until lock is found
+//	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n"); // only enable GLL until lock is found
+	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	Delayms(100);
 	sendUARTgps("$PCAS11,1*1C\r\n");	// set in stationary mode
 	Delayms(100);
@@ -231,17 +233,6 @@ bool returnUartActivity() {
 }
 
 void UartGPSCommands() {
-	/*const char s[2] = ",";
-	 char *token;
-	 token = strtok(UartRX, s); // UartRX[0]
-	 token = strtok(NULL, s);
-	 uint8_t len = atoi(token);
-	 token = strtok(NULL, s);
-	 SX1276Send((uint8_t*) token, len);
-	 sendUARTpc("Sending data on radio: ");
-	 sendUARTpc(token);
-	 */
-
 	if (UartActivityGps) {
 		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 
@@ -308,82 +299,99 @@ void UartGPSCommands() {
 				}
 				sendUARTgps("$PCAS00*01\r\n"); // save configuration to gps flash
 
-				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
+				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 
 				char s[23];
-				sprintf(s, "%f,%f", gpsData.lat, gpsData.lon);
+				sprintf(s, "%f,%f\n", gpsData.lat, gpsData.lon);
 				SX1276Send((uint8_t*) s, strlen(s));
 			}
 
 		} else if (!memcmp(CMD, "$GNZDA", 6)) {
 //				$--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh
-			CMD = strtok(UartRxGPS, c);
-			if (!memcmp(CMD, "*", sizeof(CMD))) {
-				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
-				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-				counter_read_gps = 0;
-				return;
-			}
-			CMD = strtok(NULL, c);
-			if (!memcmp(CMD, "*", sizeof(CMD))) {
-				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
-				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-				counter_read_gps = 0;
-				return;
-			}
-			uint8_t hr;
-			uint8_t min;
-			float sec;
-			uint8_t day;
-			uint8_t month;
-			uint16_t year;
+			if (!setTimeFlag) {
+				CMD = strtok(UartRxGPS, c);
+				if (!memcmp(CMD, "*", sizeof(CMD))) {
+					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+					counter_read_gps = 0;
+					return;
+				}
+				CMD = strtok(NULL, c);
+				if (!memcmp(CMD, "*", sizeof(CMD))) {
+					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+					counter_read_gps = 0;
+					return;
+				}
+				uint8_t hr;
+				uint8_t min;
+				float sec;
+				uint8_t day;
+				uint8_t month;
+				uint16_t year;
 
-			char s[5];
-			memset(s, 0, 5);
-			sprintf(s, "%c%c", CMD[0], CMD[1]);
-			hr = strtol(s, NULL, 16);
-			memset(s, 0, 5);
-			sprintf(s, "%c%c", CMD[2], CMD[3]);
-			min = strtol(s, NULL, 16);
-			memset(s, 0, 5);
-			sprintf(s, "%c%c", CMD[4], CMD[5]);
-			sec = strtol(s, NULL, 16);
-			CMD = strtok(NULL, c);
-			if (!memcmp(CMD, "*", sizeof(CMD))) {
-				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
-				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-				counter_read_gps = 0;
-				return;
-			}
-			day = strtol(CMD, NULL, 16);
-			CMD = strtok(NULL, c);
-			if (!memcmp(CMD, "*", sizeof(CMD))) {
-				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
-				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-				counter_read_gps = 0;
-				return;
-			}
-			month = strtol(CMD, NULL, 16);
+				char s[5];
+				memset(s, 0, 5);
+				sprintf(s, "%c%c", CMD[0], CMD[1]);
+				hr = strtol(s, NULL, 16);
+				memset(s, 0, 5);
+				sprintf(s, "%c%c", CMD[2], CMD[3]);
+				min = strtol(s, NULL, 16);
+				memset(s, 0, 5);
+				sprintf(s, "%c%c.%c%c", CMD[4], CMD[5], CMD[6], CMD[7]);
+				sec = strtof(s, NULL);
+				uint16_t delayLeft = 0;
+				uint16_t secInt = truncf(sec);
+				float msOver = (sec - secInt) * 1000;
+				delayLeft = 1000 - msOver;
 
-			CMD = strtok(NULL, c);
-			if (!memcmp(CMD, "*", sizeof(CMD))) {
-				sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
-				memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-				counter_read_gps = 0;
-				return;
-			}
-			year = strtol(CMD, NULL, 16);
-			setTimeFlag = true;
-			currentTime.dayOfmonth = day;
-			currentTime.hours = hr;
-			currentTime.minutes = min;
-			currentTime.month = month;
-			currentTime.year = year;
-			currentTime.seconds = sec;
-			MAP_RTC_C_holdClock();
-			RtcInit();
+				sprintf(s, "%c%c", CMD[4], CMD[5]);
+				sec = (uint8_t) strtol(s, NULL, 16);
 
-//			sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+				CMD = strtok(NULL, c);
+				if (!memcmp(CMD, "*", sizeof(CMD))) {
+					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+					counter_read_gps = 0;
+					return;
+				}
+				day = strtol(CMD, NULL, 16);
+				CMD = strtok(NULL, c);
+				if (!memcmp(CMD, "*", sizeof(CMD))) {
+					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+					counter_read_gps = 0;
+					return;
+				}
+				month = strtol(CMD, NULL, 16);
+
+				CMD = strtok(NULL, c);
+				if (!memcmp(CMD, "*", sizeof(CMD))) {
+					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+					counter_read_gps = 0;
+					return;
+				}
+				year = strtol(CMD, NULL, 16);
+				if (sec == 0x59) {
+					sec = 0x00;
+					min += 0x01;
+				} else {
+					sec += 0x01;
+				}
+
+				currentTime.dayOfmonth = day;
+				currentTime.hours = hr;
+				currentTime.minutes = min;
+				currentTime.month = month;
+				currentTime.year = year;
+				currentTime.seconds = sec;
+
+				setTimeFlag = true;
+				Delayms(delayLeft);
+				MAP_RTC_C_holdClock();
+				RtcInit();
+			}
 
 		} else {
 

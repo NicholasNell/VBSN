@@ -202,10 +202,11 @@ int main(void) {
 		getLight(&lux);
 	}
 
-//	while (!gpsWorking) {
-//
-//	}
-	// Initialise the MAC protocol
+	while (!gpsWorking) {
+
+	}
+//	 Initialise the MAC protocol
+	MacInit();
 
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);

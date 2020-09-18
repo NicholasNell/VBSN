@@ -61,7 +61,7 @@ static bool stateMachine();
 
 void MacInit() {
 	uint8_t tempID;
-	flashReadBuffer(&tempID, 1, NODE_ID_LOCATION);
+	tempID = flashReadNodeID();
 	if (tempID == 0xFF || tempID == 0x00) {
 		uint8_t tempLat = (int32_t) (gpsData.lat * 1000000)
 				% (int32_t) gpsData.lon;
@@ -71,10 +71,11 @@ void MacInit() {
 		if (_nodeID == 0xff) {
 			_nodeID = _nodeID % tempLat;
 		}
-
+		flashWriteNodeID();
 	} else {
 		_nodeID = tempID;
 	}
+
 	_numNeighbours = 0;
 	_sleepTime = SLEEP_TIME;
 	scheduleSetup();
