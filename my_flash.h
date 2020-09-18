@@ -10,11 +10,20 @@
 #define MY_FLASH_H_
 #include <stdint.h>
 
-#define MYDATA_MEM_START 0x0003F000
-#define NODE_ID_LOCATION 0x0003F000
+#define ERROR_Erase 1;
+#define ERROR_Write 2;
+#define Completed 0;
 
-int writeVarToFlash(uint8_t *s1, uint16_t len, uint32_t adr);
-int readVarFromFlash(void *s1, uint16_t len, uint32_t adr);
+#define MYDATA_MEM_START 0x0003F000
+#define NODE_ID_LOCATION 0
+
+#define MemLength 1
+
+int flashWriteBuffer();
+int flashWriteNodeID();
+int flashReadNodeID();
+int flashReadBuffer();
 int flashEraseAll();
+int flashInitBuffer();
 
 #endif /* MY_FLASH_H_ */

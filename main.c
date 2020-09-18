@@ -206,12 +206,6 @@ int main(void) {
 //
 //	}
 	// Initialise the MAC protocol
-//	flashEraseAll();
-	_nodeID = 0xFF;
-	uint32_t sectorNum = 0;
-	uint32_t bankNum = 0;
-
-	MacInit();
 
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);

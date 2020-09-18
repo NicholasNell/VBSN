@@ -16,47 +16,44 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define MY_FLASH_DATA_LEN 4096
+
+static uint8_t myFlashData[MY_FLASH_DATA_LEN];
 uint32_t lastWrite = MYDATA_MEM_START;
 
-int writeVarToFlash(uint8_t *s1, uint16_t len, uint32_t adr) {
+extern uint8_t _nodeID;
 
-	uint32_t writeAdr;
-	if (adr == NULL) {
-		writeAdr = lastWrite;
-	} else {
-		writeAdr = adr;
-	}
+int flashWriteBuffer() {
 
 	/* Unprotecting Info Bank 0, Sector 0  */
 	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
+
+	/* Trying to erase the sector. Within this function, the API will
+	 automatically try to erase the maximum number of tries. If it fails,
+	 trap in an infinite loop */
+	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START))
+		return ERROR_Erase;
 
 	/* Trying to program the memory. Within this function, the API will
 	 automatically try to program the maximum number of tries. If it fails,
 	 trap inside an infinite loop */
+	if (!MAP_FlashCtl_programMemory(myFlashData, (void*) MYDATA_MEM_START,
+			4096))
+		return ERROR_Write;
 
-	if (!MAP_FlashCtl_programMemory(s1, (void*) writeAdr, len))
-		while (1)
-			;
-	lastWrite = writeAdr + len;
 	/* Setting the sector back to protected  */
 	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
 
-	return 0;
+	return Completed;
 }
 
-int readVarFromFlash(void *s1, uint16_t len, uint32_t adr) {
+int flashReadBuffer() {
 
 	/* Unprotecting Info Bank 0, Sector 0  */
-	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
-	if (adr == NULL) {
-		memcpy(s1, (uint32_t*) --lastWrite, len);
-	} else {
-		memcpy(s1, (uint32_t*) adr, len);
+	uint8_t i = 0;
+	for (i = 0; i <= MemLength; i++) {
+		myFlashData[i] = *(uint8_t*) (i + MYDATA_MEM_START);
 	}
-
-//	memcpy(&var1LOCAL, (uint16_t*) MYDATA_MEM_START, 2);
-	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
-	return 0;
 }
 
 int flashEraseAll() {
@@ -67,4 +64,20 @@ int flashEraseAll() {
 			;
 	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
 	return 0;
+}
+
+int flashWriteNodeID() {
+	myFlashData[NODE_ID_LOCATION] = _nodeID;
+	return flashWriteBuffer();
+}
+
+int flashReadNodeID() {
+	myFlashData[NODE_ID_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
+			+ NODE_ID_LOCATION);
+	_nodeID = myFlashData[NODE_ID_LOCATION];
+	return _nodeID;
+}
+
+int flashInitBuffer() {
+	memset(myFlashData, 0xFF, MY_FLASH_DATA_LEN);
 }

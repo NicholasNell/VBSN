@@ -62,7 +62,6 @@ void UARTinitGPS() {
 	GPS_ON
 	gpsData.lat = 0.0;
 	gpsData.lon = 0.0;
-	Delayms(1000);
 	/* Selecting P9.6 and P9.7 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9,
 	GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
@@ -70,8 +69,7 @@ void UARTinitGPS() {
 	MAP_UART_enableModule(EUSCI_A3_BASE);
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(1000);
-//	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");	// only enable GLL for now
-	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n");
+	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n"); // only enable GLL until lock is found
 	Delayms(100);
 	sendUARTgps("$PCAS11,1*1C\r\n");	// set in stationary mode
 	Delayms(100);
@@ -335,7 +333,7 @@ void UartGPSCommands() {
 			}
 			uint8_t hr;
 			uint8_t min;
-			uint8_t sec;
+			float sec;
 			uint8_t day;
 			uint8_t month;
 			uint16_t year;
