@@ -11,7 +11,7 @@
 #define TX_INTERVAL 1
 uint8_t minutes = TX_INTERVAL;
 extern bool setTimeFlag;
-
+extern bool macFlag;
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
 RTC_C_Calendar currentTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2020 };
@@ -53,7 +53,7 @@ void RTC_C_IRQHandler(void) {
 		minutes--;
 		currentTime = MAP_RTC_C_getCalendarTime();
 		if (currentTime.minutes % 1 == 0) {
-
+			macFlag = true;
 		}
 		if (minutes <= 0) {
 			minutes = TX_INTERVAL;

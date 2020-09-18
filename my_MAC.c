@@ -16,15 +16,12 @@
 #include "my_gpio.h"
 
 volatile bool hasData = false;
-bool schedule_setup = false;
-volatile schedule_t mySchedule;
 extern datagram_t myDatagram;
 extern datagram_t rxdatagram;
-volatile MACappState_t MACState = NODE_DISC;
+volatile MACappState_t MACState = MAC_LISTEN;
 uint8_t emptyArray[0];
 extern SX1276_t SX1276;
-bool sleepFlag = true;
-bool discFlag = false;
+bool macFlag = false;
 
 extern Gpio_t Led_rgb_green;
 extern Gpio_t Led_rgb_blue;
@@ -33,11 +30,6 @@ extern Gpio_t Led_rgb_red;
 schedule_t scheduleTable[MAX_NEIGHBOURS];
 
 uint8_t neighbourTable[MAX_NEIGHBOURS];
-uint16_t _RTSTime;	// the time this node will listen in ms
-uint16_t _CTSTime;
-uint16_t _dataTime;
-uint16_t _syncTime;	// The time it takes to send a SYNC message in ms, node will use this to listen initially.
-uint32_t _ranNum;
 uint8_t _nodeID;
 volatile uint8_t _dataLen;
 volatile uint8_t _numNeighbours;
@@ -88,7 +80,7 @@ void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
 }
 
 bool MACStateMachine() {
-	if (sleepFlag) {
+	if (macFlag) {
 		stateMachine();
 	}
 	return true;
@@ -122,51 +114,54 @@ bool MACRx(uint32_t timeout) {
 }
 
 static bool processRXBuffer() {
-	if (ArrayToDatagram()) {
-		switch (rxdatagram.header.flags) {
-		case 0x01: {
-//				syncSchedule();
-			bool containsNode = false;
-			uint8_t i = 0;
-			for (i = 0; i < _numNeighbours; i++) {
-				if (rxdatagram.header.source == neighbourTable[i]) {
-					containsNode = true;
-					break;
-				}
-			}
-			if (!containsNode) {
-				neighbourTable[_numNeighbours++] = rxdatagram.header.source;
-			}
-		}
-			break;
-		case 0x02:
-			break;
-		case 0x03:
-			break;
-		case 0x04:
-			break;
-		default:
-			break;
-		}
-		return true;
-	} else
+	rxdatagram.header.flags = RXBuffer[4];
+
+	switch (rxdatagram.header.flags) {
+	case 0x01: 	// RTS
+		MACState = MAC_CTS;
+		break;
+	case 0x02: 	// CTS
+		MACState = MAC_DATA;
+		break;
+	case 0x03: 	// SYNC
+		break;
+	case 0x04: 	// DATA
+		MACState = MAC_ACK;
+		break;
+	case 0x05: 	// ACK
+		MACState = MAC_SLEEP;
+		break;
+	case 0x06: 	// DISC
+		break;
+	default:
 		return false;
+		break;
+	}
+	return true;
 }
 
 static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
+		case MAC_LISTEN:
+			if (MACRx(1000)) {
+
+			}
+			break;
 		case NODE_DISC:
 			break;
-		case MAC_SLEEP:
+		case MAC_SLEEP:	// SLEEP
+			macFlag = false;
 			break;
 		case SYNC_MAC:
 			break;
-		case MAC_RTS:
+		case MAC_RTS:	// Send RTS
 			break;
 		case MAC_CTS:
+			MACSend(); // Send CTS
 			break;
-		case MAC_DATA:
+		case MAC_DATA: // send sensor data
+
 			break;
 		default:
 			break;

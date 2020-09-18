@@ -22,7 +22,14 @@ typedef enum {
 } MACRadioState_t;
 
 typedef enum {
-	SYNC_MAC, MAC_SLEEP, NODE_DISC, MAC_RTS, MAC_CTS, MAC_DATA
+	SYNC_MAC,
+	MAC_SLEEP,
+	NODE_DISC,
+	MAC_RTS,
+	MAC_CTS,
+	MAC_DATA,
+	MAC_LISTEN,
+	MAC_ACK
 } MACappState_t;
 
 typedef struct {
