@@ -25,7 +25,7 @@ Datagram_t txDatagram;
 volatile bool hasData = false;
 
 // State of the MAC state machine
-volatile MACappState_t MACState = MAC_LISTEN;
+volatile MACappState_t MACState = MAC_SLEEP;
 
 // empty array for testing
 uint8_t emptyArray[0];
@@ -116,7 +116,9 @@ void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
 }
 
 bool MACStateMachine() {
-	if (macFlag & (MACState == MAC_SLEEP)) {
+
+	if (macFlag && (MACState == MAC_SLEEP)) {
+		GpioWrite(&Led_rgb_blue, 1);
 		macFlag = false;
 		if (hasData) {
 			Delayms(10);
@@ -124,9 +126,10 @@ bool MACStateMachine() {
 		} else {
 			MACState = MAC_LISTEN;
 		}
+		if (stateMachine())
+			;
 	}
-	stateMachine();
-
+	GpioWrite(&Led_rgb_blue, 0);
 	return true;
 }
 
@@ -198,35 +201,43 @@ bool MACRx(uint32_t timeout) {
 static bool processRXBuffer() {
 	memcpy(&rxdatagram, &RXBuffer, loraRxBufferSize);
 
-	switch (rxdatagram.header.flags) {
-	case 0x01: 	// RTS
-		MACState = MAC_CTS;
-		break;
-	case 0x02: 	// CTS
-		MACState = MAC_DATA;
-		break;
-	case 0x03: 	// SYNC
-		break;
-	case 0x04: 	// DATA
-		MACState = MAC_ACK;
-		break;
-	case 0x05: 	// ACK
-		hasData = false;
-		MACState = MAC_SLEEP;
-		break;
-	case 0x06: 	// DISC
-		break;
-	default:
-		return false;
+	// check if message was meant for this node:
+	if (rxdatagram.header.dest
+			== _nodeID|| rxdatagram.header.dest == BROADCAST_ADDRESS) {	// if destination is this node or broadcast check message type
+
+		switch (rxdatagram.header.flags) {
+		case 0x01: 	// RTS
+			MACState = MAC_CTS;
+			break;
+		case 0x02: 	// CTS
+			MACState = MAC_DATA;
+			break;
+		case 0x03: 	// SYNC
+			break;
+		case 0x04: 	// DATA
+			MACState = MAC_ACK;
+			break;
+		case 0x05: 	// ACK
+			hasData = false;
+			MACState = MAC_SLEEP;
+			break;
+		case 0x06: 	// DISC
+			break;
+		default:
+			return false;
+		}
+		return true;
+	} else {	// if message was not meant for this node start listening again
+		MACState = MAC_LISTEN;
+		return true;
 	}
-	return true;
 }
 
 static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_LISTEN:
-			if (!MACRx(1000)) {
+			if (!MACRx(3000)) {	// If no message received in 3sec go back to sleep
 				SX1276SetSleep();
 				RadioState = RADIO_SLEEP;
 				MACState = MAC_SLEEP;
@@ -244,7 +255,7 @@ static bool stateMachine() {
 		case SYNC_MAC:
 			return false;
 		case MAC_RTS:	// Send RTS
-			if (MACSend(0x1, rxdatagram.header.source)) {	// Send RTS
+			if (MACSend(0x1, BROADCAST_ADDRESS)) {	// Send RTS
 				if (!MACRx(1000)) {
 					MACState = MAC_SLEEP;
 					return false;
@@ -255,7 +266,7 @@ static bool stateMachine() {
 			}
 			break;
 		case MAC_CTS:
-			if (MACSend(0x2, rxdatagram.header.source)) {	// Send CTS
+			if (MACSend(0x2, BROADCAST_ADDRESS)) {	// Send CTS
 				if (!MACRx(1000)) {
 					MACState = MAC_SLEEP;
 					return false;
@@ -267,7 +278,7 @@ static bool stateMachine() {
 			break;
 		case MAC_DATA:
 			// send sensor data
-			if (MACSend(0x4, rxdatagram.header.source)) {	// Send DATA
+			if (MACSend(0x4, BROADCAST_ADDRESS)) {	// Send DATA
 				if (!MACRx(1000)) {
 					MACState = MAC_SLEEP;
 					return false;
@@ -279,7 +290,7 @@ static bool stateMachine() {
 				return false;
 			}
 		case MAC_ACK:
-			if (MACSend(0x5, rxdatagram.header.source)) { // Send ACK
+			if (MACSend(0x5, BROADCAST_ADDRESS)) { // Send ACK
 				MACState = MAC_SLEEP;
 				return true;
 			} else {

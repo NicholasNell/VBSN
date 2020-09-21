@@ -337,7 +337,7 @@ void TA0_0_IRQHandler(void) {
 
 //Counter interupt
 void TA1_0_IRQHandler(void) {
-	*timerAtempFlag = true;
+	*timerAtempFlag = !(*timerAtempFlag);
 //	stopTimerACounter();
 	MAP_Timer_A_clearCaptureCompareInterrupt(COUNTER_TIMER,
 	TIMER_A_CAPTURECOMPARE_REGISTER_0);

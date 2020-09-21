@@ -96,7 +96,7 @@ extern uint8_t _nodeID;
 // MAC layer state
 extern volatile LoRaRadioState_t RadioState;
 
-void printRegisters(void);
+void printLoRaRegisters(void);
 
 /*!
  * \brief Function to be executed on Radio Tx Done event
@@ -181,6 +181,7 @@ int main(void) {
 
 	// Initialise all ports and communication protocols
 	BoardInitMcu();
+	RtcInit();
 
 	// Initialise UART to PC
 	UARTinitPC();
@@ -213,7 +214,6 @@ int main(void) {
 //
 //	}
 
-	RtcInit();
 //	 Initialise the MAC protocol
 	MacInit();
 
@@ -222,7 +222,6 @@ int main(void) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
-//	MACState = MAC_RTS;
 	while (1) {
 		if (MACStateMachine()) {
 			;
@@ -230,6 +229,7 @@ int main(void) {
 	}
 }
 
+extern bool hasData;
 void PORT1_IRQHandler(void) {
 	uint32_t status;
 
@@ -237,6 +237,7 @@ void PORT1_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	if (status & GPIO_PIN1) {
+		hasData = true;
 
 	}
 }
@@ -270,7 +271,7 @@ void OnTxDone(void) {
 
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
-//	Radio.Sleep();
+	Radio.Sleep();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);
 	RssiValue = rssi;
@@ -310,7 +311,7 @@ void OnRxError(void) {
 #endif
 }
 
-void printRegisters(void) {
+void printLoRaRegisters(void) {
 
 	uint8_t registers[] = { 0x01, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
 			0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014, 0x15, 0x16, 0x17,
