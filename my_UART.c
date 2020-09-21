@@ -37,13 +37,12 @@ char UartRX[SIZE_BUFFER]; //Uart receive buffer
 char UartRxGPS[SIZE_BUFFER_GPS]; //Uart receive buffer
 extern struct bme280_data bme280Data;
 extern struct bme280_dev bme280Dev;
-locationData gpsData;
+LocationData gpsData;
 
 extern float lux;
 extern Gpio_t Led_rgb_blue;
-extern bool setTimeFlag;
 extern RTC_C_Calendar currentTime;
-
+extern bool setTimeFlag;
 extern bool gpsWorking;
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 //UART configured for 9600 Baud
@@ -234,7 +233,7 @@ bool returnUartActivity() {
 
 void UartGPSCommands() {
 	if (UartActivityGps) {
-		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+//		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 
 		const char c[2] = ",";
 		const char a[2] = "*";
@@ -303,7 +302,7 @@ void UartGPSCommands() {
 
 				char s[23];
 				sprintf(s, "%f,%f\n", gpsData.lat, gpsData.lon);
-				SX1276Send((uint8_t*) s, strlen(s));
+//				SX1276Send((uint8_t*) s, strlen(s));
 			}
 
 		} else if (!memcmp(CMD, "$GNZDA", 6)) {

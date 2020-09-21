@@ -63,7 +63,7 @@
 
 //uint8_t TXBuffer[255] = { 0 };
 uint8_t RXBuffer[255] = { 0 };
-volatile uint8_t BufferSize = LORA_MAX_PAYLOAD_LEN;
+volatile uint8_t loraRxBufferSize = LORA_MAX_PAYLOAD_LEN;
 
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
@@ -94,7 +94,7 @@ extern Gpio_t Led_user_red;
 
 extern uint8_t _nodeID;
 // MAC layer state
-extern volatile MACRadioState_t RadioState;
+extern volatile LoRaRadioState_t RadioState;
 
 void printRegisters(void);
 
@@ -202,9 +202,12 @@ int main(void) {
 		getLight(&lux);
 	}
 
-	while (!gpsWorking) {
+	flashInitBuffer();
+	flashEraseAll();
 
-	}
+//	while (!gpsWorking) {
+//
+//	}
 //	 Initialise the MAC protocol
 	MacInit();
 
@@ -259,8 +262,8 @@ void OnTxDone(void) {
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
 //	Radio.Sleep();
-	BufferSize = size;
-	memcpy(RXBuffer, payload, BufferSize);
+	loraRxBufferSize = size;
+	memcpy(RXBuffer, payload, loraRxBufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
 	RadioState = RXDONE;
@@ -290,7 +293,9 @@ void OnRxTimeout(void) {
 }
 
 void OnRxError(void) {
+	SX1276clearIRQFlags();
 	Radio.Sleep();
+	RadioState = RXERROR;
 #ifdef DEBUG
 	sendUARTpc("RxError\n");
 #endif

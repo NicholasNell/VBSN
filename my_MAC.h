@@ -19,7 +19,7 @@
 
 typedef enum {
 	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR, RADIO_SLEEP
-} MACRadioState_t;
+} LoRaRadioState_t;
 
 typedef enum {
 	SYNC_MAC,
@@ -35,7 +35,7 @@ typedef enum {
 typedef struct {
 	uint8_t nodeID;	// Node ID to which this schedule belongs
 	uint32_t sleepTime;	// Time until next wake period
-} schedule_t;
+} Schedule_t;
 
 void MacInit();
 
@@ -43,7 +43,7 @@ void MACreadySend(uint8_t *dataToSend, uint8_t datalen);
 
 bool MACStateMachine();
 
-bool MACSend();
+bool MACSend(uint8_t msgType, uint8_t dest);
 
 bool MACRx(uint32_t timeout);
 

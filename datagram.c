@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <my_MAC.h>
 
-header_t createHeader();
+Header_t createHeader();
 
 bool datagramInit() {
 
