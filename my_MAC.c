@@ -14,6 +14,7 @@
 #include <my_RFM9x.h>
 #include <my_timer.h>
 #include <radio.h>
+#include <stdio.h>
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
@@ -52,7 +53,12 @@ uint16_t _numMsgSent;
 
 // The LoRa RX Buffer
 extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
+
+// Datagram from received message
 Datagram_t rxdatagram;
+
+// should mac init
+extern bool macFlag;
 
 // bme280Data
 extern struct bme280_data bme280Data;
@@ -110,7 +116,15 @@ void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
 }
 
 bool MACStateMachine() {
-
+	if (macFlag & (MACState == MAC_SLEEP)) {
+		macFlag = false;
+		if (hasData) {
+			Delayms(10);
+			MACState = MAC_RTS;
+		} else {
+			MACState = MAC_LISTEN;
+		}
+	}
 	stateMachine();
 
 	return true;
@@ -197,6 +211,7 @@ static bool processRXBuffer() {
 		MACState = MAC_ACK;
 		break;
 	case 0x05: 	// ACK
+		hasData = false;
 		MACState = MAC_SLEEP;
 		break;
 	case 0x06: 	// DISC
@@ -211,27 +226,70 @@ static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_LISTEN:
-			if (MACRx(1000)) {
-
+			if (!MACRx(1000)) {
+				SX1276SetSleep();
+				RadioState = RADIO_SLEEP;
+				MACState = MAC_SLEEP;
+				return false;
 			}
 			break;
 		case NODE_DISC:
-			break;
+			return false;
 		case MAC_SLEEP:	// SLEEP
-			break;
+			if (RadioState != RADIO_SLEEP) {
+				SX1276SetSleep();
+				RadioState = RADIO_SLEEP;
+			}
+			return false;
 		case SYNC_MAC:
-			break;
+			return false;
 		case MAC_RTS:	// Send RTS
+			if (MACSend(0x1, rxdatagram.header.source)) {	// Send RTS
+				if (!MACRx(1000)) {
+					MACState = MAC_SLEEP;
+					return false;
+				}
+			} else {
+				MACState = MAC_SLEEP;
+				return false;
+			}
 			break;
 		case MAC_CTS:
-			MACSend(0x2, BROADCAST_ADDRESS); // Send CTS
+			if (MACSend(0x2, rxdatagram.header.source)) {	// Send CTS
+				if (!MACRx(1000)) {
+					MACState = MAC_SLEEP;
+					return false;
+				}
+			} else {
+				MACState = MAC_SLEEP;
+				return false;
+			}
 			break;
-		case MAC_DATA: // send sensor data
-
-			break;
+		case MAC_DATA:
+			// send sensor data
+			if (MACSend(0x4, rxdatagram.header.source)) {	// Send DATA
+				if (!MACRx(1000)) {
+					MACState = MAC_SLEEP;
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				MACState = MAC_SLEEP;
+				return false;
+			}
+		case MAC_ACK:
+			if (MACSend(0x5, rxdatagram.header.source)) { // Send ACK
+				MACState = MAC_SLEEP;
+				return true;
+			} else {
+				MACState = MAC_SLEEP;
+				return false;
+			}
 		default:
-			break;
+			return false;
 		}
+		return false;
 	}
 }
 

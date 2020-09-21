@@ -170,6 +170,7 @@ void RadioInit() {
 	Radio.Sleep();
 }
 
+extern volatile MACappState_t MACState;
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -197,6 +198,9 @@ int main(void) {
 		bme280Working = false;
 	}
 
+//	BME280_OFF
+//	MAX44009_OFF
+
 	lightSensorWorking = initMAX();
 	if (lightSensorWorking) {
 		getLight(&lux);
@@ -208,6 +212,8 @@ int main(void) {
 //	while (!gpsWorking) {
 //
 //	}
+
+	RtcInit();
 //	 Initialise the MAC protocol
 	MacInit();
 
@@ -216,8 +222,11 @@ int main(void) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
+//	MACState = MAC_RTS;
 	while (1) {
-
+		if (MACStateMachine()) {
+			;
+		}
 	}
 }
 
