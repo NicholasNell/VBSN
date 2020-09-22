@@ -181,7 +181,7 @@ int main(void) {
 
 	// Initialise all ports and communication protocols
 	BoardInitMcu();
-	RtcInit();
+//	RtcInit();
 
 	// Initialise UART to PC
 	UARTinitPC();
@@ -199,9 +199,6 @@ int main(void) {
 		bme280Working = false;
 	}
 
-//	BME280_OFF
-//	MAX44009_OFF
-
 	lightSensorWorking = initMAX();
 	if (lightSensorWorking) {
 		getLight(&lux);
@@ -214,6 +211,7 @@ int main(void) {
 //
 //	}
 
+	SX1276Send((uint8_t*) ("GPS Working\n"), 12);
 //	 Initialise the MAC protocol
 	MacInit();
 

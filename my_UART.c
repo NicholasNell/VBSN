@@ -132,11 +132,9 @@ void UartCommands() {
 		UartActivity = false;
 		switch (UartRX[0]) {
 		case 'N':
-
 			sendUARTpc("Setting Normal Mode\n");
 			break;
 		case 'D':
-
 			sendUARTpc("Setting Debug Mode\n");
 			break;
 		case 'S': {
@@ -332,10 +330,10 @@ void UartGPSCommands() {
 				char s[5];
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[0], CMD[1]);
-				hr = strtol(s, NULL, 16);
+				hr = (uint8_t) strtol(s, NULL, 16);
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[2], CMD[3]);
-				min = strtol(s, NULL, 16);
+				min = (uint8_t) strtol(s, NULL, 16);
 				memset(s, 0, 5);
 				sprintf(s, "%c%c.%c%c", CMD[4], CMD[5], CMD[6], CMD[7]);
 				sec = strtof(s, NULL);
@@ -354,7 +352,8 @@ void UartGPSCommands() {
 					counter_read_gps = 0;
 					return;
 				}
-				day = strtol(CMD, NULL, 16);
+				day = (uint8_t) strtol(CMD, NULL, 16);
+				int d = atol(CMD);
 				CMD = strtok(NULL, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
 					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
@@ -362,8 +361,8 @@ void UartGPSCommands() {
 					counter_read_gps = 0;
 					return;
 				}
-				month = strtol(CMD, NULL, 16);
-
+				month = (uint8_t) strtol(CMD, NULL, 16);
+				int m = atol(CMD);
 				CMD = strtok(NULL, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
 					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
@@ -371,7 +370,8 @@ void UartGPSCommands() {
 					counter_read_gps = 0;
 					return;
 				}
-				year = strtol(CMD, NULL, 16);
+				year = (uint16_t) strtol(CMD, NULL, 16);
+				int y = atol(CMD);
 				if (sec == 0x59) {
 					sec = 0x00;
 					min += 0x01;
@@ -379,19 +379,31 @@ void UartGPSCommands() {
 					sec += 0x01;
 				}
 
-				currentTime.dayOfmonth = day;
-				currentTime.hours = hr;
-				currentTime.minutes = min;
-				currentTime.month = month;
-				currentTime.year = year;
-				currentTime.seconds = sec;
+				int weekday = (d += m < 3 ? y-- : y - 2, 23 * m / 9 + d + 4
+						+ y / 4 - y / 100 + y / 400) % 7;
 
+				const RTC_C_Calendar currentTime = { (uint8_t) sec, min, hr,
+						weekday, (uint_fast8_t) day, month, year };
+				/* Time is Saturday, November 12th 1955 10:03:00 PM */
+//				 const RTC_C_Calendar currentTime =
+//				 {
+//				         0x00,
+//				         0x03,
+//				         0x22,
+//				         0x06,
+//				         0x12,
+//				         0x11,
+//				         0x1955
+//				 };
 				setTimeFlag = true;
+				sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 				Delayms(delayLeft);
 				MAP_RTC_C_holdClock();
-				RtcInit();
+				RtcInit(currentTime);
+				char p[23];
+				sprintf(p, "0x%x:0x%x\n", min, (uint8_t) sec);
+				SX1276Send((uint8_t*) p, 10);
 			}
-
 		} else {
 
 		}

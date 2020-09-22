@@ -66,9 +66,6 @@ extern struct bme280_data bme280Data;
 //light data
 extern float lux;
 
-// time
-extern RTC_C_Calendar currentTime;
-
 // current RadioState
 LoRaRadioState_t RadioState;
 
@@ -121,7 +118,7 @@ bool MACStateMachine() {
 		GpioWrite(&Led_rgb_blue, 1);
 		macFlag = false;
 		if (hasData) {
-			Delayms(10);
+			Delayms(1000);
 			MACState = MAC_RTS;
 		} else {
 			MACState = MAC_LISTEN;
@@ -158,8 +155,7 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 		txDatagram.data.lux = lux;
 		txDatagram.data.gpsData = gpsData;
 		txDatagram.data.soilMoisture = 100;
-		currentTime = RTC_C_getCalendarTime();
-		txDatagram.data.tim = currentTime;
+		txDatagram.data.tim = RTC_C_getCalendarTime();
 
 		memcpy(TXBuffer, &txDatagram, sizeof(txDatagram));
 		startLoRaTimer(1000);
@@ -173,7 +169,6 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 	RadioState = TX;
 	while (true) {
 		if (RadioState == TXDONE) {
-			_numMsgSent++;
 			return true;
 		} else if (RadioState == TXTIMEOUT)
 			return false;
@@ -190,10 +185,11 @@ bool MACRx(uint32_t timeout) {
 		} else if (RadioState == RXERROR) {
 			return false;
 		} else if (RadioState == RXDONE) {
-			if (processRXBuffer())
+			if (processRXBuffer()) {
 				return true;
-			else
+			} else {
 				return false;
+			}
 		}
 	}
 }
@@ -202,8 +198,8 @@ static bool processRXBuffer() {
 	memcpy(&rxdatagram, &RXBuffer, loraRxBufferSize);
 
 	// check if message was meant for this node:
-	if (rxdatagram.header.dest
-			== _nodeID|| rxdatagram.header.dest == BROADCAST_ADDRESS) {	// if destination is this node or broadcast check message type
+	if ((rxdatagram.header.dest == _nodeID)
+			|| (rxdatagram.header.dest == BROADCAST_ADDRESS)) {	// if destination is this node or broadcast check message type
 
 		switch (rxdatagram.header.flags) {
 		case 0x01: 	// RTS
@@ -220,6 +216,7 @@ static bool processRXBuffer() {
 		case 0x05: 	// ACK
 			hasData = false;
 			MACState = MAC_SLEEP;
+			_numMsgSent++;
 			break;
 		case 0x06: 	// DISC
 			break;
@@ -237,7 +234,7 @@ static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_LISTEN:
-			if (!MACRx(3000)) {	// If no message received in 3sec go back to sleep
+			if (!MACRx(30000)) {// If no message received in 3sec go back to sleep
 				SX1276SetSleep();
 				RadioState = RADIO_SLEEP;
 				MACState = MAC_SLEEP;
@@ -256,7 +253,7 @@ static bool stateMachine() {
 			return false;
 		case MAC_RTS:	// Send RTS
 			if (MACSend(0x1, BROADCAST_ADDRESS)) {	// Send RTS
-				if (!MACRx(1000)) {
+				if (!MACRx(10000)) {
 					MACState = MAC_SLEEP;
 					return false;
 				}
@@ -267,7 +264,7 @@ static bool stateMachine() {
 			break;
 		case MAC_CTS:
 			if (MACSend(0x2, BROADCAST_ADDRESS)) {	// Send CTS
-				if (!MACRx(1000)) {
+				if (!MACRx(10000)) {
 					MACState = MAC_SLEEP;
 					return false;
 				}
@@ -279,7 +276,7 @@ static bool stateMachine() {
 		case MAC_DATA:
 			// send sensor data
 			if (MACSend(0x4, BROADCAST_ADDRESS)) {	// Send DATA
-				if (!MACRx(1000)) {
+				if (!MACRx(10000)) {
 					MACState = MAC_SLEEP;
 					return false;
 				} else {
@@ -300,7 +297,7 @@ static bool stateMachine() {
 		default:
 			return false;
 		}
-		return false;
+
 	}
 }
 
