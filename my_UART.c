@@ -69,8 +69,8 @@ void UARTinitGPS() {
 	MAP_UART_enableModule(EUSCI_A3_BASE);
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(1000);
-//	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n"); // only enable GLL until lock is found
-	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
+	sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n"); // only enable GLL until lock is found
+//	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	Delayms(100);
 	sendUARTgps("$PCAS11,1*1C\r\n");	// set in stationary mode
 	Delayms(100);
@@ -296,7 +296,7 @@ void UartGPSCommands() {
 				}
 				sendUARTgps("$PCAS00*01\r\n"); // save configuration to gps flash
 
-				sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
+				sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n"); // turn off gps output
 
 				char s[23];
 				sprintf(s, "%f,%f\n", gpsData.lat, gpsData.lon);
@@ -308,14 +308,14 @@ void UartGPSCommands() {
 			if (!setTimeFlag) {
 				CMD = strtok(UartRxGPS, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 					counter_read_gps = 0;
 					return;
 				}
 				CMD = strtok(NULL, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 					counter_read_gps = 0;
 					return;
@@ -347,7 +347,7 @@ void UartGPSCommands() {
 
 				CMD = strtok(NULL, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 					counter_read_gps = 0;
 					return;
@@ -356,7 +356,7 @@ void UartGPSCommands() {
 				int d = atol(CMD);
 				CMD = strtok(NULL, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 					counter_read_gps = 0;
 					return;
@@ -365,7 +365,7 @@ void UartGPSCommands() {
 				int m = atol(CMD);
 				CMD = strtok(NULL, c);
 				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					sendUARTgps("$PCAS03,0,9,0,0,0,0,0,0*0B\r\n");
+					sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 					counter_read_gps = 0;
 					return;
@@ -395,14 +395,10 @@ void UartGPSCommands() {
 //				         0x11,
 //				         0x1955
 //				 };
-				setTimeFlag = true;
 				sendUARTgps("$PCAS03,0,0,0,0,0,0,0,0*02\r\n");
 				Delayms(delayLeft);
 				MAP_RTC_C_holdClock();
 				RtcInit(currentTime);
-				char p[23];
-				sprintf(p, "0x%x:0x%x\n", min, (uint8_t) sec);
-				SX1276Send((uint8_t*) p, 10);
 			}
 		} else {
 

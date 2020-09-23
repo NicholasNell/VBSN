@@ -7,12 +7,13 @@
 
  */
 
+#include <my_scheduler.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #define TX_INTERVAL 1
 uint8_t minutes = TX_INTERVAL;
 bool setTimeFlag;
 bool macFlag = false;
-
+extern uint16_t slotCount;
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
 //RTC_C_Calendar currentTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2020 };
@@ -39,6 +40,11 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 	// Lock the RTC registers
 	RTC_C->CTL0 = RTC_C->CTL0 & ~(RTC_C_CTL0_KEY_MASK);
 
+	/* Setup Calendar Alarm for 00 minutes every hour to set slot count to 0 */
+	MAP_RTC_C_setCalendarAlarm(0x00, RTC_C_ALARMCONDITION_OFF,
+	RTC_C_ALARMCONDITION_OFF,
+	RTC_C_ALARMCONDITION_OFF);
+
 	NVIC->ISER[0] = 1 << ((RTC_C_IRQn) & 31);
 }
 
@@ -48,20 +54,13 @@ void RTC_C_IRQHandler(void) {
 	MAP_RTC_C_clearInterruptFlag(status);
 	static RTC_C_Calendar time;
 	time = RTC_C_getCalendarTime();
-	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
-		minutes--;
-
-		if (time.minutes % 1 == 0) {
-			macFlag = true;
-		}
-		if (minutes <= 0) {
-			minutes = TX_INTERVAL;
-		}
+	slotCount++;
+	if (slotCount == MAX_SLOT_COUNT) {
+		slotCount = 0;
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
-		/* Interrupts every hour on 31min  */
-		setTimeFlag = false;
+		slotCount = 0;
 	}
 }
 

@@ -44,6 +44,8 @@ extern volatile uint8_t loraRxBufferSize;
 // array of known neighbours
 uint8_t neighbourTable[MAX_NEIGHBOURS];
 
+uint16_t neighbourSyncSlots[255];
+
 // This node MAC parameters:
 uint8_t _nodeID;
 uint8_t _dataLen;
@@ -62,6 +64,9 @@ extern bool macFlag;
 
 // bme280Data
 extern struct bme280_data bme280Data;
+
+// soil moisture data
+extern float soilMoisture;
 
 //light data
 extern float lux;
@@ -154,7 +159,7 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 		txDatagram.data.temp = bme280Data.temperature;
 		txDatagram.data.lux = lux;
 		txDatagram.data.gpsData = gpsData;
-		txDatagram.data.soilMoisture = 100;
+		txDatagram.data.soilMoisture = soilMoisture;
 		txDatagram.data.tim = RTC_C_getCalendarTime();
 
 		memcpy(TXBuffer, &txDatagram, sizeof(txDatagram));

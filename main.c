@@ -215,6 +215,10 @@ int main(void) {
 //	 Initialise the MAC protocol
 	MacInit();
 
+	__no_operation();
+	MACRx(1000);
+	__no_operation();
+
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
