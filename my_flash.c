@@ -6,6 +6,7 @@
  *      Author: njnel
  */
 
+#include <my_MAC.h>
 #include "my_flash.h"
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -22,6 +23,11 @@ static uint8_t myFlashData[MY_FLASH_DATA_LEN];
 uint32_t lastWrite = MYDATA_MEM_START;
 
 extern uint8_t _nodeID;
+
+// array of known neighbours
+extern uint8_t neighbourTable[MAX_NEIGHBOURS];
+
+extern uint16_t neighbourSyncSlots[MAX_NEIGHBOURS];
 
 int flashWriteBuffer() {
 
@@ -54,6 +60,7 @@ int flashReadBuffer() {
 	for (i = 0; i <= MemLength; i++) {
 		myFlashData[i] = *(uint8_t*) (i + MYDATA_MEM_START);
 	}
+	return true;
 }
 
 int flashEraseAll() {
@@ -80,4 +87,21 @@ int flashReadNodeID() {
 
 int flashInitBuffer() {
 	memset(myFlashData, 0xFF, MY_FLASH_DATA_LEN);
+	return true;
+}
+
+int flashWriteNeighbours() {
+	memcpy(&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION, &neighbourTable,
+			sizeof(neighbourTable));
+	memcpy(&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION,
+			&neighbourSyncSlots, sizeof(neighbourSyncSlots));
+	return flashWriteBuffer();
+}
+
+int flashReadNeighbours() {
+	myFlashData[NODE_NEIGHBOUR_TABLE_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
+			+ NODE_NEIGHBOUR_TABLE_LOCATION);
+	memcpy(&neighbourTable, &myFlashData + NODE_NEIGHBOUR_TABLE_LOCATION,
+			sizeof(neighbourTable));
+	return true;
 }

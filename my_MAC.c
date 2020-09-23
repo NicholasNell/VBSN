@@ -44,7 +44,7 @@ extern volatile uint8_t loraRxBufferSize;
 // array of known neighbours
 uint8_t neighbourTable[MAX_NEIGHBOURS];
 
-uint16_t neighbourSyncSlots[255];
+uint16_t neighbourSyncSlots[MAX_NEIGHBOURS];
 
 // This node MAC parameters:
 uint8_t _nodeID;
@@ -52,6 +52,8 @@ uint8_t _dataLen;
 uint8_t _numNeighbours;
 uint8_t _destID;
 uint16_t _numMsgSent;
+uint16_t _prevMsgId;
+uint16_t _txSlot;
 
 // The LoRa RX Buffer
 extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
@@ -107,10 +109,13 @@ void MacInit() {
 		_nodeID = tempID;
 	}
 
+	_txSlot = (uint16_t) ((SX1276Random8Bit() / 255.0) * 51.0) + 8;
 	_dataLen = 0;
 	_numNeighbours = 0;
 	_destID = BROADCAST_ADDRESS;
 	_numMsgSent = 0;
+	memset(neighbourSyncSlots, NULL, MAX_NEIGHBOURS);
+	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 }
 
 void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
@@ -119,18 +124,8 @@ void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
 
 bool MACStateMachine() {
 
-	if (macFlag && (MACState == MAC_SLEEP)) {
-		GpioWrite(&Led_rgb_blue, 1);
-		macFlag = false;
-		if (hasData) {
-			Delayms(1000);
-			MACState = MAC_RTS;
-		} else {
-			MACState = MAC_LISTEN;
-		}
-		if (stateMachine())
-			;
-	}
+	GpioWrite(&Led_rgb_blue, 1);
+	stateMachine();
 	GpioWrite(&Led_rgb_blue, 0);
 	return true;
 }
@@ -206,6 +201,9 @@ static bool processRXBuffer() {
 	if ((rxdatagram.header.dest == _nodeID)
 			|| (rxdatagram.header.dest == BROADCAST_ADDRESS)) {	// if destination is this node or broadcast check message type
 
+		if (_prevMsgId != rxdatagram.header.msgID) { // if a new message change prevMsgId to the id of the new message
+			_prevMsgId = rxdatagram.header.msgID;
+		}
 		switch (rxdatagram.header.flags) {
 		case 0x01: 	// RTS
 			MACState = MAC_CTS;
@@ -239,7 +237,7 @@ static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_LISTEN:
-			if (!MACRx(30000)) {// If no message received in 3sec go back to sleep
+			if (!MACRx(1000)) {	// If no message received in 3sec go back to sleep
 				SX1276SetSleep();
 				RadioState = RADIO_SLEEP;
 				MACState = MAC_SLEEP;
@@ -257,8 +255,9 @@ static bool stateMachine() {
 		case SYNC_MAC:
 			return false;
 		case MAC_RTS:	// Send RTS
+//			net_getNextDest(); // get the next hop destination from the network layer
 			if (MACSend(0x1, BROADCAST_ADDRESS)) {	// Send RTS
-				if (!MACRx(10000)) {
+				if (!MACRx(1000)) {
 					MACState = MAC_SLEEP;
 					return false;
 				}
@@ -269,7 +268,7 @@ static bool stateMachine() {
 			break;
 		case MAC_CTS:
 			if (MACSend(0x2, BROADCAST_ADDRESS)) {	// Send CTS
-				if (!MACRx(10000)) {
+				if (!MACRx(1000)) {
 					MACState = MAC_SLEEP;
 					return false;
 				}
@@ -281,7 +280,7 @@ static bool stateMachine() {
 		case MAC_DATA:
 			// send sensor data
 			if (MACSend(0x4, BROADCAST_ADDRESS)) {	// Send DATA
-				if (!MACRx(10000)) {
+				if (!MACRx(1000)) {
 					MACState = MAC_SLEEP;
 					return false;
 				} else {

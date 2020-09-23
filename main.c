@@ -45,6 +45,7 @@
 #include <my_MAC.h>
 #include <my_rtc.h>
 #include <my_RFM9x.h>
+#include <my_scheduler.h>
 #include <my_spi.h>
 #include <my_timer.h>
 #include <my_UART.h>
@@ -211,13 +212,10 @@ int main(void) {
 //
 //	}
 
-	SX1276Send((uint8_t*) ("GPS Working\n"), 12);
 //	 Initialise the MAC protocol
 	MacInit();
 
-	__no_operation();
-	MACRx(1000);
-	__no_operation();
+	initScheduler();
 
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
@@ -225,9 +223,7 @@ int main(void) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 	while (1) {
-		if (MACStateMachine()) {
-			;
-		}
+		scheduler();
 	}
 }
 

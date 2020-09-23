@@ -12,7 +12,7 @@
 #define MAX_SLOT_COUNT 60
 #define SLOT_LENGTH_MS 1000
 
-void initSchedule();
-void scheduler();
+void initScheduler();
+int scheduler();
 
 #endif /* MY_SCHEDULER_H_ */
