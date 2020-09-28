@@ -39,6 +39,7 @@
 #include <bme280_defs.h>
 #include <board.h>
 #include <datagram.h>
+#include <helper.h>
 #include <main.h>
 #include <my_flash.h>
 #include <my_gpio.h>
@@ -47,9 +48,11 @@
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_spi.h>
+#include <my_systick.h>
 #include <my_timer.h>
 #include <my_UART.h>
 #include <MAX44009.h>
+#include <punctual.h>
 #include <radio.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -72,7 +75,6 @@ volatile int8_t SnrValue = 0;
 // Sensor Data Variables
 struct bme280_data bme280Data;
 struct bme280_dev bme280Dev;
-float lux;
 
 // Sensor Availability:
 bool bme280Working = false;
@@ -93,7 +95,6 @@ extern Gpio_t Led_rgb_green;	//GREEN
 extern Gpio_t Led_rgb_blue;		//BLUE
 extern Gpio_t Led_user_red;
 
-extern uint8_t _nodeID;
 // MAC layer state
 extern volatile LoRaRadioState_t RadioState;
 
@@ -193,6 +194,10 @@ int main(void) {
 	// Initialise the RFM95 Radio Module
 	RadioInit();
 
+	SystickInit();
+
+	PunctualInit();
+
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
 		bme280GetData(&bme280Dev, &bme280Data);
 		bme280Working = true;
@@ -202,7 +207,7 @@ int main(void) {
 
 	lightSensorWorking = initMAX();
 	if (lightSensorWorking) {
-		getLight(&lux);
+		getLight();
 	}
 
 	flashInitBuffer();
@@ -223,11 +228,10 @@ int main(void) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 	while (1) {
-		scheduler();
+
 	}
 }
 
-extern bool hasData;
 void PORT1_IRQHandler(void) {
 	uint32_t status;
 
@@ -235,7 +239,6 @@ void PORT1_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	if (status & GPIO_PIN1) {
-		hasData = true;
 
 	}
 }

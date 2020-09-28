@@ -13,6 +13,7 @@
 #include <my_MAC.h>
 #include <my_RFM9x.h>
 #include <my_timer.h>
+#include <MAX44009.h>
 #include <radio.h>
 #include <stdio.h>
 #include <string.h>
@@ -70,9 +71,6 @@ extern struct bme280_data bme280Data;
 // soil moisture data
 extern float soilMoisture;
 
-//light data
-extern float lux;
-
 // current RadioState
 LoRaRadioState_t RadioState;
 
@@ -82,12 +80,14 @@ uint8_t TXBuffer[MAX_MESSAGE_LEN];
 //GPS Data
 extern LocationData gpsData;
 
-static void scheduleSetup();
-
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
  */
 static bool processRXBuffer();
+
+static bool MACSend(uint8_t msgType, uint8_t dest);
+
+static bool MACRx(uint32_t timeout);
 
 //static void syncSchedule();
 static bool stateMachine();
@@ -123,23 +123,20 @@ void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
 }
 
 bool MACStateMachine() {
-
-	GpioWrite(&Led_rgb_blue, 1);
 	stateMachine();
-	GpioWrite(&Led_rgb_blue, 0);
 	return true;
 }
 
 bool MACSend(uint8_t msgType, uint8_t dest) {
 
 	if (dest != NULL) {
-		txDatagram.header.dest = dest;
+		txDatagram.macHeader.dest = dest;
 	} else {
-		txDatagram.header.dest = BROADCAST_ADDRESS;
+		txDatagram.macHeader.dest = BROADCAST_ADDRESS;
 	}
-	txDatagram.header.source = _nodeID;
-	txDatagram.header.flags = msgType;
-	txDatagram.header.msgID = (uint16_t) (_nodeID << 8)
+	txDatagram.macHeader.source = _nodeID;
+	txDatagram.macHeader.flags = msgType;
+	txDatagram.macHeader.msgID = (uint16_t) (_nodeID << 8)
 			| (uint16_t) (_numMsgSent);
 	// message type:
 	//	RTS:	0x1
@@ -152,7 +149,7 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 		txDatagram.data.hum = bme280Data.humidity;
 		txDatagram.data.press = bme280Data.pressure;
 		txDatagram.data.temp = bme280Data.temperature;
-		txDatagram.data.lux = lux;
+		txDatagram.data.lux = getLux();
 		txDatagram.data.gpsData = gpsData;
 		txDatagram.data.soilMoisture = soilMoisture;
 		txDatagram.data.tim = RTC_C_getCalendarTime();
@@ -161,9 +158,9 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 		startLoRaTimer(1000);
 		SX1276Send(TXBuffer, sizeof(txDatagram));
 	} else {
-		memcpy(TXBuffer, &txDatagram, sizeof(txDatagram.header));
+		memcpy(TXBuffer, &txDatagram, sizeof(txDatagram.macHeader));
 		startLoRaTimer(1000);
-		SX1276Send(TXBuffer, sizeof(txDatagram.header));
+		SX1276Send(TXBuffer, sizeof(txDatagram.macHeader));
 	}
 
 	RadioState = TX;
@@ -198,13 +195,13 @@ static bool processRXBuffer() {
 	memcpy(&rxdatagram, &RXBuffer, loraRxBufferSize);
 
 	// check if message was meant for this node:
-	if ((rxdatagram.header.dest == _nodeID)
-			|| (rxdatagram.header.dest == BROADCAST_ADDRESS)) {	// if destination is this node or broadcast check message type
+	if ((rxdatagram.macHeader.dest == _nodeID)
+			|| (rxdatagram.macHeader.dest == BROADCAST_ADDRESS)) {// if destination is this node or broadcast check message type
 
-		if (_prevMsgId != rxdatagram.header.msgID) { // if a new message change prevMsgId to the id of the new message
-			_prevMsgId = rxdatagram.header.msgID;
+		if (_prevMsgId != rxdatagram.macHeader.msgID) { // if a new message change prevMsgId to the id of the new message
+			_prevMsgId = rxdatagram.macHeader.msgID;
 		}
-		switch (rxdatagram.header.flags) {
+		switch (rxdatagram.macHeader.flags) {
 		case 0x01: 	// RTS
 			MACState = MAC_CTS;
 			break;
@@ -237,7 +234,7 @@ static bool stateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_LISTEN:
-			if (!MACRx(1000)) {	// If no message received in 3sec go back to sleep
+			if (!MACRx(30000)) {// If no message received in 30sec go back to sleep
 				SX1276SetSleep();
 				RadioState = RADIO_SLEEP;
 				MACState = MAC_SLEEP;
@@ -301,7 +298,6 @@ static bool stateMachine() {
 		default:
 			return false;
 		}
-
 	}
 }
 

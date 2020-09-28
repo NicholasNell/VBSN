@@ -5,24 +5,30 @@
  *      Author: nicholas
  */
 
+#include <punctual.h>
 #include "my_systick.h"
-static bool *timerAtempFlag;
+
+static uint32_t ticks;
 
 /*!
  *
  * @param period value in ms
  * @param flag	flag to be set
  */
-void SystickInit(uint32_t period, bool *flag) {
+void SystickInit() {
 
-	timerAtempFlag = flag;
 	MAP_SysTick_enableModule();
-	uint32_t value = period * 15 * 100;
-	MAP_SysTick_setPeriod(value);
+	uint32_t value = 1 * 15 * 100;
+	SysTick_setPeriod(value);
+	ticks = 0;
 	MAP_SysTick_enableInterrupt();
 }
 
 void SysTick_Handler(void) {
-	*timerAtempFlag = true;
-	MAP_SysTick_disableModule();
+	ticks++;
+	PunctualISR();
+}
+
+uint32_t SystickGetTime() {
+	return ticks;
 }

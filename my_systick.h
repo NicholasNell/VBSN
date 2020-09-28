@@ -10,8 +10,8 @@
 
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
-void SystickInit( uint32_t period, bool *flag );
-void SysTick_Handler( void );
-
+void SystickInit();
+void SysTick_Handler(void);
+uint32_t SystickGetTime();
 
 #endif /* MY_SYSTICK_H_ */

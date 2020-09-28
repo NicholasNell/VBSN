@@ -11,14 +11,13 @@
 #include <helper.h>
 #include <MAX44009.h>
 
-extern float lux;
 extern struct bme280_dev bme280Dev;
 extern struct bme280_data bme280Data;
 float soilMoisture = 100;
 
 void helper_collectSensorData() {
 
-	getLight(&lux);
+	getLight();
 	bme280GetData(&bme280Dev, &bme280Data);
 	soilMoisture--;
 

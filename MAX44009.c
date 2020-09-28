@@ -10,6 +10,8 @@
 #include <math.h>
 #include "my_timer.h"
 
+static float lux;
+
 bool initMAX() {
 	bool retval;
 	MAX44009_ON
@@ -28,7 +30,7 @@ bool initMAX() {
 	return retval;
 }
 
-void getLight(float *lux) {
+void getLight() {
 	uint8_t RXData[2];
 	I2C_masterSendSingleByte(EUSCI_B1_BASE, MAX44009_LUX_HIGH_BYTE);
 	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
@@ -48,5 +50,9 @@ void getLight(float *lux) {
 	int exponent = (RXData[0] & 0xF0) >> 4;
 	int mantissa = ((RXData[0] & 0x0F) << 4) | (RXData[1] & 0x0F);
 	float luminance = pow(2, exponent) * mantissa * 0.045;
-	*lux = luminance;
+	lux = luminance;
+}
+
+float getLux() {
+	return lux;
 }

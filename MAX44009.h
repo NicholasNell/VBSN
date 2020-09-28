@@ -33,6 +33,7 @@
 #define MAX44009_OFF {MAX44009_POWER_PORT->OUT &= ~MAX44009_POWER_PIN;}
 
 bool initMAX();
-void getLight(float *lux);
+void getLight();
+float getLux();
 
 #endif /* MAX44009_H_ */

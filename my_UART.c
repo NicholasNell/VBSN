@@ -7,6 +7,7 @@
 
 #include <bme280.h>
 #include <bme280_defs.h>
+#include <helper.h>
 #include <math.h>
 #include <my_gpio.h>
 #include <my_gps.h>
@@ -39,7 +40,6 @@ extern struct bme280_data bme280Data;
 extern struct bme280_dev bme280Dev;
 LocationData gpsData;
 
-extern float lux;
 extern Gpio_t Led_rgb_blue;
 extern RTC_C_Calendar currentTime;
 extern bool setTimeFlag;
@@ -177,20 +177,19 @@ void UartCommands() {
 		}
 			break;
 		case 'L': {
-			getLight(&lux);
+			getLight();
 			char buffer[10];
-			sprintf(buffer, "%.2f", lux);
+			sprintf(buffer, "%.2f", getLux());
 			sendUARTpc("Current light intensity: ");
 			sendUARTpc(buffer);
 			sendUARTpc(" lux\n");
 		}
 			break;
 		case 'A': {
-			getLight(&lux);
-			bme280GetData(&bme280Dev, &bme280Data);
+			helper_collectSensorData();
 			sendUARTpc("All sensor data: ");
 			char buffer[10];
-			sprintf(buffer, "%.2f", lux);
+			sprintf(buffer, "%.2f", getLux());
 			sendUARTpc("| L: ");
 			sendUARTpc(buffer);
 			sprintf(buffer, "%.2f", bme280Data.temperature);
@@ -203,6 +202,14 @@ void UartCommands() {
 			sendUARTpc("| P: ");
 			sendUARTpc(buffer);
 			sendUARTpc("|\n");
+		}
+			break;
+		case 'C': { //set clock to zero
+			RTC_C_Calendar zeroTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x2020 };
+			RTC_C_holdClock();
+			RtcInit(zeroTime);
+			sendUARTpc("Time zeroed");
 		}
 			break;
 		default:
@@ -298,9 +305,6 @@ void UartGPSCommands() {
 
 				sendUARTgps("$PCAS03,0,0,0,0,0,0,,0*32\r\n"); // turn off GNA output
 
-				char s[23];
-				sprintf(s, "%f,%f\n", gpsData.lat, gpsData.lon);
-//				SX1276Send((uint8_t*) s, strlen(s));
 			}
 
 		} else if (!memcmp(CMD, "$GNZDA", 6)) {
@@ -395,10 +399,10 @@ void UartGPSCommands() {
 //				         0x11,
 //				         0x1955
 //				 };
-				sendUARTgps("$PCAS03,0,,0,0,0,0,0,0*32\r\n"); // turn off ZDA output
 				Delayms(delayLeft);
 				MAP_RTC_C_holdClock();
 				RtcInit(currentTime);
+				sendUARTgps("$PCAS03,0,,0,0,0,0,0,0*32\r\n"); // turn off ZDA output
 			}
 		} else {
 

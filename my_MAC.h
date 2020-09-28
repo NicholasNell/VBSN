@@ -41,10 +41,8 @@ void MacInit();
 
 void MACreadySend(uint8_t *dataToSend, uint8_t datalen);
 
+void MACscheduleListen();
+
 bool MACStateMachine();
-
-bool MACSend(uint8_t msgType, uint8_t dest);
-
-bool MACRx(uint32_t timeout);
 
 #endif /* MY_MAC_H_ */

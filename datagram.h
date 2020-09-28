@@ -17,6 +17,12 @@
 #define RH_MAX_MESSAGE_LEN 255
 
 typedef struct {
+	uint8_t netDest;
+	uint8_t netFlags;
+	uint8_t netHops;
+} NetHeader_t;
+
+typedef struct {
 	uint8_t dest; // Where the message needs to go (MAC LAYER, not final destination);
 	uint8_t source;	// Where the message came from, not original source
 	uint16_t msgID;	// Msg ID. Unique message number.
@@ -27,11 +33,11 @@ typedef struct {
 					// 	Data:	0x4
 					// 	Ack:	0x5
 					// 	Disc:  	0x6
-} Header_t;
+} MacHeader_t;
 
 typedef struct {
 	uint8_t min; // Minute of the hour this node starts its cycle (i.e: min=1; will sleep until 20 and send a data packet on 21;)
-} syncPacket_t;
+} SyncPacket_t;
 
 typedef struct {
 	LocationData gpsData;
@@ -44,7 +50,7 @@ typedef struct {
 } MsgData_t;
 
 typedef struct {
-	Header_t header;
+	MacHeader_t macHeader;
 	MsgData_t data;
 } Datagram_t;
 
