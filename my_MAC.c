@@ -242,6 +242,23 @@ static bool stateMachine() {
 			}
 			break;
 		case NODE_DISC:
+
+			/* Every node can only tx in its syncslot and the syncslots of it's neighbours (which if everything works, will be the same).
+			 * Rx slots the same for every node, so nodes always listen in rx slots for external commands. Or additional neighbours.
+			 * 	Node Discovery SuedoCode
+			 * Generate own syncSlot.
+			 * Listen for random amount of time (up to max slots time).
+			 * if rx sync msg:
+			 * 	set sync slot to received sync slot and update neighbour table.
+			 * 	continue rx until end of random time.
+			 * 	added addition sync slots to array of sync slots and update neighbour table.
+			 * else if timeout
+			 * 	tx own sync slot.
+			 * 	sleep.
+			 *
+			 * write sync slot and neighbours to flash
+			 *
+			 */
 			return false;
 		case MAC_SLEEP:	// SLEEP
 			if (RadioState != RADIO_SLEEP) {
