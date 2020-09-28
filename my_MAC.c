@@ -244,10 +244,11 @@ static bool stateMachine() {
 		case NODE_DISC:
 
 			/* Every node can only tx in its syncslot and the syncslots of it's neighbours (which if everything works, will be the same).
-			 * Rx slots the same for every node, so nodes always listen in rx slots for external commands. Or additional neighbours.
+			 * Rx slots the same for every node (eg every 5 slots), so nodes always listen in rx slots for external commands. Or additional neighbours.
+			 *
 			 * 	Node Discovery SuedoCode
 			 * Generate own syncSlot.
-			 * Listen for random amount of time (up to max slots time).
+			 * Listen until own sync slot occurs.
 			 * if rx sync msg:
 			 * 	set sync slot to received sync slot and update neighbour table.
 			 * 	continue rx until end of random time.
