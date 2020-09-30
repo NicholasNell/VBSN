@@ -34,15 +34,16 @@ int scheduler() {
 		}
 	}
 
-	if (slotCount == (_txSlot - 8)) { // collect Sensor Data
-		helper_collectSensorData();
-	} else if (slotCount == 30) {	// update GPS information
-		sendUARTgps("$PCAS03,0,1,0,0,0,0,1,0*02\r\n");
-	} else if (slotCount == _txSlot) { // send Sensor data
-		MACState = MAC_RTS;
-	} else if (slotCount == 10) {
-		sendUARTpc("SLOT 10\n");
+	if (slotCount % 100 == 0) {
+		MACState = MAC_LISTEN;
 	}
+
+	if (slotCount % 10 == 0) {
+		MACStateMachine();
+	} else if (slotCount == _txSlot) {
+		MACState = MAC_RTS;
+	}
+
 	return true;
 }
 

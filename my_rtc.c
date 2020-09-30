@@ -60,6 +60,9 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 	/* Specify an interrupt to assert every minute */
 	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
 
+	MAP_RTC_C_setCalendarAlarm(0x20, RTC_C_ALARMCONDITION_OFF,
+	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
+
 	/* Enable interrupt for RTC Ready Status, which asserts when the RTC
 	 * Calendar registers are ready to read.
 	 * Also, enable interrupts for the Calendar alarm and Calendar event. */
@@ -87,7 +90,7 @@ void RTC_C_IRQHandler(void) {
 
 	incrementSlotCount();
 
-	if (getSlotCount() == MAX_SLOT_COUNT) {
+	if (getSlotCount() == MAX_SLOT_COUNT + 1) {
 		setSlotCount(0);
 	}
 

@@ -32,11 +32,6 @@ typedef enum {
 	MAC_ACK
 } MACappState_t;
 
-typedef struct {
-	uint8_t nodeID;	// Node ID to which this schedule belongs
-	uint32_t sleepTime;	// Time until next wake period
-} Schedule_t;
-
 void MacInit();
 
 void MACreadySend(uint8_t *dataToSend, uint8_t datalen);
