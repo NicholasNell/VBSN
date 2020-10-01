@@ -25,9 +25,7 @@ uint32_t lastWrite = MYDATA_MEM_START;
 extern uint8_t _nodeID;
 
 // array of known neighbours
-extern uint8_t neighbourTable[MAX_NEIGHBOURS];
-
-extern uint16_t neighbourSyncSlots[MAX_NEIGHBOURS];
+extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
 int flashWriteBuffer() {
 
@@ -93,8 +91,6 @@ int flashInitBuffer() {
 int flashWriteNeighbours() {
 	memcpy(&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION, &neighbourTable,
 			sizeof(neighbourTable));
-	memcpy(&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION,
-			&neighbourSyncSlots, sizeof(neighbourSyncSlots));
 	return flashWriteBuffer();
 }
 

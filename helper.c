@@ -10,15 +10,17 @@
 #include <bme280_defs.h>
 #include <helper.h>
 #include <MAX44009.h>
+#include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
+
+extern RTC_C_Calendar timeStamp;
 
 extern struct bme280_dev bme280Dev;
 extern struct bme280_data bme280Data;
 float soilMoisture = 100;
 
 void helper_collectSensorData() {
-
 	getLight();
 	bme280GetData(&bme280Dev, &bme280Data);
 	soilMoisture--;
-
+	timeStamp = RTC_C_getCalendarTime();
 }

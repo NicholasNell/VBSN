@@ -13,6 +13,7 @@
 uint8_t minutes = TX_INTERVAL;
 bool setTimeFlag;
 bool macFlag = false;
+bool schedFlag = false;
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
 //RTC_C_Calendar currentTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2020 };
@@ -82,6 +83,7 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 }
 
 void RTC_C_IRQHandler(void) {
+	schedFlag = true;
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
@@ -97,6 +99,5 @@ void RTC_C_IRQHandler(void) {
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
 		setSlotCount(0);
 	}
-	scheduler();
 }
 

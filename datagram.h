@@ -23,7 +23,6 @@ typedef struct {
 } NetHeader_t;
 
 typedef struct {
-	uint16_t rxSlot;	// rxSlot
 	uint16_t txSlot; 	// txSlot
 	uint16_t schedID; 	// Schedule ID
 } Schedule_t;

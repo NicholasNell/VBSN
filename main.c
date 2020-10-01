@@ -56,6 +56,7 @@
 #include <radio.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sx1276Regs-Fsk.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
@@ -68,6 +69,8 @@
 //uint8_t TXBuffer[255] = { 0 };
 uint8_t RXBuffer[255] = { 0 };
 volatile uint8_t loraRxBufferSize = LORA_MAX_PAYLOAD_LEN;
+
+uint16_t loraTxtimes[255];
 
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
@@ -83,6 +86,8 @@ bool gpsWorking = false;
 
 // Radio Module status flag:
 bool rfm95Working = false;
+
+extern bool schedFlag;
 
 /*!
  * Radio events function pointer
@@ -170,6 +175,13 @@ void RadioInit() {
 	// set radio frequency channel
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
+
+	int i;
+	for (i = 0; i < 255; ++i) {
+		loraTxtimes[i] = SX1276GetTimeOnAir(MODEM_LORA, LORA_BANDWIDTH,
+		LORA_SPREADING_FACTOR, LORA_CODINGRATE, LORA_PREAMBLE_LENGTH,
+		LORA_FIX_LENGTH_PAYLOAD_ON, i + 1, LORA_CRC_ON) + 10;
+	}
 }
 
 extern volatile MACappState_t MACState;
@@ -184,6 +196,8 @@ int main(void) {
 	// Initialise all ports and communication protocols
 	BoardInitMcu();
 //	RtcInit();
+
+	srand(SX1276Random8Bit());
 
 	// Initialise UART to PC
 	UARTinitPC();
@@ -228,6 +242,11 @@ int main(void) {
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
 	while (1) {
+		if (schedFlag) {
+			schedFlag = false;
+			scheduler();
+			MACStateMachine();
+		}
 
 	}
 }

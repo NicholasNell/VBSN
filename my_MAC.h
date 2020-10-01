@@ -22,15 +22,20 @@ typedef enum {
 } LoRaRadioState_t;
 
 typedef enum {
-	SYNC_MAC,
 	MAC_SLEEP,
 	NODE_DISC,
 	MAC_RTS,
 	MAC_CTS,
 	MAC_DATA,
 	MAC_LISTEN,
-	MAC_ACK
+	MAC_ACK,
+	MAC_SYNC_BROADCAST
 } MACappState_t;
+
+typedef struct {
+	uint8_t neighbourID;
+	uint16_t neighbourTxSlot;
+} Neighbour_t;
 
 void MacInit();
 

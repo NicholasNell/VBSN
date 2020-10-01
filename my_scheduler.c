@@ -14,34 +14,50 @@
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 static uint16_t slotCount;
-extern uint16_t neighbourSyncSlots[255];
+
+static uint16_t collectdataSlot;
+
+extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
 extern uint8_t _numNeighbours;
 extern uint16_t _txSlot;
 
 extern volatile MACappState_t MACState;
 
+extern bool hasData;
+
+bool schedChange = false;
+
 void initScheduler() {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
+	collectdataSlot = _txSlot - 8;
 	slotCount = 0;
 }
 
 int scheduler() {
 	int var = 0;
 	for (var = 0; var < _numNeighbours; ++var) {
-		if (slotCount == neighbourSyncSlots[var]) {
+		if (slotCount == neighbourTable[var].neighbourTxSlot) {
 			MACState = MAC_LISTEN;
+			break;
 		}
 	}
 
-	if (slotCount % 100 == 0) {
+	if (slotCount % 100 == 0) { // Global Sync Slots
 		MACState = MAC_LISTEN;
 	}
 
-	if (slotCount % 10 == 0) {
-		MACStateMachine();
-	} else if (slotCount == _txSlot) {
+	if (slotCount == _txSlot && hasData) {
 		MACState = MAC_RTS;
+	}
+
+	if (schedChange && (slotCount % 100 == 0)) {
+		MACState = MAC_SYNC_BROADCAST;
+	}
+
+	if (slotCount == collectdataSlot) {
+		helper_collectSensorData();
+		hasData = true;
 	}
 
 	return true;
