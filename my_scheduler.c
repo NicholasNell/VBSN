@@ -31,7 +31,7 @@ bool schedChange = false;
 void initScheduler() {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
 	collectdataSlot = _txSlot - 8;
-	slotCount = 0;
+	slotCount = 1;
 }
 
 int scheduler() {

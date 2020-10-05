@@ -84,6 +84,8 @@ bool bme280Working = false;
 bool lightSensorWorking = false;
 bool gpsWorking = false;
 
+bool MACFlag = true;
+
 // Radio Module status flag:
 bool rfm95Working = false;
 
@@ -241,13 +243,22 @@ int main(void) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
+	MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P3, GPIO_PIN2);
+	MAP_GPIO_interruptEdgeSelect(GPIO_PORT_P3, GPIO_PIN2,
+	GPIO_LOW_TO_HIGH_TRANSITION);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, GPIO_PIN2);
+	MAP_GPIO_enableInterrupt(GPIO_PORT_P3, GPIO_PIN2);
+	MAP_Interrupt_enableInterrupt(INT_PORT3);
+
 	while (1) {
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
-			MACStateMachine();
+			if (MACFlag) {
+				MACFlag = false;
+				MACFlag = MACStateMachine();
+			}
 		}
-
 	}
 }
 
@@ -258,7 +269,20 @@ void PORT1_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	if (status & GPIO_PIN1) {
+	}
+}
 
+void PORT3_IRQHandler(void) {
+	uint32_t status;
+	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
+	if (status & GPIO_PIN2) {
+		schedFlag = true;
+		incrementSlotCount();
+
+		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
+			setSlotCount(0);
+		}
 	}
 }
 
@@ -274,7 +298,8 @@ void PORT2_IRQHandler(void) {
 		SX1276OnDio0Irq();
 	} else if (status & GPIO_PIN6) {
 		SX1276OnDio1Irq();
-	} else if (status & GPIO_PIN3) {
+	} else if (status & GPIO_PIN5) {
+
 	} else if (status & GPIO_PIN7) {
 		SX1276OnDio2Irq();
 	}
@@ -282,7 +307,7 @@ void PORT2_IRQHandler(void) {
 
 void OnTxDone(void) {
 	SX1276clearIRQFlags();
-	Radio.Sleep();
+//	Radio.Sleep();
 	RadioState = TXDONE;
 #ifdef DEBUG
 	sendUARTpc("TxDone\n");
@@ -291,7 +316,7 @@ void OnTxDone(void) {
 
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
-	Radio.Sleep();
+//	Radio.Sleep();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);
 	RssiValue = rssi;
@@ -313,7 +338,7 @@ void OnTxTimeout(void) {
 
 void OnRxTimeout(void) {
 	SX1276clearIRQFlags();
-	Radio.Sleep();
+//	Radio.Sleep();
 	RadioState = RXTIMEOUT;
 #ifdef DEBUG
 
