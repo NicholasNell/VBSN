@@ -199,7 +199,7 @@ int main(void) {
 	BoardInitMcu();
 //	RtcInit();
 
-	srand(SX1276Random8Bit());
+	srand(SX1276Random());
 
 	// Initialise UART to PC
 	UARTinitPC();
@@ -254,10 +254,7 @@ int main(void) {
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
-			if (MACFlag) {
-				MACFlag = false;
-				MACFlag = MACStateMachine();
-			}
+			MACStateMachine();
 		}
 	}
 }
@@ -272,16 +269,23 @@ void PORT1_IRQHandler(void) {
 	}
 }
 
+static uint8_t slotLenCounter = 0;
+#define SLOTLENGTH 5
+
 void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 	if (status & GPIO_PIN2) {
-		schedFlag = true;
-		incrementSlotCount();
+		slotLenCounter++;
+		if (slotLenCounter == SLOTLENGTH) {
+			slotLenCounter = 0;
+			schedFlag = true;
+			incrementSlotCount();
 
-		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
-			setSlotCount(0);
+			if (getSlotCount() == MAX_SLOT_COUNT + 1) {
+				setSlotCount(0);
+			}
 		}
 	}
 }

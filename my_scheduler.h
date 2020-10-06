@@ -10,8 +10,12 @@
 #define MY_SCHEDULER_H_
 #include <stdint.h>
 
-#define MAX_SLOT_COUNT 60 * 20
-#define SLOT_LENGTH_MS 1000
+#define SLOT_LENGTH_MS 5000
+#define SLOT_SCALER 5
+#define MAX_SLOT_COUNT (60 * 5 / SLOT_SCALER)
+#define POSSIBLE_TX_SLOT (10 / SLOT_SCALER)
+#define GLOBAL_RX (100 / SLOT_SCALER)
+#define COLLECT_DATA_SLOT_REL 5
 
 void initScheduler();
 int scheduler();

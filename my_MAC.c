@@ -111,7 +111,7 @@ void MacInit() {
 		{
 			double temp = (double) rand();
 			temp /= 65535.0;
-			temp *= 1000;
+			temp *= SLOT_LENGTH_MS;
 
 			carrierSenseTimes[i] = (uint32_t) temp;
 		}
@@ -126,11 +126,12 @@ void MacInit() {
 	flashWriteNodeID();
 
 	do {
-		uint8_t temp = (uint8_t) rand();
-		_txSlot = (uint16_t) (temp * 4.7);
-		_txSlot /= 10;
-		_txSlot *= 10;
-	} while (_txSlot % 100 == 0);
+		double temp = (double) rand();
+		temp /= 65535.0;
+		temp *= MAX_SLOT_COUNT * 2;
+		_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
+		_txSlot *= POSSIBLE_TX_SLOT;
+	} while (_txSlot % GLOBAL_RX == 0);
 
 	schedChange = true;
 
@@ -163,7 +164,7 @@ bool MACStateMachine() {
 			MACState = MAC_SLEEP;
 			break;
 		case MAC_LISTEN:
-			if (!MACRx(1000)) {
+			if (!MACRx(SLOT_LENGTH_MS)) {
 				MACState = MAC_SLEEP;
 				return false;
 			}
@@ -178,17 +179,20 @@ bool MACStateMachine() {
 		case MAC_RTS:
 			// Send RTS
 			//			net_getNextDest(); // get the next hop destination from the network layer
-			SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -80,
-					carrierSenseTimes[carrierSenseSlot++]);
-			if (MACSend(0x1, neighbourTable[0].neighbourID)) {	// Send RTS
-				if (!MACRx(2 * loraTxtimes[sizeof(MacHeader_t) + 1] + 50)) {
-					if (MACSend(0x1, neighbourTable[0].neighbourID)) {
-						if (!MACRx(
-								2 * loraTxtimes[sizeof(MacHeader_t) + 1]
-										+ 50)) {
-							MACState = MAC_SLEEP;
-						}
+			if (SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -80,
+					carrierSenseTimes[carrierSenseSlot++])) {
+				if (MACSend(0x1, neighbourTable[0].neighbourID)) {	// Send RTS
+					if (!MACRx(5000)) {
+//						if (MACSend(0x1, neighbourTable[0].neighbourID)) {
+//							if (!MACRx(1000)) {
+//								MACState = MAC_SLEEP;
+//							}
+//						}
+						MACState = MAC_SLEEP;
+						return false;
 					}
+				} else {
+					MACState = MAC_SLEEP;
 					return false;
 				}
 			} else {
@@ -198,14 +202,12 @@ bool MACStateMachine() {
 			break;
 		case MAC_CTS:
 			if (MACSend(0x2, rxdatagram.macHeader.source)) {	// Send CTS
-				if (!MACRx(2 * loraTxtimes[sizeof(MacHeader_t) + 1] + 50)) {
-					if (MACSend(0x2, rxdatagram.macHeader.source)) {
-						if (!MACRx(
-								2 * loraTxtimes[sizeof(MacHeader_t) + 1]
-										+ 50)) {
-							MACState = MAC_SLEEP;
-						}
-					}
+				if (!MACRx(5000)) {
+//					if (MACSend(0x2, rxdatagram.macHeader.source)) {
+//						if (!MACRx(1000)) {
+//							MACState = MAC_SLEEP;
+//						}
+//					}
 					MACState = MAC_SLEEP;
 					return false;
 				}
@@ -217,20 +219,17 @@ bool MACStateMachine() {
 		case MAC_DATA:
 			// send sensor data
 			if (MACSend(0x4, rxdatagram.macHeader.source)) {	// Send DATA
-				if (!MACRx(
-						loraTxtimes[sizeof(txDatagram) + sizeof(MacHeader_t)]
-								+ 50)) {
-					MACState = MAC_SLEEP;
-					if (MACSend(0x4, rxdatagram.macHeader.source)) {// Send DATA
-						if (!MACRx(
-								loraTxtimes[sizeof(txDatagram)
-										+ sizeof(MacHeader_t)] + 50)) {
-							MACState = MAC_SLEEP;
-							return false;
-						}
-					}
-				}
+				if (!MACRx(5000)) {
 
+//					if (MACSend(0x4, rxdatagram.macHeader.source)) {// Send DATA
+//						if (!MACRx(1000)) {
+//							MACState = MAC_SLEEP;
+//							return false;
+//						}
+//					}
+					MACState = MAC_SLEEP;
+					return false;
+				}
 			} else {
 				MACState = MAC_SLEEP;
 				return false;

@@ -348,7 +348,7 @@ bool SX1276IsChannelFree(RadioModems_t modem, uint32_t freq, int16_t rssiThresh,
 		}
 	}
 
-	SX1276SetSleep();
+//	SX1276SetSleep();
 	return status;
 }
 
@@ -861,7 +861,7 @@ void SX1276SetSleep(void) {
 	SX1276SetOpMode( RF_OPMODE_SLEEP);
 
 	SX1276.Settings.State = RF_IDLE;
-	Delayms(10);
+	Delayms(5);
 }
 
 void SX1276SetStby(void) {

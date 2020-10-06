@@ -8,10 +8,7 @@
 
 #include <helper.h>
 #include <my_MAC.h>
-#include <my_UART.h>
 #include "my_scheduler.h"
-#include <stdint.h>
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 static uint16_t slotCount;
 
@@ -30,7 +27,7 @@ bool schedChange = false;
 
 void initScheduler() {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
-	collectdataSlot = _txSlot - 8;
+	collectdataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
 	slotCount = 1;
 }
 
@@ -43,7 +40,7 @@ int scheduler() {
 		}
 	}
 
-	if (slotCount % 100 == 0) { // Global Sync Slots
+	if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
 		MACState = MAC_LISTEN;
 	}
 
@@ -51,7 +48,7 @@ int scheduler() {
 		MACState = MAC_RTS;
 	}
 
-	if (schedChange && (slotCount % 100 == 0)) {
+	if (schedChange && (slotCount % GLOBAL_RX == 0)) {
 		MACState = MAC_SYNC_BROADCAST;
 	}
 
