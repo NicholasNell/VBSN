@@ -50,13 +50,16 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 }
 
 void RTC_C_IRQHandler(void) {
-//	schedFlag = true;
+
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
 	static RTC_C_Calendar time;
 	time = RTC_C_getCalendarTime();
 
+	if (time.minutes % 0x5 == 0) {
+		setSlotCount(0);
+	}
 //	incrementSlotCount();
 
 //	if (getSlotCount() == MAX_SLOT_COUNT + 1) {

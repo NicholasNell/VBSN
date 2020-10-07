@@ -311,7 +311,6 @@ void PORT2_IRQHandler(void) {
 
 void OnTxDone(void) {
 	SX1276clearIRQFlags();
-//	Radio.Sleep();
 	RadioState = TXDONE;
 #ifdef DEBUG
 	sendUARTpc("TxDone\n");
@@ -320,7 +319,6 @@ void OnTxDone(void) {
 
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
-//	Radio.Sleep();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);
 	RssiValue = rssi;

@@ -104,8 +104,28 @@ static bool MACSend(uint8_t msgType, uint8_t dest);
 
 static bool MACRx(uint32_t timeout);
 
-void MacInit() {
+static void genID(bool genNew);
+
+static void genID(bool genNew) {
 	uint8_t tempID;
+
+	if (genNew) {
+		while (tempID == 0xFF || tempID == 0x00 || tempID == _nodeID) {
+			tempID = (uint8_t) rand();
+		}
+		_nodeID = tempID;
+	} else {
+		tempID = flashReadNodeID();
+
+		while (tempID == 0xFF || tempID == 0x00) {
+			tempID = (uint8_t) rand();
+		}
+		_nodeID = tempID;
+	}
+	flashWriteNodeID();
+}
+void MacInit() {
+
 	uint8_t i;
 	for (i = 0; i < 255; ++i) {
 		{
@@ -115,15 +135,9 @@ void MacInit() {
 
 			carrierSenseTimes[i] = (uint32_t) temp;
 		}
-
 	}
-	tempID = flashReadNodeID();
 
-	while (tempID == 0xFF || tempID == 0x00) {
-		tempID = (uint8_t) rand();
-	}
-	_nodeID = tempID;
-	flashWriteNodeID();
+	genID(false);
 
 	do {
 		double temp = (double) rand();
@@ -144,7 +158,6 @@ void MacInit() {
 
 bool MACStateMachine() {
 	while (true) {
-
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
 			if (!MACRx(carrierSenseTimes[carrierSenseSlot++])) {
@@ -241,6 +254,8 @@ bool MACStateMachine() {
 				MACState = MAC_SLEEP;
 				return false;
 			}
+		case MAC_WAIT:
+			break;
 		default:
 			return false;
 		}
@@ -352,6 +367,11 @@ static bool processRXBuffer() {
 					rxdatagram.macHeader.sched.txSlot;
 			neighbourTable[_numNeighbours++] = receivedNeighbour;
 			MACState = MAC_SLEEP;
+
+			if (rxdatagram.macHeader.source == _nodeID) {
+				genID(true);
+				schedChange = true;
+			}
 			break;
 		}
 		default:
