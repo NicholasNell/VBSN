@@ -39,8 +39,6 @@ typedef struct {
 
 void MacInit();
 
-void MACreadySend(uint8_t *dataToSend, uint8_t datalen);
-
 void MACscheduleListen();
 
 bool MACStateMachine();

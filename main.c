@@ -103,7 +103,7 @@ extern Gpio_t Led_rgb_blue;		//BLUE
 extern Gpio_t Led_user_red;
 
 // MAC layer state
-extern volatile LoRaRadioState_t RadioState;
+extern LoRaRadioState_t RadioState;
 
 void printLoRaRegisters(void);
 

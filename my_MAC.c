@@ -30,7 +30,7 @@ static uint8_t carrierSenseSlot = 0;
 Datagram_t txDatagram;
 
 // Does this node have data to send?
-volatile bool hasData = false;
+bool hasData = false;
 
 // State of the MAC state machine
 volatile MACappState_t MACState = NODE_DISC;
@@ -142,10 +142,6 @@ void MacInit() {
 	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 }
 
-void MACreadySend(uint8_t *dataToSend, uint8_t dataLen) {
-
-}
-
 bool MACStateMachine() {
 	while (true) {
 
@@ -229,6 +225,9 @@ bool MACStateMachine() {
 //					}
 					MACState = MAC_SLEEP;
 					return false;
+				} else {
+					MACState = MAC_SLEEP;
+					return true;
 				}
 			} else {
 				MACState = MAC_SLEEP;
