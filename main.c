@@ -38,18 +38,14 @@
 #include <bme280.h>
 #include <bme280_defs.h>
 #include <board.h>
-#include <datagram.h>
-#include <helper.h>
 #include <main.h>
 #include <my_flash.h>
 #include <my_gpio.h>
 #include <my_MAC.h>
-#include <my_rtc.h>
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_spi.h>
 #include <my_systick.h>
-#include <my_timer.h>
 #include <my_UART.h>
 #include <MAX44009.h>
 #include <punctual.h>
@@ -302,8 +298,6 @@ void PORT2_IRQHandler(void) {
 		SX1276OnDio0Irq();
 	} else if (status & GPIO_PIN6) {
 		SX1276OnDio1Irq();
-	} else if (status & GPIO_PIN5) {
-
 	} else if (status & GPIO_PIN7) {
 		SX1276OnDio2Irq();
 	}

@@ -8,7 +8,8 @@
 
 #include <helper.h>
 #include <my_MAC.h>
-#include "my_scheduler.h"
+#include <my_scheduler.h>
+#include <stdbool.h>
 
 static uint16_t slotCount;
 
@@ -56,7 +57,6 @@ int scheduler() {
 		helper_collectSensorData();
 		hasData = true;
 	}
-
 	return true;
 }
 

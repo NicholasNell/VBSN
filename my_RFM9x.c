@@ -5,17 +5,15 @@
  *      Author: nicholas
  */
 
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
-#include <math.h>
+#include <my_RFM9x.h>
+#include <my_spi.h>
+#include <my_timer.h>
+#include <stddef.h>
 #include <string.h>
-#include "my_timer.h"
-#include "radio.h"
-#include "my_RFM9x.h"
-#include "sx1276-board.h"
-#include "timer.h"
-#include "sx1276Regs-Fsk.h"
-#include "sx1276Regs-LoRa.h"
-#include "my_spi.h"
+#include <sx1276-board.h>
+#include <sx1276Regs-Fsk.h>
+#include <sx1276Regs-LoRa.h>
+#include <timer.h>
 
 /*
  * Local types definition

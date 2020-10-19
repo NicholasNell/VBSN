@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
-#include <utilities.h>
 
 // Array of carrier sense times
 static uint32_t carrierSenseTimes[0xff];
@@ -107,7 +106,7 @@ static bool MACRx(uint32_t timeout);
 static void genID(bool genNew);
 
 static void genID(bool genNew) {
-	uint8_t tempID;
+	uint8_t tempID = 0x0;
 
 	if (genNew) {
 		while (tempID == 0xFF || tempID == 0x00 || tempID == _nodeID) {
@@ -124,6 +123,7 @@ static void genID(bool genNew) {
 	}
 	flashWriteNodeID();
 }
+
 void MacInit() {
 
 	uint8_t i;
@@ -304,31 +304,42 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 	}
 
 	RadioState = TX;
+	bool retVal = false;
 	while (true) {
 		if (RadioState == TXDONE) {
-			return true;
+			retVal = true;
 		} else if (RadioState == TXTIMEOUT)
-			return false;
+			retVal = false;
 	}
+	stopLoRaTimer();
+	return retVal;
 }
 
 bool MACRx(uint32_t timeout) {
 	Radio.Rx(0);
 	RadioState = RX;
 	startLoRaTimer(timeout);
+	bool retVal = false;
 	while (true) {
 		if (RadioState == RXTIMEOUT) {
-			return false;
+			retVal = false;
+			break;
 		} else if (RadioState == RXERROR) {
-			return false;
+			retVal = false;
+			break;
 		} else if (RadioState == RXDONE) {
 			if (processRXBuffer()) {
-				return true;
+				retVal = true;
+				break;
 			} else {
-				return false;
+				retVal = false;
+				break;
 			}
 		}
 	}
+	stopLoRaTimer();
+	return retVal;
+
 }
 
 static bool processRXBuffer() {
@@ -378,7 +389,7 @@ static bool processRXBuffer() {
 			return false;
 		}
 		return true;
-	} else { // if message was not meant for this node start listening again
+	} else {
 		return false;
 	}
 }

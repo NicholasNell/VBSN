@@ -21,14 +21,15 @@
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
+#include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 #include <ti/devices/msp432p4xx/driverlib/uart.h>
 #include <ti/devices/msp432p4xx/inc/msp432p401r.h>
 #include "my_UART.h"
 
 #define SIZE_BUFFER 80
 #define SIZE_BUFFER_GPS 255
-#define GPS_ON
-#define GPS_OFF
+#define GPS_ON P6->OUT |= BIT0;
+#define GPS_OFF P6->OUT &= ~BIT0;
 
 uint8_t counter_read_pc = 0; //UART receive buffer counter
 uint8_t counter_read_gps = 0;
@@ -44,7 +45,9 @@ extern Gpio_t Led_rgb_blue;
 extern RTC_C_Calendar currentTime;
 extern bool setTimeFlag;
 extern bool gpsWorking;
+
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
+
 //UART configured for 9600 Baud
 const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
 		9,                                     // BRDIV = 9
@@ -79,8 +82,8 @@ void UARTinitGPS() {
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
-
 }
+
 void UARTinitPC() {
 	/* Selecting P1.2 and P1.3 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
@@ -110,14 +113,12 @@ void sendUARTgps(char *buffer) {
 	}
 	uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P9);
 	GPIO_clearInterruptFlag(GPIO_PORT_P9, status);
-// write_string_toSD(buffer);
 }
 
 void send_uart_integer(uint32_t integer) {
 	char buffer[10];
 	sprintf(buffer, "_%2X_", integer);
 	sendUARTpc(buffer);
-
 }
 
 void checkUartActivity() {
@@ -398,8 +399,6 @@ void UartGPSCommands() {
 				RtcInit(currentTime);
 				sendUARTgps("$PCAS03,0,,0,0,0,0,0,0*32\r\n"); // turn off ZDA output
 			}
-		} else {
-
 		}
 		memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 		counter_read_gps = 0;
@@ -422,7 +421,6 @@ void EUSCIA3_IRQHandler(void) {
 	if (counter_read_gps == SIZE_BUFFER_GPS) {
 		counter_read_gps = 0;
 	}
-
 }
 
 void EUSCIA0_IRQHandler(void) {
@@ -442,5 +440,4 @@ void EUSCIA0_IRQHandler(void) {
 	if (counter_read_pc == SIZE_BUFFER) {
 		counter_read_pc = 0;
 	}
-
 }

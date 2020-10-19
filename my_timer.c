@@ -12,12 +12,13 @@
  * TIMER_A_2 is being used specifically for the LoRa radio timings. using ACLK at 128kHz/64 for 0.5ms accuracy and max delay of 32.768 s
  */
 
-#include "my_timer.h"
-#include "utilities.h"
-#include "board.h"
-#include "my_RFM9x.h"
-#include "timer.h"
-#include "my_MAC.h"
+#include <my_timer.h>
+#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
+#include <ti/devices/msp432p4xx/driverlib/timer_a.h>
+#include <ti/devices/msp432p4xx/driverlib/timer32.h>
+#include <ti/devices/msp432p4xx/inc/msp432p401r.h>
+#include <timer.h>
 
 /*
  Global variables

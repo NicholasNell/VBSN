@@ -8,7 +8,10 @@
  */
 
 #include <my_scheduler.h>
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <stdint.h>
+#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
+#include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
 bool setTimeFlag;
 bool macFlag = false;

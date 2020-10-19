@@ -9,10 +9,8 @@
 #define DATAGRAM_H_
 
 #include <my_gps.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
-#include "my_MAC.h"
 
 #define RH_MAX_MESSAGE_LEN 255
 
@@ -55,10 +53,5 @@ typedef struct {
 	MacHeader_t macHeader;
 	MsgData_t data;
 } Datagram_t;
-
-bool datagramInit();
-void createDatagram();
-void datagramToArray();
-bool ArrayToDatagram();
 
 #endif /* DATAGRAM_H_ */

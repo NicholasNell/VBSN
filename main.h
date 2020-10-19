@@ -15,9 +15,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include <stdint.h>
-#include <stdbool.h>
-
 /*!
  * Constant values need to compute the RSSI value
  */

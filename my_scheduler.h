@@ -8,6 +8,7 @@
 
 #ifndef MY_SCHEDULER_H_
 #define MY_SCHEDULER_H_
+
 #include <stdint.h>
 
 #define SLOT_LENGTH_MS 5000
