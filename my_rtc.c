@@ -60,18 +60,18 @@ void RTC_C_IRQHandler(void) {
 	static RTC_C_Calendar time;
 	time = RTC_C_getCalendarTime();
 
-	if (time.minutes % 0x5 == 0) {
-		setSlotCount(0);
-	}
+//	if (time.minutes % 0x5 == 0) {
+//		setSlotCount(0);
+//	}
 //	incrementSlotCount();
 
 //	if (getSlotCount() == MAX_SLOT_COUNT + 1) {
 //		setSlotCount(0);
 //	}
 
-	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
-		setSlotCount(0);
-	}
+//	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
+//		setSlotCount(0);
+//	}
 
 }
 

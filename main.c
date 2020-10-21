@@ -266,7 +266,7 @@ void PORT1_IRQHandler(void) {
 }
 
 static uint8_t slotLenCounter = 0;
-#define SLOTLENGTH 5
+#define SLOTLENGTH 1
 
 void PORT3_IRQHandler(void) {
 	uint32_t status;

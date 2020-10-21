@@ -209,57 +209,59 @@ bool MACStateMachine() {
 				return false;
 			}
 			break;
-		case MAC_CTS:
-			if (MACSend(0x2, rxdatagram.macHeader.source)) {	// Send CTS
-				if (!MACRx(5000)) {
-//					if (MACSend(0x2, rxdatagram.macHeader.source)) {
-//						if (!MACRx(1000)) {
-//							MACState = MAC_SLEEP;
-//						}
-//					}
-					MACState = MAC_SLEEP;
-					return false;
-				}
-			} else {
-				MACState = MAC_SLEEP;
-				return false;
-			}
-			break;
-		case MAC_DATA:
-			// send sensor data
-			if (MACSend(0x4, rxdatagram.macHeader.source)) {	// Send DATA
-				if (!MACRx(5000)) {
+			/*		case MAC_CTS:
+			 if (MACSend(0x2, rxdatagram.macHeader.source)) {	// Send CTS
+			 if (!MACRx(5000)) {
+			 //					if (MACSend(0x2, rxdatagram.macHeader.source)) {
+			 //						if (!MACRx(1000)) {
+			 //							MACState = MAC_SLEEP;
+			 //						}
+			 //					}
+			 MACState = MAC_SLEEP;
+			 return false;
+			 }
+			 } else {
+			 MACState = MAC_SLEEP;
+			 return false;
+			 }
+			 break;
+			 case MAC_DATA:
+			 // send sensor data
+			 if (MACSend(0x4, rxdatagram.macHeader.source)) {	// Send DATA
+			 if (!MACRx(5000)) {
 
-//					if (MACSend(0x4, rxdatagram.macHeader.source)) {// Send DATA
-//						if (!MACRx(1000)) {
-//							MACState = MAC_SLEEP;
-//							return false;
-//						}
-//					}
-					MACState = MAC_SLEEP;
-					return false;
-				} else {
-					MACState = MAC_SLEEP;
-					return true;
-				}
-			} else {
-				MACState = MAC_SLEEP;
-				return false;
-			}
-		case MAC_ACK:
-			if (MACSend(0x5, rxdatagram.macHeader.source)) { // Send ACK
-				MACState = MAC_SLEEP;
-				return true;
-			} else {
-				MACState = MAC_SLEEP;
-				return false;
-			}
+			 //					if (MACSend(0x4, rxdatagram.macHeader.source)) {// Send DATA
+			 //						if (!MACRx(1000)) {
+			 //							MACState = MAC_SLEEP;
+			 //							return false;
+			 //						}
+			 //					}
+			 MACState = MAC_SLEEP;
+			 return false;
+			 } else {
+			 MACState = MAC_SLEEP;
+			 return true;
+			 }
+			 } else {
+			 MACState = MAC_SLEEP;
+			 return false;
+			 }
+			 case MAC_ACK:
+			 if (MACSend(0x5, rxdatagram.macHeader.source)) { // Send ACK
+			 MACState = MAC_SLEEP;
+			 return true;
+			 } else {
+			 MACState = MAC_SLEEP;
+			 return false;
+			 }
+			 */
 		case MAC_WAIT:
+			return true;
 			break;
 		default:
 			return false;
 		}
-		return false;
+//		return false;
 	}
 }
 
@@ -308,8 +310,11 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 	while (true) {
 		if (RadioState == TXDONE) {
 			retVal = true;
-		} else if (RadioState == TXTIMEOUT)
+			break;
+		} else if (RadioState == TXTIMEOUT) {
 			retVal = false;
+			break;
+		}
 	}
 
 	stopLoRaTimer();
@@ -340,7 +345,6 @@ bool MACRx(uint32_t timeout) {
 	}
 	stopLoRaTimer();
 	return retVal;
-
 }
 
 static bool processRXBuffer() {
@@ -356,15 +360,18 @@ static bool processRXBuffer() {
 
 		switch (rxdatagram.macHeader.flags) {
 		case 0x01: 	// RTS
-			MACState = MAC_CTS;
+			MACSend(0x2, rxdatagram.macHeader.source);
+			MACState = MAC_LISTEN;
 			break;
 		case 0x02: 	// CTS
-			MACState = MAC_DATA;
+			MACSend(0x4, rxdatagram.macHeader.source);
+			MACState = MAC_LISTEN;
 			break;
 		case 0x03: 	// SYNC
 			break;
 		case 0x04: 	// DATA
-			MACState = MAC_ACK;
+			MACSend(0x5, rxdatagram.macHeader.source);
+			MACState = MAC_SLEEP;
 			break;
 		case 0x05: 	// ACK
 			hasData = false;
