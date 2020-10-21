@@ -311,6 +311,7 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 		} else if (RadioState == TXTIMEOUT)
 			retVal = false;
 	}
+
 	stopLoRaTimer();
 	return retVal;
 }
