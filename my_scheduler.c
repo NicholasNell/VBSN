@@ -49,7 +49,7 @@ int scheduler() {
 		MACState = MAC_RTS;
 	}
 
-	if (schedChange && (slotCount % GLOBAL_RX == 0)) {
+	if ((schedChange || !_numNeighbours) && (slotCount % GLOBAL_RX == 0)) {
 		MACState = MAC_SYNC_BROADCAST;
 	}
 

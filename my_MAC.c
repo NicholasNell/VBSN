@@ -191,12 +191,7 @@ bool MACStateMachine() {
 			if (SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -80,
 					carrierSenseTimes[carrierSenseSlot++])) {
 				if (MACSend(0x1, neighbourTable[0].neighbourID)) {	// Send RTS
-					if (!MACRx(5000)) {
-//						if (MACSend(0x1, neighbourTable[0].neighbourID)) {
-//							if (!MACRx(1000)) {
-//								MACState = MAC_SLEEP;
-//							}
-//						}
+					if (!MACRx(SLOT_LENGTH_MS)) {
 						MACState = MAC_SLEEP;
 						return false;
 					}
@@ -209,55 +204,8 @@ bool MACStateMachine() {
 				return false;
 			}
 			break;
-			/*		case MAC_CTS:
-			 if (MACSend(0x2, rxdatagram.macHeader.source)) {	// Send CTS
-			 if (!MACRx(5000)) {
-			 //					if (MACSend(0x2, rxdatagram.macHeader.source)) {
-			 //						if (!MACRx(1000)) {
-			 //							MACState = MAC_SLEEP;
-			 //						}
-			 //					}
-			 MACState = MAC_SLEEP;
-			 return false;
-			 }
-			 } else {
-			 MACState = MAC_SLEEP;
-			 return false;
-			 }
-			 break;
-			 case MAC_DATA:
-			 // send sensor data
-			 if (MACSend(0x4, rxdatagram.macHeader.source)) {	// Send DATA
-			 if (!MACRx(5000)) {
-
-			 //					if (MACSend(0x4, rxdatagram.macHeader.source)) {// Send DATA
-			 //						if (!MACRx(1000)) {
-			 //							MACState = MAC_SLEEP;
-			 //							return false;
-			 //						}
-			 //					}
-			 MACState = MAC_SLEEP;
-			 return false;
-			 } else {
-			 MACState = MAC_SLEEP;
-			 return true;
-			 }
-			 } else {
-			 MACState = MAC_SLEEP;
-			 return false;
-			 }
-			 case MAC_ACK:
-			 if (MACSend(0x5, rxdatagram.macHeader.source)) { // Send ACK
-			 MACState = MAC_SLEEP;
-			 return true;
-			 } else {
-			 MACState = MAC_SLEEP;
-			 return false;
-			 }
-			 */
 		case MAC_WAIT:
 			return true;
-			break;
 		default:
 			return false;
 		}
@@ -360,21 +308,25 @@ static bool processRXBuffer() {
 
 		switch (rxdatagram.macHeader.flags) {
 		case 0x01: 	// RTS
-			MACSend(0x2, rxdatagram.macHeader.source);
+			MACSend(0x2, rxdatagram.macHeader.source); // send CTS to requesting node
 			MACState = MAC_LISTEN;
 			break;
 		case 0x02: 	// CTS
-			MACSend(0x4, rxdatagram.macHeader.source);
-			MACState = MAC_LISTEN;
+			if (hasData) {
+				MACSend(0x4, rxdatagram.macHeader.source); // Send data to destination node
+				MACState = MAC_LISTEN;
+			} else {
+				MACState = MAC_SLEEP;
+			}
 			break;
 		case 0x03: 	// SYNC
 			break;
 		case 0x04: 	// DATA
-			MACSend(0x5, rxdatagram.macHeader.source);
+			MACSend(0x5, rxdatagram.macHeader.source); // Send Ack back to transmitting node
 			MACState = MAC_SLEEP;
 			break;
 		case 0x05: 	// ACK
-			hasData = false;
+			hasData = false;	// data has succesfully been sent
 			MACState = MAC_SLEEP;
 			_numMsgSent++;
 			break;
@@ -388,7 +340,7 @@ static bool processRXBuffer() {
 			MACState = MAC_SLEEP;
 
 			if (rxdatagram.macHeader.source == _nodeID) {
-				genID(true);
+				genID(true); // change ID because another node has the same ID
 				schedChange = true;
 			}
 			break;
@@ -398,6 +350,7 @@ static bool processRXBuffer() {
 		}
 		return true;
 	} else {
+		MACState = MAC_SLEEP;
 		return false;
 	}
 }
