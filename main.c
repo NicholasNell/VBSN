@@ -101,6 +101,9 @@ extern Gpio_t Led_user_red;
 // MAC layer state
 extern LoRaRadioState_t RadioState;
 
+// bracket number
+extern uint8_t bracketNum;
+
 void printLoRaRegisters(void);
 
 /*!
@@ -265,23 +268,18 @@ void PORT1_IRQHandler(void) {
 	}
 }
 
-static uint8_t slotLenCounter = 0;
-#define SLOTLENGTH 1
-
 void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
-	if (status & GPIO_PIN2) {
-		slotLenCounter++;
-		if (slotLenCounter == SLOTLENGTH) {
-			slotLenCounter = 0;
-			schedFlag = true;
-			incrementSlotCount();
 
-			if (getSlotCount() == MAX_SLOT_COUNT + 1) {
-				setSlotCount(0);
-			}
+	if (status & GPIO_PIN2) {
+		schedFlag = true;
+		incrementSlotCount();
+
+		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
+			setSlotCount(0);
+			bracketNum++;
 		}
 	}
 }

@@ -94,6 +94,12 @@ extern uint16_t loraTxtimes[255];
 // data collection time
 RTC_C_Calendar timeStamp;
 
+// Valid messaged under current circumstances
+static uint8_t expMsgType;
+
+// external txBracket
+extern uint8_t txBracket;
+
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
  */
@@ -161,7 +167,7 @@ bool MACStateMachine() {
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
 			if (!MACRx(carrierSenseTimes[carrierSenseSlot++])) {
-				if (MACSend(0x6, BROADCAST_ADDRESS)) {
+				if (MACSend(MSG_SYNC, BROADCAST_ADDRESS)) {
 					schedChange = false;
 					MACState = MAC_SLEEP;
 					return true;
@@ -173,6 +179,7 @@ bool MACStateMachine() {
 			MACState = MAC_SLEEP;
 			break;
 		case MAC_LISTEN:
+			expMsgType = MSG_RTS | MSG_SYNC;
 			if (!MACRx(SLOT_LENGTH_MS)) {
 				MACState = MAC_SLEEP;
 				return false;
@@ -190,17 +197,21 @@ bool MACStateMachine() {
 			//			net_getNextDest(); // get the next hop destination from the network layer
 			if (SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -80,
 					carrierSenseTimes[carrierSenseSlot++])) {
-				if (MACSend(0x1, neighbourTable[0].neighbourID)) {	// Send RTS
+				if (MACSend(MSG_RTS, neighbourTable[0].neighbourID)) {// Send RTS
+					expMsgType = MSG_CTS;
 					if (!MACRx(SLOT_LENGTH_MS)) {
 						MACState = MAC_SLEEP;
+						txBracket += 1;
 						return false;
 					}
 				} else {
 					MACState = MAC_SLEEP;
+					txBracket += 1;
 					return false;
 				}
 			} else {
 				MACState = MAC_SLEEP;
+				txBracket += 1;
 				return false;
 			}
 			break;
@@ -226,14 +237,8 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 			| (uint16_t) (_numMsgSent);
 	txDatagram.macHeader.sched.txSlot = _txSlot;
 	txDatagram.macHeader.sched.schedID = _nodeID;
-	// message type:
-	//	RTS:	0x1
-	// 	CTS:	0x2
-	// 	SYNC:	0x3
-	// 	Data:	0x4
-	// 	Ack:	0x5
-	// 	Disc:  	0x6
-	if (msgType == 0x4) {
+
+	if (msgType == MSG_DATA) {
 		txDatagram.data.hum = bme280Data.humidity;
 		txDatagram.data.press = bme280Data.pressure;
 		txDatagram.data.temp = bme280Data.temperature;
@@ -306,47 +311,49 @@ static bool processRXBuffer() {
 			_prevMsgId = rxdatagram.macHeader.msgID;
 		}
 
-		switch (rxdatagram.macHeader.flags) {
-		case 0x01: 	// RTS
-			MACSend(0x2, rxdatagram.macHeader.source); // send CTS to requesting node
-			MACState = MAC_LISTEN;
-			break;
-		case 0x02: 	// CTS
-			if (hasData) {
-				MACSend(0x4, rxdatagram.macHeader.source); // Send data to destination node
+		if (rxdatagram.macHeader.flags & expMsgType) { // check if message is expected type
+			switch (rxdatagram.macHeader.flags) {
+			case MSG_RTS: 	// RTS
+				MACSend(MSG_CTS, rxdatagram.macHeader.source); // send CTS to requesting node
 				MACState = MAC_LISTEN;
-			} else {
+				break;
+			case MSG_CTS: 	// CTS
+				if (hasData) {
+					MACSend(MSG_DATA, rxdatagram.macHeader.source); // Send data to destination node
+					expMsgType = MSG_ACK;
+					MACState = MAC_LISTEN;
+				} else {
+					MACState = MAC_SLEEP;
+				}
+				break;
+			case MSG_DATA: 	// DATA
+				MACSend(MSG_ACK, rxdatagram.macHeader.source); // Send Ack back to transmitting node
 				MACState = MAC_SLEEP;
-			}
-			break;
-		case 0x03: 	// SYNC
-			break;
-		case 0x04: 	// DATA
-			MACSend(0x5, rxdatagram.macHeader.source); // Send Ack back to transmitting node
-			MACState = MAC_SLEEP;
-			break;
-		case 0x05: 	// ACK
-			hasData = false;	// data has succesfully been sent
-			MACState = MAC_SLEEP;
-			_numMsgSent++;
-			break;
-		case 0x06: 	// SYNC
-		{
-			Neighbour_t receivedNeighbour;
-			receivedNeighbour.neighbourID = rxdatagram.macHeader.source;
-			receivedNeighbour.neighbourTxSlot =
-					rxdatagram.macHeader.sched.txSlot;
-			neighbourTable[_numNeighbours++] = receivedNeighbour;
-			MACState = MAC_SLEEP;
+				break;
+			case MSG_ACK: 	// ACK
+				hasData = false;	// data has succesfully been sent
+				MACState = MAC_SLEEP;
+				_numMsgSent++;
+				expMsgType = MSG_NONE;
+				break;
+			case MSG_SYNC: 	// SYNC
+			{
+				Neighbour_t receivedNeighbour;
+				receivedNeighbour.neighbourID = rxdatagram.macHeader.source;
+				receivedNeighbour.neighbourTxSlot =
+						rxdatagram.macHeader.sched.txSlot;
+				neighbourTable[_numNeighbours++] = receivedNeighbour;
+				MACState = MAC_SLEEP;
 
-			if (rxdatagram.macHeader.source == _nodeID) {
-				genID(true); // change ID because another node has the same ID
-				schedChange = true;
+				if (rxdatagram.macHeader.source == _nodeID) {
+					genID(true); // change ID because another node has the same ID
+					schedChange = true;
+				}
+				break;
 			}
-			break;
-		}
-		default:
-			return false;
+			default:
+				return false;
+			}
 		}
 		return true;
 	} else {

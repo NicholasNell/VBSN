@@ -13,7 +13,7 @@
 
 static uint16_t slotCount;
 
-static uint16_t collectdataSlot;
+static uint16_t collectDataSlot;
 
 extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
@@ -26,15 +26,26 @@ extern bool hasData;
 
 bool schedChange = false;
 
+uint8_t bracketNum = 0;
+uint8_t txBracket = 0;
+
 void initScheduler() {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
-	collectdataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
+	collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
 	slotCount = 1;
 }
 
 int scheduler() {
+	if (bracketNum == 4) {
+		bracketNum = 0;
+	}
+
+	if (txBracket == 4) {
+		txBracket = 4;
+	}
+
 	int var = 0;
-	for (var = 0; var < _numNeighbours; ++var) {
+	for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
 		if (slotCount == neighbourTable[var].neighbourTxSlot) {
 			MACState = MAC_LISTEN;
 			break;
@@ -45,17 +56,22 @@ int scheduler() {
 		MACState = MAC_LISTEN;
 	}
 
-	if (slotCount == _txSlot && hasData) {
+	if ((slotCount == _txSlot) && (hasData) && (txBracket == bracketNum)) {	// if it is the nodes tx slot and it has data to send and it is in its correct bracket
 		MACState = MAC_RTS;
 	}
 
-	if ((schedChange || !_numNeighbours) && (slotCount % GLOBAL_RX == 0)) {
+	if ((schedChange || !_numNeighbours) && (slotCount % GLOBAL_RX == 0)) {	// if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
 		MACState = MAC_SYNC_BROADCAST;
 	}
 
-	if (slotCount == collectdataSlot) {
+	if (slotCount == collectDataSlot) {	// if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 		helper_collectSensorData();
 		hasData = true;
+	}
+
+	if (slotCount == (_txSlot + 2) && (hasData == true)) {
+		hasData = false;
+		txBracket++;
 	}
 	return true;
 }

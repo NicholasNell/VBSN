@@ -14,6 +14,14 @@
 
 #define RH_MAX_MESSAGE_LEN 255
 
+// msgType Flags
+#define MSG_NONE	0b00000000
+#define MSG_RTS 	0b00000001
+#define MSG_CTS 	0b00000010
+#define MSG_DATA 	0b00000100
+#define MSG_ACK 	0b00001000
+#define MSG_SYNC 	0b00010000
+
 typedef struct {
 	uint8_t netDest;
 	uint8_t netFlags;
