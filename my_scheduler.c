@@ -36,6 +36,7 @@ void initScheduler() {
 }
 
 int scheduler() {
+	bool macStateMachineEnable = false;
 	if (bracketNum == 4) {
 		bracketNum = 0;
 	}
@@ -48,20 +49,24 @@ int scheduler() {
 	for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
 		if (slotCount == neighbourTable[var].neighbourTxSlot) {
 			MACState = MAC_LISTEN;
+			macStateMachineEnable = true;
 			break;
 		}
 	}
 
 	if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
 		MACState = MAC_LISTEN;
+		macStateMachineEnable = true;
 	}
 
 	if ((slotCount == _txSlot) && (hasData) && (txBracket == bracketNum)) {	// if it is the nodes tx slot and it has data to send and it is in its correct bracket
 		MACState = MAC_RTS;
+		macStateMachineEnable = true;
 	}
 
-	if ((schedChange || !_numNeighbours) && (slotCount % GLOBAL_RX == 0)) {	// if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
+	if (schedChange && (slotCount % GLOBAL_RX == 0)) {// if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
 		MACState = MAC_SYNC_BROADCAST;
+		macStateMachineEnable = true;
 	}
 
 	if (slotCount == collectDataSlot) {	// if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
@@ -72,6 +77,10 @@ int scheduler() {
 	if (slotCount == (_txSlot + 2) && (hasData == true)) {
 		hasData = false;
 		txBracket++;
+	}
+
+	if (macStateMachineEnable) {
+		MACStateMachine();
 	}
 	return true;
 }

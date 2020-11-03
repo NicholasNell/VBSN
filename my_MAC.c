@@ -160,20 +160,22 @@ void MacInit() {
 	_destID = BROADCAST_ADDRESS;
 	_numMsgSent = 0;
 	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
+	expMsgType = MSG_SYNC;
 }
 
 bool MACStateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
+			expMsgType = MSG_SYNC;
 			if (!MACRx(carrierSenseTimes[carrierSenseSlot++])) {
 				if (MACSend(MSG_SYNC, BROADCAST_ADDRESS)) {
 					schedChange = false;
 					MACState = MAC_SLEEP;
-					return true;
+//					return true;
 				} else {
 					MACState = MAC_SLEEP;
-					return false;
+//					return false;
 				}
 			}
 			MACState = MAC_SLEEP;
@@ -182,7 +184,7 @@ bool MACStateMachine() {
 			expMsgType = MSG_RTS | MSG_SYNC;
 			if (!MACRx(SLOT_LENGTH_MS)) {
 				MACState = MAC_SLEEP;
-				return false;
+//				return false;
 			}
 			break;
 		case MAC_SLEEP:
@@ -202,23 +204,23 @@ bool MACStateMachine() {
 					if (!MACRx(SLOT_LENGTH_MS)) {
 						MACState = MAC_SLEEP;
 						txBracket += 1;
-						return false;
+//						return false;
 					}
 				} else {
 					MACState = MAC_SLEEP;
 					txBracket += 1;
-					return false;
+//					return false;
 				}
 			} else {
 				MACState = MAC_SLEEP;
 				txBracket += 1;
-				return false;
+//				return false;
 			}
 			break;
 		case MAC_WAIT:
-			return true;
+//			return true;
 		default:
-			return false;
+//			return false;
 		}
 //		return false;
 	}

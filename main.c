@@ -211,7 +211,7 @@ int main(void) {
 
 	SystickInit();
 
-	PunctualInit();
+//	PunctualInit();
 
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
 		bme280GetData(&bme280Dev, &bme280Data);
@@ -253,7 +253,7 @@ int main(void) {
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
-			MACStateMachine();
+
 		}
 	}
 }
