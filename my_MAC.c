@@ -97,9 +97,6 @@ RTC_C_Calendar timeStamp;
 // Valid messaged under current circumstances
 static uint8_t expMsgType;
 
-// external txBracket
-extern uint8_t txBracket;
-
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
  */
@@ -136,8 +133,8 @@ void MacInit() {
 	for (i = 0; i < 255; ++i) {
 		{
 			double temp = (double) rand();
-			temp /= 65535.0;
-			temp *= SLOT_LENGTH_MS;
+			temp /= (double) RAND_MAX;
+			temp *= SLOT_LENGTH_MS * 0.2;
 
 			carrierSenseTimes[i] = (uint32_t) temp;
 		}
@@ -181,7 +178,7 @@ bool MACStateMachine() {
 			MACState = MAC_SLEEP;
 			break;
 		case MAC_LISTEN:
-			expMsgType = MSG_RTS | MSG_SYNC;
+			expMsgType |= MSG_RTS | MSG_SYNC;
 			if (!MACRx(SLOT_LENGTH_MS)) {
 				MACState = MAC_SLEEP;
 //				return false;
@@ -203,24 +200,24 @@ bool MACStateMachine() {
 					expMsgType = MSG_CTS;
 					if (!MACRx(SLOT_LENGTH_MS)) {
 						MACState = MAC_SLEEP;
-						txBracket += 1;
+
 //						return false;
 					}
 				} else {
 					MACState = MAC_SLEEP;
-					txBracket += 1;
+
 //					return false;
 				}
 			} else {
 				MACState = MAC_SLEEP;
-				txBracket += 1;
+
 //				return false;
 			}
 			break;
 		case MAC_WAIT:
 //			return true;
 		default:
-//			return false;
+			return false;
 		}
 //		return false;
 	}
@@ -313,50 +310,50 @@ static bool processRXBuffer() {
 			_prevMsgId = rxdatagram.macHeader.msgID;
 		}
 
-		if (rxdatagram.macHeader.flags & expMsgType) { // check if message is expected type
-			switch (rxdatagram.macHeader.flags) {
-			case MSG_RTS: 	// RTS
-				MACSend(MSG_CTS, rxdatagram.macHeader.source); // send CTS to requesting node
+//		if (rxdatagram.macHeader.flags & expMsgType) { // check if message is expected type
+		switch (rxdatagram.macHeader.flags) {
+		case MSG_RTS: 	// RTS
+			MACSend(MSG_CTS, rxdatagram.macHeader.source); // send CTS to requesting node
+			MACState = MAC_LISTEN;
+			break;
+		case MSG_CTS: 	// CTS
+			if (hasData) {
+				MACSend(MSG_DATA, rxdatagram.macHeader.source); // Send data to destination node
+				expMsgType |= MSG_ACK;
 				MACState = MAC_LISTEN;
-				break;
-			case MSG_CTS: 	// CTS
-				if (hasData) {
-					MACSend(MSG_DATA, rxdatagram.macHeader.source); // Send data to destination node
-					expMsgType = MSG_ACK;
-					MACState = MAC_LISTEN;
-				} else {
-					MACState = MAC_SLEEP;
-				}
-				break;
-			case MSG_DATA: 	// DATA
-				MACSend(MSG_ACK, rxdatagram.macHeader.source); // Send Ack back to transmitting node
+			} else {
 				MACState = MAC_SLEEP;
-				break;
-			case MSG_ACK: 	// ACK
-				hasData = false;	// data has succesfully been sent
-				MACState = MAC_SLEEP;
-				_numMsgSent++;
-				expMsgType = MSG_NONE;
-				break;
-			case MSG_SYNC: 	// SYNC
-			{
-				Neighbour_t receivedNeighbour;
-				receivedNeighbour.neighbourID = rxdatagram.macHeader.source;
-				receivedNeighbour.neighbourTxSlot =
-						rxdatagram.macHeader.sched.txSlot;
-				neighbourTable[_numNeighbours++] = receivedNeighbour;
-				MACState = MAC_SLEEP;
+			}
+			break;
+		case MSG_DATA: 	// DATA
+			MACSend(MSG_ACK, rxdatagram.macHeader.source); // Send Ack back to transmitting node
+			MACState = MAC_SLEEP;
+			break;
+		case MSG_ACK: 	// ACK
+			hasData = false;	// data has succesfully been sent
+			MACState = MAC_SLEEP;
+			_numMsgSent++;
+			expMsgType = MSG_NONE;
+			break;
+		case MSG_SYNC: 	// SYNC
+		{
+			Neighbour_t receivedNeighbour;
+			receivedNeighbour.neighbourID = rxdatagram.macHeader.source;
+			receivedNeighbour.neighbourTxSlot =
+					rxdatagram.macHeader.sched.txSlot;
+			neighbourTable[_numNeighbours++] = receivedNeighbour;
+			MACState = MAC_SLEEP;
 
-				if (rxdatagram.macHeader.source == _nodeID) {
-					genID(true); // change ID because another node has the same ID
-					schedChange = true;
-				}
-				break;
+			if (rxdatagram.macHeader.source == _nodeID) {
+				genID(true); // change ID because another node has the same ID
+				schedChange = true;
 			}
-			default:
-				return false;
-			}
+			break;
 		}
+		default:
+			return false;
+		}
+//		}
 		return true;
 	} else {
 		MACState = MAC_SLEEP;

@@ -10,6 +10,7 @@
 #include <my_MAC.h>
 #include <my_scheduler.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 static uint16_t slotCount;
 
@@ -26,9 +27,6 @@ extern bool hasData;
 
 bool schedChange = false;
 
-uint8_t bracketNum = 0;
-uint8_t txBracket = 0;
-
 void initScheduler() {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
 	collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
@@ -37,13 +35,6 @@ void initScheduler() {
 
 int scheduler() {
 	bool macStateMachineEnable = false;
-	if (bracketNum == 4) {
-		bracketNum = 0;
-	}
-
-	if (txBracket == 4) {
-		txBracket = 4;
-	}
 
 	int var = 0;
 	for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
@@ -59,12 +50,14 @@ int scheduler() {
 		macStateMachineEnable = true;
 	}
 
-	if ((slotCount == _txSlot) && (hasData) && (txBracket == bracketNum)) {	// if it is the nodes tx slot and it has data to send and it is in its correct bracket
+	if ((slotCount == _txSlot) && (hasData)) { // if it is the nodes tx slot and it has data to send and it is in its correct bracket
 		MACState = MAC_RTS;
 		macStateMachineEnable = true;
 	}
 
-	if (schedChange && (slotCount % GLOBAL_RX == 0)) {// if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
+	if ((schedChange && (slotCount % GLOBAL_RX == 0))
+			|| ((rand() * 100 < SYNC_PROB * RAND_MAX)
+					&& (slotCount % GLOBAL_RX == 0))) { // if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
 		MACState = MAC_SYNC_BROADCAST;
 		macStateMachineEnable = true;
 	}
@@ -76,7 +69,6 @@ int scheduler() {
 
 	if (slotCount == (_txSlot + 2) && (hasData == true)) {
 		hasData = false;
-		txBracket++;
 	}
 
 	if (macStateMachineEnable) {

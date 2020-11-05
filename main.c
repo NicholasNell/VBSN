@@ -101,9 +101,6 @@ extern Gpio_t Led_user_red;
 // MAC layer state
 extern LoRaRadioState_t RadioState;
 
-// bracket number
-extern uint8_t bracketNum;
-
 void printLoRaRegisters(void);
 
 /*!
@@ -253,10 +250,12 @@ int main(void) {
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
-
 		}
 	}
 }
+
+extern bool schedChange;
+extern uint16_t _txSlot;
 
 void PORT1_IRQHandler(void) {
 	uint32_t status;
@@ -265,6 +264,8 @@ void PORT1_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	if (status & GPIO_PIN1) {
+		_txSlot = 55;
+		schedChange = true;
 	}
 }
 
@@ -279,7 +280,6 @@ void PORT3_IRQHandler(void) {
 
 		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
 			setSlotCount(0);
-			bracketNum++;
 		}
 	}
 }
@@ -332,7 +332,7 @@ void OnTxTimeout(void) {
 
 void OnRxTimeout(void) {
 	SX1276clearIRQFlags();
-//	Radio.Sleep();
+	Radio.Sleep();
 	RadioState = RXTIMEOUT;
 #ifdef DEBUG
 
