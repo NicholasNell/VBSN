@@ -21,6 +21,8 @@
 #define MSG_DATA 	0b00000100
 #define MSG_ACK 	0b00001000
 #define MSG_SYNC 	0b00010000
+#define MSG_RREQ 	0b00100000
+#define MSG_RREP	0b01000000
 
 typedef struct {
 	uint8_t netDest;
@@ -37,7 +39,7 @@ typedef struct {
 	uint8_t dest; // Where the message needs to go (MAC LAYER, not final destination);
 	uint8_t source;	// Where the message came from, not original source
 	uint16_t msgID;	// Msg ID. Unique message number.
-	Schedule_t sched; // syncslot
+	uint16_t txSlot; 	// txSlot
 	uint8_t flags;	// message type:
 					//	RTS:	0x1
 					// 	CTS:	0x2
@@ -58,8 +60,29 @@ typedef struct {
 } MsgData_t;
 
 typedef struct {
+	uint8_t source_addr;
+	uint8_t source_sequence_num;
+	uint8_t broadcast_id;
+	uint8_t dest_addr;
+	uint8_t dest_sequence_num;
+	uint8_t hop_cnt;
+} RReq_t;
+
+typedef struct {
+	uint8_t source_addr;
+	uint8_t dest_addr;
+	uint8_t dest_sequence_num;
+	uint8_t hop_cnt;
+	uint8_t lifetime;
+} RRep_t;
+
+typedef struct {
 	MacHeader_t macHeader;
-	MsgData_t data;
+	union Data {
+		RReq_t Rreq;
+		RRep_t Rrep;
+		MsgData_t msgData;
+	} data;
 } Datagram_t;
 
 #endif /* DATAGRAM_H_ */

@@ -15,6 +15,7 @@
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_timer.h>
+#include <myNet.h>
 #include <MAX44009.h>
 #include <radio.h>
 #include <stdlib.h>
@@ -50,6 +51,9 @@ extern volatile uint8_t loraRxBufferSize;
 
 // array of known neighbours
 Neighbour_t neighbourTable[MAX_NEIGHBOURS];
+
+// Routing Table
+RouteEntry_t routingtable[10];
 
 // This node MAC parameters:
 uint8_t _nodeID;
@@ -144,8 +148,8 @@ void MacInit() {
 
 	do {
 		double temp = (double) rand();
-		temp /= 65535.0;
-		temp *= MAX_SLOT_COUNT * 2;
+		temp /= RAND_MAX;
+		temp *= MAX_SLOT_COUNT;
 		_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
 		_txSlot *= POSSIBLE_TX_SLOT;
 	} while (_txSlot % GLOBAL_RX == 0);
@@ -157,6 +161,7 @@ void MacInit() {
 	_destID = BROADCAST_ADDRESS;
 	_numMsgSent = 0;
 	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
+	memset(routingtable, NULL, MAX_ROUTES);
 	expMsgType = MSG_SYNC;
 }
 
@@ -194,7 +199,7 @@ bool MACStateMachine() {
 		case MAC_RTS:
 			// Send RTS
 			//			net_getNextDest(); // get the next hop destination from the network layer
-			if (SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -80,
+			if (SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -60,
 					carrierSenseTimes[carrierSenseSlot++])) {
 				if (MACSend(MSG_RTS, neighbourTable[0].neighbourID)) {// Send RTS
 					expMsgType = MSG_CTS;
@@ -234,17 +239,16 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 	txDatagram.macHeader.flags = msgType;
 	txDatagram.macHeader.msgID = (uint16_t) (_nodeID << 8)
 			| (uint16_t) (_numMsgSent);
-	txDatagram.macHeader.sched.txSlot = _txSlot;
-	txDatagram.macHeader.sched.schedID = _nodeID;
+	txDatagram.macHeader.txSlot = _txSlot;
 
 	if (msgType == MSG_DATA) {
-		txDatagram.data.hum = bme280Data.humidity;
-		txDatagram.data.press = bme280Data.pressure;
-		txDatagram.data.temp = bme280Data.temperature;
-		txDatagram.data.lux = getLux();
-		txDatagram.data.gpsData = gpsData;
-		txDatagram.data.soilMoisture = soilMoisture;
-		txDatagram.data.tim = timeStamp;
+		txDatagram.data.msgData.hum = bme280Data.humidity;
+		txDatagram.data.msgData.press = bme280Data.pressure;
+		txDatagram.data.msgData.temp = bme280Data.temperature;
+		txDatagram.data.msgData.lux = getLux();
+		txDatagram.data.msgData.gpsData = gpsData;
+		txDatagram.data.msgData.soilMoisture = soilMoisture;
+		txDatagram.data.msgData.tim = timeStamp;
 
 		int size = sizeof(txDatagram);
 		memcpy(TXBuffer, &txDatagram, size);
@@ -310,7 +314,6 @@ static bool processRXBuffer() {
 			_prevMsgId = rxdatagram.macHeader.msgID;
 		}
 
-//		if (rxdatagram.macHeader.flags & expMsgType) { // check if message is expected type
 		switch (rxdatagram.macHeader.flags) {
 		case MSG_RTS: 	// RTS
 			MACSend(MSG_CTS, rxdatagram.macHeader.source); // send CTS to requesting node
@@ -339,8 +342,7 @@ static bool processRXBuffer() {
 		{
 			Neighbour_t receivedNeighbour;
 			receivedNeighbour.neighbourID = rxdatagram.macHeader.source;
-			receivedNeighbour.neighbourTxSlot =
-					rxdatagram.macHeader.sched.txSlot;
+			receivedNeighbour.neighbourTxSlot = rxdatagram.macHeader.txSlot;
 			neighbourTable[_numNeighbours++] = receivedNeighbour;
 			MACState = MAC_SLEEP;
 
@@ -348,12 +350,13 @@ static bool processRXBuffer() {
 				genID(true); // change ID because another node has the same ID
 				schedChange = true;
 			}
+
 			break;
 		}
 		default:
 			return false;
 		}
-//		}
+
 		return true;
 	} else {
 		MACState = MAC_SLEEP;
