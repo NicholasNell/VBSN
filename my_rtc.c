@@ -9,6 +9,7 @@
 
 #include <my_scheduler.h>
 #include <stdint.h>
+#include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
@@ -16,6 +17,7 @@
 bool setTimeFlag;
 bool macFlag = false;
 bool schedFlag = false;
+bool rtcInitFlag = false;
 
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
@@ -50,6 +52,7 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 
 	/* Enable interrupts and go to sleep. */
 	MAP_Interrupt_enableInterrupt(INT_RTC_C);
+	rtcInitFlag = true;
 }
 
 void RTC_C_IRQHandler(void) {
@@ -57,9 +60,18 @@ void RTC_C_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
-	static RTC_C_Calendar time;
-	time = RTC_C_getCalendarTime();
 
+	if (rtcInitFlag) {
+		schedFlag = true;
+		incrementSlotCount();
+
+		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
+			setSlotCount(0);
+		}
+
+		GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN2);
+
+	}
 //	if (time.minutes % 0x5 == 0) {
 //		setSlotCount(0);
 //	}

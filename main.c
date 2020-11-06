@@ -42,6 +42,7 @@
 #include <my_flash.h>
 #include <my_gpio.h>
 #include <my_MAC.h>
+#include <my_rtc.h>
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_spi.h>
@@ -255,7 +256,6 @@ int main(void) {
 }
 
 extern bool schedChange;
-extern uint16_t _txSlot;
 
 void PORT1_IRQHandler(void) {
 	uint32_t status;
@@ -264,8 +264,7 @@ void PORT1_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	if (status & GPIO_PIN1) {
-		_txSlot = 55;
-		schedChange = true;
+
 	}
 }
 
@@ -275,12 +274,15 @@ void PORT3_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 
 	if (status & GPIO_PIN2) {
-		schedFlag = true;
-		incrementSlotCount();
-
-		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
-			setSlotCount(0);
-		}
+//		schedFlag = true;
+//		incrementSlotCount();
+//
+//		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
+//			setSlotCount(0);
+//		}
+		const RTC_C_Calendar currentTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x2020 };
+		RtcInit(currentTime);
 	}
 }
 
