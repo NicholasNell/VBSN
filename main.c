@@ -247,10 +247,17 @@ int main(void) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P3, GPIO_PIN2);
 	MAP_Interrupt_enableInterrupt(INT_PORT3);
 
+	MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
+	WDT_A_CLOCKITERATIONS_8192K);
+
+	MAP_WDT_A_startTimer();
+
 	while (1) {
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
+			MAP_WDT_A_clearTimer();
 		}
 	}
 }
