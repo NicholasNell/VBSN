@@ -28,8 +28,8 @@
 
 #define SIZE_BUFFER 80
 #define SIZE_BUFFER_GPS 255
-#define GPS_ON P6->OUT |= BIT0;
-#define GPS_OFF P6->OUT &= ~BIT0;
+#define GPS_ON
+#define GPS_OFF
 
 uint8_t counter_read_pc = 0; //UART receive buffer counter
 uint8_t counter_read_gps = 0;
@@ -72,12 +72,11 @@ void UARTinitGPS() {
 	MAP_UART_enableModule(EUSCI_A3_BASE);
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(1000);
-	sendUARTgps("$PCAS03,0,1,0,0,0,0,1,0*02\r\n"); // only enable GLL and ZDA
+//	sendUARTgps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
+	sendUARTgps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
 //	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	Delayms(100);
-	sendUARTgps("$PCAS11,1*1C\r\n");	// set in stationary mode
-	Delayms(100);
-	sendUARTgps("$PCAS00*01\r\n");	// save configuration to gps flash
+	sendUARTgps(PMTK_FULL_POWER_MODE);
 
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
@@ -240,15 +239,21 @@ bool returnUartActivity() {
 void UartGPSCommands() {
 	if (UartActivityGps) {
 
-		const char c[2] = ",";
+		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+
+		const char c[1] = ",";
 		const char a[2] = "*";
-//		char *dummyGPS =
-//				"$GNGLL,3355.70225,S,01851.99155,E,065407.000,A,A*54\r\n";
+//		"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n"
+		char *dummyGPS =
+				"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n";
+//				"$GNGLL,3355.7142,S,01851.9869,E,085806.000,A,A*5A\r\n";
 		char *CMD;
+
+		memcpy(UartRxGPS, dummyGPS, strlen(dummyGPS));
 		CMD = strtok(UartRxGPS, a);
 		UartActivityGps = false;
 
-		if (!memcmp(CMD, "$GNGLL", 6)) {
+		if (!memcmp(CMD, "$GNRMC", 6)) {
 //			$--GLL,ddmm.mm,a,dddmm.mm,a,hhmmss.ss,A,x*hh<CR><LF>
 			if (strpbrk(CMD, "A")) {
 				gpsWorking = true;
@@ -257,6 +262,48 @@ void UartGPSCommands() {
 				CMD = strtok(UartRxGPS, c);
 				CMD = strtok(NULL, c);
 
+				//Time
+				uint8_t hr;
+				uint8_t minute;
+				uint8_t sec;
+				uint8_t day;
+				uint8_t month;
+				uint16_t year;
+
+				char s[5];
+				memset(s, 0, 5);
+				sprintf(s, "%c%c", CMD[0], CMD[1]);
+				hr = (uint8_t) strtol(s, NULL, 16);
+				memset(s, 0, 5);
+				sprintf(s, "%c%c", CMD[2], CMD[3]);
+				minute = (uint8_t) strtol(s, NULL, 16);
+				memset(s, 0, 5);
+				sprintf(s, "%c%c", CMD[4], CMD[5]);
+				sec = strtol(s, NULL, 16);
+				uint16_t delayLeft = 0;
+				memset(s, 0, 5);
+				sprintf(s, "%c%c%c", CMD[7], CMD[8], CMD[9]);
+				uint16_t msSec = strtol(s, NULL, 10);
+				uint16_t msOver = 1000 - msSec;
+				delayLeft = msOver;
+
+				const RTC_C_Calendar currentTime = { (uint8_t) sec, minute, hr,
+						0, (uint_fast8_t) 0, 0, 0x2020 };
+				/* Time is Saturday, November 12th 1955 10:03:00 PM */
+				//				 const RTC_C_Calendar currentTime =
+				//				 {
+				//				         0x00,
+				//				         0x03,
+				//				         0x22,
+				//				         0x06,
+				//				         0x12,
+				//				         0x11,
+				//				         0x1955
+				//				 };
+				CMD = strtok(NULL, c);
+				CMD = strtok(NULL, c);
+
+				// Location
 				char tempDeg[2] = { 0 };
 				tempDeg[0] = CMD[0];
 				tempDeg[1] = CMD[1];
@@ -300,10 +347,13 @@ void UartGPSCommands() {
 					gpsData.lon *= -1;
 
 				}
-				sendUARTgps("$PCAS00*01\r\n"); // save configuration to gps flash
 
-				sendUARTgps("$PCAS03,0,0,0,0,0,0,,0*32\r\n"); // turn off GNA output
+				CMD = strtok(NULL, c);
+				CMD = strtok(NULL, c);
+				CMD = strtok(NULL, c);
+				CMD = strtok(NULL, c);
 
+//				sendUARTgps(PMTK_FULL_POWER_MODE);
 			}
 
 		} else if (!memcmp(CMD, "$GNZDA", 6)) {
@@ -397,7 +447,6 @@ void UartGPSCommands() {
 				MAP_RTC_C_holdClock();
 				Delayms(delayLeft);
 				RtcInit(currentTime);
-				sendUARTgps("$PCAS03,0,,0,0,0,0,0,0*32\r\n"); // turn off ZDA output
 			}
 		}
 		memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
@@ -410,6 +459,7 @@ void EUSCIA3_IRQHandler(void) {
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
 		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(EUSCI_A3_BASE);
+//		MAP_UART_transmitData(EUSCI_A0_BASE, UartRxGPS[counter_read_gps]);
 		counter_read_gps++;
 	}
 	if (UartRxGPS[counter_read_gps - 1] == 0x0A
@@ -429,6 +479,7 @@ void EUSCIA0_IRQHandler(void) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
 		UartRX[counter_read_pc] = MAP_UART_receiveData(EUSCI_A0_BASE);
+//		MAP_UART_transmitData(EUSCI_A3_BASE, UartRX[counter_read_pc]);
 		counter_read_pc++;
 	}
 	if (UartRX[counter_read_pc - 1] == 0x0A
