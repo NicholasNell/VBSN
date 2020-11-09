@@ -38,13 +38,53 @@ void i2cInit() {
 	/* Initializing I2C Master to SMCLK at 100khz with no autostop */
 	I2C_initMaster(EUSCI_B1_BASE, &i2cConfig);
 
-	/* Specify slave address */
-	I2C_setSlaveAddress(EUSCI_B1_BASE, SLAVE_ADDRESS_LIGHT_SENSOR);
-
-	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
+//	/* Specify slave address */
+//	I2C_setSlaveAddress(EUSCI_B1_BASE, SLAVE_ADDRESS_LIGHT_SENSOR);
+//
+//	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
 	/* Enable I2C Module to start operations */
 	I2C_enableModule(EUSCI_B1_BASE);
 //	Interrupt_enableInterrupt(INT_EUSCIB1);
 }
 
+uint8_t i2cSend(uint8_t addr, uint8_t *buffer, uint8_t bufLen) {
+	uint8_t retval;
+	I2C_setSlaveAddress(EUSCI_B1_BASE, addr); // Make sure correct i2c slave selected
+	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
+	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
+		;
+
+	int index = 0;
+	retval = I2C_masterSendMultiByteStartWithTimeout(EUSCI_B1_BASE,
+			buffer[index++], 500); // first byte is reg to be configured
+	int count = 0;
+	while (count < bufLen) {
+		retval = I2C_masterSendMultiByteNextWithTimeout(EUSCI_B1_BASE,
+				buffer[index++], 500); // Set in non continuous mode 800ms integration time
+		count++;
+	}
+
+	retval = I2C_masterSendMultiByteStopWithTimeout(EUSCI_B1_BASE, 500);
+	return retval;
+}
+
+uint8_t i2cTxRxSingleBytes(uint8_t addr, uint8_t *txBuf, uint8_t *rxBuf,
+		uint8_t numBytes) {
+	uint8_t retval;
+	I2C_setSlaveAddress(EUSCI_B1_BASE, addr); // Make sure correct i2c slave selected
+	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
+	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
+		;
+
+	int i = 0;
+	for (i = 0; i < numBytes; i++) {
+		I2C_masterSendSingleByte(EUSCI_B1_BASE, txBuf[i]);
+		while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
+			;
+		rxBuf[i] = I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
+		while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
+			;
+	}
+	return true;
+}
 #endif /* MY_I2C_C_ */

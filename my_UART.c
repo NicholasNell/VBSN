@@ -76,8 +76,7 @@ void UARTinitGPS() {
 	sendUARTgps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
 //	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	Delayms(100);
-	sendUARTgps(PMTK_FULL_POWER_MODE);
-
+	sendUARTgps(PMTK_STANDBY);
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
@@ -244,12 +243,12 @@ void UartGPSCommands() {
 		const char c[1] = ",";
 		const char a[2] = "*";
 //		"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n"
-		char *dummyGPS =
-				"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n";
+//		char *dummyGPS =
+//				"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n";
 //				"$GNGLL,3355.7142,S,01851.9869,E,085806.000,A,A*5A\r\n";
 		char *CMD;
 
-		memcpy(UartRxGPS, dummyGPS, strlen(dummyGPS));
+//		memcpy(UartRxGPS, dummyGPS, strlen(dummyGPS));
 		CMD = strtok(UartRxGPS, a);
 		UartActivityGps = false;
 
@@ -287,8 +286,6 @@ void UartGPSCommands() {
 				uint16_t msOver = 1000 - msSec;
 				delayLeft = msOver;
 
-				const RTC_C_Calendar currentTime = { (uint8_t) sec, minute, hr,
-						0, (uint_fast8_t) 0, 0, 0x2020 };
 				/* Time is Saturday, November 12th 1955 10:03:00 PM */
 				//				 const RTC_C_Calendar currentTime =
 				//				 {
@@ -349,109 +346,52 @@ void UartGPSCommands() {
 				}
 
 				CMD = strtok(NULL, c);
-				CMD = strtok(NULL, c);
-				CMD = strtok(NULL, c);
-				CMD = strtok(NULL, c);
-
-//				sendUARTgps(PMTK_FULL_POWER_MODE);
-			}
-
-		} else if (!memcmp(CMD, "$GNZDA", 6)) {
-//				$--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh
-			if (!setTimeFlag) {
-				CMD = strtok(UartRxGPS, c);
-				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-					counter_read_gps = 0;
-					return;
+				// Speed over Ground "0.00"
+				{
+					memset(s, 0, 5);
+					sprintf(s, "%c%c%c", CMD[0], CMD[1], CMD[2]);
+					float sog = strtof(s, NULL);
 				}
 				CMD = strtok(NULL, c);
-				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-					counter_read_gps = 0;
-					return;
+				// Course over Ground "000.00
+				{
+					memset(s, 0, 5);
+					sprintf(s, "%c%c%c%c%c", CMD[0], CMD[1], CMD[2], CMD[3],
+							CMD[4]);
+					float cog = strtof(s, NULL);
 				}
-				uint8_t hr;
-				uint8_t min;
-				float sec;
-				uint8_t day;
-				uint8_t month;
-				uint16_t year;
-
-				char s[5];
+				CMD = strtok(NULL, c);
+				// Date ddmmyy
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[0], CMD[1]);
-				hr = (uint8_t) strtol(s, NULL, 16);
+				day = (uint8_t) strtol(s, NULL, 16);
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[2], CMD[3]);
-				min = (uint8_t) strtol(s, NULL, 16);
+				month = (uint8_t) strtol(s, NULL, 16);
 				memset(s, 0, 5);
-				sprintf(s, "%c%c.%c%c", CMD[4], CMD[5], CMD[6], CMD[7]);
-				sec = strtof(s, NULL);
-				uint16_t delayLeft = 0;
-				uint16_t secInt = truncf(sec);
-				float msOver = (sec - secInt) * 1000;
-				delayLeft = 1000 - msOver;
-
 				sprintf(s, "%c%c", CMD[4], CMD[5]);
-				sec = (uint8_t) strtol(s, NULL, 16);
+				year = 0x2000 + (uint8_t) strtol(s, NULL, 16);
 
-				CMD = strtok(NULL, c);
-				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-					counter_read_gps = 0;
-					return;
-				}
-				day = (uint8_t) strtol(CMD, NULL, 16);
-				int d = atol(CMD);
-				CMD = strtok(NULL, c);
-				if (!memcmp(CMD, "*", sizeof(CMD))) {
-					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-					counter_read_gps = 0;
-					return;
-				}
-				month = (uint8_t) strtol(CMD, NULL, 16);
-				int m = atol(CMD);
-				CMD = strtok(NULL, c);
-				if (!memcmp(CMD, "*", sizeof(CMD))) {
+				const RTC_C_Calendar currentTime = { (uint8_t) sec, minute, hr,
+						0, (uint_fast8_t) day, month, year };
 
-					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-					counter_read_gps = 0;
-					return;
-				}
-				year = (uint16_t) strtol(CMD, NULL, 16);
-				int y = atol(CMD);
-				if (sec == 0x59) {
-					sec = 0x00;
-					min += 0x01;
-				} else {
-					sec += 0x01;
-				}
-
-				int weekday = (d += m < 3 ? y-- : y - 2, 23 * m / 9 + d + 4
-						+ y / 4 - y / 100 + y / 400) % 7;
-
-				const RTC_C_Calendar currentTime = { (uint8_t) sec, min, hr,
-						weekday, (uint_fast8_t) day, month, year };
-				/* Time is Saturday, November 12th 1955 10:03:00 PM */
-//				 const RTC_C_Calendar currentTime =
-//				 {
-//				         0x00,
-//				         0x03,
-//				         0x22,
-//				         0x06,
-//				         0x12,
-//				         0x11,
-//				         0x1955
-//				 };
 				MAP_RTC_C_holdClock();
-				Delayms(delayLeft);
 				RtcInit(currentTime);
+
+				CMD = strtok(NULL, c);
+				// Magnetic Variation
+				CMD = strtok(NULL, c);
+				//Mode A
+				CMD = strtok(NULL, c);
+				// checksum
+
+				sendUARTgps(PMTK_STANDBY);
 			}
+
 		}
-		memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-		counter_read_gps = 0;
 	}
+	memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+	counter_read_gps = 0;
 }
 
 void EUSCIA3_IRQHandler(void) {

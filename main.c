@@ -88,6 +88,8 @@ bool rfm95Working = false;
 
 extern bool schedFlag;
 
+bool gpsWakeFlag = false;
+
 /*!
  * Radio events function pointer
  */
@@ -254,10 +256,17 @@ int main(void) {
 	MAP_WDT_A_startTimer();
 
 	while (1) {
+
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
 			MAP_WDT_A_clearTimer();
+		}
+
+		if (gpsWakeFlag) {
+			sendUARTgps("H\r\n");
+			gpsWakeFlag = false;
+
 		}
 	}
 }

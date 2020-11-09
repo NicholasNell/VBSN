@@ -18,6 +18,7 @@ bool setTimeFlag;
 bool macFlag = false;
 bool schedFlag = false;
 bool rtcInitFlag = false;
+extern bool gpsWakeFlag;
 
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
@@ -31,10 +32,10 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 
 	/* Specify an interrupt to assert every minute */
-	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
+	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_NOON);
 
-	MAP_RTC_C_setCalendarAlarm(0x20, RTC_C_ALARMCONDITION_OFF,
-	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
+//	MAP_RTC_C_setCalendarAlarm(RTC_C_ALARMCONDITION_OFF, 0x12,
+//	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
 
 	/* Enable interrupt for RTC Ready Status, which asserts when the RTC
 	 * Calendar registers are ready to read.
@@ -43,8 +44,7 @@ void RtcInit(const RTC_C_Calendar currentTime) {
 			RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
 					| RTC_C_CLOCK_ALARM_INTERRUPT);
 	MAP_RTC_C_enableInterrupt(
-			RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
-					| RTC_C_CLOCK_ALARM_INTERRUPT);
+	RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT);
 
 	/* Start RTC Clock */
 	MAP_RTC_C_startClock();
@@ -81,9 +81,10 @@ void RTC_C_IRQHandler(void) {
 //		setSlotCount(0);
 //	}
 
-//	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
-//		setSlotCount(0);
-//	}
+	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
+		gpsWakeFlag = true;
+		setSlotCount(0);
+	}
 
 }
 
