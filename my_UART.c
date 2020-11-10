@@ -238,14 +238,13 @@ bool returnUartActivity() {
 void UartGPSCommands() {
 	if (UartActivityGps) {
 
-		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+//		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 
 		const char c[1] = ",";
 		const char a[2] = "*";
 //		"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n"
 //		char *dummyGPS =
 //				"$GNRMC,093037.675,A,5606.1725,N,01404.0622,E,0.00,248.06,091120,0.00,W,E,N*5A\r\n";
-//				"$GNGLL,3355.7142,S,01851.9869,E,085806.000,A,A*5A\r\n";
 		char *CMD;
 
 //		memcpy(UartRxGPS, dummyGPS, strlen(dummyGPS));

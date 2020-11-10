@@ -81,6 +81,8 @@ bool bme280Working = false;
 bool lightSensorWorking = false;
 bool gpsWorking = false;
 
+bool hasGSM = false;
+
 bool MACFlag = true;
 
 // Radio Module status flag:
@@ -211,6 +213,8 @@ int main(void) {
 
 	SystickInit();
 
+	hasGSM = initGSM();
+
 //	PunctualInit();
 
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
@@ -256,7 +260,7 @@ int main(void) {
 	MAP_WDT_A_startTimer();
 
 	while (1) {
-
+		MAP_WDT_A_clearTimer();
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();

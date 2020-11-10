@@ -12,6 +12,7 @@
 #include <stdbool.h>
 
 #define BROADCAST_ADDRESS 0xFF
+#define GATEWAY_ADDRESS 0x00
 #define MAX_MESSAGE_LEN 255
 #define DEFAULT_RX_TIME 1000
 #define SLEEP_TIME 60 * 2 * 1000

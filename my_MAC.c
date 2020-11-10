@@ -83,6 +83,9 @@ extern float soilMoisture;
 // schedChange
 extern bool schedChange;
 
+// has GSM module, if it has, is a root
+extern bool hasGSM;
+
 // current RadioState
 LoRaRadioState_t RadioState;
 
@@ -116,14 +119,15 @@ static void genID(bool genNew) {
 	uint8_t tempID = 0x0;
 
 	if (genNew) {
-		while (tempID == 0xFF || tempID == 0x00 || tempID == _nodeID) {
+		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS
+				|| tempID == _nodeID) {
 			tempID = (uint8_t) rand();
 		}
 		_nodeID = tempID;
 	} else {
 		tempID = flashReadNodeID();
 
-		while (tempID == 0xFF || tempID == 0x00) {
+		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
 			tempID = (uint8_t) rand();
 		}
 		_nodeID = tempID;
@@ -144,7 +148,11 @@ void MacInit() {
 		}
 	}
 
-	genID(false);
+	if (hasGSM) {
+		_nodeID = GATEWAY_ADDRESS;
+	} else {
+		genID(false);
+	}
 
 	do {
 		double temp = (double) rand();
@@ -351,10 +359,13 @@ static bool processRXBuffer() {
 				schedChange = true;
 			}
 
-			break;
-		}
-		default:
-			return false;
+			RouteEntry_t newRoute;
+		newRoute.
+
+		break;
+	}
+	default:
+		return false;
 		}
 
 		return true;
