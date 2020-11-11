@@ -22,7 +22,7 @@
 #define RSSI_OFFSET_HF                              -157
 
 #define RF_FREQUENCY 868500000  // Hz
-#define TX_OUTPUT_POWER -4	    // dBm
+#define TX_OUTPUT_POWER 10	    // dBm
 #define TX_TIMEOUT_VALUE 3000 	// ms
 #define RX_TIMEOUT_VALUE 5000 //ms
 #define LORA_BANDWIDTH 9      //  LoRa: [	0: 7.8 kHz,  1: 10.4 kHz,  2: 15.6 kHz,

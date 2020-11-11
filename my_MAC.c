@@ -360,12 +360,11 @@ static bool processRXBuffer() {
 			}
 
 			RouteEntry_t newRoute;
-		newRoute.
 
-		break;
-	}
-	default:
-		return false;
+			break;
+		}
+		default:
+			return false;
 		}
 
 		return true;

@@ -46,6 +46,10 @@ extern RTC_C_Calendar currentTime;
 extern bool setTimeFlag;
 extern bool gpsWorking;
 
+bool setRTCFlag = false;
+
+extern RTC_C_Calendar currentTime;
+
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 
 //UART configured for 9600 Baud
@@ -71,12 +75,17 @@ void UARTinitGPS() {
 	MAP_UART_initModule(EUSCI_A3_BASE, &uartConfig);
 	MAP_UART_enableModule(EUSCI_A3_BASE);
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
-	Delayms(1000);
+	Delayms(100);
 //	sendUARTgps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
-	sendUARTgps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+	sendUARTgps(PMTK_SET_NMEA_OUTPUT_OFF);
 //	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	Delayms(100);
-	sendUARTgps(PMTK_STANDBY);
+	sendUARTgps(PMTK_FULL_POWER_MODE);
+	Delayms(100);
+	sendUARTgps(PMTK_API_SET_FIX_CTL_1HZ);
+	Delayms(100);
+	sendUARTgps(PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ);
+
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
@@ -238,7 +247,7 @@ bool returnUartActivity() {
 void UartGPSCommands() {
 	if (UartActivityGps) {
 
-//		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
 
 		const char c[1] = ",";
 		const char a[2] = "*";
@@ -371,11 +380,13 @@ void UartGPSCommands() {
 				sprintf(s, "%c%c", CMD[4], CMD[5]);
 				year = 0x2000 + (uint8_t) strtol(s, NULL, 16);
 
-				const RTC_C_Calendar currentTime = { (uint8_t) sec, minute, hr,
-						0, (uint_fast8_t) day, month, year };
+				RTC_C_Calendar newCal = { (uint8_t) (sec + 0x01), minute, hr, 0,
+						(uint_fast8_t) day, month, year };
+				currentTime = newCal;
 
-				MAP_RTC_C_holdClock();
-				RtcInit(currentTime);
+				if (sec != 0x59) {
+					setRTCFlag = true;
+				}
 
 				CMD = strtok(NULL, c);
 				// Magnetic Variation
@@ -384,7 +395,6 @@ void UartGPSCommands() {
 				CMD = strtok(NULL, c);
 				// checksum
 
-				sendUARTgps(PMTK_STANDBY);
 			}
 
 		}

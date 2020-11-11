@@ -106,6 +106,8 @@ extern Gpio_t Led_user_red;
 // MAC layer state
 extern LoRaRadioState_t RadioState;
 
+extern RTC_C_Calendar currentTime;
+
 void printLoRaRegisters(void);
 
 /*!
@@ -200,6 +202,18 @@ int main(void) {
 	BoardInitMcu();
 //	RtcInit();
 
+	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_Interrupt_enableInterrupt(INT_PORT1);
+
+	MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P3, GPIO_PIN2);
+	MAP_GPIO_interruptEdgeSelect(GPIO_PORT_P3, GPIO_PIN2,
+	GPIO_LOW_TO_HIGH_TRANSITION);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, GPIO_PIN2);
+	MAP_GPIO_enableInterrupt(GPIO_PORT_P3, GPIO_PIN2);
+	MAP_Interrupt_enableInterrupt(INT_PORT3);
+
 	srand(SX1276Random());
 
 	// Initialise UART to PC
@@ -213,7 +227,7 @@ int main(void) {
 
 	SystickInit();
 
-	hasGSM = initGSM();
+//	hasGSM = initGSM();
 
 //	PunctualInit();
 
@@ -241,23 +255,11 @@ int main(void) {
 
 	initScheduler();
 
-	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_Interrupt_enableInterrupt(INT_PORT1);
-
-	MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P3, GPIO_PIN2);
-	MAP_GPIO_interruptEdgeSelect(GPIO_PORT_P3, GPIO_PIN2,
-	GPIO_LOW_TO_HIGH_TRANSITION);
-	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, GPIO_PIN2);
-	MAP_GPIO_enableInterrupt(GPIO_PORT_P3, GPIO_PIN2);
-	MAP_Interrupt_enableInterrupt(INT_PORT3);
-
 	MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
 	MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
 	WDT_A_CLOCKITERATIONS_8192K);
 
-	MAP_WDT_A_startTimer();
+//	MAP_WDT_A_startTimer();
 
 	while (1) {
 		MAP_WDT_A_clearTimer();
@@ -288,21 +290,32 @@ void PORT1_IRQHandler(void) {
 	}
 }
 
+extern bool setRTCFlag;
 void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
-
+	GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN1);
 	if (status & GPIO_PIN2) {
+
+		if (!gpsWorking) {
+			sendUARTgps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+		}
+
+		if (setRTCFlag) {
+			MAP_RTC_C_holdClock();
+			RtcInit();
+			sendUARTgps(PMTK_STANDBY);
+			setRTCFlag = false;
+		}
 //		schedFlag = true;
 //		incrementSlotCount();
 //
 //		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
 //			setSlotCount(0);
 //		}
-		const RTC_C_Calendar currentTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x2020 };
-		RtcInit(currentTime);
+//
+//		RtcInit(currentTime);
 	}
 }
 

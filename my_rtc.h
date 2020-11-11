@@ -10,7 +10,7 @@
 #define MY_RTC_H_
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
-void RtcInit(const RTC_C_Calendar currentTime);
+void RtcInit();
 
 #endif  /*MY_RTC_H_*/
 
