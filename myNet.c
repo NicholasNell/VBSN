@@ -7,14 +7,16 @@
 #include <myNet.h>
 #include <string.h>
 // Routing Table
-static RouteEntry_t routingtable[20];
-static uint16_t _numRoutes;
-static uint8_t _routeSequenceNumber;
-static uint8_t _broadcastID;
+RouteEntry_t routingtable[MAX_ROUTES];
+uint16_t _numRoutes;
+uint8_t _routeSequenceNumber;
+uint8_t _broadcastID;
+uint8_t _destSequenceNumber;
 
 void netInit() {
 	_numRoutes = 0;
 	_routeSequenceNumber = 0;
+	_destSequenceNumber = 0xFF;
 	_broadcastID = 0;
 	memset(routingtable, NULL, MAX_ROUTES);
 }
@@ -31,7 +33,7 @@ void addRoute(nodeAddress dest) {
 	routingtable[_numRoutes++] = newRoute;
 }
 
-uint8_t getDest(nodeAddress dest) {
+nodeAddress getDest(nodeAddress dest) {
 	return 0;
 }
 

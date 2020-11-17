@@ -10,7 +10,8 @@
 #include <datagram.h>
 #include <stdint.h>
 
-#define MAX_ROUTES 10
+#define MAX_ROUTES 20
+#define MAX_HOPS 4
 
 typedef struct {
 	nodeAddress dest;
@@ -31,7 +32,7 @@ typedef struct {
 
 void netInit();
 void addRoute(nodeAddress dest);
-uint8_t getDest(nodeAddress dest);
+nodeAddress getDest(nodeAddress dest);
 void sendRREQ();
 
 #endif /* MYNET_H_ */

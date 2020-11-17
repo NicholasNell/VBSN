@@ -27,21 +27,12 @@
 typedef uint8_t nodeAddress;
 
 typedef struct {
-	nodeAddress netDest;
-	nodeAddress netSource;
-	uint8_t netFlags;
-	uint8_t netHops;
-	uint8_t ttl;
-} NetHeader_t;
-
-typedef struct {
 	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
 	nodeAddress localSource; // Where the message came from, not original source
 	nodeAddress netSource;	// original message source
 	nodeAddress netDest;	// final destination, probably gateway
 	uint8_t hops;			// number of message hops from source to here
 	uint8_t ttl;			// maximum number of hops
-	uint8_t msgID;	// Msg ID. Unique message number.
 	uint16_t txSlot; // txSlot
 	uint8_t flags;	 // see flags
 } Header_t;
@@ -81,6 +72,7 @@ typedef struct {
 		RRep_t Rrep;
 		MsgData_t sensData;
 	} data;
+
 } Datagram_t;
 
 #endif /* DATAGRAM_H_ */

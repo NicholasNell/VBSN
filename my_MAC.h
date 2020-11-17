@@ -46,6 +46,7 @@ void MACscheduleListen();
 
 bool MACStateMachine();
 
-bool MACStartTransaction(nodeAddress destination, uint8_t msgType);
+bool MACStartTransaction(nodeAddress destination, uint8_t msgType,
+		bool isSource);
 
 #endif /* MY_MAC_H_ */
