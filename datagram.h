@@ -24,30 +24,27 @@
 #define MSG_RREQ 	0b00100000
 #define MSG_RREP	0b01000000
 
+typedef uint8_t nodeAddress;
+
 typedef struct {
-	uint8_t netDest;
+	nodeAddress netDest;
+	nodeAddress netSource;
 	uint8_t netFlags;
 	uint8_t netHops;
+	uint8_t ttl;
 } NetHeader_t;
 
 typedef struct {
-	uint16_t txSlot; 	// txSlot
-	uint16_t schedID; 	// Schedule ID
-} Schedule_t;
-
-typedef struct {
-	uint8_t dest; // Where the message needs to go (MAC LAYER, not final destination);
-	uint8_t source;	// Where the message came from, not original source
-	uint16_t msgID;	// Msg ID. Unique message number.
-	uint16_t txSlot; 	// txSlot
-	uint8_t flags;	// message type:
-					//	RTS:	0x1
-					// 	CTS:	0x2
-					// 	SYNC:	0x3
-					// 	Data:	0x4
-					// 	Ack:	0x5
-					// 	Sync:  	0x6
-} MacHeader_t;
+	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
+	nodeAddress localSource; // Where the message came from, not original source
+	nodeAddress netSource;	// original message source
+	nodeAddress netDest;	// final destination, probably gateway
+	uint8_t hops;			// number of message hops from source to here
+	uint8_t ttl;			// maximum number of hops
+	uint8_t msgID;	// Msg ID. Unique message number.
+	uint16_t txSlot; // txSlot
+	uint8_t flags;	 // see flags
+} Header_t;
 
 typedef struct {
 	LocationData gpsData;
@@ -60,28 +57,29 @@ typedef struct {
 } MsgData_t;
 
 typedef struct {
-	uint8_t source_addr;
+	nodeAddress source_addr;
 	uint8_t source_sequence_num;
 	uint8_t broadcast_id;
-	uint8_t dest_addr;
-	uint8_t dest_sequence_num;
-	uint8_t hop_cnt;
+	nodeAddress dest_addr;	// destination address: will probably be a gateway
+	uint8_t dest_sequence_num;	// destination sequence number
+	uint8_t hop_cnt;	// number of hops the message has gone through
 } RReq_t;
 
 typedef struct {
-	uint8_t source_addr;
-	uint8_t dest_addr;
-	uint8_t dest_sequence_num;
-	uint8_t hop_cnt;
-	uint8_t lifetime;
+	nodeAddress source_addr;	// source address, will be a sensor node
+	nodeAddress dest_addr;	// destination address: will probably be the gateway
+	uint8_t dest_sequence_num;	// destination sequence number
+	uint8_t hop_cnt;	// number of hops until now
+	uint8_t lifetime;	// TTL?
 } RRep_t;
 
 typedef struct {
-	MacHeader_t macHeader;
+	Header_t msgHeader;
+
 	union Data {
 		RReq_t Rreq;
 		RRep_t Rrep;
-		MsgData_t msgData;
+		MsgData_t sensData;
 	} data;
 } Datagram_t;
 

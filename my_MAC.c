@@ -52,14 +52,10 @@ extern volatile uint8_t loraRxBufferSize;
 // array of known neighbours
 Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
-// Routing Table
-RouteEntry_t routingtable[10];
-
 // This node MAC parameters:
-uint8_t _nodeID;
+nodeAddress _nodeID;
 uint8_t _dataLen;
 uint8_t _numNeighbours;
-uint8_t _destID;
 uint16_t _numMsgSent;
 uint16_t _prevMsgId;
 uint16_t _txSlot;
@@ -109,26 +105,28 @@ static uint8_t expMsgType;
  */
 static bool processRXBuffer();
 
-static bool MACSend(uint8_t msgType, uint8_t dest);
+static bool MACSend(uint8_t msgType, nodeAddress dest);
 
 static bool MACRx(uint32_t timeout);
 
 static void genID(bool genNew);
 
+static void addNeighbour();
+
 static void genID(bool genNew) {
-	uint8_t tempID = 0x0;
+	nodeAddress tempID = 0x0;
 
 	if (genNew) {
 		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS
 				|| tempID == _nodeID) {
-			tempID = (uint8_t) rand();
+			tempID = (nodeAddress) rand();
 		}
 		_nodeID = tempID;
 	} else {
 		tempID = flashReadNodeID();
 
 		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
-			tempID = (uint8_t) rand();
+			tempID = (nodeAddress) rand();
 		}
 		_nodeID = tempID;
 	}
@@ -136,7 +134,6 @@ static void genID(bool genNew) {
 }
 
 void MacInit() {
-
 	uint8_t i;
 	for (i = 0; i < 255; ++i) {
 		{
@@ -163,13 +160,11 @@ void MacInit() {
 	} while (_txSlot % GLOBAL_RX == 0);
 
 	schedChange = true;
-
 	_dataLen = 0;
 	_numNeighbours = 0;
 	_destID = BROADCAST_ADDRESS;
 	_numMsgSent = 0;
 	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
-	memset(routingtable, NULL, MAX_ROUTES);
 	expMsgType = MSG_SYNC;
 }
 
@@ -213,17 +208,14 @@ bool MACStateMachine() {
 					expMsgType = MSG_CTS;
 					if (!MACRx(SLOT_LENGTH_MS)) {
 						MACState = MAC_SLEEP;
-
 //						return false;
 					}
 				} else {
 					MACState = MAC_SLEEP;
-
 //					return false;
 				}
 			} else {
 				MACState = MAC_SLEEP;
-
 //				return false;
 			}
 			break;
@@ -236,34 +228,30 @@ bool MACStateMachine() {
 	}
 }
 
-bool MACSend(uint8_t msgType, uint8_t dest) {
+bool MACSend(uint8_t msgType, nodeAddress dest) {
 
-	if (dest != NULL) {
-		txDatagram.macHeader.dest = dest;
-	} else {
-		txDatagram.macHeader.dest = BROADCAST_ADDRESS;
-	}
-	txDatagram.macHeader.source = _nodeID;
-	txDatagram.macHeader.flags = msgType;
-	txDatagram.macHeader.msgID = (uint16_t) (_nodeID << 8)
-			| (uint16_t) (_numMsgSent);
-	txDatagram.macHeader.txSlot = _txSlot;
+	txDatagram.msgHeader.nextHop = dest;
+	txDatagram.msgHeader.localSource = _nodeID;
+	txDatagram.msgHeader.hops = 0;
+	txDatagram.msgHeader.flags = msgType;
+	txDatagram.msgHeader.msgID = _numMsgSent++;
+	txDatagram.msgHeader.txSlot = _txSlot;
 
 	if (msgType == MSG_DATA) {
-		txDatagram.data.msgData.hum = bme280Data.humidity;
-		txDatagram.data.msgData.press = bme280Data.pressure;
-		txDatagram.data.msgData.temp = bme280Data.temperature;
-		txDatagram.data.msgData.lux = getLux();
-		txDatagram.data.msgData.gpsData = gpsData;
-		txDatagram.data.msgData.soilMoisture = soilMoisture;
-		txDatagram.data.msgData.tim = timeStamp;
+		txDatagram.data.sensData.hum = bme280Data.humidity;
+		txDatagram.data.sensData.press = bme280Data.pressure;
+		txDatagram.data.sensData.temp = bme280Data.temperature;
+		txDatagram.data.sensData.lux = getLux();
+		txDatagram.data.sensData.gpsData = gpsData;
+		txDatagram.data.sensData.soilMoisture = soilMoisture;
+		txDatagram.data.sensData.tim = timeStamp;
 
 		int size = sizeof(txDatagram);
 		memcpy(TXBuffer, &txDatagram, size);
 		startLoRaTimer(loraTxtimes[size + 1]);
 		SX1276Send(TXBuffer, size);
 	} else {
-		int size = sizeof(txDatagram.macHeader);
+		int size = sizeof(txDatagram.msgHeader);
 		memcpy(TXBuffer, &txDatagram, size);
 		startLoRaTimer(loraTxtimes[size + 1]);
 		SX1276Send(TXBuffer, size);
@@ -280,7 +268,6 @@ bool MACSend(uint8_t msgType, uint8_t dest) {
 			break;
 		}
 	}
-
 	stopLoRaTimer();
 	return retVal;
 }
@@ -315,21 +302,21 @@ static bool processRXBuffer() {
 	memcpy(&rxdatagram, &RXBuffer, loraRxBufferSize);
 
 	// check if message was meant for this node:
-	if ((rxdatagram.macHeader.dest == _nodeID)
-			|| (rxdatagram.macHeader.dest == BROADCAST_ADDRESS)) {// if destination is this node or broadcast check message type
+	if ((rxdatagram.msgHeader.nextHop == _nodeID)
+			|| (rxdatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) {// if destination is this node or broadcast check message type
 
-		if (_prevMsgId != rxdatagram.macHeader.msgID) { // if a new message change prevMsgId to the id of the new message
-			_prevMsgId = rxdatagram.macHeader.msgID;
+		if (_prevMsgId != rxdatagram.msgHeader.msgID) { // if a new message change prevMsgId to the id of the new message
+			_prevMsgId = rxdatagram.msgHeader.msgID;
 		}
 
-		switch (rxdatagram.macHeader.flags) {
+		switch (rxdatagram.msgHeader.flags) {
 		case MSG_RTS: 	// RTS
-			MACSend(MSG_CTS, rxdatagram.macHeader.source); // send CTS to requesting node
+			MACSend(MSG_CTS, rxdatagram.msgHeader.source); // send CTS to requesting node
 			MACState = MAC_LISTEN;
 			break;
 		case MSG_CTS: 	// CTS
 			if (hasData) {
-				MACSend(MSG_DATA, rxdatagram.macHeader.source); // Send data to destination node
+				MACSend(MSG_DATA, rxdatagram.msgHeader.source); // Send data to destination node
 				expMsgType |= MSG_ACK;
 				MACState = MAC_LISTEN;
 			} else {
@@ -337,36 +324,30 @@ static bool processRXBuffer() {
 			}
 			break;
 		case MSG_DATA: 	// DATA
-			MACSend(MSG_ACK, rxdatagram.macHeader.source); // Send Ack back to transmitting node
+			MACSend(MSG_ACK, rxdatagram.msgHeader.source); // Send Ack back to transmitting node
 			MACState = MAC_SLEEP;
 			break;
 		case MSG_ACK: 	// ACK
 			hasData = false;	// data has succesfully been sent
 			MACState = MAC_SLEEP;
-			_numMsgSent++;
 			expMsgType = MSG_NONE;
 			break;
 		case MSG_SYNC: 	// SYNC
 		{
-			Neighbour_t receivedNeighbour;
-			receivedNeighbour.neighbourID = rxdatagram.macHeader.source;
-			receivedNeighbour.neighbourTxSlot = rxdatagram.macHeader.txSlot;
-			neighbourTable[_numNeighbours++] = receivedNeighbour;
+			addNeighbour();
+
 			MACState = MAC_SLEEP;
 
-			if (rxdatagram.macHeader.source == _nodeID) {
+			if (rxdatagram.msgHeader.localSource == _nodeID) {
 				genID(true); // change ID because another node has the same ID
 				schedChange = true;
 			}
-
-			RouteEntry_t newRoute;
-
+			addRoute(rxdatagram.msgHeader.nextHop);
 			break;
 		}
 		default:
 			return false;
 		}
-
 		return true;
 	} else {
 		MACState = MAC_SLEEP;
@@ -374,3 +355,21 @@ static bool processRXBuffer() {
 	}
 }
 
+static void addNeighbour() {
+	Neighbour_t receivedNeighbour;
+	receivedNeighbour.neighbourID = rxdatagram.msgHeader.localSource;
+	receivedNeighbour.neighbourTxSlot = rxdatagram.msgHeader.txSlot;
+	neighbourTable[_numNeighbours++] = receivedNeighbour;
+}
+
+void MACscheduleListen() {
+}
+
+bool MACStartTransaction(nodeAddress destination, uint8_t msgType) {
+	rxdatagram.msgHeader.nextHop = destination;
+	rxdatagram.msgHeader.flags = MSG_RTS;
+	rxdatagram.msgHeader.msgID = _numMsgSent++;
+	rxdatagram.msgHeader.localSource = _nodeID;
+	rxdatagram.msgHeader.txSlot = _txSlot;
+
+}

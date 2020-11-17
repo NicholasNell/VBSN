@@ -8,6 +8,7 @@
 #ifndef MY_MAC_H_
 #define MY_MAC_H_
 
+#include <datagram.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -35,7 +36,7 @@ typedef enum {
 } MACappState_t;
 
 typedef struct {
-	uint8_t neighbourID;
+	nodeAddress neighbourID;
 	uint16_t neighbourTxSlot;
 } Neighbour_t;
 
@@ -44,5 +45,7 @@ void MacInit();
 void MACscheduleListen();
 
 bool MACStateMachine();
+
+bool MACStartTransaction(nodeAddress destination, uint8_t msgType);
 
 #endif /* MY_MAC_H_ */

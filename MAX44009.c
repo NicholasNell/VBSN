@@ -49,7 +49,6 @@ void getLight() {
 	volatile int mantissa = ((RXData[0] & 0x0F) << 4) | (RXData[1] & 0x0F);
 	volatile float luminance = pow(2, exponent) * mantissa * 0.045;
 	lux = luminance;
-	__no_operation();
 }
 
 float getLux() {

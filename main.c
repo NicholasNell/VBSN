@@ -48,6 +48,7 @@
 #include <my_spi.h>
 #include <my_systick.h>
 #include <my_UART.h>
+#include <myNet.h>
 #include <MAX44009.h>
 #include <punctual.h>
 #include <radio.h>
@@ -251,6 +252,7 @@ int main(void) {
 //	}
 
 //	 Initialise the MAC protocol
+	netInit();
 	MacInit();
 
 	initScheduler();
