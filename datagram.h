@@ -15,14 +15,25 @@
 #define RH_MAX_MESSAGE_LEN 255
 
 // msgType Flags
-#define MSG_NONE	0b00000000
-#define MSG_RTS 	0b00000001
-#define MSG_CTS 	0b00000010
-#define MSG_DATA 	0b00000100
-#define MSG_ACK 	0b00001000
-#define MSG_SYNC 	0b00010000
-#define MSG_RREQ 	0b00100000
-#define MSG_RREP	0b01000000
+//#define MSG_NONE	0b00000000
+//#define MSG_RTS 	0b00000001
+//#define MSG_CTS 	0b00000010
+//#define MSG_DATA 	0b00000100
+//#define MSG_ACK 	0b00001000
+//#define MSG_SYNC 	0b00010000
+//#define MSG_RREQ 	0b00100000
+//#define MSG_RREP	0b01000000
+
+typedef enum msgFlags {
+	MSG_NONE = 0,
+	MSG_RTS,
+	MSG_CTS,
+	MSG_DATA,
+	MSG_ACK,
+	MSG_SYNC,
+	MSG_RREQ,
+	MSG_RREP
+} msgType_t;
 
 typedef uint8_t nodeAddress;
 

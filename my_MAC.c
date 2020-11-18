@@ -97,8 +97,7 @@ extern uint16_t loraTxtimes[255];
 // data collection time
 RTC_C_Calendar timeStamp;
 
-// Valid messaged under current circumstances
-static uint8_t expMsgType;
+static uint8_t rxMsgType;
 
 extern uint8_t _routeSequenceNumber;
 extern uint8_t _broadcastID;
@@ -168,14 +167,13 @@ void MacInit() {
 	_numNeighbours = 0;
 	_numMsgSent = 0;
 	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
-	expMsgType = MSG_SYNC;
+	rxMsgType = MSG_NONE;
 }
 
 bool MACStateMachine() {
 	while (true) {
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
-			expMsgType = MSG_SYNC;
 			if (!MACRx(carrierSenseTimes[carrierSenseSlot++])) {
 				if (MACSend(MSG_SYNC, BROADCAST_ADDRESS)) {
 					schedChange = false;
@@ -189,7 +187,6 @@ bool MACStateMachine() {
 			MACState = MAC_SLEEP;
 			break;
 		case MAC_LISTEN:
-			expMsgType |= MSG_RTS | MSG_SYNC;
 			if (!MACRx(SLOT_LENGTH_MS)) {
 				MACState = MAC_SLEEP;
 //				return false;
@@ -208,7 +205,7 @@ bool MACStateMachine() {
 			if (SX1276IsChannelFree(MODEM_LORA, RF_FREQUENCY, -60,
 					carrierSenseTimes[carrierSenseSlot++])) {
 				if (MACSend(MSG_RTS, neighbourTable[0].neighbourID)) {// Send RTS
-					expMsgType = MSG_CTS;
+
 					if (!MACRx(SLOT_LENGTH_MS)) {
 						MACState = MAC_SLEEP;
 //						return false;
@@ -316,23 +313,30 @@ static bool processRXBuffer() {
 		case MSG_CTS: 	// CTS
 			if (hasData) {
 				MACSend(MSG_DATA, rxdatagram.msgHeader.localSource); // Send data to destination node
-				expMsgType |= MSG_ACK;
 				MACState = MAC_LISTEN;
 			} else {
 				MACState = MAC_SLEEP;
 			}
 			break;
 		case MSG_DATA: 	// DATA
+			rxMsgType = MSG_DATA;
 			MACSend(MSG_ACK, rxdatagram.msgHeader.localSource); // Send Ack back to transmitting node
 			MACState = MAC_SLEEP;
 			break;
 		case MSG_ACK: 	// ACK
 			hasData = false;	// data has succesfully been sent
 			MACState = MAC_SLEEP;
-			expMsgType = MSG_NONE;
 			break;
+		case MSG_RREP: 	// RREP
+			rxMsgType = MSG_RREP;
+			MACSend(MSG_ACK, rxdatagram.msgHeader.localSource); // Send Ack back to transmitting node
+			MACState = MAC_SLEEP;
+			break;
+
+			/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
 		case MSG_SYNC: 	// SYNC
 		{
+			rxMsgType = MSG_SYNC;
 			addNeighbour();
 
 			MACState = MAC_SLEEP;
@@ -344,6 +348,11 @@ static bool processRXBuffer() {
 			addRoute(rxdatagram.msgHeader.nextHop);
 			break;
 		}
+		case MSG_RREQ: 	// RREQ
+			rxMsgType = MSG_RREQ;
+			processRreq();
+			MACState = MAC_SLEEP;
+			break;
 		default:
 			return false;
 		}
@@ -424,6 +433,17 @@ bool MACStartTransaction(nodeAddress destination, uint8_t msgType,
 		txDatagram.data.Rreq.dest_addr = GATEWAY_ADDRESS;
 		txDatagram.data.Rreq.dest_sequence_num = _destSequenceNumber;
 		txDatagram.data.Rreq.hop_cnt = 0;
+		break;
+	case MSG_RREP:
+		/*
+		 nodeAddress source_addr;	// source address, will be a sensor node
+		 nodeAddress dest_addr;	// destination address: will probably be the gateway
+		 uint8_t dest_sequence_num;	// destination sequence number
+		 uint8_t hop_cnt;	// number of hops until now
+		 uint8_t lifetime;	// TTL?
+		 */
+		txDatagram.data.Rrep.source_addr = _nodeID;
+
 		break;
 	default:
 		break;

@@ -12,6 +12,7 @@
 
 #define MAX_ROUTES 20
 #define MAX_HOPS 4
+#define REVERSE_PATH_EXP_TIME 10
 
 typedef struct {
 	nodeAddress dest;
@@ -34,5 +35,13 @@ void netInit();
 void addRoute(nodeAddress dest);
 nodeAddress getDest(nodeAddress dest);
 void sendRREQ();
+
+// process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
+
+/*!
+ *  \brief process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
+ * @return message type to be sent
+ */
+msgType_t processRreq();
 
 #endif /* MYNET_H_ */
