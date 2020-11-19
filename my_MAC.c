@@ -368,22 +368,8 @@ static bool processRXBuffer() {
 		}
 		case MSG_RREQ: 	// RREQ
 			rxMsgType = MSG_RREQ;
-			{
-				msgType_t RReqReply = processRreq();
 
-				switch (RReqReply) {
-				case MSG_NONE:
-					MACState = MAC_SLEEP;
-					break;
-				case MSG_RREP:
-					break;
-				case MSG_RREQ:
-					break;
-				default:
-					break;
-				}
-
-			}
+			nextNetOp = processRreq();
 
 			break;
 		default:
