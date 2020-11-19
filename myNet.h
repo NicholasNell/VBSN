@@ -31,10 +31,34 @@ typedef struct {
 	uint8_t source_sequence_num;
 } ReversePathInfo_t;
 
+typedef enum netOps {
+	NET_NONE, NET_REBROADCAST_RREQ, NET_BROADCAST_RREQ, NET_UNICAST_RREP
+} NextNetOp_t;
+
 void netInit();
+
+/*!
+ * Add new entry to the routing table
+ * @param dest
+ */
 void addRoute(nodeAddress dest);
+
+/*!
+ *  get next hop in path to given destination
+ * @param dest
+ * @return
+ */
 nodeAddress getDest(nodeAddress dest);
+
+/*!
+ * send initial rreq
+ */
 void sendRREQ();
+
+/*!
+ * Rebroadcasr rreq
+ */
+void netReRReq();
 
 // process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
 
@@ -42,6 +66,6 @@ void sendRREQ();
  *  \brief process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
  * @return message type to be sent
  */
-msgType_t processRreq();
+NextNetOp_t processRreq();
 
 #endif /* MYNET_H_ */

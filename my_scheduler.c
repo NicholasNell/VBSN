@@ -26,6 +26,7 @@ extern volatile MACappState_t MACState;
 extern bool hasData;
 
 bool schedChange = false;
+bool netOp = false;
 
 void initScheduler() {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
@@ -69,6 +70,11 @@ int scheduler() {
 
 	if (slotCount == (_txSlot + 2) && (hasData == true)) {
 		hasData = false;
+	}
+
+	if ((slotCount % GLOBAL_RX == 0) && netOp) {
+		macStateMachineEnable = true;
+		MACState = MAC_NET_OP;
 	}
 
 	if (macStateMachineEnable) {

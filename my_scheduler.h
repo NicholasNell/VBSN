@@ -15,9 +15,9 @@
 #define SLOT_SCALER 1
 #define MAX_SLOT_COUNT (60.0 * 1.0 / SLOT_SCALER)
 #define POSSIBLE_TX_SLOT 1
-#define GLOBAL_RX (10 / SLOT_SCALER)
+#define GLOBAL_RX (5 / SLOT_SCALER)
 #define COLLECT_DATA_SLOT_REL 10
-#define SYNC_PROB 10
+#define SYNC_PROB 5
 
 void initScheduler();
 int scheduler();

@@ -99,9 +99,11 @@ RTC_C_Calendar timeStamp;
 
 static uint8_t rxMsgType;
 
-extern uint8_t _routeSequenceNumber;
+extern uint8_t _nodeSequenceNumber;
 extern uint8_t _broadcastID;
 extern uint8_t _destSequenceNumber;
+
+static NextNetOp_t nextNetOp = NET_NONE;
 
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -217,6 +219,22 @@ bool MACStateMachine() {
 			} else {
 				MACState = MAC_SLEEP;
 //				return false;
+			}
+			break;
+		case MAC_NET_OP:
+			switch (nextNetOp) {
+			case NET_NONE:
+				MACState = MAC_SLEEP;
+				break;
+			case NET_REBROADCAST_RREQ:
+//				netReRReq();
+				break;
+			case NET_BROADCAST_RREQ:
+				break;
+			case NET_UNICAST_RREP:
+				break;
+			default:
+				break;
 			}
 			break;
 		case MAC_WAIT:
@@ -350,8 +368,23 @@ static bool processRXBuffer() {
 		}
 		case MSG_RREQ: 	// RREQ
 			rxMsgType = MSG_RREQ;
-			processRreq();
-			MACState = MAC_SLEEP;
+			{
+				msgType_t RReqReply = processRreq();
+
+				switch (RReqReply) {
+				case MSG_NONE:
+					MACState = MAC_SLEEP;
+					break;
+				case MSG_RREP:
+					break;
+				case MSG_RREQ:
+					break;
+				default:
+					break;
+				}
+
+			}
+
 			break;
 		default:
 			return false;
@@ -428,7 +461,7 @@ bool MACStartTransaction(nodeAddress destination, uint8_t msgType,
 		 uint8_t hop_cnt;	// number of hops the message has gone through
 		 */
 		txDatagram.data.Rreq.source_addr = _nodeID;
-		txDatagram.data.Rreq.source_sequence_num = _routeSequenceNumber;
+		txDatagram.data.Rreq.source_sequence_num = _nodeSequenceNumber;
 		txDatagram.data.Rreq.broadcast_id = _broadcastID;
 		txDatagram.data.Rreq.dest_addr = GATEWAY_ADDRESS;
 		txDatagram.data.Rreq.dest_sequence_num = _destSequenceNumber;
