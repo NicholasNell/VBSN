@@ -230,6 +230,7 @@ bool MACStateMachine() {
 //				netReRReq();
 				break;
 			case NET_BROADCAST_RREQ:
+				sendRREQ();
 				break;
 			case NET_UNICAST_RREP:
 				break;
@@ -370,7 +371,6 @@ static bool processRXBuffer() {
 			rxMsgType = MSG_RREQ;
 
 			nextNetOp = processRreq();
-
 			break;
 		default:
 			return false;
