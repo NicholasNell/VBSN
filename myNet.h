@@ -32,7 +32,11 @@ typedef struct {
 } ReversePathInfo_t;
 
 typedef enum netOps {
-	NET_NONE, NET_REBROADCAST_RREQ, NET_BROADCAST_RREQ, NET_UNICAST_RREP
+	NET_NONE,
+	NET_REBROADCAST_RREQ,
+	NET_BROADCAST_RREQ,
+	NET_UNICAST_RREP,
+	NET_WAIT
 } NextNetOp_t;
 
 void netInit();

@@ -105,12 +105,14 @@ extern uint8_t _destSequenceNumber;
 
 static NextNetOp_t nextNetOp = NET_NONE;
 
+static bool hopMessageFlag = false;
+
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
  */
 static bool processRXBuffer();
 
-static bool MACSend(uint8_t msgType, nodeAddress dest);
+static bool MACSend(msgType_t msgType, nodeAddress dest);
 
 static bool MACRx(uint32_t timeout);
 
@@ -227,12 +229,17 @@ bool MACStateMachine() {
 				MACState = MAC_SLEEP;
 				break;
 			case NET_REBROADCAST_RREQ:
-//				netReRReq();
+				netReRReq();
 				break;
 			case NET_BROADCAST_RREQ:
 				sendRREQ();
 				break;
 			case NET_UNICAST_RREP:
+				break;
+			case NET_WAIT:
+				if (!MACRx(SLOT_LENGTH_MS)) {
+					MACState = MAC_SLEEP;
+				}
 				break;
 			default:
 				break;
@@ -247,7 +254,7 @@ bool MACStateMachine() {
 	}
 }
 
-bool MACSend(uint8_t msgType, nodeAddress dest) {
+bool MACSend(msgType_t msgType, nodeAddress dest) {
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -339,8 +346,17 @@ static bool processRXBuffer() {
 			break;
 		case MSG_DATA: 	// DATA
 			rxMsgType = MSG_DATA;
+			if (rxdatagram.msgHeader.netDest != rxdatagram.msgHeader.nextHop) {
+				hopMessageFlag = true;
+			} else {
+				hopMessageFlag = false;
+			}
+
 			MACSend(MSG_ACK, rxdatagram.msgHeader.localSource); // Send Ack back to transmitting node
-			MACState = MAC_SLEEP;
+			if (!hopMessageFlag) {
+				MACState = MAC_SLEEP;
+			}
+
 			break;
 		case MSG_ACK: 	// ACK
 			hasData = false;	// data has succesfully been sent
@@ -390,11 +406,11 @@ static void addNeighbour() {
 }
 
 void MACscheduleListen() {
+
 }
 
 bool MACStartTransaction(nodeAddress destination, uint8_t msgType,
 		bool isSource) {
-
 	/*
 	 *	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
 	 * 	nodeAddress localSource; // Where the message came from, not original source
@@ -462,7 +478,6 @@ bool MACStartTransaction(nodeAddress destination, uint8_t msgType,
 		 uint8_t lifetime;	// TTL?
 		 */
 		txDatagram.data.Rrep.source_addr = _nodeID;
-
 		break;
 	default:
 		break;

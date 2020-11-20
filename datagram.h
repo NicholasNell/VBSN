@@ -42,10 +42,9 @@ typedef struct {
 	nodeAddress localSource; // Where the message came from, not original source
 	nodeAddress netSource;	// original message source
 	nodeAddress netDest;	// final destination, probably gateway
-	uint8_t hops;			// number of message hops from source to here
 	uint8_t ttl;			// maximum number of hops
 	uint16_t txSlot; // txSlot
-	uint8_t flags;	 // see flags
+	msgType_t flags;	 // see flags
 } Header_t;
 
 typedef struct {

@@ -5,6 +5,7 @@
  *      Author: njnel
  */
 #include <datagram.h>
+#include <my_MAC.h>
 #include <my_timer.h>
 #include <myNet.h>
 #include <string.h>
@@ -102,4 +103,10 @@ NextNetOp_t processRreq() {
 		}
 	}
 	return retVal;
+}
+
+void netReRReq() {
+	rxdatagram.data.Rreq.hop_cnt++;
+	rxdatagram.msgHeader.localSource = _nodeID;
+	rxdatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
 }
