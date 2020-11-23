@@ -37,17 +37,23 @@ typedef enum {
 } MACappState_t;
 
 typedef struct {
-	nodeAddress neighbourID;
-	uint16_t neighbourTxSlot;
+		nodeAddress neighbourID;
+		uint16_t neighbourTxSlot;
 } Neighbour_t;
 
-void MacInit();
+void MacInit( );
 
-void MACscheduleListen();
+void MACscheduleListen( );
 
-bool MACStateMachine();
+bool MACStateMachine( );
 
-bool MACStartTransaction(nodeAddress destination, uint8_t msgType,
-		bool isSource);
+bool MACStartTransaction(
+		nodeAddress destination,
+		uint8_t msgType,
+		bool isSource );
+
+bool isNeighbour( nodeAddress node );
+
+void addNeighbour( nodeAddress neighbour, uint16_t txSlot );
 
 #endif /* MY_MAC_H_ */
