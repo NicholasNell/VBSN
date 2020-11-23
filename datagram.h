@@ -67,8 +67,8 @@ typedef struct {
 } RReq_t;
 
 typedef struct {
-		nodeAddress source_addr;	// source address, will be a sensor node
-		nodeAddress dest_addr;// destination address: will probably be the gateway
+		nodeAddress source_addr;// source address, will probably be a gateway
+		nodeAddress dest_addr;// destination address: will probably be a sensor
 		uint8_t dest_sequence_num;	// destination sequence number
 		uint8_t hop_cnt;	// number of hops until now
 		uint8_t lifetime;	// TTL?

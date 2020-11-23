@@ -371,7 +371,7 @@ static bool processRXBuffer( ) {
 			case MSG_RREP: 	// RREP
 				MACSend(MSG_ACK, rxdatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				nextNetOp = processRrep();
-				MACState = MAC_SLEEP;
+				MACState = MAC_NET_OP;
 
 				break;
 
@@ -394,6 +394,7 @@ static bool processRXBuffer( ) {
 			case MSG_RREQ: 	// RREQ
 				// when a rreq is received, determine what actions to do next.
 				nextNetOp = processRreq();
+				MACState = MAC_NET_OP;
 				break;
 			default:
 				return false;

@@ -12,26 +12,35 @@
 
 #define MAX_ROUTES 20
 #define MAX_HOPS 4
-#define REVERSE_PATH_EXP_TIME 10
+#define REVERSE_PATH_EXP_TIME 100
 
 typedef struct {
 		nodeAddress dest;
 		uint8_t next_hop;
 		uint8_t num_hops;
 		uint8_t dest_seq_num;
-		uint8_t num_active_neighbours;
 		uint16_t expiration_time;
 } RouteEntry_t;
 
 typedef struct {
-		nodeAddress destinationAddress;	// destination address of the received RReq
-		nodeAddress sourceAddress;		// source address of the received RReq
-		uint8_t broadcastID;			// RReq boradcast address
+		nodeAddress destinationAddress;	// the source of the rreq (ie the destination of the reverse path)
+		nodeAddress nextHop;// the next hop on the way to the source of the rreq
+		uint8_t hopcount;		// the number of hops to the source of the rreq
+
+		uint8_t broadcastID;	// RReq boradcast ID (used to identify the rreq)
 		uint8_t expTime;			// expiration time of the reverse path info
 		uint8_t source_sequence_num;// source sequence number used to determine route freshness
-		uint8_t numHopsToSource;// the number of hops it took for the RReq to reach this node from the source
-		nodeAddress lastHop;	// the node that broadcast the rreq to this node
+
 } ReversePathInfo_t;
+
+typedef struct {
+		nodeAddress destinationAddress; // the final destination of the rreq, specified by the rrep
+		nodeAddress nextHop;		// the node from which the rrep was received
+		uint8_t hopcount;			// the number of hnops to the destination
+
+		uint8_t expTime;			// expiration time of the reverse path info
+		uint8_t dest_sequence_num; // destination sequence number used to determine route freshness
+} ForwardPathInfo_t;
 
 typedef enum netOps {
 	NET_NONE,
@@ -47,7 +56,7 @@ void netInit( );
  * Add new entry to the routing table
  * @param dest
  */
-void addRoute( nodeAddress dest );
+void addRoute( RouteEntry_t routeToNode );
 
 /*!
  *  get next hop in path to given destination
@@ -93,5 +102,19 @@ bool hasRouteToNode( nodeAddress dest, RouteEntry_t *routeToNode );
  * @return	returns the next network operation
  */
 NextNetOp_t processRrep( );
+
+/*!
+ *
+ * \brief Adds the current reverse path to the routing table
+ * @return returns true if route was added to path, false if not
+ * wont add route to table if a newer one exists in the table.
+ */
+bool addReversePathToTable( );
+
+/*!
+ * \brief Adds the current forawrd path to the routing table.
+ * @return return true if route was added to table
+ */
+bool addForwardPathToTable( );
 
 #endif /* MYNET_H_ */
