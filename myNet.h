@@ -66,14 +66,15 @@ void addRoute( RouteEntry_t routeToNode );
 nodeAddress getDest( nodeAddress dest );
 
 /*!
- * send initial rreq
+ * send initial rreq for route discovery
+ * @return return true if succesful
  */
-void sendRREQ( );
+bool sendRREQ( );
 
 /*!
- * Rebroadcasr rreq
+ * \brief	Rebroadcast rreq
  */
-void netReRReq( );
+bool netReRReq( );
 
 // process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
 
@@ -92,7 +93,7 @@ void addRoutetoNeighbour( nodeAddress dest );
 /*!
  * \brief looks for a route in the routing table and returns a copy of the entry if one is found, otherwise returns NULL
  * @param dest
- * @return returns a copy of the routeEntry if a route has been found in the routing table, otherwise returns NULL
+ * @return return true if it has a route to the node
  */
 
 bool hasRouteToNode( nodeAddress dest, RouteEntry_t *routeToNode );
@@ -116,5 +117,11 @@ bool addReversePathToTable( );
  * @return return true if route was added to table
  */
 bool addForwardPathToTable( );
+
+/*!
+ * \brief send a unicast rrep back to last hop from which a rreq was received
+ * @return returns true if message was sent succesfully
+ */
+bool sendRRep( );
 
 #endif /* MYNET_H_ */

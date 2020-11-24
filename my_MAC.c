@@ -29,6 +29,9 @@ static uint8_t carrierSenseSlot = 0;
 // Datagram containing the data to be sent over the medium
 Datagram_t txDatagram;
 
+// Datagram from received message
+Datagram_t rxDatagram;
+
 // Does this node have data to send?
 bool hasData = false;
 
@@ -63,9 +66,6 @@ uint16_t _schedID;
 
 // The LoRa RX Buffer
 extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
-
-// Datagram from received message
-Datagram_t rxdatagram;
 
 // should mac init
 extern bool macFlag;
@@ -104,6 +104,8 @@ extern uint8_t _destSequenceNumber;
 static NextNetOp_t nextNetOp = NET_NONE;
 
 static bool hopMessageFlag = false;
+
+extern bool netOp;
 
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -226,13 +228,35 @@ bool MACStateMachine( ) {
 			case MAC_NET_OP:
 				switch (nextNetOp) {
 					case NET_NONE:
-						MACState = MAC_SLEEP;
+						MACState = MAC_LISTEN;
 						break;
 					case NET_REBROADCAST_RREQ:
-						netReRReq();
+						if (SX1276IsChannelFree(
+								MODEM_LORA,
+								RF_FREQUENCY,
+								-60,
+								carrierSenseTimes[carrierSenseSlot++])) {
+							if (netReRReq()) {
+								nextNetOp = NET_WAIT;
+							}
+							else {
+								nextNetOp = NET_REBROADCAST_RREQ;
+							}
+						}
 						break;
 					case NET_BROADCAST_RREQ:
-						sendRREQ();
+						if (SX1276IsChannelFree(
+								MODEM_LORA,
+								RF_FREQUENCY,
+								-60,
+								carrierSenseTimes[carrierSenseSlot++])) {
+							if (sendRREQ()) {
+								nextNetOp = NET_WAIT;
+							}
+							else {
+								NET_BROADCAST_RREQ;
+							}
+						}
 						break;
 					case NET_UNICAST_RREP:
 						break;
@@ -329,20 +353,20 @@ bool MACRx( uint32_t timeout ) {
 }
 
 static bool processRXBuffer( ) {
-	memcpy(&rxdatagram, &RXBuffer, loraRxBufferSize);
+	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
 
 	// check if message was meant for this node:
-	if ((rxdatagram.msgHeader.nextHop == _nodeID)
-			|| (rxdatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) {// if destination is this node or broadcast check message type
+	if ((rxDatagram.msgHeader.nextHop == _nodeID)
+			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) {// if destination is this node or broadcast check message type
 
-		switch (rxdatagram.msgHeader.flags) {
+		switch (rxDatagram.msgHeader.flags) {
 			case MSG_RTS: 	// RTS
-				MACSend(MSG_CTS, rxdatagram.msgHeader.localSource); // send CTS to requesting node
+				MACSend(MSG_CTS, rxDatagram.msgHeader.localSource); // send CTS to requesting node
 				MACState = MAC_LISTEN;
 				break;
 			case MSG_CTS: 	// CTS
 				if (hasData) {
-					MACSend(MSG_DATA, rxdatagram.msgHeader.localSource); // Send data to destination node
+					MACSend(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
 					MACState = MAC_LISTEN;
 				}
 				else {
@@ -350,15 +374,15 @@ static bool processRXBuffer( ) {
 				}
 				break;
 			case MSG_DATA: 	// DATA
-				if (rxdatagram.msgHeader.netDest
-						!= rxdatagram.msgHeader.nextHop) {
+				if (rxDatagram.msgHeader.netDest
+						!= rxDatagram.msgHeader.nextHop) {
 					hopMessageFlag = true;
 				}
 				else {
 					hopMessageFlag = false;
 				}
 
-				MACSend(MSG_ACK, rxdatagram.msgHeader.localSource); // Send Ack back to transmitting node
+				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				if (!hopMessageFlag) {
 					MACState = MAC_SLEEP;
 				}
@@ -369,32 +393,33 @@ static bool processRXBuffer( ) {
 				MACState = MAC_SLEEP;
 				break;
 			case MSG_RREP: 	// RREP
-				MACSend(MSG_ACK, rxdatagram.msgHeader.localSource); // Send Ack back to transmitting node
+				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				nextNetOp = processRrep();
 				MACState = MAC_NET_OP;
-
+				netOp = true;
 				break;
 
 				/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
 			case MSG_SYNC: 	// SYNC
 			{
 				addNeighbour(
-						rxdatagram.msgHeader.localSource,
-						rxdatagram.msgHeader.txSlot);
+						rxDatagram.msgHeader.localSource,
+						rxDatagram.msgHeader.txSlot);
 
 				MACState = MAC_SLEEP;
 
-				if (rxdatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
+				if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
 					genID(true);
 					schedChange = true;
 				}
-				addRoutetoNeighbour(rxdatagram.msgHeader.localSource);
+				addRoutetoNeighbour(rxDatagram.msgHeader.localSource);
 				break;
 			}
 			case MSG_RREQ: 	// RREQ
 				// when a rreq is received, determine what actions to do next.
 				nextNetOp = processRreq();
 				MACState = MAC_NET_OP;
+				netOp = true;
 				break;
 			default:
 				return false;
@@ -414,10 +439,6 @@ void addNeighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	neighbourTable[_numNeighbours++] = receivedNeighbour;
 }
 
-void MACscheduleListen( ) {
-
-}
-
 bool MACStartTransaction(
 		nodeAddress destination,
 		msgType_t msgType,
@@ -432,29 +453,29 @@ bool MACStartTransaction(
 	 * 	uint16_t txSlot; // txSlot
 	 * 	uint8_t flags;	 // see flags
 	 */
-	rxdatagram.msgHeader.nextHop = destination;
-	rxdatagram.msgHeader.localSource = _nodeID;
+	rxDatagram.msgHeader.nextHop = destination;
+	rxDatagram.msgHeader.localSource = _nodeID;
 	if (isSource) {
-		rxdatagram.msgHeader.netSource = _nodeID;
+		rxDatagram.msgHeader.netSource = _nodeID;
 	}
 	else {
 
 	}
 //	rxdatagram.msgHeader.netDest =
-	rxdatagram.msgHeader.ttl = MAX_HOPS;
+	rxDatagram.msgHeader.ttl = MAX_HOPS;
 
-	rxdatagram.msgHeader.txSlot = _txSlot;
-	rxdatagram.msgHeader.flags = msgType;
+	rxDatagram.msgHeader.txSlot = _txSlot;
+	rxDatagram.msgHeader.flags = msgType;
 
 	switch (msgType) {
 		case MSG_SYNC:
-			rxdatagram.msgHeader.ttl = 1;
-			rxdatagram.msgHeader.netDest = BROADCAST_ADDRESS;
-			rxdatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
+			rxDatagram.msgHeader.ttl = 1;
+			rxDatagram.msgHeader.netDest = BROADCAST_ADDRESS;
+			rxDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
 			break;
 		case MSG_DATA:
-			rxdatagram.msgHeader.netDest = GATEWAY_ADDRESS;
-			rxdatagram.msgHeader.nextHop = getDest(GATEWAY_ADDRESS);
+			rxDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
+			rxDatagram.msgHeader.nextHop = getDest(GATEWAY_ADDRESS);
 
 			txDatagram.data.sensData.hum = bme280Data.humidity;
 			txDatagram.data.sensData.press = bme280Data.pressure;
@@ -507,3 +528,25 @@ bool isNeighbour( nodeAddress node ) {
 	return retVal;
 }
 
+bool MACSendTxDatagram( ) {
+	bool retVal = false;
+	int size = sizeof(txDatagram);
+	memcpy(TXBuffer, &txDatagram, size);
+	startLoRaTimer(loraTxtimes[size + 1]);
+	SX1276Send(TXBuffer, size);
+
+	RadioState = TX;
+	bool retVal = false;
+	while (true) {
+		if (RadioState == TXDONE) {
+			retVal = true;
+			break;
+		}
+		else if (RadioState == TXTIMEOUT) {
+			retVal = false;
+			break;
+		}
+	}
+	stopLoRaTimer();
+	return retVal;
+}

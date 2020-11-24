@@ -41,10 +41,15 @@ typedef struct {
 		uint16_t neighbourTxSlot;
 } Neighbour_t;
 
+/*!
+ * \brief Initialise the mac protocol and all node parameters
+ */
 void MacInit( );
 
-void MACscheduleListen( );
-
+/*!
+ * \brief the state machine that control the mac protocol
+ * @return returns true if succesful
+ */
 bool MACStateMachine( );
 
 bool MACStartTransaction(
@@ -52,8 +57,24 @@ bool MACStartTransaction(
 		uint8_t msgType,
 		bool isSource );
 
+/*!
+ *
+ * @param checks if given node address is a neighbour of this node
+ * @return return true if node is a neighbour
+ */
 bool isNeighbour( nodeAddress node );
 
+/*!
+ * \brief add node to neighbour table
+ * @param neighbour
+ * @param txSlot
+ */
 void addNeighbour( nodeAddress neighbour, uint16_t txSlot );
+
+/*!
+ * \brief copies the contents of the txdatagram into the txBuffer and then transmits it. Only use if txdatagram has already been set up correctly.
+ * @return returns true if succesfully sent
+ */
+bool MACSendTxDatagram( );
 
 #endif /* MY_MAC_H_ */

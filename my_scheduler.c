@@ -28,13 +28,13 @@ extern bool hasData;
 bool schedChange = false;
 bool netOp = false;
 
-void initScheduler() {
+void initScheduler( ) {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
 	collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
 	slotCount = 1;
 }
 
-int scheduler() {
+int scheduler( ) {
 	bool macStateMachineEnable = false;
 
 	int var = 0;
@@ -73,6 +73,7 @@ int scheduler() {
 	}
 
 	if ((slotCount % GLOBAL_RX == 0) && netOp) {
+		netOp = false;
 		macStateMachineEnable = true;
 		MACState = MAC_NET_OP;
 	}
@@ -83,14 +84,14 @@ int scheduler() {
 	return true;
 }
 
-uint16_t getSlotCount() {
+uint16_t getSlotCount( ) {
 	return slotCount;
 }
 
-void setSlotCount(uint16_t newSlotCount) {
+void setSlotCount( uint16_t newSlotCount ) {
 	slotCount = newSlotCount;
 }
 
-void incrementSlotCount() {
+void incrementSlotCount( ) {
 	slotCount++;
 }
