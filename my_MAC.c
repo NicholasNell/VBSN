@@ -174,6 +174,7 @@ void MacInit( ) {
 }
 
 bool MACStateMachine( ) {
+	RouteEntry_t *route = NULL;
 	while (true) {
 		switch (MACState) {
 			case MAC_SYNC_BROADCAST:
@@ -205,24 +206,27 @@ bool MACStateMachine( ) {
 				return false;
 			case MAC_RTS:
 				// Send RTS
-				//			net_getNextDest(); // get the next hop destination from the network layer
-				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
-					if (MACSend(MSG_RTS, neighbourTable[0].neighbourID)) {// Send RTS
 
-						if (!MACRx(SLOT_LENGTH_MS)) {
-							MACState = MAC_SLEEP;
+				if (hasRouteToNode(GATEWAY_ADDRESS, route)) {
+					if (SX1276IsChannelFree(MODEM_LORA,
+					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+
+						if (MACSend(MSG_RTS, route->next_hop)) { // Send RTS
+
+							if (!MACRx(SLOT_LENGTH_MS)) {
+								MACState = MAC_SLEEP;
 //						return false;
+							}
+						}
+						else {
+							MACState = MAC_SLEEP;
+//					return false;
 						}
 					}
 					else {
 						MACState = MAC_SLEEP;
-//					return false;
-					}
-				}
-				else {
-					MACState = MAC_SLEEP;
 //				return false;
+					}
 				}
 				break;
 			case MAC_NET_OP:
@@ -357,7 +361,7 @@ static bool processRXBuffer( ) {
 
 	// check if message was meant for this node:
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
-			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) {// if destination is this node or broadcast check message type
+			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) { // if destination is this node or broadcast check message type
 
 		switch (rxDatagram.msgHeader.flags) {
 			case MSG_RTS: 	// RTS
@@ -374,8 +378,7 @@ static bool processRXBuffer( ) {
 				}
 				break;
 			case MSG_DATA: 	// DATA
-				if (rxDatagram.msgHeader.netDest
-						!= rxDatagram.msgHeader.nextHop) {
+				if (rxDatagram.msgHeader.netDest != _nodeID) {
 					hopMessageFlag = true;
 				}
 				else {
@@ -385,6 +388,9 @@ static bool processRXBuffer( ) {
 				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				if (!hopMessageFlag) {
 					MACState = MAC_SLEEP;
+				}
+				else {
+					MACState = MAC_RTS;
 				}
 
 				break;
@@ -536,7 +542,6 @@ bool MACSendTxDatagram( ) {
 	SX1276Send(TXBuffer, size);
 
 	RadioState = TX;
-	bool retVal = false;
 	while (true) {
 		if (RadioState == TXDONE) {
 			retVal = true;

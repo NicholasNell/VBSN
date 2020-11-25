@@ -25,6 +25,8 @@ extern volatile MACappState_t MACState;
 
 extern bool hasData;
 
+extern bool hopMessageFlag;
+
 bool schedChange = false;
 bool netOp = false;
 

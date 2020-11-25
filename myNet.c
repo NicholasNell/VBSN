@@ -28,6 +28,7 @@ static ForwardPathInfo_t forwardPathInfo;
 extern Datagram_t rxDatagram;
 extern Datagram_t txDatagram;
 extern nodeAddress _nodeID;
+extern uint16_t _txSlot;
 
 void netInit( ) {
 	_numRoutes = 0;
@@ -59,7 +60,7 @@ nodeAddress getDest( nodeAddress dest ) {
 bool sendRREQ( ) {
 	bool retVal = false;
 
-	RouteEntry_t *newRoute;
+	RouteEntry_t *newRoute = NULL;
 	hasRouteToNode(GATEWAY_ADDRESS, newRoute);
 
 	_broadcastID++;
@@ -78,7 +79,7 @@ bool sendRREQ( ) {
 	if (newRoute == NULL) { // if no route exist to node in question, set sequence number as zero
 		txDatagram.data.Rreq.dest_sequence_num = 0;
 	}
-	else if (newRoute->dest_seq_num >= 0) {
+	else {
 		txDatagram.data.Rreq.dest_sequence_num = newRoute->dest_seq_num;
 	}
 
@@ -222,12 +223,13 @@ NextNetOp_t processRrep( ) {
 
 	if (addedPath) {
 		retVal = NET_UNICAST_RREP;
-		RouteEntry_t *route;
+		RouteEntry_t *route = NULL;
 		if (hasRouteToNode(rxDatagram.data.Rrep.dest_addr, route)) {
 			rrepNodeUnicast = route->next_hop;
+			retVal = NET_UNICAST_RREP;
 		}
 		else {
-			retVal = false;
+			retVal = NET_NONE;
 			return retVal;
 		}
 	}
@@ -297,7 +299,7 @@ bool addForwardPathToTable( ) {
 bool sendRRep( ) {
 	bool retVal = false;
 
-	RouteEntry_t *newRoute;
+	RouteEntry_t *newRoute = NULL;
 	hasRouteToNode(rxDatagram.msgHeader.netDest, newRoute);
 
 	txDatagram.msgHeader.flags = MSG_RREP;
