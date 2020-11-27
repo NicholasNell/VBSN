@@ -109,34 +109,34 @@ extern LoRaRadioState_t RadioState;
 
 extern RTC_C_Calendar currentTime;
 
-void printLoRaRegisters(void);
+void printLoRaRegisters( void );
 
 /*!
  * \brief Function to be executed on Radio Tx Done event
  */
-void OnTxDone(void);
+void OnTxDone( void );
 
 /*!
  * \brief Function to be executed on Radio Rx Done event
  */
-void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
+void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 
 /*!
  * \brief Function executed on Radio Tx Timeout event
  */
-void OnTxTimeout(void);
+void OnTxTimeout( void );
 
 /*!
  * \brief Function executed on Radio Rx Timeout event
  */
-void OnRxTimeout(void);
+void OnRxTimeout( void );
 
 /*!
  * \brief Function executed on Radio Rx Error event
  */
-void OnRxError(void);
+void OnRxError( void );
 
-void RadioInit() {
+void RadioInit( ) {
 	// Radio initialization
 	RadioEvents.TxDone = OnTxDone;
 	RadioEvents.RxDone = OnRxDone;
@@ -150,7 +150,8 @@ void RadioInit() {
 		rfm95Working = false;
 		BoardResetMcu();
 		return;
-	} else {
+	}
+	else {
 		rfm95Working = true;
 	}
 
@@ -191,13 +192,12 @@ void RadioInit() {
 }
 
 extern volatile MACappState_t MACState;
-int main(void) {
+int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 
 	bool isRoot = false;
-	if (isRoot)
-		printf("ROOT!\n");
+	if (isRoot) printf("ROOT!\n");
 
 	// Initialise all ports and communication protocols
 	BoardInitMcu();
@@ -235,7 +235,8 @@ int main(void) {
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
 		bme280GetData(&bme280Dev, &bme280Data);
 		bme280Working = true;
-	} else {
+	}
+	else {
 		bme280Working = false;
 	}
 
@@ -274,14 +275,13 @@ int main(void) {
 		if (gpsWakeFlag) {
 			sendUARTgps("H\r\n");
 			gpsWakeFlag = false;
-
 		}
 	}
 }
 
 extern bool schedChange;
 
-void PORT1_IRQHandler(void) {
+void PORT1_IRQHandler( void ) {
 	uint32_t status;
 
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
@@ -293,7 +293,7 @@ void PORT1_IRQHandler(void) {
 }
 
 extern bool setRTCFlag;
-void PORT3_IRQHandler(void) {
+void PORT3_IRQHandler( void ) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
@@ -321,7 +321,7 @@ void PORT3_IRQHandler(void) {
 	}
 }
 
-void PORT2_IRQHandler(void) {
+void PORT2_IRQHandler( void ) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
@@ -331,14 +331,16 @@ void PORT2_IRQHandler(void) {
 #endif
 	if (status & GPIO_PIN4) {
 		SX1276OnDio0Irq();
-	} else if (status & GPIO_PIN6) {
+	}
+	else if (status & GPIO_PIN6) {
 		SX1276OnDio1Irq();
-	} else if (status & GPIO_PIN7) {
+	}
+	else if (status & GPIO_PIN7) {
 		SX1276OnDio2Irq();
 	}
 }
 
-void OnTxDone(void) {
+void OnTxDone( void ) {
 	SX1276clearIRQFlags();
 	RadioState = TXDONE;
 #ifdef DEBUG
@@ -346,7 +348,7 @@ void OnTxDone(void) {
 #endif
 }
 
-void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
+void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	SX1276clearIRQFlags();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);
@@ -359,7 +361,7 @@ void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 #endif
 }
 
-void OnTxTimeout(void) {
+void OnTxTimeout( void ) {
 	Radio.Sleep();
 	RadioState = TXTIMEOUT;
 #ifdef DEBUG
@@ -367,7 +369,7 @@ void OnTxTimeout(void) {
 #endif
 }
 
-void OnRxTimeout(void) {
+void OnRxTimeout( void ) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXTIMEOUT;
@@ -378,7 +380,7 @@ void OnRxTimeout(void) {
 #endif
 }
 
-void OnRxError(void) {
+void OnRxError( void ) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXERROR;
@@ -387,12 +389,13 @@ void OnRxError(void) {
 #endif
 }
 
-void printLoRaRegisters(void) {
+void printLoRaRegisters( void ) {
 
 	uint8_t registers[] = { 0x01, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
-			0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014, 0x15, 0x16, 0x17,
-			0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22,
-			0x23, 0x24, 0x25, 0x26, 0x27, 0x4b };
+							0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014,
+							0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
+							0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24,
+							0x25, 0x26, 0x27, 0x4b };
 
 	uint8_t i;
 	for (i = 0; i < sizeof(registers); i++) {

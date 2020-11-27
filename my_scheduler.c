@@ -80,6 +80,12 @@ int scheduler( ) {
 		MACState = MAC_NET_OP;
 	}
 
+	if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) {
+		hopMessageFlag = false;
+		MACState = MAC_HOP_MESSAGE;
+		macStateMachineEnable = true;
+	}
+
 	if (macStateMachineEnable) {
 		MACStateMachine();
 	}

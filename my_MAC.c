@@ -118,6 +118,8 @@ static bool MACRx( uint32_t timeout );
 
 static void genID( bool genNew );
 
+static bool MAChopMessage( nodeAddress dest );
+
 static void genID( bool genNew ) {
 	nodeAddress tempID = 0x0;
 
@@ -274,7 +276,32 @@ bool MACStateMachine( ) {
 				}
 				break;
 			case MAC_WAIT:
+				break;
 //			return true;
+			case MAC_HOP_MESSAGE:
+				if (hasRouteToNode(GATEWAY_ADDRESS, route)) {
+					if (SX1276IsChannelFree(MODEM_LORA,
+					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+
+						if (MAChopMessage(route->next_hop)) { // Send RTS
+
+							if (!MACRx(SLOT_LENGTH_MS)) {
+								MACState = MAC_SLEEP;
+								//						return false;
+							}
+						}
+						else {
+							MACState = MAC_SLEEP;
+							//					return false;
+						}
+					}
+					else {
+						MACState = MAC_SLEEP;
+						//				return false;
+					}
+				}
+				break;
+
 			default:
 				return false;
 		}
@@ -542,6 +569,34 @@ bool MACSendTxDatagram( ) {
 	SX1276Send(TXBuffer, size);
 
 	RadioState = TX;
+	while (true) {
+		if (RadioState == TXDONE) {
+			retVal = true;
+			break;
+		}
+		else if (RadioState == TXTIMEOUT) {
+			retVal = false;
+			break;
+		}
+	}
+	stopLoRaTimer();
+	return retVal;
+}
+
+static bool MAChopMessage( nodeAddress dest ) {
+
+	memcpy(&txDatagram, &rxDatagram, loraRxBufferSize);
+	txDatagram.msgHeader.localSource = _nodeID;
+	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
+	txDatagram.msgHeader.nextHop = dest;
+	txDatagram.msgHeader.txSlot = _txSlot;
+	int size = sizeof(txDatagram);
+	memcpy(TXBuffer, &txDatagram, size);
+	startLoRaTimer(loraTxtimes[size + 1]);
+	SX1276Send(TXBuffer, size);
+
+	RadioState = TX;
+	bool retVal = false;
 	while (true) {
 		if (RadioState == TXDONE) {
 			retVal = true;

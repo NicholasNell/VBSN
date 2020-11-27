@@ -33,7 +33,8 @@ typedef enum {
 	MAC_ACK,
 	MAC_SYNC_BROADCAST,
 	MAC_WAIT,
-	MAC_NET_OP
+	MAC_NET_OP,
+	MAC_HOP_MESSAGE
 } MACappState_t;
 
 typedef struct {
