@@ -208,13 +208,6 @@ int main( void ) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
-	MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P3, GPIO_PIN2);
-	MAP_GPIO_interruptEdgeSelect(GPIO_PORT_P3, GPIO_PIN2,
-	GPIO_LOW_TO_HIGH_TRANSITION);
-	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, GPIO_PIN2);
-	MAP_GPIO_enableInterrupt(GPIO_PORT_P3, GPIO_PIN2);
-	MAP_Interrupt_enableInterrupt(INT_PORT3);
-
 	srand(SX1276Random());
 
 	// Initialise UART to PC
@@ -298,7 +291,7 @@ void PORT3_IRQHandler( void ) {
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 	GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN1);
-	if (status & GPIO_PIN2) {
+	if (status & GPS_PPS_PIN) {
 
 		if (!gpsWorking) {
 			sendUARTgps(PMTK_SET_NMEA_OUTPUT_RMCONLY);

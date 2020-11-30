@@ -74,6 +74,15 @@ void UARTinitGPS( ) {
 	GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
 	MAP_UART_initModule(EUSCI_A3_BASE, &uartConfig);
 	MAP_UART_enableModule(EUSCI_A3_BASE);
+
+	// PPS signal
+	MAP_GPIO_setAsInputPinWithPullDownResistor(GPS_PPS_PORT, GPS_PPS_PIN);
+	MAP_GPIO_interruptEdgeSelect(GPS_PPS_PORT, GPS_PPS_PIN,
+	GPIO_LOW_TO_HIGH_TRANSITION);
+	MAP_GPIO_clearInterruptFlag(GPS_PPS_PORT, GPS_PPS_PIN);
+	MAP_GPIO_enableInterrupt(GPS_PPS_PORT, GPS_PPS_PIN);
+	MAP_Interrupt_enableInterrupt(INT_PORT3);
+
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(100);
 //	sendUARTgps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
