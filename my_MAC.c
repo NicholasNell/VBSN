@@ -103,7 +103,7 @@ extern uint8_t _destSequenceNumber;
 
 static NextNetOp_t nextNetOp = NET_NONE;
 
-static bool hopMessageFlag = false;
+bool hopMessageFlag = false;
 
 extern bool netOp;
 
@@ -260,7 +260,7 @@ bool MACStateMachine( ) {
 								nextNetOp = NET_WAIT;
 							}
 							else {
-								NET_BROADCAST_RREQ;
+								nextNetOp = NET_BROADCAST_RREQ;
 							}
 						}
 						break;
