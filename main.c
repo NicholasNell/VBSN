@@ -41,6 +41,7 @@
 #include <main.h>
 #include <my_flash.h>
 #include <my_gpio.h>
+#include <my_GSM.h>
 #include <my_MAC.h>
 #include <my_rtc.h>
 #include <my_RFM9x.h>
@@ -214,12 +215,16 @@ int main( void ) {
 	UARTinitPC();
 
 	//Initialise UART to GPS;
-	UARTinitGPS();
+//	UARTinitGPS();
 
 	// Initialise the RFM95 Radio Module
-	RadioInit();
+//	RadioInit();
 
 	SystickInit();
+
+	GSM_startup();
+
+	checkGPRSattached();
 
 //	hasGSM = initGSM();
 

@@ -1,10 +1,3 @@
-/*
- * gsmModem.c
- *
- *  Created on: Aug 10, 2016
- *      Author: Jonathan
- */
-
 #include <my_GSM.h>
 #include <my_timer.h>
 #include <stdint.h>
@@ -173,12 +166,12 @@ int getSignalStrength( int index ) {
 /*Checks whether the modem is started by checking that it responds and also the signal strength*/
 int modem_start( void ) {
 	int ii;
-
+	int checked = CHECK_COM();
 	for (ii = 0; ii < 5; ii++) {
 		CHECK_COM();
-		Delayms(50);
+		Delayms(10);
 	}
-	int checked = CHECK_COM();
+
 	if (checked) {
 //		send_UART("modem alive\r");
 		//set_AmIServer(true); //Sets the IAMModem parameter to true
@@ -188,7 +181,7 @@ int modem_start( void ) {
 		//set_AmIServer(false); //Sets the IAMModem parameter to false
 		return 0;
 	}
-	disablecommandEcho();
+//	disablecommandEcho();
 	int strength;
 	int index;
 	do {
