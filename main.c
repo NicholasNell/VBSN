@@ -224,7 +224,9 @@ int main( void ) {
 
 	GSM_startup();
 
-	checkGPRSattached();
+//	checkGPRSattached();
+
+	sendmsg("AT+COPS?\r");
 
 //	hasGSM = initGSM();
 

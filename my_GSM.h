@@ -68,6 +68,8 @@ int checkForStringposition( char *checkFor );
  * has been returned by the GSM modem during that time. If timeout occurs it returns false
  */
 bool wait_Check_ForReply( char *reply, uint8_t delay_s );
+
+void checkSignal( );
 /*Returns the signal strength from the GSM modem*/
 int getSignalStrength( int index );
 /*Connects to an HTTPS server and attempts to get info from it*/

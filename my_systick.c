@@ -15,7 +15,7 @@ static uint32_t ticks;
  * @param period value in ms
  * @param flag	flag to be set
  */
-void SystickInit() {
+void SystickInit( ) {
 
 	MAP_SysTick_enableModule();
 	uint32_t value = 1 * 15 * 100;
@@ -24,11 +24,11 @@ void SystickInit() {
 	MAP_SysTick_enableInterrupt();
 }
 
-void SysTick_Handler(void) {
+void SysTick_Handler( void ) {
 	ticks++;
-	PunctualISR();
+//	PunctualISR();
 }
 
-uint32_t SystickGetTime() {
+uint32_t SystickGetTime( ) {
 	return ticks;
 }
