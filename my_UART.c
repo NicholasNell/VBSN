@@ -445,7 +445,7 @@ void EUSCIA0_IRQHandler( void ) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
 		UartRX[counter_read_pc] = MAP_UART_receiveData(EUSCI_A0_BASE);
-//		MAP_UART_transmitData(EUSCI_A3_BASE, UartRX[counter_read_pc]);
+//		MAP_UART_transmitData(EUSCI_A2_BASE, UartRX[counter_read_pc]);
 		counter_read_pc++;
 	}
 	if (UartRX[counter_read_pc - 1] == 0x0A

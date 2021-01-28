@@ -48,6 +48,7 @@
 #include <my_scheduler.h>
 #include <my_spi.h>
 #include <my_systick.h>
+#include <my_timer.h>
 #include <my_UART.h>
 #include <myNet.h>
 #include <MAX44009.h>
@@ -224,9 +225,17 @@ int main( void ) {
 
 	GSM_startup();
 
+//	checkRegistration();
+
 //	checkGPRSattached();
 
-	sendmsg("AT+COPS?\r");
+//	modem_start();
+
+	Delayms(1000);
+	checkGPRSattached();
+//	sendmsg("AT+COPS?\r");
+
+//	checkSignal();
 
 //	hasGSM = initGSM();
 

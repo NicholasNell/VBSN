@@ -181,7 +181,7 @@ int modem_start( void ) {
 		//set_AmIServer(false); //Sets the IAMModem parameter to false
 		return 0;
 	}
-//	disablecommandEcho();
+	disablecommandEcho();
 	int strength;
 	int index;
 	do {
@@ -275,7 +275,7 @@ void checkGPRSattached( void ) {
 	Delayms(500);
 	sendmsg("AT#SCFG?\r");
 	Delayms(500);
-	sendmsg("AT+CGDCONT=1,\"IP\",\"myMTN\"\r");
+	sendmsg("AT+CGDCONT=1,\"IP\",\"VodaCom-SA\"\r");
 	Delayms(500);
 	sendmsg("AT+CREG=1\r");
 	Delayms(500);
