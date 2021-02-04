@@ -27,7 +27,7 @@ Gpio_t Led_user_red;
 /*!
  * Initializes the unused GPIO to a know status
  */
-static void BoardUnusedIoInit(void);
+static void BoardUnusedIoInit( void );
 
 /*!
  * Timer used at first boot to calibrate the SystemWakeupTime
@@ -47,20 +47,20 @@ static bool UsbIsConnected = false;
  */
 static volatile bool SystemWakeupTimeCalibrated = false;
 
-void BoardCriticalSectionBegin(uint32_t *mask) {
+void BoardCriticalSectionBegin( uint32_t *mask ) {
 	*mask = __get_PRIMASK();
 	__disable_irq();
 }
 
-void BoardCriticalSectionEnd(uint32_t *mask) {
+void BoardCriticalSectionEnd( uint32_t *mask ) {
 	__set_PRIMASK(*mask);
 }
 
-void BoardInitPeriph(void) {
+void BoardInitPeriph( void ) {
 
 }
 
-void BoardInitMcu(void) {
+void BoardInitMcu( void ) {
 	BoardUnusedIoInit();
 
 	SystemClockConfig();
@@ -74,8 +74,8 @@ void BoardInitMcu(void) {
 	LED_RGB_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 	GpioInit(&Led_rgb_green,
 	LED_RGB_GREEN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
-	GpioInit(&Led_rgb_blue,
-	LED_RGB_BLUE, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
+//	GpioInit(&Led_rgb_blue,
+//	LED_RGB_BLUE, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 	GpioInit(&Led_user_red,
 	LED_USER_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 
@@ -84,12 +84,12 @@ void BoardInitMcu(void) {
 
 	GpioWrite(&Led_rgb_red, 0);
 	GpioWrite(&Led_rgb_green, 0);
-	GpioWrite(&Led_rgb_blue, 0);
+//	GpioWrite(&Led_rgb_blue, 0);
 	GpioWrite(&Led_user_red, 0);
 
 }
 
-void BoardResetMcu(void) {
+void BoardResetMcu( void ) {
 
 	CRITICAL_SECTION_BEGIN();
 	//Restart system
@@ -97,24 +97,24 @@ void BoardResetMcu(void) {
 	CRITICAL_SECTION_END();
 }
 
-void BoardDeInitMcu(void) {
+void BoardDeInitMcu( void ) {
 	spi_close();
 	SX1276IoDeInit();
 }
 
-uint16_t BoardBatteryMeasureVolage(void) {
+uint16_t BoardBatteryMeasureVolage( void ) {
 	return 0;
 }
 
-uint32_t BoardGetBatteryVoltage(void) {
+uint32_t BoardGetBatteryVoltage( void ) {
 	return 0;
 }
 
-uint8_t BoardGetBatteryLevel(void) {
+uint8_t BoardGetBatteryLevel( void ) {
 	return 0;
 }
 
-static void BoardUnusedIoInit(void) {
+static void BoardUnusedIoInit( void ) {
 	/* Terminating all remaining pins to minimize power consumption. This is
 	 done by register accesses for simplicity and to minimize branching API
 	 calls */
@@ -154,15 +154,16 @@ static void BoardUnusedIoInit(void) {
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_PJ, PIN_ALL16);
 }
 
-uint8_t GetBoardPowerSource(void) {
+uint8_t GetBoardPowerSource( void ) {
 	if (UsbIsConnected == false) {
 		return BATTERY_POWER;
-	} else {
+	}
+	else {
 		return USB_POWER;
 	}
 }
 
-void SystemClockConfig(void) {
+void SystemClockConfig( void ) {
 	/*
 	 * What clock goes where??:
 	 * ACLK:	use with TIMER_A and SPI

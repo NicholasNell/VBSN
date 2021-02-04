@@ -8,7 +8,6 @@
 #ifndef BOARD_CONFIG_H_
 #define BOARD_CONFIG_H_
 
-
 #define RADIO_NSS                                   P5_2
 
 #define RADIO_DIO_0                                 P2_4
@@ -26,10 +25,9 @@
 
 #define LED_RGB_RED                                 P2_0
 #define LED_RGB_GREEN                               P2_1
-#define LED_RGB_BLUE                                P2_2
+//#define LED_RGB_BLUE                                P2_2
 #define LED_USER_RED								P1_0
 
 #define BOARD_TCXO_WAKEUP_TIME                      1
-
 
 #endif /* BOARD_CONFIG_H_ */

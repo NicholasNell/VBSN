@@ -58,6 +58,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <EC5.h>
 #include <sx1276Regs-Fsk.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
@@ -103,7 +104,7 @@ static RadioEvents_t RadioEvents;
 // MSP432 Developments board LED's
 extern Gpio_t Led_rgb_red;	//RED
 extern Gpio_t Led_rgb_green;	//GREEN
-extern Gpio_t Led_rgb_blue;		//BLUE
+//extern Gpio_t Led_rgb_blue;		//BLUE
 extern Gpio_t Led_user_red;
 
 // MAC layer state
@@ -231,8 +232,8 @@ int main( void ) {
 
 //	modem_start();
 
-	Delayms(1000);
-	checkGPRSattached();
+//	Delayms(1000);
+//	checkGPRSattached();
 //	sendmsg("AT+COPS?\r");
 
 //	checkSignal();
@@ -264,6 +265,10 @@ int main( void ) {
 //	 Initialise the MAC protocol
 	netInit();
 	MacInit();
+
+	initADC();
+
+	getVWC();
 
 	initScheduler();
 
