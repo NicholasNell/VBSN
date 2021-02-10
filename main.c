@@ -225,15 +225,46 @@ int main( void ) {
 
 	GSM_startup();
 
-//	checkRegistration();
+	modem_start();
+
+	Delayms(100);
 
 //	checkGPRSattached();
 
-//	modem_start();
-
+//	Delayms(1000);
+//
+//	sendmsg("AT+CREG?\r\n");
+//	Delayms(1000);
+//
+//	sendmsg("AT#SCFG?\r\n");
+//
 	Delayms(1000);
-	checkGPRSattached();
-//	sendmsg("AT+COPS?\r");
+//
+//	sendmsg("AT#SGACT=?\r\n");
+
+//	gsm_setupModemPing();
+//	/*Pings the google website*/
+//	gsm_ping_google();
+
+	HTTP_connect();
+
+//	Delayms(1000);
+//
+//	sendmsg("AT+CIICR\r\n");
+//
+//	Delayms(1000);
+//
+//	sendmsg("AT+CIFSR\r\n");
+//
+//	Delayms(1000);
+//
+//	sendmsg("AT+CIPSPRT=0\r\n");
+//
+//	Delayms(1000);
+//	sendmsg("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",\"80\"\r\n");
+
+//	HTTP_connect();
+//	checkGPRSattached();
 
 //	checkSignal();
 

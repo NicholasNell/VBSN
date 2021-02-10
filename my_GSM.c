@@ -249,7 +249,7 @@ void gsm_setupModemPing( void ) {
 
 void gsm_ping_google( void ) {
 	//gsm_setupModemPing();
-	sendmsg("AT#PING=\"www.sport24.co.za\"\r");
+	sendmsg("AT#PING=\"www.google.co.za\"\r");
 	//delay_gsm_respond(50);
 	//counter_read_gsm=0;
 
@@ -265,19 +265,19 @@ void checkRegistration( void ) {
 }
 
 void checkGPRSattached( void ) {
-	sendmsg("AT+CGATT?\r");
+	sendmsg("AT+CGATT?\r\n");
 	Delayms(500);
-	sendmsg("AT+CGREG?\r");
+	sendmsg("AT+CGREG?\r\n");
 	Delayms(500);
-	sendmsg("AT+CGREG=1?\r");
+	sendmsg("AT+CGREG=1?\r\n");
 	Delayms(500);
-	sendmsg("AT&K=0\r");
+	sendmsg("AT&K=0\r\n");
 	Delayms(500);
-	sendmsg("AT#SCFG?\r");
+	sendmsg("AT#SCFG?\r\n");
 	Delayms(500);
-	sendmsg("AT+CGDCONT=1,\"IP\",\"VodaCom-SA\"\r");
+	sendmsg("AT+CGDCONT=1,\"IP\",\"VodaCom-SA\"\r\n");
 	Delayms(500);
-	sendmsg("AT+CREG=1\r");
+	sendmsg("AT+CREG=1\r\n");
 	Delayms(500);
 	setup_GPRSSettings();
 	Delayms(500);
@@ -303,17 +303,17 @@ bool wait_Check_ForReply( char *reply, uint8_t delay_s ) {
 }
 
 void setup_GPRSSettings( void ) {
-	sendmsg("AT#GPRS?\r");
+	sendmsg("AT#GPRS?\r\n");
 	Delayms(50);
-	if (wait_Check_ForReply("#GPRS: 0", 1)) sendmsg("AT#GPRS=1\r");
+	if (wait_Check_ForReply("#GPRS: 0", 1)) sendmsg("AT#GPRS=1\r\n");
 	__no_operation();
 }
 void HTTP_connect( void ) {
 	//sendmsg("AT#SKTD=0,80,\"www.telit.net\"\r");
-	//sendmsg("AT#SD=1,0,80,\"www.m2msupport.net\"\r");//working
-	sendmsg("AT#SD=1,0,80,\"www.dweet.io\"\r"); //working2
+//	sendmsg("AT#SD=1,0,80,\"www.m2msupport.net\"\r");	//working
+	sendmsg("AT#SD=1,0,80,\"api.thingspeak.com\"\r\n"); //working2
 	//sendmsg("AT#SKTD=0,80,\"www.theage.com.au\"\r");
-	//sendmsg("AT#SD=1,0,80,\"www.openweathermap.org\"\r");
+//	sendmsg("AT#SD=1,0,80,\"www.openweathermap.org\"\r\n");
 	Delayms(50);
 	if (wait_Check_ForReply("CONNECT", 5)) {
 //		send_UART("Connected");
