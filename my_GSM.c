@@ -279,7 +279,7 @@ void checkGPRSattached( void ) {
 	Delayms(500);
 	sendmsg("AT+CREG=1\r\n");
 	Delayms(500);
-	setup_GPRSSettings();
+	sendmsg("AT#GPRS=1\r\n");
 	Delayms(500);
 	//sendmsg("AT#GPRS?\r");
 	//sendmsg("AT#GPRS=1\r");
@@ -304,15 +304,15 @@ bool wait_Check_ForReply( char *reply, uint8_t delay_s ) {
 
 void setup_GPRSSettings( void ) {
 	sendmsg("AT#GPRS?\r\n");
-	Delayms(50);
+	Delayms(100);
 	if (wait_Check_ForReply("#GPRS: 0", 1)) sendmsg("AT#GPRS=1\r\n");
 	__no_operation();
 }
 void HTTP_connect( void ) {
-	//sendmsg("AT#SKTD=0,80,\"www.telit.net\"\r");
-//	sendmsg("AT#SD=1,0,80,\"www.m2msupport.net\"\r");	//working
-	sendmsg("AT#SD=1,0,80,\"api.thingspeak.com\"\r\n"); //working2
-	//sendmsg("AT#SKTD=0,80,\"www.theage.com.au\"\r");
+//	sendmsg("AT#SKTD=0,80,\"www.telit.net\"\r");
+	sendmsg("AT#SD=1,0,80,\"www.m2msupport.net\"\r");	//working
+//	sendmsg("AT#SD=1,0,80,\"api.thingspeak.com\"\r\n"); //working2
+			//sendmsg("AT#SKTD=0,80,\"www.theage.com.au\"\r");
 //	sendmsg("AT#SD=1,0,80,\"www.openweathermap.org\"\r\n");
 	Delayms(50);
 	if (wait_Check_ForReply("CONNECT", 5)) {

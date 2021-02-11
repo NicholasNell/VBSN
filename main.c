@@ -227,46 +227,20 @@ int main( void ) {
 
 	modem_start();
 
-	Delayms(100);
+	Delayms(500);
 
-//	checkGPRSattached();
-
-//	Delayms(1000);
-//
-//	sendmsg("AT+CREG?\r\n");
-//	Delayms(1000);
-//
-//	sendmsg("AT#SCFG?\r\n");
-//
+	sendmsg("AT&K=0\r\n");
 	Delayms(1000);
-//
-//	sendmsg("AT#SGACT=?\r\n");
-
-//	gsm_setupModemPing();
-//	/*Pings the google website*/
-//	gsm_ping_google();
-
-	HTTP_connect();
-
-//	Delayms(1000);
-//
-//	sendmsg("AT+CIICR\r\n");
-//
-//	Delayms(1000);
-//
-//	sendmsg("AT+CIFSR\r\n");
-//
-//	Delayms(1000);
-//
-//	sendmsg("AT+CIPSPRT=0\r\n");
-//
-//	Delayms(1000);
-//	sendmsg("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",\"80\"\r\n");
+	sendmsg("AT#SCFG?\r\n");
+	Delayms(1000);
+	sendmsg("AT#SGACT=1,1\r\n");
+	Delayms(100);
+	sendmsg("AT+CGDCONT=1,\"IP\",\"internet\",\"0.0.0.0\",0,0\r\n");
+	Delayms(1000);
+	sendmsg("AT+CREG=1\r\n");
+	Delayms(1000);
 
 //	HTTP_connect();
-//	checkGPRSattached();
-
-//	checkSignal();
 
 //	hasGSM = initGSM();
 
