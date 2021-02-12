@@ -2,6 +2,7 @@
 #include <my_timer.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
@@ -365,3 +366,26 @@ int STRING_SEARCH( int index )         // index' is Strings[index][SIZE_COMMAND]
 }
 //               LOADS TO TEMP ARRAY THE SEARCHABLE STRING
 
+void HTTP_sendData( void ) {
+	sendmsg("AT&K=0\r\n");	// disable flow control
+	Delayms(2000);
+	sendmsg("AT+CGDCONT=1,\"IP\",\"internet\",\"0.0.0.0\",0,0\r\n");// Define PDP context
+	Delayms(2000);
+	sendmsg("AT#SGACT=1,1\r\n");	// Context Activation
+	Delayms(2000);
+	sendmsg("AT#HTTPCFG=0,\"api.thingspeak.com\",80,0,,,0,120,1\r\n");// HTTP Config
+	char buf[4];
+	float temp = 33.3;
+	sprintf(buf, "%.1f", temp);
+	Delayms(2000);
+	sendmsg(
+			"AT#HTTPSND=0,0,\"https://api.thingspeak.com/update?api_key=8DXP0M9I0CD8Y8PK"); // send data;
+
+//	sendmsg(buf);
+	sendmsg("&field2=1");
+	sendmsg("\",1,1,0\r\n");
+	Delayms(5000);
+	sendmsg("0\r\n");
+	Delayms(1000);
+	sendmsg("AT#SGACT=1,0\r\n");	// Context Deactivation
+}

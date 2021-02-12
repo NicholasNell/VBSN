@@ -229,16 +229,7 @@ int main( void ) {
 
 	Delayms(500);
 
-	sendmsg("AT&K=0\r\n");
-	Delayms(1000);
-	sendmsg("AT#SCFG?\r\n");
-	Delayms(1000);
-	sendmsg("AT#SGACT=1,1\r\n");
-	Delayms(100);
-	sendmsg("AT+CGDCONT=1,\"IP\",\"internet\",\"0.0.0.0\",0,0\r\n");
-	Delayms(1000);
-	sendmsg("AT+CREG=1\r\n");
-	Delayms(1000);
+	HTTP_sendData();
 
 //	HTTP_connect();
 

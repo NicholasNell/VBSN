@@ -74,6 +74,8 @@ void checkSignal( );
 int getSignalStrength( int index );
 /*Connects to an HTTPS server and attempts to get info from it*/
 void HTTP_connect( void );
+
+void HTTP_sendData( void );
 /*Disables the command echo from the GSM*/
 void disablecommandEcho( void );
 #endif /* MY_GSMMODEM_H_ */
