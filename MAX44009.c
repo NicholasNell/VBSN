@@ -18,13 +18,13 @@
 
 static float lux;
 
-bool initMAX() {
+bool initMAX( ) {
 	bool retval;
 	MAX44009_ON
 	Delayms(800);
 
 	uint8_t sendBuf[] = { MAX44009_REG_CONFIG, 0x00 };
-	retval = i2cSend(MAX44009_ADDR, sendBuf, strlen((char*) sendBuf));
+	retval = (bool) i2cSend(MAX44009_ADDR, sendBuf, strlen((char*) sendBuf));
 //	I2C_setSlaveAddress(EUSCI_B1_BASE, MAX44009_ADDR); // Make sure correct i2c slave selected
 //	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
 //	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
@@ -39,7 +39,7 @@ bool initMAX() {
 	return retval;
 }
 
-void getLight() {
+void getLight( ) {
 	uint8_t RXData[2];
 	uint8_t txBuf[] = { MAX44009_LUX_HIGH_BYTE, MAX44009_LUX_LOW_BYTE };
 	i2cTxRxSingleBytes(MAX44009_ADDR, txBuf, RXData, 2);
@@ -51,6 +51,6 @@ void getLight() {
 	lux = luminance;
 }
 
-float getLux() {
+float getLux( ) {
 	return lux;
 }

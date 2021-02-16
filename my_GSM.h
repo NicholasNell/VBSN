@@ -28,6 +28,8 @@
 //void send_UART_hex(char bufferHex);
 /*Send a char array through the specified UART channel*/
 //void send_UART(char *buffer);
+/*Initialises the GSM module, and checks if one is present */
+bool initGSM( void );
 /*Sets up the pins and interrupts for GSM modem*/
 void GSM_startup( void );
 /* Function which sends strings on UART to the GSM modem*/
