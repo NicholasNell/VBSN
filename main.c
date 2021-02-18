@@ -229,10 +229,6 @@ int main( void ) {
 		isRoot = false;
 	}
 
-	HTTP_sendData();
-
-	Delayms(500);
-
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
 		bme280GetData(&bme280Dev, &bme280Data);
 		bme280Working = true;

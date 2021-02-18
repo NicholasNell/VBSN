@@ -221,14 +221,16 @@ int modem_start( void ) {
 void gsmPowerSaveON( ) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	send_gsmUART("AT+CFUN=7\r");              // Send Attention Command
-	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
+//	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
+	Delayms(500);
 	counter_read_gsm = 0;                     // Reset buffer counter
 }
 //						Set the GSM modem to NORMAL mode
 void gsmPowerSaveOFF( ) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	send_gsmUART("AT+CFUN=1\r");                     // Send Attention Command
-	delay_gsm_respond(5000);                     // Delay a maximum of X seconds
+//	delay_gsm_respond(5000);                     // Delay a maximum of X seconds
+	Delayms(500);
 	counter_read_gsm = 0;                     // Reset buffer counter
 }
 
@@ -446,6 +448,8 @@ int STRING_SEARCH( int index )         // index' is Strings[index][SIZE_COMMAND]
  */
 
 void HTTP_sendData( void ) {
+
+//	gsmPowerSaveOFF();
 	sendmsg("AT#SGACT=1,1\r\n");	// Context Activation
 //	wait_Check_ForReply("#SGACT:", 2);
 	Delayms(2000);
@@ -455,8 +459,9 @@ void HTTP_sendData( void ) {
 	sprintf(buf, "%.1f", temp);
 //	wait_Check_ForReply("OK", 2);
 	Delayms(1000);
-	sendmsg(
-			"AT#HTTPQRY=0,0,\"https://api.thingspeak.com/update?api_key=8DXP0M9I0CD8Y8PK&field1=22&field2=3\"\r\n");
+	sendmsg("AT#HTTPQRY=0,0,\"https://api.thingspeak.com/update?api_key=")
+	sendmsg (TEST_API_KEY);
+	sendmsg("&field1=22&field2=3\"\r\n");
 //	sendmsg(
 //			"AT#HTTPSND=0,0,\"https://api.thingspeak.com/update?api_key=8DXP0M9I0CD8Y8PK"); // send data POST request;
 //
@@ -470,4 +475,5 @@ void HTTP_sendData( void ) {
 	sendmsg("AT#SGACT=1,0\r\n");	// Context Deactivation
 //	wait_Check_ForReply("OK", 2);
 	Delayms(1000);
+//	gsmPowerSaveON();
 }

@@ -19,6 +19,8 @@
 #define OK       0          // 1 <-- Required
 #define CMTI    1          // 2 <-- Required
 #define ERROR   2          // 3 <-- Required
+
+#define TEST_API_KEY "8DXP0M9I0CD8Y8PK"
 /*String and other buffers*/
 
 //Strings[][];		//Store the possible returns from the GSM modem
