@@ -52,7 +52,6 @@
 #include <my_UART.h>
 #include <myNet.h>
 #include <MAX44009.h>
-#include <punctual.h>
 #include <radio.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -151,7 +150,7 @@ void RadioInit( ) {
 	if (Radio.Read(REG_VERSION) == 0x00) {
 		sendUARTpc("Radio could not be detected!\n\r");
 		rfm95Working = false;
-		BoardResetMcu();
+		BoardResetMcu();// if no radio is detected reset the MCU and try again; no radio, no work
 		return;
 	}
 	else {
@@ -222,8 +221,9 @@ int main( void ) {
 	// Initialise the RFM95 Radio Module
 //	RadioInit();
 
-	SystickInit();
+	hasGSM = initGSM();
 
+<<<<<<< HEAD
 	GSM_startup();
 
 //	checkRegistration();
@@ -241,6 +241,14 @@ int main( void ) {
 //	hasGSM = initGSM();
 
 //	PunctualInit();
+=======
+	if (hasGSM) {
+		isRoot = true;
+	}
+	else {
+		isRoot = false;
+	}
+>>>>>>> GSM
 
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
 		bme280GetData(&bme280Dev, &bme280Data);

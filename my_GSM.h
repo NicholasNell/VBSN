@@ -19,6 +19,8 @@
 #define OK       0          // 1 <-- Required
 #define CMTI    1          // 2 <-- Required
 #define ERROR   2          // 3 <-- Required
+
+#define TEST_API_KEY "8DXP0M9I0CD8Y8PK"
 /*String and other buffers*/
 
 //Strings[][];		//Store the possible returns from the GSM modem
@@ -28,6 +30,8 @@
 //void send_UART_hex(char bufferHex);
 /*Send a char array through the specified UART channel*/
 //void send_UART(char *buffer);
+/*Initialises the GSM module, and checks if one is present */
+bool initGSM( void );
 /*Sets up the pins and interrupts for GSM modem*/
 void GSM_startup( void );
 /* Function which sends strings on UART to the GSM modem*/
@@ -74,6 +78,8 @@ void checkSignal( );
 int getSignalStrength( int index );
 /*Connects to an HTTPS server and attempts to get info from it*/
 void HTTP_connect( void );
+
+void HTTP_sendData( void );
 /*Disables the command echo from the GSM*/
 void disablecommandEcho( void );
 #endif /* MY_GSMMODEM_H_ */

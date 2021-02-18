@@ -1,17 +1,24 @@
 /*
  * my_systick.h
  *
- *  Created on: 02 Mar 2020
- *      Author: nicholas
+ *  Created on: 2 Mar, 2020
+ *      Author: Nicholas
  */
 
 #ifndef MY_SYSTICK_H_
 #define MY_SYSTICK_H_
 
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+/************** SYSTICK TIMER **************/
+void setupSysTick_ms( void );
+void setupSysTick_second( void );
 
-void SystickInit();
-void SysTick_Handler(void);
-uint32_t SystickGetTime();
+void runsystickFunction_ms( uint16_t ms_delay );
+void runSystickFunction_second( uint16_t second_delay );
+bool SystimerReadyCheck( void );
+/*
+ * Sets the delay left to 0, and disables the interrupt for the module
+ */
+void stopSystick( void );
+uint16_t delayLeft( void );
 
-#endif /* MY_SYSTICK_H_ */
+#endif

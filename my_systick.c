@@ -1,34 +1,66 @@
 /*
- * my_systick.c
+ * mysystick.c
  *
- *  Created on: 02 Mar 2020
- *      Author: nicholas
+ *  Created on: 2020
+ *      Author: Nicholas
  */
 
-#include <punctual.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <ti/devices/msp432p4xx/driverlib/systick.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 #include "my_systick.h"
+/************** SYSTICK TIMER **************/
+uint16_t delay = 0;
+bool timerReady = false;
+/************** SYSTICK TIMER **************/
 
-static uint32_t ticks;
+void SysTick_Handler( void ) //INTERRUPT ROUTINE
+		{
+	// MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);
+	if (delay == 0) {
+		timerReady = true;
+		MAP_SysTick_disableInterrupt();
+	}
+	delay--;
+}
 
-/*!
- *
- * @param period value in ms
- * @param flag	flag to be set
- */
-void SystickInit( ) {
-
+void setupSysTick_ms( void ) {
+	//Sets the sysTick to 1 millisecond
+	MAP_SysTick_disableModule();
+	MAP_SysTick_setPeriod(1500);
 	MAP_SysTick_enableModule();
-	uint32_t value = 1 * 15 * 100;
-	SysTick_setPeriod(value);
-	ticks = 0;
+}
+void setupSysTick_second( void ) {
+	//Sets the sysTick to 1 second
+
+	MAP_SysTick_disableModule();
+	MAP_SysTick_setPeriod(1500000);
+	MAP_SysTick_enableModule();
+}
+
+void runsystickFunction_ms( uint16_t ms_delay ) {
+	setupSysTick_ms();
+	delay = ms_delay;
+	timerReady = false;
+	MAP_SysTick_enableInterrupt();
+}
+void runSystickFunction_second( uint16_t second_delay ) {
+	setupSysTick_second();
+	delay = second_delay;
+	timerReady = false;
 	MAP_SysTick_enableInterrupt();
 }
 
-void SysTick_Handler( void ) {
-	ticks++;
-//	PunctualISR();
+void stopSystick( void ) {
+	delay = 0;
+	MAP_SysTick_disableInterrupt();
 }
 
-uint32_t SystickGetTime( ) {
-	return ticks;
+bool SystimerReadyCheck( void ) {
+	return timerReady;
+}
+
+uint16_t delayLeft( void ) {
+	return delay;
 }
