@@ -24,7 +24,7 @@ extern bool gpsWakeFlag;
 //Time is Saturday, November 12th 1955 10:03:00 PM
 RTC_C_Calendar currentTime;
 
-void RtcInit() {
+void RtcInit( ) {
 
 	//![Simple RTC Example]
 	/* Initializing RTC with current time as described in time in
@@ -55,7 +55,7 @@ void RtcInit() {
 	rtcInitFlag = true;
 }
 
-void RTC_C_IRQHandler(void) {
+void RTC_C_IRQHandler( void ) {
 
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
@@ -68,8 +68,6 @@ void RTC_C_IRQHandler(void) {
 		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
 			setSlotCount(0);
 		}
-
-		GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN2);
 
 	}
 //	if (time.minutes % 0x5 == 0) {

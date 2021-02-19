@@ -1,6 +1,9 @@
+#include <bme280_defs.h>
+#include <helper.h>
 #include <my_GSM.h>
 #include <my_systick.h>
 #include <my_timer.h>
+#include <MAX44009.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -446,22 +449,36 @@ int STRING_SEARCH( int index )         // index' is Strings[index][SIZE_COMMAND]
  free string corresponding to other content type and possible sub-types
  <extra_header_line> - String parameter indicating optional HTTP header line.
  */
-
+extern struct bme280_dev bme280Dev;
+extern struct bme280_data bme280Data;
 void HTTP_sendData( void ) {
+
+	helper_collectSensorData();
+	char buf[4];
+	double temp = bme280Data.temperature;
+	sprintf(buf, "%.1f", temp);
+	char buf1[5];
+	double temp1 = getLux();
+	sprintf(buf1, "%.1f", temp1);
 
 //	gsmPowerSaveOFF();
 	sendmsg("AT#SGACT=1,1\r\n");	// Context Activation
 //	wait_Check_ForReply("#SGACT:", 2);
 	Delayms(2000);
 	sendmsg("AT#HTTPCFG=0,\"api.thingspeak.com\",80,0,,,0,120,1\r\n");// HTTP Config
-	char buf[4];
-	float temp = 33.3;
-	sprintf(buf, "%.1f", temp);
+
 //	wait_Check_ForReply("OK", 2);
 	Delayms(1000);
-	sendmsg("AT#HTTPQRY=0,0,\"https://api.thingspeak.com/update?api_key=")
-	sendmsg (TEST_API_KEY);
-	sendmsg("&field1=22&field2=3\"\r\n");
+	sendmsg("AT#HTTPQRY=0,0,\"https://api.thingspeak.com/update?api_key=");
+	sendmsg(TEST_API_KEY);
+	sendmsg("&field1=");
+	sendmsg(buf);
+	sendmsg("&field2=");
+	sprintf(buf, "%.1f", bme280Data.humidity);
+	sendmsg(buf);
+	sendmsg("&field3=");
+	sendmsg(buf1);
+	sendmsg("\"\r\n");
 //	sendmsg(
 //			"AT#HTTPSND=0,0,\"https://api.thingspeak.com/update?api_key=8DXP0M9I0CD8Y8PK"); // send data POST request;
 //

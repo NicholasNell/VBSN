@@ -18,7 +18,7 @@ extern struct bme280_dev bme280Dev;
 extern struct bme280_data bme280Data;
 float soilMoisture = 100;
 
-void helper_collectSensorData() {
+void helper_collectSensorData( ) {
 	getLight();
 	bme280GetData(&bme280Dev, &bme280Data);
 	soilMoisture--;

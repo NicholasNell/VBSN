@@ -203,7 +203,7 @@ int main( void ) {
 
 	// Initialise all ports and communication protocols
 	BoardInitMcu();
-//	RtcInit();
+	RtcInit();
 
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
@@ -216,39 +216,23 @@ int main( void ) {
 	UARTinitPC();
 
 	//Initialise UART to GPS;
-//	UARTinitGPS();
+	UARTinitGPS();
 
-	// Initialise the RFM95 Radio Module
-//	RadioInit();
+//	 Initialise the RFM95 Radio Module
+	RadioInit();
 
 	hasGSM = initGSM();
 
-<<<<<<< HEAD
 	GSM_startup();
 
-//	checkRegistration();
+	hasGSM = initGSM();
 
-//	checkGPRSattached();
-
-//	modem_start();
-
-//	Delayms(1000);
-//	checkGPRSattached();
-//	sendmsg("AT+COPS?\r");
-
-//	checkSignal();
-
-//	hasGSM = initGSM();
-
-//	PunctualInit();
-=======
 	if (hasGSM) {
 		isRoot = true;
 	}
 	else {
 		isRoot = false;
 	}
->>>>>>> GSM
 
 	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
 		bme280GetData(&bme280Dev, &bme280Data);
@@ -283,6 +267,8 @@ int main( void ) {
 	MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
 	MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
 	WDT_A_CLOCKITERATIONS_8192K);
+
+	HTTP_sendData();
 
 //	MAP_WDT_A_startTimer();
 
@@ -319,7 +305,6 @@ void PORT3_IRQHandler( void ) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
-	GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN1);
 	if (status & GPS_PPS_PIN) {
 
 		if (!gpsWorking) {
