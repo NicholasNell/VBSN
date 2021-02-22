@@ -8,6 +8,7 @@
  */
 
 #include <my_scheduler.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>

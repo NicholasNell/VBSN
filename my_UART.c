@@ -50,6 +50,9 @@ bool setRTCFlag = false;
 
 extern RTC_C_Calendar currentTime;
 
+// static functions
+static void UartGPSCommands( );
+
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 
 //UART configured for 9600 Baud
@@ -70,10 +73,12 @@ void UARTinitGPS( ) {
 	gpsData.lat = 0.0;
 	gpsData.lon = 0.0;
 	/* Selecting P9.6 and P9.7 in UART mode */
-	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9,
-	GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
-	MAP_UART_initModule(EUSCI_A3_BASE, &uartConfig);
-	MAP_UART_enableModule(EUSCI_A3_BASE);
+	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(
+	UART_GPS_PORT,
+	UART_GPS_PINS,
+	GPIO_PRIMARY_MODULE_FUNCTION);
+	MAP_UART_initModule(UART_GPS_MODULE, &uartConfig);
+	MAP_UART_enableModule(UART_GPS_MODULE);
 
 	// PPS signal
 	MAP_GPIO_setAsInputPinWithPullDownResistor(GPS_PPS_PORT, GPS_PPS_PIN);
@@ -81,7 +86,7 @@ void UARTinitGPS( ) {
 	GPIO_LOW_TO_HIGH_TRANSITION);
 	MAP_GPIO_clearInterruptFlag(GPS_PPS_PORT, GPS_PPS_PIN);
 	MAP_GPIO_enableInterrupt(GPS_PPS_PORT, GPS_PPS_PIN);
-	MAP_Interrupt_enableInterrupt(INT_PORT3);
+	MAP_Interrupt_enableInterrupt(GPS_PPS_INT_PORT);
 
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	Delayms(100);
@@ -96,39 +101,39 @@ void UARTinitGPS( ) {
 	sendUARTgps(PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ);
 
 	/* Enabling interrupts */
-	MAP_UART_enableInterrupt(EUSCI_A3_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
-	MAP_Interrupt_enableInterrupt(INT_EUSCIA3);
+	MAP_UART_enableInterrupt(UART_GPS_MODULE, EUSCI_A_UART_RECEIVE_INTERRUPT);
+	MAP_Interrupt_enableInterrupt(UART_GPS_INT);
 }
 
 void UARTinitPC( ) {
 	/* Selecting P1.2 and P1.3 in UART mode */
-	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-	GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
-	MAP_UART_initModule(EUSCI_A0_BASE, &uartConfig);
-	MAP_UART_enableModule(EUSCI_A0_BASE);
+	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(UART_PC_PORT, UART_PC_PINS,
+	GPIO_PRIMARY_MODULE_FUNCTION);
+	MAP_UART_initModule(UART_PC_MODULE, &uartConfig);
+	MAP_UART_enableModule(UART_PC_MODULE);
 
 	/* Enabling interrupts */
-	MAP_UART_enableInterrupt(EUSCI_A0_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
-	Interrupt_setPriority(INT_EUSCIA0, 0x40);
-	MAP_Interrupt_enableInterrupt(INT_EUSCIA0);
+	MAP_UART_enableInterrupt(UART_PC_MODULE, EUSCI_A_UART_RECEIVE_INTERRUPT);
+	Interrupt_setPriority(UART_PC_INT, 0x40);
+	MAP_Interrupt_enableInterrupt(UART_PC_INT);
 }
 
 void sendUARTpc( char *buffer ) {
 	int count = 0;
 	while (strlen(buffer) > count) {
-		MAP_UART_transmitData(EUSCI_A0_BASE, buffer[count++]);
+		MAP_UART_transmitData(UART_PC_MODULE, buffer[count++]);
 	}
-	uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
-	GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
+	uint32_t status = GPIO_getEnabledInterruptStatus(UART_PC_PORT);
+	GPIO_clearInterruptFlag(UART_PC_PORT, status);
 }
 
 void sendUARTgps( char *buffer ) {
 	int count = 0;
 	while (strlen(buffer) > count) {
-		MAP_UART_transmitData(EUSCI_A3_BASE, buffer[count++]);
+		MAP_UART_transmitData(UART_GPS_MODULE, buffer[count++]);
 	}
-	uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P9);
-	GPIO_clearInterruptFlag(GPIO_PORT_P9, status);
+	uint32_t status = GPIO_getEnabledInterruptStatus(UART_GPS_PORT);
+	GPIO_clearInterruptFlag(UART_GPS_PORT, status);
 }
 
 void send_uart_integer( uint32_t integer ) {
@@ -139,11 +144,11 @@ void send_uart_integer( uint32_t integer ) {
 
 void checkUartActivity( ) {
 	if (returnUartActivity()) {
-		UartCommands();
+		UartPCCommandHandler();
 	}
 }
 
-void UartCommands( ) {
+void UartPCCommandHandler( ) {
 	counter_read_pc = 0;
 	if (UartActivity) {
 		UartActivity = false;
@@ -256,7 +261,7 @@ bool returnUartActivity( ) {
 void UartGPSCommands( ) {
 	if (UartActivityGps) {
 
-		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);
+//		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);	// Debugging, send uart data OTA to pc
 
 		const char c[1] = ",";
 		const char a[2] = "*";
@@ -421,11 +426,11 @@ void UartGPSCommands( ) {
 }
 
 void EUSCIA3_IRQHandler( void ) {
-	uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A3_BASE);
+	uint32_t status = MAP_UART_getEnabledInterruptStatus(UART_GPS_MODULE);
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
-		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(EUSCI_A3_BASE);
-//		MAP_UART_transmitData(EUSCI_A0_BASE, UartRxGPS[counter_read_gps]);
+		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(UART_GPS_MODULE);
+//		MAP_UART_transmitData(UART_PC_MODULE, UartRxGPS[counter_read_gps]);
 		counter_read_gps++;
 	}
 	if (UartRxGPS[counter_read_gps - 1] == 0x0A
@@ -440,18 +445,18 @@ void EUSCIA3_IRQHandler( void ) {
 }
 
 void EUSCIA0_IRQHandler( void ) {
-	uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A0_BASE);
+	uint32_t status = MAP_UART_getEnabledInterruptStatus(UART_PC_MODULE);
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
-		UartRX[counter_read_pc] = MAP_UART_receiveData(EUSCI_A0_BASE);
+		UartRX[counter_read_pc] = MAP_UART_receiveData(UART_PC_MODULE);
 //		MAP_UART_transmitData(EUSCI_A2_BASE, UartRX[counter_read_pc]);
 		counter_read_pc++;
 	}
 	if (UartRX[counter_read_pc - 1] == 0x0A
 			&& UartRX[counter_read_pc - 2] == 0x0D) {
 		UartActivity = true;
-		UartCommands();
+		UartPCCommandHandler();
 	}
 
 	if (counter_read_pc == SIZE_BUFFER) {

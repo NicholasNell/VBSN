@@ -223,10 +223,6 @@ int main( void ) {
 
 	hasGSM = initGSM();
 
-	GSM_startup();
-
-	hasGSM = initGSM();
-
 	if (hasGSM) {
 		isRoot = true;
 	}
@@ -267,8 +263,6 @@ int main( void ) {
 	MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
 	MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
 	WDT_A_CLOCKITERATIONS_8192K);
-
-	HTTP_sendData();
 
 //	MAP_WDT_A_startTimer();
 

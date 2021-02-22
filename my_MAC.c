@@ -410,6 +410,7 @@ static bool processRXBuffer( ) {
 				}
 				else {
 					hopMessageFlag = false;
+					// now either store the data for further later sending or get ready to upload data to cloud
 				}
 
 				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
@@ -472,10 +473,8 @@ void addNeighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	neighbourTable[_numNeighbours++] = receivedNeighbour;
 }
 
-bool MACStartTransaction(
-		nodeAddress destination,
-		msgType_t msgType,
-		bool isSource ) {
+bool MACStartTransaction( nodeAddress destination, msgType_t msgType,
+bool isSource ) {
 	/*
 	 *	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
 	 * 	nodeAddress localSource; // Where the message came from, not original source
