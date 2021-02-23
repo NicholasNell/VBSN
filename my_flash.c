@@ -56,11 +56,6 @@ int flashWriteBuffer( ) {
 
 int flashReadBuffer( ) {
 
-	/* Unprotecting Info Bank 0, Sector 0  */
-//	uint8_t i = 0;
-//	for (i = 0; i <= MemLength; i++) {
-//		myFlashData[i] = *(uint8_t*) (i + MYDATA_MEM_START);
-//	}
 	memcpy(&myFlashData, (uint32_t*) (MYDATA_MEM_START), MY_FLASH_DATA_LEN);
 	return true;
 }
@@ -122,5 +117,16 @@ int flashFillStructForWrite( ) {
 	myFlashDataStruct.lenOfBuffer = 2 + 4 + sizeof(RTC_C_Calendar)
 			+ sizeof(nodeAddress) + sizeof(*ptr) * MAX_NEIGHBOURS
 			+ sizeof(*ptr1) * MAX_ROUTES + sizeof(*ptr2) * MAX_STORED_MSG;
+	return 1;
+}
+
+int flashWriteStructToFlash( ) {
+	memcpy(&myFlashData, &myFlashDataStruct, MY_FLASH_DATA_LEN);
+	flashWriteBuffer();
+	return 1;
+}
+
+int flashReadFromFlash( void ) {
+	memcpy(&myFlashDataStruct, (uint8_t*) MYDATA_MEM_START, 1);
 	return 1;
 }

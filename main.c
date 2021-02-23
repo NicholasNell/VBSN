@@ -253,10 +253,10 @@ int main( void ) {
 //
 //	}
 
-	flashFillStructForWrite();
-
 	flashInitBuffer();
 	flashReadBuffer();
+
+	flashFillStructForWrite();
 
 //	 Initialise the MAC protocol
 	netInit();

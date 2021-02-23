@@ -145,6 +145,7 @@ static void genID( bool genNew ) {
 }
 
 void MacInit( ) {
+	memset(&receivedDatagrams, 0x00, sizeof(receivedDatagrams));
 	uint8_t i;
 	for (i = 0; i < 255; ++i) {
 		{

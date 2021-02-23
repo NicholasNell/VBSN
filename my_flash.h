@@ -47,10 +47,9 @@ int flashInitBuffer( );
 int flashWriteNeighbours( );
 int flashReadNeighbours( );
 
-/*!
- * \brief fills the flash data struct from local memory
- * @return
- */
+//! Fills the structure with current values from RAM
+//! @return None
+
 int flashFillStructForWrite( );
 
 /*!
@@ -58,5 +57,16 @@ int flashFillStructForWrite( );
  * @return
  */
 int flashFillStructFromMem( );
+
+/*!
+ *  \brief	writes the struct to the flash memory
+ * @return
+ */
+int flashWriteStructToFlash( );
+
+//!	fills the data struct with data from flash
+//!
+//! @return None
+int flashReadFromFlash( void );
 
 #endif /* MY_FLASH_H_ */
