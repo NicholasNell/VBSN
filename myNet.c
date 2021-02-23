@@ -319,3 +319,7 @@ bool sendRRep( ) {
 	retVal = MACSendTxDatagram();
 	return retVal;
 }
+
+RouteEntry_t* getRoutingTable( ) {
+	return routingtable;
+}

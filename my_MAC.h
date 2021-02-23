@@ -18,6 +18,7 @@
 #define DEFAULT_RX_TIME 1000
 #define SLEEP_TIME 60 * 2 * 1000
 #define MAX_NEIGHBOURS 255
+#define MAX_STORED_MSG 10
 
 typedef enum {
 	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR, RADIO_SLEEP
@@ -77,5 +78,17 @@ void addNeighbour( nodeAddress neighbour, uint16_t txSlot );
  * @return returns true if succesfully sent
  */
 bool MACSendTxDatagram( );
+
+/*!
+ * \returns a reference to the neighour table
+ * @return return a referce to neighbour table
+ */
+Neighbour_t* getNeighbourTable( );
+
+/*!
+ *
+ * @return ref to received msg buffer
+ */
+Datagram_t* getReceivedMessages( );
 
 #endif /* MY_MAC_H_ */

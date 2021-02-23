@@ -124,4 +124,10 @@ bool addForwardPathToTable( );
  */
 bool sendRRep( );
 
+/*!
+ *
+ * @return a ptr to routingtable;
+ */
+RouteEntry_t* getRoutingTable( );
+
 #endif /* MYNET_H_ */

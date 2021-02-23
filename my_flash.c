@@ -16,8 +16,11 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
 #define MY_FLASH_DATA_LEN 4096
+
+static FlashData_t myFlashDataStruct;
 
 static uint8_t myFlashData[MY_FLASH_DATA_LEN];
 uint32_t lastWrite = MYDATA_MEM_START;
@@ -27,7 +30,7 @@ extern uint8_t _nodeID;
 // array of known neighbours
 extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
-int flashWriteBuffer() {
+int flashWriteBuffer( ) {
 
 	/* Unprotecting Info Bank 0, Sector 0  */
 	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
@@ -35,15 +38,15 @@ int flashWriteBuffer() {
 	/* Trying to erase the sector. Within this function, the API will
 	 automatically try to erase the maximum number of tries. If it fails,
 	 trap in an infinite loop */
-	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START))
-		return ERROR_Erase;
+	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START)) return ERROR_Erase;
 
 	/* Trying to program the memory. Within this function, the API will
 	 automatically try to program the maximum number of tries. If it fails,
 	 trap inside an infinite loop */
-	if (!MAP_FlashCtl_programMemory(myFlashData, (void*) MYDATA_MEM_START,
-			4096))
-		return ERROR_Write;
+	if (!MAP_FlashCtl_programMemory(
+			myFlashData,
+			(void*) MYDATA_MEM_START,
+			4096)) return ERROR_Write;
 
 	/* Setting the sector back to protected  */
 	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
@@ -51,53 +54,73 @@ int flashWriteBuffer() {
 	return Completed;
 }
 
-int flashReadBuffer() {
+int flashReadBuffer( ) {
 
 	/* Unprotecting Info Bank 0, Sector 0  */
-	uint8_t i = 0;
-	for (i = 0; i <= MemLength; i++) {
-		myFlashData[i] = *(uint8_t*) (i + MYDATA_MEM_START);
-	}
+//	uint8_t i = 0;
+//	for (i = 0; i <= MemLength; i++) {
+//		myFlashData[i] = *(uint8_t*) (i + MYDATA_MEM_START);
+//	}
+	memcpy(&myFlashData, (uint32_t*) (MYDATA_MEM_START), MY_FLASH_DATA_LEN);
 	return true;
 }
 
-int flashEraseAll() {
+int flashEraseAll( ) {
 	/* Unprotecting Info Bank 0, Sector 0  */
 	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
-	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START))
-		while (1)
-			;
+	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START)) while (1)
+		;
 	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
 	return 0;
 }
 
-int flashWriteNodeID() {
+int flashWriteNodeID( ) {
 	myFlashData[NODE_ID_LOCATION] = _nodeID;
 	return flashWriteBuffer();
 }
 
-int flashReadNodeID() {
+int flashReadNodeID( ) {
 	myFlashData[NODE_ID_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
 			+ NODE_ID_LOCATION);
 	_nodeID = myFlashData[NODE_ID_LOCATION];
 	return _nodeID;
 }
 
-int flashInitBuffer() {
-	memset(myFlashData, 0xFF, MY_FLASH_DATA_LEN);
+int flashInitBuffer( ) {
+	memcpy(myFlashData, &myFlashDataStruct, sizeof(myFlashDataStruct));
 	return true;
 }
 
-int flashWriteNeighbours() {
-	memcpy(&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION, &neighbourTable,
+int flashWriteNeighbours( ) {
+	memcpy(
+			&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION,
+			&neighbourTable,
 			sizeof(neighbourTable));
 	return flashWriteBuffer();
 }
 
-int flashReadNeighbours() {
+int flashReadNeighbours( ) {
 	myFlashData[NODE_NEIGHBOUR_TABLE_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
 			+ NODE_NEIGHBOUR_TABLE_LOCATION);
-	memcpy(&neighbourTable, &myFlashData + NODE_NEIGHBOUR_TABLE_LOCATION,
+	memcpy(
+			&neighbourTable,
+			&myFlashData + NODE_NEIGHBOUR_TABLE_LOCATION,
 			sizeof(neighbourTable));
 	return true;
+}
+
+int flashFillStructForWrite( ) {
+	myFlashDataStruct.flashValidIdentifier = FLASH_OK_IDENTIFIER;
+	myFlashDataStruct.thisNodeId = _nodeID;
+	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
+	Neighbour_t *ptr = getNeighbourTable();
+	memcpy(&myFlashDataStruct.neighbourTable, &ptr, sizeof(*ptr));
+	RouteEntry_t *ptr1 = getRoutingTable();
+	memcpy(&myFlashDataStruct.routingtable, &ptr1, sizeof(*ptr1));
+	Datagram_t *ptr2 = getReceivedMessages();
+	memcpy(&myFlashDataStruct.receivedMessages, &ptr2, sizeof(*ptr2));
+	myFlashDataStruct.lenOfBuffer = 2 + 4 + sizeof(RTC_C_Calendar)
+			+ sizeof(nodeAddress) + sizeof(*ptr) * MAX_NEIGHBOURS
+			+ sizeof(*ptr1) * MAX_ROUTES + sizeof(*ptr2) * MAX_STORED_MSG;
+	return 1;
 }

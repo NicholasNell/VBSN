@@ -32,6 +32,9 @@ Datagram_t txDatagram;
 // Datagram from received message
 Datagram_t rxDatagram;
 
+Datagram_t receivedDatagrams[MAX_STORED_MSG];
+uint8_t receivedMsgIndex = 0;
+
 // Does this node have data to send?
 bool hasData = false;
 
@@ -386,6 +389,11 @@ bool MACRx( uint32_t timeout ) {
 static bool processRXBuffer( ) {
 	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
 
+	if (receivedMsgIndex == MAX_STORED_MSG) {
+		receivedMsgIndex = 0;
+	}
+	receivedDatagrams[receivedMsgIndex] = rxDatagram;
+
 	// check if message was meant for this node:
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
 			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) { // if destination is this node or broadcast check message type
@@ -608,4 +616,12 @@ static bool MAChopMessage( nodeAddress dest ) {
 	}
 	stopLoRaTimer();
 	return retVal;
+}
+
+Neighbour_t* getNeighbourTable( ) {
+	return neighbourTable;
+}
+
+Datagram_t* getReceivedMessages( ) {
+	return receivedDatagrams;
 }

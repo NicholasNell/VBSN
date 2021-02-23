@@ -197,6 +197,11 @@ extern volatile MACappState_t MACState;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
+	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
+	WDT_A_CLOCKITERATIONS_128M);	// aprox 16 seconds
+
+	MAP_WDT_A_startTimer();
 
 	bool isRoot = false;
 	if (isRoot) printf("ROOT!\n");
@@ -205,6 +210,7 @@ int main( void ) {
 	BoardInitMcu();
 	RtcInit();
 
+	// Button 1 interrupt
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
@@ -243,12 +249,14 @@ int main( void ) {
 		getLight();
 	}
 
-	flashInitBuffer();
-	flashEraseAll();
-
 //	while (!gpsWorking) {
 //
 //	}
+
+	flashFillStructForWrite();
+
+	flashInitBuffer();
+	flashReadBuffer();
 
 //	 Initialise the MAC protocol
 	netInit();
@@ -260,11 +268,12 @@ int main( void ) {
 
 	initScheduler();
 
-	MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
-	MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_8192K);
+	MAP_WDT_A_holdTimer();
+	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_BCLK,
+	WDT_A_CLOCKITERATIONS_512K);	// aprox 16 seconds
 
-//	MAP_WDT_A_startTimer();
+	MAP_WDT_A_startTimer();
 
 	while (1) {
 		MAP_WDT_A_clearTimer();
