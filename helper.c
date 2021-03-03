@@ -8,6 +8,7 @@
 
 #include <bme280.h>
 #include <bme280_defs.h>
+#include <EC5.h>
 #include <helper.h>
 #include <MAX44009.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
@@ -21,6 +22,6 @@ float soilMoisture = 100;
 void helper_collect_sensor_data( ) {
 	get_light();
 	bme280_get_data(&bme280Dev, &bme280Data);
-	soilMoisture--;
+	get_vwc();
 	timeStamp = RTC_C_getCalendarTime();
 }
