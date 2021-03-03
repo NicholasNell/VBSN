@@ -1,0 +1,162 @@
+\hypertarget{struct_radio_events__t}{}\doxysection{Radio\+Events\+\_\+t Struct Reference}
+\label{struct_radio_events__t}\index{RadioEvents\_t@{RadioEvents\_t}}
+
+
+Radio driver callback functions.  
+
+
+
+
+{\ttfamily \#include $<$radio.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_af3d5845be2b1d9298fec8aea76ac07aa}{Tx\+Done}} )(void)
+\begin{DoxyCompactList}\small\item\em Tx Done callback prototype. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_a869fb2c61e5aee8f8b104345d510e7f3}{Tx\+Timeout}} )(void)
+\begin{DoxyCompactList}\small\item\em Tx Timeout callback prototype. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_a7b337c532d25153f0197537cb81eed49}{Rx\+Done}} )(uint8\+\_\+t $\ast$payload, uint16\+\_\+t size, int16\+\_\+t rssi, int8\+\_\+t snr)
+\begin{DoxyCompactList}\small\item\em Rx Done callback prototype. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_a0baf0babc5416ab7f30e59e5afd3af7f}{Rx\+Timeout}} )(void)
+\begin{DoxyCompactList}\small\item\em Rx Timeout callback prototype. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_aa218d9f2e2bd1a4188b50b2cee24e8ad}{Rx\+Error}} )(void)
+\begin{DoxyCompactList}\small\item\em Rx Error callback prototype. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_ac80306a77a53595fed3bca4a1a72ce54}{Fhss\+Change\+Channel}} )(uint8\+\_\+t current\+Channel)
+\begin{DoxyCompactList}\small\item\em FHSS Change Channel callback prototype. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio_events__t_a554a1c53c1b150353f5711ab4e43b577}{Cad\+Done}} )(bool channel\+Activity\+Detected)
+\begin{DoxyCompactList}\small\item\em CAD Done callback prototype. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Radio driver callback functions. 
+
+Definition at line 56 of file radio.\+h.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{struct_radio_events__t_a554a1c53c1b150353f5711ab4e43b577}\label{struct_radio_events__t_a554a1c53c1b150353f5711ab4e43b577}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!CadDone@{CadDone}}
+\index{CadDone@{CadDone}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{CadDone}{CadDone}}
+{\footnotesize\ttfamily void( $\ast$ Cad\+Done) (bool channel\+Activity\+Detected)}
+
+
+
+CAD Done callback prototype. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & channel\+Detected Channel Activity detected during the CAD \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio_events__t_ac80306a77a53595fed3bca4a1a72ce54}\label{struct_radio_events__t_ac80306a77a53595fed3bca4a1a72ce54}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!FhssChangeChannel@{FhssChangeChannel}}
+\index{FhssChangeChannel@{FhssChangeChannel}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{FhssChangeChannel}{FhssChangeChannel}}
+{\footnotesize\ttfamily void( $\ast$ Fhss\+Change\+Channel) (uint8\+\_\+t current\+Channel)}
+
+
+
+FHSS Change Channel callback prototype. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & current\+Channel Index number of the current channel \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 90 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio_events__t_a7b337c532d25153f0197537cb81eed49}\label{struct_radio_events__t_a7b337c532d25153f0197537cb81eed49}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!RxDone@{RxDone}}
+\index{RxDone@{RxDone}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{RxDone}{RxDone}}
+{\footnotesize\ttfamily void( $\ast$ Rx\+Done) (uint8\+\_\+t $\ast$payload, uint16\+\_\+t size, int16\+\_\+t rssi, int8\+\_\+t snr)}
+
+
+
+Rx Done callback prototype. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & payload Received buffer pointer \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Received buffer size \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & rssi RSSI value computed while receiving the frame \mbox{[}d\+Bm\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & snr SNR value computed while receiving the frame \mbox{[}dB\mbox{]} FSK \+: N/A ( set to 0 ) Lo\+Ra\+: SNR value in dB \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 76 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio_events__t_aa218d9f2e2bd1a4188b50b2cee24e8ad}\label{struct_radio_events__t_aa218d9f2e2bd1a4188b50b2cee24e8ad}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!RxError@{RxError}}
+\index{RxError@{RxError}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{RxError}{RxError}}
+{\footnotesize\ttfamily void( $\ast$ Rx\+Error) (void)}
+
+
+
+Rx Error callback prototype. 
+
+
+
+Definition at line 84 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio_events__t_a0baf0babc5416ab7f30e59e5afd3af7f}\label{struct_radio_events__t_a0baf0babc5416ab7f30e59e5afd3af7f}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!RxTimeout@{RxTimeout}}
+\index{RxTimeout@{RxTimeout}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{RxTimeout}{RxTimeout}}
+{\footnotesize\ttfamily void( $\ast$ Rx\+Timeout) (void)}
+
+
+
+Rx Timeout callback prototype. 
+
+
+
+Definition at line 80 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio_events__t_af3d5845be2b1d9298fec8aea76ac07aa}\label{struct_radio_events__t_af3d5845be2b1d9298fec8aea76ac07aa}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!TxDone@{TxDone}}
+\index{TxDone@{TxDone}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{TxDone}{TxDone}}
+{\footnotesize\ttfamily void( $\ast$ Tx\+Done) (void)}
+
+
+
+Tx Done callback prototype. 
+
+
+
+Definition at line 61 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio_events__t_a869fb2c61e5aee8f8b104345d510e7f3}\label{struct_radio_events__t_a869fb2c61e5aee8f8b104345d510e7f3}} 
+\index{RadioEvents\_t@{RadioEvents\_t}!TxTimeout@{TxTimeout}}
+\index{TxTimeout@{TxTimeout}!RadioEvents\_t@{RadioEvents\_t}}
+\doxysubsubsection{\texorpdfstring{TxTimeout}{TxTimeout}}
+{\footnotesize\ttfamily void( $\ast$ Tx\+Timeout) (void)}
+
+
+
+Tx Timeout callback prototype. 
+
+
+
+Definition at line 65 of file radio.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/\mbox{\hyperlink{radio_8h}{radio.\+h}}\end{DoxyCompactItemize}

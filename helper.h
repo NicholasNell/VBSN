@@ -9,6 +9,6 @@
 #ifndef HELPER_H_
 #define HELPER_H_
 
-void helper_collectSensorData();
+void helper_collect_sensor_data();
 
 #endif /* HELPER_H_ */

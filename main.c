@@ -58,6 +58,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <EC5.h>
+#include <helper.h>
 #include <sx1276Regs-Fsk.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
@@ -91,6 +92,9 @@ bool MACFlag = true;
 // Radio Module status flag:
 bool rfm95Working = false;
 
+// is this a root node??
+bool isRoot = false;
+
 extern bool schedFlag;
 
 bool gpsWakeFlag = false;
@@ -111,46 +115,46 @@ extern LoRaRadioState_t RadioState;
 
 extern RTC_C_Calendar currentTime;
 
-void printLoRaRegisters( void );
+void print_lora_registers( void );
 
 /*!
  * \brief Function to be executed on Radio Tx Done event
  */
-void OnTxDone( void );
+void on_tx_done( void );
 
 /*!
  * \brief Function to be executed on Radio Rx Done event
  */
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
+void on_rx_done( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 
 /*!
  * \brief Function executed on Radio Tx Timeout event
  */
-void OnTxTimeout( void );
+void on_tx_timeout( void );
 
 /*!
  * \brief Function executed on Radio Rx Timeout event
  */
-void OnRxTimeout( void );
+void on_rx_timeout( void );
 
 /*!
  * \brief Function executed on Radio Rx Error event
  */
-void OnRxError( void );
+void on_rx_error( void );
 
-void RadioInit( ) {
+void radio_init( ) {
 	// Radio initialization
-	RadioEvents.TxDone = OnTxDone;
-	RadioEvents.RxDone = OnRxDone;
-	RadioEvents.TxTimeout = OnTxTimeout;
-	RadioEvents.RxTimeout = OnRxTimeout;
-	RadioEvents.RxError = OnRxError;
+	RadioEvents.TxDone = on_tx_done;
+	RadioEvents.RxDone = on_rx_done;
+	RadioEvents.TxTimeout = on_tx_timeout;
+	RadioEvents.RxTimeout = on_rx_timeout;
+	RadioEvents.RxError = on_rx_error;
 
 	// detect radio hardware
 	if (Radio.Read(REG_VERSION) == 0x00) {
-		sendUARTpc("Radio could not be detected!\n\r");
+		send_uart_pc("Radio could not be detected!\n\r");
 		rfm95Working = false;
-		BoardResetMcu();// if no radio is detected reset the MCU and try again; no radio, no work
+		board_reset_mcu();// if no radio is detected reset the MCU and try again; no radio, no work
 		return;
 	}
 	else {
@@ -203,12 +207,11 @@ int main( void ) {
 
 	MAP_WDT_A_startTimer();
 
-	bool isRoot = false;
-	if (isRoot) printf("ROOT!\n");
+	isRoot = false;	// Assume not a root node at first
 
 	// Initialise all ports and communication protocols
-	BoardInitMcu();
-	RtcInit();
+	board_init_mcu();
+	rtc_init();
 
 	// Button 1 interrupt
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
@@ -216,18 +219,18 @@ int main( void ) {
 	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
 	MAP_Interrupt_enableInterrupt(INT_PORT1);
 
-	srand(SX1276Random());
+	srand(SX1276Random());	// Seeding Random Number generator
 
 	// Initialise UART to PC
-	UARTinitPC();
+	uart_init_pc();
 
 	//Initialise UART to GPS;
-	UARTinitGPS();
+	uart_init_gps();
 
 //	 Initialise the RFM95 Radio Module
-	RadioInit();
+	radio_init();
 
-	hasGSM = initGSM();
+	hasGSM = init_gsm();	//Check if has GSm module
 
 	if (hasGSM) {
 		isRoot = true;
@@ -236,37 +239,41 @@ int main( void ) {
 		isRoot = false;
 	}
 
-	if (bme280UserInit(&bme280Dev, &bme280Data) >= 0) {
-		bme280GetData(&bme280Dev, &bme280Data);
+	if (bme280_user_init(&bme280Dev, &bme280Data) >= 0) {
+		bme280_get_data(&bme280Dev, &bme280Data);
 		bme280Working = true;
 	}
 	else {
 		bme280Working = false;
 	}
 
-	lightSensorWorking = initMAX();
+	lightSensorWorking = init_max();
 	if (lightSensorWorking) {
-		getLight();
+		get_light();
 	}
+
+	// Have to awit for GPS to get a lock before operation can continue
 
 //	while (!gpsWorking) {
 //
 //	}
 
-	flashInitBuffer();
-	flashReadBuffer();
+//	flash_fill_struct_for_write();
 
-	flashFillStructForWrite();
+//	 Initialise the Network and  MAC protocol
+	net_init();
+	mac_init();
 
-//	 Initialise the MAC protocol
-	netInit();
-	MacInit();
+	init_adc();
 
-	initADC();
+	// Volumetric Water Content Sensor
+	get_vwc();
 
-	getVWC();
+	init_scheduler();
 
-	initScheduler();
+	helper_collect_sensor_data();
+
+	gsm_upload_my_data();
 
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
@@ -284,7 +291,7 @@ int main( void ) {
 		}
 
 		if (gpsWakeFlag) {
-			sendUARTgps("H\r\n");
+			send_uart_gps("H\r\n");
 			gpsWakeFlag = false;
 		}
 	}
@@ -311,13 +318,13 @@ void PORT3_IRQHandler( void ) {
 	if (status & GPS_PPS_PIN) {
 
 		if (!gpsWorking) {
-			sendUARTgps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+			send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
 		}
 
 		if (setRTCFlag) {
 			MAP_RTC_C_holdClock();
-			RtcInit();
-			sendUARTgps(PMTK_STANDBY);
+			rtc_init();
+			send_uart_gps(PMTK_STANDBY);
 			setRTCFlag = false;
 		}
 //		schedFlag = true;
@@ -337,7 +344,7 @@ void PORT2_IRQHandler( void ) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
 #ifdef DEBUG
-	sendUARTpc("LoRa Interrupt Triggered: ");
+	send_uart_pc("LoRa Interrupt Triggered: ");
 #endif
 	if (status & GPIO_PIN4) {
 		SX1276OnDio0Irq();
@@ -350,15 +357,15 @@ void PORT2_IRQHandler( void ) {
 	}
 }
 
-void OnTxDone( void ) {
+void on_tx_done( void ) {
 	SX1276clearIRQFlags();
 	RadioState = TXDONE;
 #ifdef DEBUG
-	sendUARTpc("TxDone\n");
+	send_uart_pc("TxDone\n");
 #endif
 }
 
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
+void on_rx_done( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	SX1276clearIRQFlags();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);
@@ -366,40 +373,40 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 	SnrValue = snr;
 	RadioState = RXDONE;
 #ifdef DEBUG
-	sendUARTpc("RxDone\n");
+	send_uart_pc("RxDone\n");
 	GpioFlashLED(&Led_rgb_green, 10);
 #endif
 }
 
-void OnTxTimeout( void ) {
+void on_tx_timeout( void ) {
 	Radio.Sleep();
 	RadioState = TXTIMEOUT;
 #ifdef DEBUG
-	sendUARTpc("TxTimeout\n");
+	send_uart_pc("TxTimeout\n");
 #endif
 }
 
-void OnRxTimeout( void ) {
+void on_rx_timeout( void ) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXTIMEOUT;
 #ifdef DEBUG
 
-	sendUARTpc("RxTimeout\n");
+	send_uart_pc("RxTimeout\n");
 	GpioFlashLED(&Led_rgb_red, 10);
 #endif
 }
 
-void OnRxError( void ) {
+void on_rx_error( void ) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXERROR;
 #ifdef DEBUG
-	sendUARTpc("RxError\n");
+	send_uart_pc("RxError\n");
 #endif
 }
 
-void printLoRaRegisters( void ) {
+void print_lora_registers( void ) {
 
 	uint8_t registers[] = { 0x01, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
 							0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014,
@@ -411,8 +418,8 @@ void printLoRaRegisters( void ) {
 	for (i = 0; i < sizeof(registers); i++) {
 
 		send_uart_integer(registers[i]);
-		sendUARTpc(": ");
-		send_uart_integer(spiRead_RFM(registers[i]));
-		sendUARTpc("\n");
+		send_uart_pc(": ");
+		send_uart_integer(spi_read_rfm(registers[i]));
+		send_uart_pc("\n");
 	}
 }

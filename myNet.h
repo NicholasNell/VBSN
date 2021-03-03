@@ -50,31 +50,31 @@ typedef enum netOps {
 	NET_WAIT
 } NextNetOp_t;
 
-void netInit( );
+void net_init( );
 
 /*!
  * Add new entry to the routing table
  * @param dest
  */
-void addRoute( RouteEntry_t routeToNode );
+void add_route( RouteEntry_t routeToNode );
 
 /*!
  *  get next hop in path to given destination
  * @param dest
  * @return
  */
-nodeAddress getDest( nodeAddress dest );
+nodeAddress get_dest( nodeAddress dest );
 
 /*!
  * send initial rreq for route discovery
  * @return return true if succesful
  */
-bool sendRREQ( );
+bool send_rreq( );
 
 /*!
  * \brief	Rebroadcast rreq
  */
-bool netReRReq( );
+bool net_re_rreq( );
 
 // process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
 
@@ -82,13 +82,13 @@ bool netReRReq( );
  *  \brief process RReq and determine if the message need to be broadcast or if a RRep needs to be sent
  * @return message type to be sent
  */
-NextNetOp_t processRreq( );
+NextNetOp_t process_rreq( );
 
 /*!
  * Adds a neighbouring node to the routing table.
  * @param dest: the neighbour ID
  */
-void addRoutetoNeighbour( nodeAddress dest );
+void add_route_to_neighbour( nodeAddress dest );
 
 /*!
  * \brief looks for a route in the routing table and returns a copy of the entry if one is found, otherwise returns NULL
@@ -96,13 +96,13 @@ void addRoutetoNeighbour( nodeAddress dest );
  * @return return true if it has a route to the node
  */
 
-bool hasRouteToNode( nodeAddress dest, RouteEntry_t *routeToNode );
+bool has_route_to_node( nodeAddress dest, RouteEntry_t *routeToNode );
 
 /*!
  * \brief	determines what to do after the rrep has been received
  * @return	returns the next network operation
  */
-NextNetOp_t processRrep( );
+NextNetOp_t process_rrep( );
 
 /*!
  *
@@ -110,24 +110,24 @@ NextNetOp_t processRrep( );
  * @return returns true if route was added to path, false if not
  * wont add route to table if a newer one exists in the table.
  */
-bool addReversePathToTable( );
+bool add_reverse_path_to_table( );
 
 /*!
  * \brief Adds the current forawrd path to the routing table.
  * @return return true if route was added to table
  */
-bool addForwardPathToTable( );
+bool add_forward_path_to_table( );
 
 /*!
  * \brief send a unicast rrep back to last hop from which a rreq was received
  * @return returns true if message was sent succesfully
  */
-bool sendRRep( );
+bool send_rrep( );
 
 /*!
  *
  * @return a ptr to routingtable;
  */
-RouteEntry_t* getRoutingTable( );
+RouteEntry_t* get_routing_table( );
 
 #endif /* MYNET_H_ */

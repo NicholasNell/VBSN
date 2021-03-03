@@ -1,0 +1,431 @@
+\hypertarget{my___u_a_r_t_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+\+UART.c File Reference}
+\label{my___u_a_r_t_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_UART.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_UART.c}}
+{\ttfamily \#include $<$bme280.\+h$>$}\newline
+{\ttfamily \#include $<$bme280\+\_\+defs.\+h$>$}\newline
+{\ttfamily \#include $<$helper.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+gpio.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+gps.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+rtc.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+RFM9x.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+timer.\+h$>$}\newline
+{\ttfamily \#include $<$MAX44009.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/gpio.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/interrupt.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rom\+\_\+map.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rtc\+\_\+c.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/uart.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/inc/msp432p401r.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+\+UART.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}{SIZE\+\_\+\+BUFFER}}~80
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8c_a374a42555e51bd100872d342cb97e065}{SIZE\+\_\+\+BUFFER\+\_\+\+GPS}}~255
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8c_adbde023bf876dba0d5ee888bcb0b2771}{GPS\+\_\+\+ON}}
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8c_add00fd774ff116920f04374c9844e389}{GPS\+\_\+\+OFF}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_ae8a57d8cb4b5a1c716c68baac528cf07}{UARTinit\+GPS}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_a0af0e4f657b3716bc7fb3ebab4361703}{UARTinit\+PC}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_a3f30a224acac42c8c643958287babb00}{send\+UARTpc}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_af12f88bcc0b1f6a7ad586f7b657035f6}{send\+UARTgps}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_a87f79fc10c3a98ed5620475dd9f85ce4}{send\+\_\+uart\+\_\+integer}} (uint32\+\_\+t integer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_a47e4609c118fa7fd029fd8837b0a0cf2}{check\+Uart\+Activity}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_ad22139b1833df60ee4089aa84836d03f}{Uart\+PCCommand\+Handler}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_aa5c5d424b1d744da2b0f38bf3f74653e}{send\+\_\+uart\+\_\+integer\+\_\+next\+Line}} (uint32\+\_\+t integer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_abe2142d544fa837716555ecb235195d4}{reset\+UARTArray}} ()
+\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8c_a03f9e9098eebf6e00708bf1b2af0f984}{return\+Uart\+Activity}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_a70742dc782b4aa87494ecae2b4113546}{EUSCIA3\+\_\+\+IRQHandler}} (void)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8c_aeadc86bd00fdcdb107dfbe6fd01e312b}{EUSCIA0\+\_\+\+IRQHandler}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my___u_a_r_t_8c_a733bf22bed9627a88359e16abbd797b7}{counter\+\_\+read\+\_\+pc}} = 0
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my___u_a_r_t_8c_a67e87c81e46a781de225be2f47915f34}{counter\+\_\+read\+\_\+gps}} = 0
+\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8c_a64435889186e6253998d91cbdcdb6007}{Uart\+Activity\+Gps}} = false
+\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8c_acfec8804b765574a6b2743f2ae293a50}{Uart\+Activity}} = false
+\item 
+char \mbox{\hyperlink{my___u_a_r_t_8c_a4c93cbd147cc8711484ea6f9ce8d17ff}{Uart\+RX}} \mbox{[}\mbox{\hyperlink{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}{SIZE\+\_\+\+BUFFER}}\mbox{]}
+\item 
+char \mbox{\hyperlink{my___u_a_r_t_8c_a28b46a06613f431a87e2efe5a38dee58}{Uart\+Rx\+GPS}} \mbox{[}\mbox{\hyperlink{my___u_a_r_t_8c_a374a42555e51bd100872d342cb97e065}{SIZE\+\_\+\+BUFFER\+\_\+\+GPS}}\mbox{]}
+\item 
+struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} \mbox{\hyperlink{my___u_a_r_t_8c_a29c054e412a9172bada57bc985137d01}{bme280\+Data}}
+\item 
+struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} \mbox{\hyperlink{my___u_a_r_t_8c_acf49615fa6291ac4def5fe342a492cec}{bme280\+Dev}}
+\item 
+\mbox{\hyperlink{struct_location_data}{Location\+Data}} \mbox{\hyperlink{my___u_a_r_t_8c_aaca066869286b4871c5e350d871cc9e1}{gps\+Data}}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{my___u_a_r_t_8c_aca235357ad14d7d18604e74d61b78ecb}{Led\+\_\+rgb\+\_\+blue}}
+\item 
+RTC\+\_\+\+C\+\_\+\+Calendar \mbox{\hyperlink{my___u_a_r_t_8c_a7603e92cd5154e676532cd41ec1802be}{current\+Time}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Simple RTC Config\mbox{]} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8c_a4545c2e8c4a99258e032bcfdfb97726a}{set\+Time\+Flag}}
+\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8c_ac3b9aa5a732990e83f6d5559bed928ea}{gps\+Working}}
+\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8c_a5ed9357e8eb0800b9391eadf4807bd7c}{set\+RTCFlag}} = false
+\item 
+const e\+USCI\+\_\+\+UART\+\_\+\+Config\+V1 \mbox{\hyperlink{my___u_a_r_t_8c_ad359190a2ebcf7279dc06e2c6e41aac6}{uart\+Config}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my___u_a_r_t_8c_add00fd774ff116920f04374c9844e389}\label{my___u_a_r_t_8c_add00fd774ff116920f04374c9844e389}} 
+\index{my\_UART.c@{my\_UART.c}!GPS\_OFF@{GPS\_OFF}}
+\index{GPS\_OFF@{GPS\_OFF}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{GPS\_OFF}{GPS\_OFF}}
+{\footnotesize\ttfamily \#define GPS\+\_\+\+OFF}
+
+
+
+Definition at line 32 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_adbde023bf876dba0d5ee888bcb0b2771}\label{my___u_a_r_t_8c_adbde023bf876dba0d5ee888bcb0b2771}} 
+\index{my\_UART.c@{my\_UART.c}!GPS\_ON@{GPS\_ON}}
+\index{GPS\_ON@{GPS\_ON}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{GPS\_ON}{GPS\_ON}}
+{\footnotesize\ttfamily \#define GPS\+\_\+\+ON}
+
+
+
+Definition at line 31 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}\label{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}} 
+\index{my\_UART.c@{my\_UART.c}!SIZE\_BUFFER@{SIZE\_BUFFER}}
+\index{SIZE\_BUFFER@{SIZE\_BUFFER}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{SIZE\_BUFFER}{SIZE\_BUFFER}}
+{\footnotesize\ttfamily \#define SIZE\+\_\+\+BUFFER~80}
+
+
+
+Definition at line 29 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a374a42555e51bd100872d342cb97e065}\label{my___u_a_r_t_8c_a374a42555e51bd100872d342cb97e065}} 
+\index{my\_UART.c@{my\_UART.c}!SIZE\_BUFFER\_GPS@{SIZE\_BUFFER\_GPS}}
+\index{SIZE\_BUFFER\_GPS@{SIZE\_BUFFER\_GPS}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{SIZE\_BUFFER\_GPS}{SIZE\_BUFFER\_GPS}}
+{\footnotesize\ttfamily \#define SIZE\+\_\+\+BUFFER\+\_\+\+GPS~255}
+
+
+
+Definition at line 30 of file my\+\_\+\+UART.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my___u_a_r_t_8c_a47e4609c118fa7fd029fd8837b0a0cf2}\label{my___u_a_r_t_8c_a47e4609c118fa7fd029fd8837b0a0cf2}} 
+\index{my\_UART.c@{my\_UART.c}!checkUartActivity@{checkUartActivity}}
+\index{checkUartActivity@{checkUartActivity}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{checkUartActivity()}{checkUartActivity()}}
+{\footnotesize\ttfamily void check\+Uart\+Activity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 145 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_aeadc86bd00fdcdb107dfbe6fd01e312b}\label{my___u_a_r_t_8c_aeadc86bd00fdcdb107dfbe6fd01e312b}} 
+\index{my\_UART.c@{my\_UART.c}!EUSCIA0\_IRQHandler@{EUSCIA0\_IRQHandler}}
+\index{EUSCIA0\_IRQHandler@{EUSCIA0\_IRQHandler}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{EUSCIA0\_IRQHandler()}{EUSCIA0\_IRQHandler()}}
+{\footnotesize\ttfamily void EUSCIA0\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 447 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a70742dc782b4aa87494ecae2b4113546}\label{my___u_a_r_t_8c_a70742dc782b4aa87494ecae2b4113546}} 
+\index{my\_UART.c@{my\_UART.c}!EUSCIA3\_IRQHandler@{EUSCIA3\_IRQHandler}}
+\index{EUSCIA3\_IRQHandler@{EUSCIA3\_IRQHandler}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{EUSCIA3\_IRQHandler()}{EUSCIA3\_IRQHandler()}}
+{\footnotesize\ttfamily void EUSCIA3\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 428 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_abe2142d544fa837716555ecb235195d4}\label{my___u_a_r_t_8c_abe2142d544fa837716555ecb235195d4}} 
+\index{my\_UART.c@{my\_UART.c}!resetUARTArray@{resetUARTArray}}
+\index{resetUARTArray@{resetUARTArray}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{resetUARTArray()}{resetUARTArray()}}
+{\footnotesize\ttfamily void reset\+UARTArray (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 252 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a03f9e9098eebf6e00708bf1b2af0f984}\label{my___u_a_r_t_8c_a03f9e9098eebf6e00708bf1b2af0f984}} 
+\index{my\_UART.c@{my\_UART.c}!returnUartActivity@{returnUartActivity}}
+\index{returnUartActivity@{returnUartActivity}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{returnUartActivity()}{returnUartActivity()}}
+{\footnotesize\ttfamily bool return\+Uart\+Activity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 257 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a87f79fc10c3a98ed5620475dd9f85ce4}\label{my___u_a_r_t_8c_a87f79fc10c3a98ed5620475dd9f85ce4}} 
+\index{my\_UART.c@{my\_UART.c}!send\_uart\_integer@{send\_uart\_integer}}
+\index{send\_uart\_integer@{send\_uart\_integer}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{send\_uart\_integer()}{send\_uart\_integer()}}
+{\footnotesize\ttfamily void send\+\_\+uart\+\_\+integer (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{integer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 139 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_aa5c5d424b1d744da2b0f38bf3f74653e}\label{my___u_a_r_t_8c_aa5c5d424b1d744da2b0f38bf3f74653e}} 
+\index{my\_UART.c@{my\_UART.c}!send\_uart\_integer\_nextLine@{send\_uart\_integer\_nextLine}}
+\index{send\_uart\_integer\_nextLine@{send\_uart\_integer\_nextLine}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{send\_uart\_integer\_nextLine()}{send\_uart\_integer\_nextLine()}}
+{\footnotesize\ttfamily void send\+\_\+uart\+\_\+integer\+\_\+next\+Line (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{integer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 245 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_af12f88bcc0b1f6a7ad586f7b657035f6}\label{my___u_a_r_t_8c_af12f88bcc0b1f6a7ad586f7b657035f6}} 
+\index{my\_UART.c@{my\_UART.c}!sendUARTgps@{sendUARTgps}}
+\index{sendUARTgps@{sendUARTgps}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{sendUARTgps()}{sendUARTgps()}}
+{\footnotesize\ttfamily void send\+UARTgps (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 130 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a3f30a224acac42c8c643958287babb00}\label{my___u_a_r_t_8c_a3f30a224acac42c8c643958287babb00}} 
+\index{my\_UART.c@{my\_UART.c}!sendUARTpc@{sendUARTpc}}
+\index{sendUARTpc@{sendUARTpc}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{sendUARTpc()}{sendUARTpc()}}
+{\footnotesize\ttfamily void send\+UARTpc (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 121 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_ae8a57d8cb4b5a1c716c68baac528cf07}\label{my___u_a_r_t_8c_ae8a57d8cb4b5a1c716c68baac528cf07}} 
+\index{my\_UART.c@{my\_UART.c}!UARTinitGPS@{UARTinitGPS}}
+\index{UARTinitGPS@{UARTinitGPS}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UARTinitGPS()}{UARTinitGPS()}}
+{\footnotesize\ttfamily void UARTinit\+GPS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 71 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a0af0e4f657b3716bc7fb3ebab4361703}\label{my___u_a_r_t_8c_a0af0e4f657b3716bc7fb3ebab4361703}} 
+\index{my\_UART.c@{my\_UART.c}!UARTinitPC@{UARTinitPC}}
+\index{UARTinitPC@{UARTinitPC}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UARTinitPC()}{UARTinitPC()}}
+{\footnotesize\ttfamily void UARTinit\+PC (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 108 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_ad22139b1833df60ee4089aa84836d03f}\label{my___u_a_r_t_8c_ad22139b1833df60ee4089aa84836d03f}} 
+\index{my\_UART.c@{my\_UART.c}!UartPCCommandHandler@{UartPCCommandHandler}}
+\index{UartPCCommandHandler@{UartPCCommandHandler}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UartPCCommandHandler()}{UartPCCommandHandler()}}
+{\footnotesize\ttfamily void Uart\+PCCommand\+Handler (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 151 of file my\+\_\+\+UART.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my___u_a_r_t_8c_a29c054e412a9172bada57bc985137d01}\label{my___u_a_r_t_8c_a29c054e412a9172bada57bc985137d01}} 
+\index{my\_UART.c@{my\_UART.c}!bme280Data@{bme280Data}}
+\index{bme280Data@{bme280Data}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{bme280Data}{bme280Data}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} bme280\+Data\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_acf49615fa6291ac4def5fe342a492cec}\label{my___u_a_r_t_8c_acf49615fa6291ac4def5fe342a492cec}} 
+\index{my\_UART.c@{my\_UART.c}!bme280Dev@{bme280Dev}}
+\index{bme280Dev@{bme280Dev}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{bme280Dev}{bme280Dev}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} bme280\+Dev\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a67e87c81e46a781de225be2f47915f34}\label{my___u_a_r_t_8c_a67e87c81e46a781de225be2f47915f34}} 
+\index{my\_UART.c@{my\_UART.c}!counter\_read\_gps@{counter\_read\_gps}}
+\index{counter\_read\_gps@{counter\_read\_gps}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{counter\_read\_gps}{counter\_read\_gps}}
+{\footnotesize\ttfamily uint8\+\_\+t counter\+\_\+read\+\_\+gps = 0}
+
+
+
+Definition at line 35 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a733bf22bed9627a88359e16abbd797b7}\label{my___u_a_r_t_8c_a733bf22bed9627a88359e16abbd797b7}} 
+\index{my\_UART.c@{my\_UART.c}!counter\_read\_pc@{counter\_read\_pc}}
+\index{counter\_read\_pc@{counter\_read\_pc}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{counter\_read\_pc}{counter\_read\_pc}}
+{\footnotesize\ttfamily uint8\+\_\+t counter\+\_\+read\+\_\+pc = 0}
+
+
+
+Definition at line 34 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a7603e92cd5154e676532cd41ec1802be}\label{my___u_a_r_t_8c_a7603e92cd5154e676532cd41ec1802be}} 
+\index{my\_UART.c@{my\_UART.c}!currentTime@{currentTime}}
+\index{currentTime@{currentTime}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{currentTime}{currentTime}}
+{\footnotesize\ttfamily RTC\+\_\+\+C\+\_\+\+Calendar current\+Time\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+\mbox{[}Simple RTC Config\mbox{]} 
+
+
+
+Definition at line 51 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_aaca066869286b4871c5e350d871cc9e1}\label{my___u_a_r_t_8c_aaca066869286b4871c5e350d871cc9e1}} 
+\index{my\_UART.c@{my\_UART.c}!gpsData@{gpsData}}
+\index{gpsData@{gpsData}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{gpsData}{gpsData}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_location_data}{Location\+Data}} gps\+Data}
+
+
+
+Definition at line 42 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_ac3b9aa5a732990e83f6d5559bed928ea}\label{my___u_a_r_t_8c_ac3b9aa5a732990e83f6d5559bed928ea}} 
+\index{my\_UART.c@{my\_UART.c}!gpsWorking@{gpsWorking}}
+\index{gpsWorking@{gpsWorking}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{gpsWorking}{gpsWorking}}
+{\footnotesize\ttfamily bool gps\+Working\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 85 of file main.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_aca235357ad14d7d18604e74d61b78ecb}\label{my___u_a_r_t_8c_aca235357ad14d7d18604e74d61b78ecb}} 
+\index{my\_UART.c@{my\_UART.c}!Led\_rgb\_blue@{Led\_rgb\_blue}}
+\index{Led\_rgb\_blue@{Led\_rgb\_blue}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{Led\_rgb\_blue}{Led\_rgb\_blue}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+rgb\+\_\+blue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 24 of file board.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a5ed9357e8eb0800b9391eadf4807bd7c}\label{my___u_a_r_t_8c_a5ed9357e8eb0800b9391eadf4807bd7c}} 
+\index{my\_UART.c@{my\_UART.c}!setRTCFlag@{setRTCFlag}}
+\index{setRTCFlag@{setRTCFlag}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{setRTCFlag}{setRTCFlag}}
+{\footnotesize\ttfamily bool set\+RTCFlag = false}
+
+
+
+Definition at line 49 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a4545c2e8c4a99258e032bcfdfb97726a}\label{my___u_a_r_t_8c_a4545c2e8c4a99258e032bcfdfb97726a}} 
+\index{my\_UART.c@{my\_UART.c}!setTimeFlag@{setTimeFlag}}
+\index{setTimeFlag@{setTimeFlag}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{setTimeFlag}{setTimeFlag}}
+{\footnotesize\ttfamily bool set\+Time\+Flag\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 18 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_acfec8804b765574a6b2743f2ae293a50}\label{my___u_a_r_t_8c_acfec8804b765574a6b2743f2ae293a50}} 
+\index{my\_UART.c@{my\_UART.c}!UartActivity@{UartActivity}}
+\index{UartActivity@{UartActivity}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UartActivity}{UartActivity}}
+{\footnotesize\ttfamily bool Uart\+Activity = false}
+
+
+
+Definition at line 37 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a64435889186e6253998d91cbdcdb6007}\label{my___u_a_r_t_8c_a64435889186e6253998d91cbdcdb6007}} 
+\index{my\_UART.c@{my\_UART.c}!UartActivityGps@{UartActivityGps}}
+\index{UartActivityGps@{UartActivityGps}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UartActivityGps}{UartActivityGps}}
+{\footnotesize\ttfamily bool Uart\+Activity\+Gps = false}
+
+
+
+Definition at line 36 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_ad359190a2ebcf7279dc06e2c6e41aac6}\label{my___u_a_r_t_8c_ad359190a2ebcf7279dc06e2c6e41aac6}} 
+\index{my\_UART.c@{my\_UART.c}!uartConfig@{uartConfig}}
+\index{uartConfig@{uartConfig}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{uartConfig}{uartConfig}}
+{\footnotesize\ttfamily const e\+USCI\+\_\+\+UART\+\_\+\+Config\+V1 uart\+Config}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ EUSCI\_A\_UART\_CLOCKSOURCE\_SMCLK, }
+\DoxyCodeLine{        9,                                     }
+\DoxyCodeLine{        12,                                       }
+\DoxyCodeLine{        34,                                       }
+\DoxyCodeLine{        EUSCI\_A\_UART\_NO\_PARITY,                  }
+\DoxyCodeLine{        EUSCI\_A\_UART\_LSB\_FIRST,                  }
+\DoxyCodeLine{        EUSCI\_A\_UART\_ONE\_STOP\_BIT,               }
+\DoxyCodeLine{        EUSCI\_A\_UART\_MODE,                       }
+\DoxyCodeLine{        EUSCI\_A\_UART\_OVERSAMPLING\_BAUDRATE\_GENERATION,  }
+\DoxyCodeLine{        EUSCI\_A\_UART\_8\_BIT\_LEN                  }
+\DoxyCodeLine{        \}}
+
+\end{DoxyCode}
+
+
+Definition at line 59 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a4c93cbd147cc8711484ea6f9ce8d17ff}\label{my___u_a_r_t_8c_a4c93cbd147cc8711484ea6f9ce8d17ff}} 
+\index{my\_UART.c@{my\_UART.c}!UartRX@{UartRX}}
+\index{UartRX@{UartRX}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UartRX}{UartRX}}
+{\footnotesize\ttfamily char Uart\+RX\mbox{[}\mbox{\hyperlink{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}{SIZE\+\_\+\+BUFFER}}\mbox{]}}
+
+
+
+Definition at line 38 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8c_a28b46a06613f431a87e2efe5a38dee58}\label{my___u_a_r_t_8c_a28b46a06613f431a87e2efe5a38dee58}} 
+\index{my\_UART.c@{my\_UART.c}!UartRxGPS@{UartRxGPS}}
+\index{UartRxGPS@{UartRxGPS}!my\_UART.c@{my\_UART.c}}
+\doxysubsubsection{\texorpdfstring{UartRxGPS}{UartRxGPS}}
+{\footnotesize\ttfamily char Uart\+Rx\+GPS\mbox{[}\mbox{\hyperlink{my___u_a_r_t_8c_a374a42555e51bd100872d342cb97e065}{SIZE\+\_\+\+BUFFER\+\_\+\+GPS}}\mbox{]}}
+
+
+
+Definition at line 39 of file my\+\_\+\+UART.\+c.
+

@@ -1,0 +1,131 @@
+\hypertarget{radio_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/radio.h File Reference}
+\label{radio_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/radio.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/radio.h}}
+
+
+Radio driver API definition.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_radio_events__t}{Radio\+Events\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Radio driver callback functions. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_radio__s}{Radio\+\_\+s}}
+\begin{DoxyCompactList}\small\item\em Radio driver definition. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\+\_\+\+FSK}} = 0
+, \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057abeb331e097974ea65b07d74df9e85a8e}{MODEM\+\_\+\+LORA}}
+ \}
+\item 
+enum \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}{Radio\+State\+\_\+t}} \{ \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a89c1ff89fc074c1c80f96d186c99f899}{RF\+\_\+\+IDLE}} = 0
+, \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a5a6a549e66aa54871013a612aa2aba45}{RF\+\_\+\+RX\+\_\+\+RUNNING}}
+, \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5add0cb5bc08318df9a5e688f4802ed99d}{RF\+\_\+\+TX\+\_\+\+RUNNING}}
+, \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a6798b346c6d95e2970d33ccd04c5d39c}{RF\+\_\+\+CAD}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const struct \mbox{\hyperlink{struct_radio__s}{Radio\+\_\+s}} \mbox{\hyperlink{radio_8h_acf9fe61a72c16fa29a0dc449d23e3820}{Radio}}
+\begin{DoxyCompactList}\small\item\em Radio driver. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Radio driver API definition. 
+
+\begin{DoxyCopyright}{Copyright}
+Revised BSD License, see section LICENSE.
+\end{DoxyCopyright}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \_\_\_\_\_\_                              \_}
+\DoxyCodeLine{ / \_\_\_\_\_)             \_              | |}
+\DoxyCodeLine{( (\_\_\_\_  \_\_\_\_\_ \_\_\_\_ \_| |\_ \_\_\_\_\_  \_\_\_\_| |\_\_}
+\DoxyCodeLine{ \(\backslash\)\_\_\_\_ \(\backslash\)| \_\_\_ |    (\_   \_) \_\_\_ |/ \_\_\_)  \_ \(\backslash\)}
+\DoxyCodeLine{ \_\_\_\_\_) ) \_\_\_\_| | | || |\_| \_\_\_\_( (\_\_\_| | | |}
+\DoxyCodeLine{(\_\_\_\_\_\_/|\_\_\_\_\_)\_|\_|\_| \(\backslash\)\_\_)\_\_\_\_\_)\(\backslash\)\_\_\_\_)\_| |\_|}
+\DoxyCodeLine{(C)2013-\/2017 Semtech}
+
+\end{DoxyCode}
+
+
+\begin{DoxyAuthor}{Author}
+Miguel Luis ( Semtech )
+
+Gregory Cristian ( Semtech ) 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}\label{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}} 
+\index{radio.h@{radio.h}!RadioModems\_t@{RadioModems\_t}}
+\index{RadioModems\_t@{RadioModems\_t}!radio.h@{radio.h}}
+\doxysubsubsection{\texorpdfstring{RadioModems\_t}{RadioModems\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}
+
+Radio driver supported modems \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MODEM\_FSK@{MODEM\_FSK}!radio.h@{radio.h}}\index{radio.h@{radio.h}!MODEM\_FSK@{MODEM\_FSK}}}\mbox{\Hypertarget{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}\label{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}} 
+MODEM\+\_\+\+FSK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MODEM\_LORA@{MODEM\_LORA}!radio.h@{radio.h}}\index{radio.h@{radio.h}!MODEM\_LORA@{MODEM\_LORA}}}\mbox{\Hypertarget{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057abeb331e097974ea65b07d74df9e85a8e}\label{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057abeb331e097974ea65b07d74df9e85a8e}} 
+MODEM\+\_\+\+LORA&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 37 of file radio.\+h.
+
+\mbox{\Hypertarget{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}\label{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}} 
+\index{radio.h@{radio.h}!RadioState\_t@{RadioState\_t}}
+\index{RadioState\_t@{RadioState\_t}!radio.h@{radio.h}}
+\doxysubsubsection{\texorpdfstring{RadioState\_t}{RadioState\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}{Radio\+State\+\_\+t}}}
+
+Radio driver internal state machine states definition \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RF\_IDLE@{RF\_IDLE}!radio.h@{radio.h}}\index{radio.h@{radio.h}!RF\_IDLE@{RF\_IDLE}}}\mbox{\Hypertarget{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a89c1ff89fc074c1c80f96d186c99f899}\label{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a89c1ff89fc074c1c80f96d186c99f899}} 
+RF\+\_\+\+IDLE&The radio is idle. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RF\_RX\_RUNNING@{RF\_RX\_RUNNING}!radio.h@{radio.h}}\index{radio.h@{radio.h}!RF\_RX\_RUNNING@{RF\_RX\_RUNNING}}}\mbox{\Hypertarget{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a5a6a549e66aa54871013a612aa2aba45}\label{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a5a6a549e66aa54871013a612aa2aba45}} 
+RF\+\_\+\+RX\+\_\+\+RUNNING&The radio is in reception state. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RF\_TX\_RUNNING@{RF\_TX\_RUNNING}!radio.h@{radio.h}}\index{radio.h@{radio.h}!RF\_TX\_RUNNING@{RF\_TX\_RUNNING}}}\mbox{\Hypertarget{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5add0cb5bc08318df9a5e688f4802ed99d}\label{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5add0cb5bc08318df9a5e688f4802ed99d}} 
+RF\+\_\+\+TX\+\_\+\+RUNNING&The radio is in transmission state. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RF\_CAD@{RF\_CAD}!radio.h@{radio.h}}\index{radio.h@{radio.h}!RF\_CAD@{RF\_CAD}}}\mbox{\Hypertarget{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a6798b346c6d95e2970d33ccd04c5d39c}\label{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5a6798b346c6d95e2970d33ccd04c5d39c}} 
+RF\+\_\+\+CAD&The radio is doing channel activity detection. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 46 of file radio.\+h.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{radio_8h_acf9fe61a72c16fa29a0dc449d23e3820}\label{radio_8h_acf9fe61a72c16fa29a0dc449d23e3820}} 
+\index{radio.h@{radio.h}!Radio@{Radio}}
+\index{Radio@{Radio}!radio.h@{radio.h}}
+\doxysubsubsection{\texorpdfstring{Radio}{Radio}}
+{\footnotesize\ttfamily const struct \mbox{\hyperlink{struct_radio__s}{Radio\+\_\+s}} Radio\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Radio driver. 
+
+\begin{DoxyRemark}{Remarks}
+This variable is defined and initialized in the specific radio board implementation
+\end{DoxyRemark}
+Radio driver structure initialization 
+
+Definition at line 31 of file sx1276-\/board.\+c.
+

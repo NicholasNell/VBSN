@@ -16,8 +16,8 @@
 
 void spi_open(void);
 void spi_close(void);
-uint8_t spiRead_RFM(uint16_t addr);
-void spiWrite_RFM(uint16_t addr, uint8_t val);
+uint8_t spi_read_rfm(uint16_t addr);
+void spi_write_rfm(uint16_t addr, uint8_t val);
 int spi_read_write(uint8_t pBuff);
 int8_t user_spi_write_bme280(uint8_t reg_addr, const uint8_t *reg_data,
 		uint32_t len, void *intf_ptr);

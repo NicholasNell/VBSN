@@ -1,0 +1,383 @@
+\hypertarget{my_net_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+Net.c File Reference}
+\label{my_net_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/myNet.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/myNet.c}}
+{\ttfamily \#include $<$datagram.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+MAC.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+RFM9x.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+timer.\+h$>$}\newline
+{\ttfamily \#include $<$my\+Net.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my_net_8c_ad86c5a9186f48666cadf54de488aa5f8}{net\+Init}} ()
+\item 
+void \mbox{\hyperlink{my_net_8c_a6d5d1e036b3787f2988b633c11672aef}{add\+Route}} (\mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} route\+To\+Node)
+\item 
+void \mbox{\hyperlink{my_net_8c_ada6da0c4cda27b3caa50aa4ae5dbfc3d}{add\+Routeto\+Neighbour}} (\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} dest)
+\item 
+\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} \mbox{\hyperlink{my_net_8c_aa17b871b72018386ae647ee3d6e68593}{get\+Dest}} (\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} dest)
+\item 
+bool \mbox{\hyperlink{my_net_8c_ae6338c2259b63d8fdc8064c083cd3c3a}{send\+RREQ}} ()
+\item 
+\mbox{\hyperlink{my_net_8h_adbb2b59c9677ed1e7157f8f52f51137d}{Next\+Net\+Op\+\_\+t}} \mbox{\hyperlink{my_net_8c_a153fb0995510ce43ba6d2f0872912fc4}{process\+Rreq}} ()
+\begin{DoxyCompactList}\small\item\em process RReq and determine if the message need to be broadcast or if a RRep needs to be sent \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my_net_8c_a8060301ef495da61c2788ef1d8648b84}{net\+Re\+RReq}} ()
+\begin{DoxyCompactList}\small\item\em Rebroadcast rreq. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my_net_8c_aeb540a2275f3168e331907480b36dd60}{has\+Route\+To\+Node}} (\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} dest, \mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} $\ast$route\+To\+Node)
+\begin{DoxyCompactList}\small\item\em looks for a route in the routing table and returns a copy of the entry if one is found, otherwise returns NULL \end{DoxyCompactList}\item 
+\mbox{\hyperlink{my_net_8h_adbb2b59c9677ed1e7157f8f52f51137d}{Next\+Net\+Op\+\_\+t}} \mbox{\hyperlink{my_net_8c_ad545fdbc430905196f44aa0e4b24eb87}{process\+Rrep}} ()
+\begin{DoxyCompactList}\small\item\em determines what to do after the rrep has been received \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my_net_8c_acb2b106225eef46cbb7db8952112a008}{add\+Reverse\+Path\+To\+Table}} ()
+\begin{DoxyCompactList}\small\item\em Adds the current reverse path to the routing table. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my_net_8c_a78a45e189561524802af08228ae4126a}{add\+Forward\+Path\+To\+Table}} ()
+\begin{DoxyCompactList}\small\item\em Adds the current forawrd path to the routing table. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my_net_8c_a437cfe5c4eb9e190283dacdf59c8024b}{send\+RRep}} ()
+\begin{DoxyCompactList}\small\item\em send a unicast rrep back to last hop from which a rreq was received \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} $\ast$ \mbox{\hyperlink{my_net_8c_a71f5980345613dc56a482a4007578e20}{get\+Routing\+Table}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} \mbox{\hyperlink{my_net_8c_ae45295e435dcec019964f6b8a6fdf72b}{routingtable}} \mbox{[}\mbox{\hyperlink{my_net_8h_af40843a876a06522a44e5e8a362b0e66}{MAX\+\_\+\+ROUTES}}\mbox{]}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{my_net_8c_ac42dd090b228d1f27396a9ef26bfc5c8}{\+\_\+num\+Routes}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my_net_8c_a5646b1e652110ac705975e8732e8b087}{\+\_\+node\+Sequence\+Number}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my_net_8c_a781f43e6fee57c390d88e4d0ad657589}{\+\_\+broadcast\+ID}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my_net_8c_a64888d8c5db0f47471c04bcdee5ec281}{\+\_\+dest\+Sequence\+Number}}
+\item 
+bool \mbox{\hyperlink{my_net_8c_ade167a597f47d5c17aaaec6718cf5a31}{not\+Has\+Reverse\+Path\+Info}} = true
+\item 
+bool \mbox{\hyperlink{my_net_8c_a350932d4006b91b0d9454c73a0387011}{not\+Has\+Forward\+Path\+Info}} = true
+\item 
+\mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} \mbox{\hyperlink{my_net_8c_a9d95a84378ff8b2560936961deda9cb1}{rx\+Datagram}}
+\item 
+\mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} \mbox{\hyperlink{my_net_8c_ada221508ab5b1544d8aed2f58ea07de0}{tx\+Datagram}}
+\item 
+\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} \mbox{\hyperlink{my_net_8c_adb2a8e66b3b04cfd852ab0b1ff5c86f3}{\+\_\+node\+ID}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{my_net_8c_ad303d2b19a8ea4ac9f90807301ad8a16}{\+\_\+tx\+Slot}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my_net_8c_a78a45e189561524802af08228ae4126a}\label{my_net_8c_a78a45e189561524802af08228ae4126a}} 
+\index{myNet.c@{myNet.c}!addForwardPathToTable@{addForwardPathToTable}}
+\index{addForwardPathToTable@{addForwardPathToTable}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{addForwardPathToTable()}{addForwardPathToTable()}}
+{\footnotesize\ttfamily bool add\+Forward\+Path\+To\+Table (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Adds the current forawrd path to the routing table. 
+
+\begin{DoxyReturn}{Returns}
+return true if route was added to table 
+\end{DoxyReturn}
+
+
+Definition at line 268 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_acb2b106225eef46cbb7db8952112a008}\label{my_net_8c_acb2b106225eef46cbb7db8952112a008}} 
+\index{myNet.c@{myNet.c}!addReversePathToTable@{addReversePathToTable}}
+\index{addReversePathToTable@{addReversePathToTable}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{addReversePathToTable()}{addReversePathToTable()}}
+{\footnotesize\ttfamily bool add\+Reverse\+Path\+To\+Table (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Adds the current reverse path to the routing table. 
+
+\begin{DoxyReturn}{Returns}
+returns true if route was added to path, false if not wont add route to table if a newer one exists in the table. 
+\end{DoxyReturn}
+
+
+Definition at line 239 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a6d5d1e036b3787f2988b633c11672aef}\label{my_net_8c_a6d5d1e036b3787f2988b633c11672aef}} 
+\index{myNet.c@{myNet.c}!addRoute@{addRoute}}
+\index{addRoute@{addRoute}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{addRoute()}{addRoute()}}
+{\footnotesize\ttfamily void add\+Route (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}}}]{route\+To\+Node }\end{DoxyParamCaption})}
+
+Add new entry to the routing table 
+\begin{DoxyParams}{Parameters}
+{\em dest} & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 41 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ada6da0c4cda27b3caa50aa4ae5dbfc3d}\label{my_net_8c_ada6da0c4cda27b3caa50aa4ae5dbfc3d}} 
+\index{myNet.c@{myNet.c}!addRoutetoNeighbour@{addRoutetoNeighbour}}
+\index{addRoutetoNeighbour@{addRoutetoNeighbour}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{addRoutetoNeighbour()}{addRoutetoNeighbour()}}
+{\footnotesize\ttfamily void add\+Routeto\+Neighbour (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}]{dest }\end{DoxyParamCaption})}
+
+Adds a neighbouring node to the routing table. 
+\begin{DoxyParams}{Parameters}
+{\em dest} & the neighbour ID \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 45 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_aa17b871b72018386ae647ee3d6e68593}\label{my_net_8c_aa17b871b72018386ae647ee3d6e68593}} 
+\index{myNet.c@{myNet.c}!getDest@{getDest}}
+\index{getDest@{getDest}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{getDest()}{getDest()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} get\+Dest (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}]{dest }\end{DoxyParamCaption})}
+
+get next hop in path to given destination 
+\begin{DoxyParams}{Parameters}
+{\em dest} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 56 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a71f5980345613dc56a482a4007578e20}\label{my_net_8c_a71f5980345613dc56a482a4007578e20}} 
+\index{myNet.c@{myNet.c}!getRoutingTable@{getRoutingTable}}
+\index{getRoutingTable@{getRoutingTable}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{getRoutingTable()}{getRoutingTable()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}}$\ast$ get\+Routing\+Table (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+a ptr to routingtable; 
+\end{DoxyReturn}
+
+
+Definition at line 318 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_aeb540a2275f3168e331907480b36dd60}\label{my_net_8c_aeb540a2275f3168e331907480b36dd60}} 
+\index{myNet.c@{myNet.c}!hasRouteToNode@{hasRouteToNode}}
+\index{hasRouteToNode@{hasRouteToNode}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{hasRouteToNode()}{hasRouteToNode()}}
+{\footnotesize\ttfamily bool has\+Route\+To\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}]{dest,  }\item[{\mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} $\ast$}]{route\+To\+Node }\end{DoxyParamCaption})}
+
+
+
+looks for a route in the routing table and returns a copy of the entry if one is found, otherwise returns NULL 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dest} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return true if it has a route to the node 
+\end{DoxyReturn}
+
+
+Definition at line 189 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ad86c5a9186f48666cadf54de488aa5f8}\label{my_net_8c_ad86c5a9186f48666cadf54de488aa5f8}} 
+\index{myNet.c@{myNet.c}!netInit@{netInit}}
+\index{netInit@{netInit}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{netInit()}{netInit()}}
+{\footnotesize\ttfamily void net\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a8060301ef495da61c2788ef1d8648b84}\label{my_net_8c_a8060301ef495da61c2788ef1d8648b84}} 
+\index{myNet.c@{myNet.c}!netReRReq@{netReRReq}}
+\index{netReRReq@{netReRReq}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{netReRReq()}{netReRReq()}}
+{\footnotesize\ttfamily bool net\+Re\+RReq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Rebroadcast rreq. 
+
+
+
+Definition at line 174 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ad545fdbc430905196f44aa0e4b24eb87}\label{my_net_8c_ad545fdbc430905196f44aa0e4b24eb87}} 
+\index{myNet.c@{myNet.c}!processRrep@{processRrep}}
+\index{processRrep@{processRrep}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{processRrep()}{processRrep()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{my_net_8h_adbb2b59c9677ed1e7157f8f52f51137d}{Next\+Net\+Op\+\_\+t}} process\+Rrep (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+determines what to do after the rrep has been received 
+
+\begin{DoxyReturn}{Returns}
+returns the next network operation 
+\end{DoxyReturn}
+
+
+Definition at line 205 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a153fb0995510ce43ba6d2f0872912fc4}\label{my_net_8c_a153fb0995510ce43ba6d2f0872912fc4}} 
+\index{myNet.c@{myNet.c}!processRreq@{processRreq}}
+\index{processRreq@{processRreq}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{processRreq()}{processRreq()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{my_net_8h_adbb2b59c9677ed1e7157f8f52f51137d}{Next\+Net\+Op\+\_\+t}} process\+Rreq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+process RReq and determine if the message need to be broadcast or if a RRep needs to be sent 
+
+\begin{DoxyReturn}{Returns}
+message type to be sent 
+\end{DoxyReturn}
+
+
+Definition at line 101 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a437cfe5c4eb9e190283dacdf59c8024b}\label{my_net_8c_a437cfe5c4eb9e190283dacdf59c8024b}} 
+\index{myNet.c@{myNet.c}!sendRRep@{sendRRep}}
+\index{sendRRep@{sendRRep}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{sendRRep()}{sendRRep()}}
+{\footnotesize\ttfamily bool send\+RRep (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+send a unicast rrep back to last hop from which a rreq was received 
+
+\begin{DoxyReturn}{Returns}
+returns true if message was sent succesfully 
+\end{DoxyReturn}
+
+
+Definition at line 294 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ae6338c2259b63d8fdc8064c083cd3c3a}\label{my_net_8c_ae6338c2259b63d8fdc8064c083cd3c3a}} 
+\index{myNet.c@{myNet.c}!sendRREQ@{sendRREQ}}
+\index{sendRREQ@{sendRREQ}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{sendRREQ()}{sendRREQ()}}
+{\footnotesize\ttfamily bool send\+RREQ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+send initial rreq for route discovery \begin{DoxyReturn}{Returns}
+return true if succesful 
+\end{DoxyReturn}
+
+
+Definition at line 60 of file my\+Net.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my_net_8c_a781f43e6fee57c390d88e4d0ad657589}\label{my_net_8c_a781f43e6fee57c390d88e4d0ad657589}} 
+\index{myNet.c@{myNet.c}!\_broadcastID@{\_broadcastID}}
+\index{\_broadcastID@{\_broadcastID}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{\_broadcastID}{\_broadcastID}}
+{\footnotesize\ttfamily uint8\+\_\+t \+\_\+broadcast\+ID}
+
+
+
+Definition at line 17 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a64888d8c5db0f47471c04bcdee5ec281}\label{my_net_8c_a64888d8c5db0f47471c04bcdee5ec281}} 
+\index{myNet.c@{myNet.c}!\_destSequenceNumber@{\_destSequenceNumber}}
+\index{\_destSequenceNumber@{\_destSequenceNumber}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{\_destSequenceNumber}{\_destSequenceNumber}}
+{\footnotesize\ttfamily uint8\+\_\+t \+\_\+dest\+Sequence\+Number}
+
+
+
+Definition at line 18 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_adb2a8e66b3b04cfd852ab0b1ff5c86f3}\label{my_net_8c_adb2a8e66b3b04cfd852ab0b1ff5c86f3}} 
+\index{myNet.c@{myNet.c}!\_nodeID@{\_nodeID}}
+\index{\_nodeID@{\_nodeID}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{\_nodeID}{\_nodeID}}
+{\footnotesize\ttfamily \mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} \+\_\+node\+ID\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 62 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a5646b1e652110ac705975e8732e8b087}\label{my_net_8c_a5646b1e652110ac705975e8732e8b087}} 
+\index{myNet.c@{myNet.c}!\_nodeSequenceNumber@{\_nodeSequenceNumber}}
+\index{\_nodeSequenceNumber@{\_nodeSequenceNumber}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{\_nodeSequenceNumber}{\_nodeSequenceNumber}}
+{\footnotesize\ttfamily uint8\+\_\+t \+\_\+node\+Sequence\+Number}
+
+
+
+Definition at line 16 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ac42dd090b228d1f27396a9ef26bfc5c8}\label{my_net_8c_ac42dd090b228d1f27396a9ef26bfc5c8}} 
+\index{myNet.c@{myNet.c}!\_numRoutes@{\_numRoutes}}
+\index{\_numRoutes@{\_numRoutes}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{\_numRoutes}{\_numRoutes}}
+{\footnotesize\ttfamily uint16\+\_\+t \+\_\+num\+Routes}
+
+
+
+Definition at line 15 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ad303d2b19a8ea4ac9f90807301ad8a16}\label{my_net_8c_ad303d2b19a8ea4ac9f90807301ad8a16}} 
+\index{myNet.c@{myNet.c}!\_txSlot@{\_txSlot}}
+\index{\_txSlot@{\_txSlot}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{\_txSlot}{\_txSlot}}
+{\footnotesize\ttfamily uint16\+\_\+t \+\_\+tx\+Slot\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 67 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a350932d4006b91b0d9454c73a0387011}\label{my_net_8c_a350932d4006b91b0d9454c73a0387011}} 
+\index{myNet.c@{myNet.c}!notHasForwardPathInfo@{notHasForwardPathInfo}}
+\index{notHasForwardPathInfo@{notHasForwardPathInfo}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{notHasForwardPathInfo}{notHasForwardPathInfo}}
+{\footnotesize\ttfamily bool not\+Has\+Forward\+Path\+Info = true}
+
+
+
+Definition at line 25 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ade167a597f47d5c17aaaec6718cf5a31}\label{my_net_8c_ade167a597f47d5c17aaaec6718cf5a31}} 
+\index{myNet.c@{myNet.c}!notHasReversePathInfo@{notHasReversePathInfo}}
+\index{notHasReversePathInfo@{notHasReversePathInfo}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{notHasReversePathInfo}{notHasReversePathInfo}}
+{\footnotesize\ttfamily bool not\+Has\+Reverse\+Path\+Info = true}
+
+
+
+Definition at line 21 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ae45295e435dcec019964f6b8a6fdf72b}\label{my_net_8c_ae45295e435dcec019964f6b8a6fdf72b}} 
+\index{myNet.c@{myNet.c}!routingtable@{routingtable}}
+\index{routingtable@{routingtable}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{routingtable}{routingtable}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} routingtable\mbox{[}\mbox{\hyperlink{my_net_8h_af40843a876a06522a44e5e8a362b0e66}{MAX\+\_\+\+ROUTES}}\mbox{]}}
+
+
+
+Definition at line 14 of file my\+Net.\+c.
+
+\mbox{\Hypertarget{my_net_8c_a9d95a84378ff8b2560936961deda9cb1}\label{my_net_8c_a9d95a84378ff8b2560936961deda9cb1}} 
+\index{myNet.c@{myNet.c}!rxDatagram@{rxDatagram}}
+\index{rxDatagram@{rxDatagram}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{rxDatagram}{rxDatagram}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} rx\+Datagram\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 33 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my_net_8c_ada221508ab5b1544d8aed2f58ea07de0}\label{my_net_8c_ada221508ab5b1544d8aed2f58ea07de0}} 
+\index{myNet.c@{myNet.c}!txDatagram@{txDatagram}}
+\index{txDatagram@{txDatagram}!myNet.c@{myNet.c}}
+\doxysubsubsection{\texorpdfstring{txDatagram}{txDatagram}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} tx\+Datagram\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 30 of file my\+\_\+\+MAC.\+c.
+

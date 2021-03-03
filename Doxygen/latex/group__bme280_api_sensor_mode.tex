@@ -1,0 +1,99 @@
+\hypertarget{group__bme280_api_sensor_mode}{}\doxysection{Sensor Mode}
+\label{group__bme280_api_sensor_mode}\index{Sensor Mode@{Sensor Mode}}
+
+
+Generic API for configuring sensor power mode.  
+
+
+Generic API for configuring sensor power mode. 
+
+\hypertarget{bme280_api_bme280_set_sensor_mode}{}\doxysubsubsection{bme280\+\_\+set\+\_\+sensor\+\_\+mode}\label{bme280_api_bme280_set_sensor_mode}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_a6373385e51038a9b982c42e0dce4ba9f}{bme280\_set\_sensor\_mode}}(uint8\_t sensor\_mode, \textcolor{keyword}{const} \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API sets the power mode of the sensor.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}. \\
+\hline
+\mbox{\texttt{ in}}  & {\em sensor\+\_\+mode} & \+: Variable which contains the power mode to be set.\\
+\hline
+\end{DoxyParams}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ sensor\+\_\+mode   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ sensor\+\_\+mode   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros    }\\\cline{1-2}
+\endhead
+0   &BME280\+\_\+\+SLEEP\+\_\+\+MODE    \\\cline{1-2}
+1   &BME280\+\_\+\+FORCED\+\_\+\+MODE    \\\cline{1-2}
+3   &BME280\+\_\+\+NORMAL\+\_\+\+MODE   \\\cline{1-2}
+\end{longtabu}
+
+
+\begin{DoxyReturn}{Returns}
+Result of API execution status
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}
+\hypertarget{bme280_api_bme280_get_sensor_mode}{}\doxysubsubsection{bme280\+\_\+get\+\_\+sensor\+\_\+mode}\label{bme280_api_bme280_get_sensor_mode}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_aab44df556ac18f4e7800d8869a5d483f}{bme280\_get\_sensor\_mode}}(uint8\_t *sensor\_mode, \textcolor{keyword}{const} \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API gets the power mode of the sensor.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}. \\
+\hline
+\mbox{\texttt{ out}}  & {\em sensor\+\_\+mode} & \+: Pointer variable to store the power mode.\\
+\hline
+\end{DoxyParams}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ sensor\+\_\+mode   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ sensor\+\_\+mode   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros    }\\\cline{1-2}
+\endhead
+0   &BME280\+\_\+\+SLEEP\+\_\+\+MODE    \\\cline{1-2}
+1   &BME280\+\_\+\+FORCED\+\_\+\+MODE    \\\cline{1-2}
+3   &BME280\+\_\+\+NORMAL\+\_\+\+MODE   \\\cline{1-2}
+\end{longtabu}
+
+
+\begin{DoxyReturn}{Returns}
+Result of API execution status
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}

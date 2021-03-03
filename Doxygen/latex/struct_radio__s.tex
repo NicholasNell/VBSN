@@ -1,0 +1,698 @@
+\hypertarget{struct_radio__s}{}\doxysection{Radio\+\_\+s Struct Reference}
+\label{struct_radio__s}\index{Radio\_s@{Radio\_s}}
+
+
+Radio driver definition.  
+
+
+
+
+{\ttfamily \#include $<$radio.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a229670b62864db58444023c5c89b0bf9}{Init}} )(\mbox{\hyperlink{struct_radio_events__t}{Radio\+Events\+\_\+t}} $\ast$events)
+\begin{DoxyCompactList}\small\item\em Initializes the radio. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}{Radio\+State\+\_\+t}}($\ast$ \mbox{\hyperlink{struct_radio__s_a377915f7a7bcf47b37f301173f998ef9}{Get\+Status}} )(void)
+\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a72519c61045a1c4dd51233ff0e374628}{Set\+Modem}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem)
+\begin{DoxyCompactList}\small\item\em Configures the radio with the given modem. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a691bfd16e5be0274cbfe0d7454749f12}{Set\+Channel}} )(uint32\+\_\+t freq)
+\begin{DoxyCompactList}\small\item\em Sets the channel frequency. \end{DoxyCompactList}\item 
+bool($\ast$ \mbox{\hyperlink{struct_radio__s_a4c8c593c3c380636ec2ca7c452d59281}{Is\+Channel\+Free}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t freq, int16\+\_\+t rssi\+Thresh, uint32\+\_\+t max\+Carrier\+Sense\+Time)
+\begin{DoxyCompactList}\small\item\em Checks if the channel is free for the given time. \end{DoxyCompactList}\item 
+uint32\+\_\+t($\ast$ \mbox{\hyperlink{struct_radio__s_a334bf05b91b26c5e6faf6bbf6737eab9}{Random}} )(void)
+\begin{DoxyCompactList}\small\item\em Generates a 32 bits random value based on the RSSI readings. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_ae4e2616b2534ce84bf4110dc6d31f82f}{Set\+Rx\+Config}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint32\+\_\+t bandwidth\+Afc, uint16\+\_\+t preamble\+Len, uint16\+\_\+t symb\+Timeout, bool fix\+Len, uint8\+\_\+t payload\+Len, bool crc\+On, bool freq\+Hop\+On, uint8\+\_\+t hop\+Period, bool iq\+Inverted, bool rx\+Continuous)
+\begin{DoxyCompactList}\small\item\em Sets the reception parameters. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a52823b01ffc876df28bf986abc706db7}{Set\+Tx\+Config}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, int8\+\_\+t power, uint32\+\_\+t fdev, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint16\+\_\+t preamble\+Len, bool fix\+Len, bool crc\+On, bool freq\+Hop\+On, uint8\+\_\+t hop\+Period, bool iq\+Inverted, uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the transmission parameters. \end{DoxyCompactList}\item 
+bool($\ast$ \mbox{\hyperlink{struct_radio__s_a984f224d5ef26fb8a35f77d664f384df}{Check\+Rf\+Frequency}} )(uint32\+\_\+t frequency)
+\begin{DoxyCompactList}\small\item\em Checks if the given RF frequency is supported by the hardware. \end{DoxyCompactList}\item 
+uint32\+\_\+t($\ast$ \mbox{\hyperlink{struct_radio__s_ae4b90e1d02022cfd16bc1e79c8c701a1}{Time\+On\+Air}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint16\+\_\+t preamble\+Len, bool fix\+Len, uint8\+\_\+t payload\+Len, bool crc\+On)
+\begin{DoxyCompactList}\small\item\em Computes the packet time on air in ms for the given payload. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a84c3ad8e921fef613c838563197adc6c}{Send}} )(uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Sends the buffer of size. Prepares the packet to be sent and sets the radio in transmission. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a5792613816e79c465be4169c0bc020cb}{Sleep}} )(void)
+\begin{DoxyCompactList}\small\item\em Sets the radio in sleep mode. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_ad1d3253de93d8fd1eee59da2a1c794ec}{Standby}} )(void)
+\begin{DoxyCompactList}\small\item\em Sets the radio in standby mode. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a28354465b3df8db25bd766e54c96d837}{Rx}} )(uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the radio in reception mode for the given time. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a6896222d46a4b809dde1e916ee6d5d6b}{Start\+Cad}} )(void)
+\begin{DoxyCompactList}\small\item\em Start a Channel Activity Detection. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a33dccb0bc830d9a68ec0c2e75b74e541}{Set\+Tx\+Continuous\+Wave}} )(uint32\+\_\+t freq, int8\+\_\+t power, uint16\+\_\+t time)
+\begin{DoxyCompactList}\small\item\em Sets the radio in continuous wave transmission mode. \end{DoxyCompactList}\item 
+int16\+\_\+t($\ast$ \mbox{\hyperlink{struct_radio__s_ad973f70640c019eb62ac88f25fb9b75f}{Rssi}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem)
+\begin{DoxyCompactList}\small\item\em Reads the current RSSI value. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_aa10c31bc66c525698fd57d5dea5a888a}{Write}} )(uint16\+\_\+t addr, uint8\+\_\+t data)
+\begin{DoxyCompactList}\small\item\em Writes the radio register at the specified address. \end{DoxyCompactList}\item 
+uint8\+\_\+t($\ast$ \mbox{\hyperlink{struct_radio__s_a37d2eb5c32dc2461524b7f611627cb37}{Read}} )(uint16\+\_\+t addr)
+\begin{DoxyCompactList}\small\item\em Reads the radio register at the specified address. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a781ffc8e38fd30e4148890c8062c70f5}{Write\+Buffer}} )(uint16\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Writes multiple radio registers starting at address. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a95dd91574c0eeb271533bd62bf9a1d7e}{Read\+Buffer}} )(uint16\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reads multiple radio registers starting at address. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_a19598b798e8b165378b397515c673d1c}{Set\+Max\+Payload\+Length}} )(\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint8\+\_\+t max)
+\begin{DoxyCompactList}\small\item\em Sets the maximum payload length. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_ae0f6793bbe24c202782b95f3d4805d92}{Set\+Public\+Network}} )(bool enable, uint16\+\_\+t syncword)
+\begin{DoxyCompactList}\small\item\em Sets the network to public or private. Updates the sync byte. \end{DoxyCompactList}\item 
+uint32\+\_\+t($\ast$ \mbox{\hyperlink{struct_radio__s_aa6c05429af1a9f479d4720d95d0ee774}{Get\+Wakeup\+Time}} )(void)
+\begin{DoxyCompactList}\small\item\em Gets the time required for the board plus radio to get out of sleep.\mbox{[}ms\mbox{]}. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_ae5865dd1b58fc4f6d086f2de5c993c02}{Irq\+Process}} )(void)
+\begin{DoxyCompactList}\small\item\em Process radio irq. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_abb6a28b218d2e018c09f79449a5f4fd9}{Rx\+Boosted}} )(uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the radio in reception mode with Max LNA gain for the given time. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_radio__s_aa0ec8ed3a51984978c447f45a7699356}{Set\+Rx\+Duty\+Cycle}} )(uint32\+\_\+t rx\+Time, uint32\+\_\+t sleep\+Time)
+\begin{DoxyCompactList}\small\item\em Sets the Rx duty cycle management parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Radio driver definition. 
+
+Definition at line 102 of file radio.\+h.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{struct_radio__s_a984f224d5ef26fb8a35f77d664f384df}\label{struct_radio__s_a984f224d5ef26fb8a35f77d664f384df}} 
+\index{Radio\_s@{Radio\_s}!CheckRfFrequency@{CheckRfFrequency}}
+\index{CheckRfFrequency@{CheckRfFrequency}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{CheckRfFrequency}{CheckRfFrequency}}
+{\footnotesize\ttfamily bool( $\ast$ Check\+Rf\+Frequency) (uint32\+\_\+t frequency)}
+
+
+
+Checks if the given RF frequency is supported by the hardware. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & frequency RF frequency to be checked \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em is\+Supported} & \mbox{[}true\+: supported, false\+: unsupported\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 242 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a377915f7a7bcf47b37f301173f998ef9}\label{struct_radio__s_a377915f7a7bcf47b37f301173f998ef9}} 
+\index{Radio\_s@{Radio\_s}!GetStatus@{GetStatus}}
+\index{GetStatus@{GetStatus}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{GetStatus}{GetStatus}}
+{\footnotesize\ttfamily \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}{Radio\+State\+\_\+t}}($\ast$ Get\+Status) (void)}
+
+Return current radio status
+
+
+\begin{DoxyParams}{Parameters}
+{\em status} & Radio status.\mbox{[}RF\+\_\+\+IDLE, RF\+\_\+\+RX\+\_\+\+RUNNING, RF\+\_\+\+TX\+\_\+\+RUNNING\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 115 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_aa6c05429af1a9f479d4720d95d0ee774}\label{struct_radio__s_aa6c05429af1a9f479d4720d95d0ee774}} 
+\index{Radio\_s@{Radio\_s}!GetWakeupTime@{GetWakeupTime}}
+\index{GetWakeupTime@{GetWakeupTime}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{GetWakeupTime}{GetWakeupTime}}
+{\footnotesize\ttfamily uint32\+\_\+t( $\ast$ Get\+Wakeup\+Time) (void)}
+
+
+
+Gets the time required for the board plus radio to get out of sleep.\mbox{[}ms\mbox{]}. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em time} & Radio plus board wakeup time in ms. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 368 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a229670b62864db58444023c5c89b0bf9}\label{struct_radio__s_a229670b62864db58444023c5c89b0bf9}} 
+\index{Radio\_s@{Radio\_s}!Init@{Init}}
+\index{Init@{Init}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Init}{Init}}
+{\footnotesize\ttfamily void( $\ast$ Init) (\mbox{\hyperlink{struct_radio_events__t}{Radio\+Events\+\_\+t}} $\ast$events)}
+
+
+
+Initializes the radio. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & events Structure containing the driver callback functions \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 109 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_ae5865dd1b58fc4f6d086f2de5c993c02}\label{struct_radio__s_ae5865dd1b58fc4f6d086f2de5c993c02}} 
+\index{Radio\_s@{Radio\_s}!IrqProcess@{IrqProcess}}
+\index{IrqProcess@{IrqProcess}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{IrqProcess}{IrqProcess}}
+{\footnotesize\ttfamily void( $\ast$ Irq\+Process) (void)}
+
+
+
+Process radio irq. 
+
+
+
+Definition at line 372 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a4c8c593c3c380636ec2ca7c452d59281}\label{struct_radio__s_a4c8c593c3c380636ec2ca7c452d59281}} 
+\index{Radio\_s@{Radio\_s}!IsChannelFree@{IsChannelFree}}
+\index{IsChannelFree@{IsChannelFree}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{IsChannelFree}{IsChannelFree}}
+{\footnotesize\ttfamily bool( $\ast$ Is\+Channel\+Free) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t freq, int16\+\_\+t rssi\+Thresh, uint32\+\_\+t max\+Carrier\+Sense\+Time)}
+
+
+
+Checks if the channel is free for the given time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & freq Channel RF frequency \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & rssi\+Thresh RSSI threshold \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & max\+Carrier\+Sense\+Time Max time while the RSSI is measured\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em is\+Free} & \mbox{[}true\+: Channel is free, false\+: Channel is not free\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 138 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a334bf05b91b26c5e6faf6bbf6737eab9}\label{struct_radio__s_a334bf05b91b26c5e6faf6bbf6737eab9}} 
+\index{Radio\_s@{Radio\_s}!Random@{Random}}
+\index{Random@{Random}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Random}{Random}}
+{\footnotesize\ttfamily uint32\+\_\+t( $\ast$ Random) (void)}
+
+
+
+Generates a 32 bits random value based on the RSSI readings. 
+
+\begin{DoxyRemark}{Remarks}
+This function sets the radio in Lo\+Ra modem mode and disables all interrupts. After calling this function either Radio.\+Set\+Rx\+Config or Radio.\+Set\+Tx\+Config functions must be called.
+\end{DoxyRemark}
+
+\begin{DoxyRetVals}{Return values}
+{\em random\+Value} & 32 bits random value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 149 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a37d2eb5c32dc2461524b7f611627cb37}\label{struct_radio__s_a37d2eb5c32dc2461524b7f611627cb37}} 
+\index{Radio\_s@{Radio\_s}!Read@{Read}}
+\index{Read@{Read}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Read}{Read}}
+{\footnotesize\ttfamily uint8\+\_\+t( $\ast$ Read) (uint16\+\_\+t addr)}
+
+
+
+Reads the radio register at the specified address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & addr Register address \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em data} & Register value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 331 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a95dd91574c0eeb271533bd62bf9a1d7e}\label{struct_radio__s_a95dd91574c0eeb271533bd62bf9a1d7e}} 
+\index{Radio\_s@{Radio\_s}!ReadBuffer@{ReadBuffer}}
+\index{ReadBuffer@{ReadBuffer}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{ReadBuffer}{ReadBuffer}}
+{\footnotesize\ttfamily void( $\ast$ Read\+Buffer) (uint16\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)}
+
+
+
+Reads multiple radio registers starting at address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & addr First Radio register address \\
+\hline
+{\em \mbox{[}\+OUT\mbox{]}} & buffer Buffer where to copy the registers data \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of registers to be read \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 347 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_ad973f70640c019eb62ac88f25fb9b75f}\label{struct_radio__s_ad973f70640c019eb62ac88f25fb9b75f}} 
+\index{Radio\_s@{Radio\_s}!Rssi@{Rssi}}
+\index{Rssi@{Rssi}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Rssi}{Rssi}}
+{\footnotesize\ttfamily int16\+\_\+t( $\ast$ Rssi) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem)}
+
+
+
+Reads the current RSSI value. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em rssi\+Value} & Current RSSI value in \mbox{[}d\+Bm\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 317 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a28354465b3df8db25bd766e54c96d837}\label{struct_radio__s_a28354465b3df8db25bd766e54c96d837}} 
+\index{Radio\_s@{Radio\_s}!Rx@{Rx}}
+\index{Rx@{Rx}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Rx}{Rx}}
+{\footnotesize\ttfamily void( $\ast$ Rx) (uint32\+\_\+t timeout)}
+
+
+
+Sets the radio in reception mode for the given time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & timeout Reception timeout \mbox{[}ms\mbox{]} \mbox{[}0\+: continuous, others timeout\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 299 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_abb6a28b218d2e018c09f79449a5f4fd9}\label{struct_radio__s_abb6a28b218d2e018c09f79449a5f4fd9}} 
+\index{Radio\_s@{Radio\_s}!RxBoosted@{RxBoosted}}
+\index{RxBoosted@{RxBoosted}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{RxBoosted}{RxBoosted}}
+{\footnotesize\ttfamily void( $\ast$ Rx\+Boosted) (uint32\+\_\+t timeout)}
+
+
+
+Sets the radio in reception mode with Max LNA gain for the given time. 
+
+\begin{DoxyRemark}{Remarks}
+Available on SX126x radios only.
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & timeout Reception timeout \mbox{[}ms\mbox{]} \mbox{[}0\+: continuous, others timeout\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 384 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a84c3ad8e921fef613c838563197adc6c}\label{struct_radio__s_a84c3ad8e921fef613c838563197adc6c}} 
+\index{Radio\_s@{Radio\_s}!Send@{Send}}
+\index{Send@{Send}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Send}{Send}}
+{\footnotesize\ttfamily void( $\ast$ Send) (uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)}
+
+
+
+Sends the buffer of size. Prepares the packet to be sent and sets the radio in transmission. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & buffer Buffer pointer \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Buffer size \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 285 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a691bfd16e5be0274cbfe0d7454749f12}\label{struct_radio__s_a691bfd16e5be0274cbfe0d7454749f12}} 
+\index{Radio\_s@{Radio\_s}!SetChannel@{SetChannel}}
+\index{SetChannel@{SetChannel}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetChannel}{SetChannel}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Channel) (uint32\+\_\+t freq)}
+
+
+
+Sets the channel frequency. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & freq Channel RF frequency \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 127 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a19598b798e8b165378b397515c673d1c}\label{struct_radio__s_a19598b798e8b165378b397515c673d1c}} 
+\index{Radio\_s@{Radio\_s}!SetMaxPayloadLength@{SetMaxPayloadLength}}
+\index{SetMaxPayloadLength@{SetMaxPayloadLength}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetMaxPayloadLength}{SetMaxPayloadLength}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Max\+Payload\+Length) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint8\+\_\+t max)}
+
+
+
+Sets the maximum payload length. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & max Maximum payload length in bytes \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 354 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a72519c61045a1c4dd51233ff0e374628}\label{struct_radio__s_a72519c61045a1c4dd51233ff0e374628}} 
+\index{Radio\_s@{Radio\_s}!SetModem@{SetModem}}
+\index{SetModem@{SetModem}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetModem}{SetModem}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Modem) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem)}
+
+
+
+Configures the radio with the given modem. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 121 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_ae0f6793bbe24c202782b95f3d4805d92}\label{struct_radio__s_ae0f6793bbe24c202782b95f3d4805d92}} 
+\index{Radio\_s@{Radio\_s}!SetPublicNetwork@{SetPublicNetwork}}
+\index{SetPublicNetwork@{SetPublicNetwork}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetPublicNetwork}{SetPublicNetwork}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Public\+Network) (bool enable, uint16\+\_\+t syncword)}
+
+
+
+Sets the network to public or private. Updates the sync byte. 
+
+\begin{DoxyRemark}{Remarks}
+Applies to Lo\+Ra modem only
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & enable if true, it enables a public network \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 362 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_ae4e2616b2534ce84bf4110dc6d31f82f}\label{struct_radio__s_ae4e2616b2534ce84bf4110dc6d31f82f}} 
+\index{Radio\_s@{Radio\_s}!SetRxConfig@{SetRxConfig}}
+\index{SetRxConfig@{SetRxConfig}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetRxConfig}{SetRxConfig}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Rx\+Config) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint32\+\_\+t bandwidth\+Afc, uint16\+\_\+t preamble\+Len, uint16\+\_\+t symb\+Timeout, bool fix\+Len, uint8\+\_\+t payload\+Len, bool crc\+On, bool freq\+Hop\+On, uint8\+\_\+t hop\+Period, bool iq\+Inverted, bool rx\+Continuous)}
+
+
+
+Sets the reception parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Sets the bandwidth FSK \+: $>$= 2600 and $<$= 250000 Hz Lo\+Ra\+: \mbox{[}0\+: 125 k\+Hz, 1\+: 250 k\+Hz, 2\+: 500 k\+Hz, 3\+: Reserved\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & datarate Sets the Datarate FSK \+: 600..300000 bits/s Lo\+Ra\+: \mbox{[}6\+: 64, 7\+: 128, 8\+: 256, 9\+: 512, 10\+: 1024, 11\+: 2048, 12\+: 4096 chips\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & coderate Sets the coding rate (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}1\+: 4/5, 2\+: 4/6, 3\+: 4/7, 4\+: 4/8\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth\+Afc Sets the AFC Bandwidth (FSK only) FSK \+: $>$= 2600 and $<$= 250000 Hz Lo\+Ra\+: N/A ( set to 0 ) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & preamble\+Len Sets the Preamble length FSK \+: Number of bytes Lo\+Ra\+: Length in symbols (the hardware adds 4 more symbols) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & symb\+Timeout Sets the Rx\+Single timeout value FSK \+: timeout in number of bytes Lo\+Ra\+: timeout in symbols \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fix\+Len Fixed length packets \mbox{[}0\+: variable, 1\+: fixed\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & payload\+Len Sets payload length when fixed length is used \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & crc\+On Enables/\+Disables the CRC \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & freq\+Hop\+On Enables disables the intra-\/packet frequency hopping FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & hop\+Period Number of symbols between each hop FSK \+: N/A ( set to 0 ) Lo\+Ra\+: Number of symbols \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & iq\+Inverted Inverts IQ signals (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: not inverted, 1\+: inverted\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & rx\+Continuous Sets the reception in continuous mode \mbox{[}false\+: single mode, true\+: continuous mode\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 189 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_aa0ec8ed3a51984978c447f45a7699356}\label{struct_radio__s_aa0ec8ed3a51984978c447f45a7699356}} 
+\index{Radio\_s@{Radio\_s}!SetRxDutyCycle@{SetRxDutyCycle}}
+\index{SetRxDutyCycle@{SetRxDutyCycle}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetRxDutyCycle}{SetRxDutyCycle}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Rx\+Duty\+Cycle) (uint32\+\_\+t rx\+Time, uint32\+\_\+t sleep\+Time)}
+
+
+
+Sets the Rx duty cycle management parameters. 
+
+\begin{DoxyRemark}{Remarks}
+Available on SX126x radios only.
+\end{DoxyRemark}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em rx\+Time} & Structure describing reception timeout value \\
+\hline
+\mbox{\texttt{ in}}  & {\em sleep\+Time} & Structure describing sleep timeout value \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 393 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a52823b01ffc876df28bf986abc706db7}\label{struct_radio__s_a52823b01ffc876df28bf986abc706db7}} 
+\index{Radio\_s@{Radio\_s}!SetTxConfig@{SetTxConfig}}
+\index{SetTxConfig@{SetTxConfig}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetTxConfig}{SetTxConfig}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Tx\+Config) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, int8\+\_\+t power, uint32\+\_\+t fdev, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint16\+\_\+t preamble\+Len, bool fix\+Len, bool crc\+On, bool freq\+Hop\+On, uint8\+\_\+t hop\+Period, bool iq\+Inverted, uint32\+\_\+t timeout)}
+
+
+
+Sets the transmission parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & power Sets the output power \mbox{[}d\+Bm\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fdev Sets the frequency deviation (FSK only) FSK \+: \mbox{[}Hz\mbox{]} Lo\+Ra\+: 0 \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Sets the bandwidth (Lo\+Ra only) FSK \+: 0 Lo\+Ra\+: \mbox{[}0\+: 125 k\+Hz, 1\+: 250 k\+Hz, 2\+: 500 k\+Hz, 3\+: Reserved\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & datarate Sets the Datarate FSK \+: 600..300000 bits/s Lo\+Ra\+: \mbox{[}6\+: 64, 7\+: 128, 8\+: 256, 9\+: 512, 10\+: 1024, 11\+: 2048, 12\+: 4096 chips\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & coderate Sets the coding rate (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}1\+: 4/5, 2\+: 4/6, 3\+: 4/7, 4\+: 4/8\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & preamble\+Len Sets the preamble length FSK \+: Number of bytes Lo\+Ra\+: Length in symbols (the hardware adds 4 more symbols) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fix\+Len Fixed length packets \mbox{[}0\+: variable, 1\+: fixed\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & crc\+On Enables disables the CRC \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & freq\+Hop\+On Enables disables the intra-\/packet frequency hopping FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & hop\+Period Number of symbols between each hop FSK \+: N/A ( set to 0 ) Lo\+Ra\+: Number of symbols \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & iq\+Inverted Inverts IQ signals (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: not inverted, 1\+: inverted\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & timeout Transmission timeout \mbox{[}ms\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 231 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a33dccb0bc830d9a68ec0c2e75b74e541}\label{struct_radio__s_a33dccb0bc830d9a68ec0c2e75b74e541}} 
+\index{Radio\_s@{Radio\_s}!SetTxContinuousWave@{SetTxContinuousWave}}
+\index{SetTxContinuousWave@{SetTxContinuousWave}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{SetTxContinuousWave}{SetTxContinuousWave}}
+{\footnotesize\ttfamily void( $\ast$ Set\+Tx\+Continuous\+Wave) (uint32\+\_\+t freq, int8\+\_\+t power, uint16\+\_\+t time)}
+
+
+
+Sets the radio in continuous wave transmission mode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & freq Channel RF frequency \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & power Sets the output power \mbox{[}d\+Bm\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & time Transmission mode timeout \mbox{[}s\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 311 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a5792613816e79c465be4169c0bc020cb}\label{struct_radio__s_a5792613816e79c465be4169c0bc020cb}} 
+\index{Radio\_s@{Radio\_s}!Sleep@{Sleep}}
+\index{Sleep@{Sleep}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Sleep}{Sleep}}
+{\footnotesize\ttfamily void( $\ast$ Sleep) (void)}
+
+
+
+Sets the radio in sleep mode. 
+
+
+
+Definition at line 289 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_ad1d3253de93d8fd1eee59da2a1c794ec}\label{struct_radio__s_ad1d3253de93d8fd1eee59da2a1c794ec}} 
+\index{Radio\_s@{Radio\_s}!Standby@{Standby}}
+\index{Standby@{Standby}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Standby}{Standby}}
+{\footnotesize\ttfamily void( $\ast$ Standby) (void)}
+
+
+
+Sets the radio in standby mode. 
+
+
+
+Definition at line 293 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a6896222d46a4b809dde1e916ee6d5d6b}\label{struct_radio__s_a6896222d46a4b809dde1e916ee6d5d6b}} 
+\index{Radio\_s@{Radio\_s}!StartCad@{StartCad}}
+\index{StartCad@{StartCad}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{StartCad}{StartCad}}
+{\footnotesize\ttfamily void( $\ast$ Start\+Cad) (void)}
+
+
+
+Start a Channel Activity Detection. 
+
+
+
+Definition at line 303 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_ae4b90e1d02022cfd16bc1e79c8c701a1}\label{struct_radio__s_ae4b90e1d02022cfd16bc1e79c8c701a1}} 
+\index{Radio\_s@{Radio\_s}!TimeOnAir@{TimeOnAir}}
+\index{TimeOnAir@{TimeOnAir}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{TimeOnAir}{TimeOnAir}}
+{\footnotesize\ttfamily uint32\+\_\+t($\ast$ Time\+On\+Air) (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint16\+\_\+t preamble\+Len, bool fix\+Len, uint8\+\_\+t payload\+Len, bool crc\+On)}
+
+
+
+Computes the packet time on air in ms for the given payload. 
+
+\textbackslash{}\+Remark Can only be called once Set\+Rx\+Config or Set\+Tx\+Config have been called
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Sets the bandwidth FSK \+: $>$= 2600 and $<$= 250000 Hz Lo\+Ra\+: \mbox{[}0\+: 125 k\+Hz, 1\+: 250 k\+Hz, 2\+: 500 k\+Hz, 3\+: Reserved\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & datarate Sets the Datarate FSK \+: 600..300000 bits/s Lo\+Ra\+: \mbox{[}6\+: 64, 7\+: 128, 8\+: 256, 9\+: 512, 10\+: 1024, 11\+: 2048, 12\+: 4096 chips\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & coderate Sets the coding rate (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}1\+: 4/5, 2\+: 4/6, 3\+: 4/7, 4\+: 4/8\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & preamble\+Len Sets the Preamble length FSK \+: Number of bytes Lo\+Ra\+: Length in symbols (the hardware adds 4 more symbols) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fix\+Len Fixed length packets \mbox{[}0\+: variable, 1\+: fixed\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & payload\+Len Sets payload length when fixed length is used \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & crc\+On Enables/\+Disables the CRC \mbox{[}0\+: OFF, 1\+: ON\mbox{]}\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em air\+Time} & Computed air\+Time (ms) for the given packet payload length \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 269 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_aa10c31bc66c525698fd57d5dea5a888a}\label{struct_radio__s_aa10c31bc66c525698fd57d5dea5a888a}} 
+\index{Radio\_s@{Radio\_s}!Write@{Write}}
+\index{Write@{Write}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{Write}{Write}}
+{\footnotesize\ttfamily void( $\ast$ Write) (uint16\+\_\+t addr, uint8\+\_\+t data)}
+
+
+
+Writes the radio register at the specified address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & addr Register address \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & data New register value \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 324 of file radio.\+h.
+
+\mbox{\Hypertarget{struct_radio__s_a781ffc8e38fd30e4148890c8062c70f5}\label{struct_radio__s_a781ffc8e38fd30e4148890c8062c70f5}} 
+\index{Radio\_s@{Radio\_s}!WriteBuffer@{WriteBuffer}}
+\index{WriteBuffer@{WriteBuffer}!Radio\_s@{Radio\_s}}
+\doxysubsubsection{\texorpdfstring{WriteBuffer}{WriteBuffer}}
+{\footnotesize\ttfamily void( $\ast$ Write\+Buffer) (uint16\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)}
+
+
+
+Writes multiple radio registers starting at address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & addr First Radio register address \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & buffer Buffer containing the new register\textquotesingle{}s values \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of registers to be written \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 339 of file radio.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/\mbox{\hyperlink{radio_8h}{radio.\+h}}\end{DoxyCompactItemize}

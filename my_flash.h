@@ -38,35 +38,35 @@ typedef struct {
 
 #define MemLength 766
 
-int flashWriteBuffer( );
-int flashWriteNodeID( );
-int flashReadNodeID( );
-int flashReadBuffer( );
-int flashEraseAll( );
-int flashInitBuffer( );
-int flashWriteNeighbours( );
-int flashReadNeighbours( );
+int flash_write_buffer( );
+int flash_write_node_id( );
+int flash_read_node_id( );
+int flash_read_buffer( );
+int flash_erase_all( );
+int flash_init_buffer( );
+int flash_write_neighbours( );
+int flash_read_neighbours( );
 
 //! Fills the structure with current values from RAM
 //! @return None
 
-int flashFillStructForWrite( );
+int flash_fill_struct_for_write( );
 
 /*!
  *  \brief fill the struct from flash memory
  * @return
  */
-int flashFillStructFromMem( );
+int flash_fill_struct_from_mem( );
 
 /*!
  *  \brief	writes the struct to the flash memory
  * @return
  */
-int flashWriteStructToFlash( );
+int flash_write_struct_to_flash( );
 
 //!	fills the data struct with data from flash
 //!
 //! @return None
-int flashReadFromFlash( void );
+int flash_read_from_flash( void );
 
 #endif /* MY_FLASH_H_ */

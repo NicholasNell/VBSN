@@ -22,7 +22,7 @@
 /*!
  * \brief	inititial the scheduler, set tx slot and data collection slot
  */
-void initScheduler( );
+void init_scheduler( );
 
 /*!
  *  \brief	decides what happes in this particular slot
@@ -34,17 +34,17 @@ int scheduler( );
  * \brief returns the current slot count
  * @return
  */
-uint16_t getSlotCount( );
+uint16_t get_slot_count( );
 
 /*!
  * \brief sets the slot counter to the given value
  * @param newSlotCount
  */
-void setSlotCount( uint16_t newSlotCount );
+void set_slot_count( uint16_t newSlotCount );
 
 /*!
  * \brief increments the slot counter by one
  */
-void incrementSlotCount( );
+void increment_slot_count( );
 
 #endif /* MY_SCHEDULER_H_ */

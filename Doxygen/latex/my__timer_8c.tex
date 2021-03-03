@@ -1,0 +1,827 @@
+\hypertarget{my__timer_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+timer.c File Reference}
+\label{my__timer_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_timer.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_timer.c}}
+{\ttfamily \#include $<$my\+\_\+timer.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/interrupt.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rom\+\_\+map.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/timer\+\_\+a.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/timer32.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/inc/msp432p401r.\+h$>$}\newline
+{\ttfamily \#include $<$timer.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a093fb58c584374660f2459896c024b91}{DELAY\+\_\+\+TIMER}}~TIMER\+\_\+\+A0\+\_\+\+BASE
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a47f28c3e6aaaa7b3c7301bfdfd08d033}{DELAY\+\_\+\+INT}}~INT\+\_\+\+TA0\+\_\+0
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a758105e3a6ef811c2fb0ae54adb47f91}{COUNTER\+\_\+\+TIMER}}~TIMER\+\_\+\+A1\+\_\+\+BASE
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a23d4b60421e9d40f1f8744ca4a323114}{COUNTER\+\_\+\+INT}}~INT\+\_\+\+TA1\+\_\+0
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_af34f0ad1de9002073ec8b1c190aefc66}{LORA\+\_\+\+TIMER}}~TIMER\+\_\+\+A2\+\_\+\+BASE
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a62c20708a5aba05d73da4f4e88ad254b}{LORA\+\_\+\+INT}}~INT\+\_\+\+TA2\+\_\+0
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_abae3e99578e3374af6a20546c6a8b32c}{DELAY\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}~0.\+5
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_add0fca0080aa844e01814a8e84b24a90}{DELAY\+\_\+\+MS\+\_\+\+TO\+\_\+\+TICK}}~1/\mbox{\hyperlink{my__timer_8c_abae3e99578e3374af6a20546c6a8b32c}{DELAY\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a9b1aef3b12c76b4d22fce10a5a45e973}{COUNTER\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}~0.\+5
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_aee167d7a31618e6bfb5be68d71a055a4}{COUNTER\+\_\+\+MS\+\_\+\+TO\+\_\+\+TICK}}~1/\mbox{\hyperlink{my__timer_8c_a9b1aef3b12c76b4d22fce10a5a45e973}{COUNTER\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_ab7340892e16cbd2cb62da0b75a453b6d}{LORA\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}~0.\+5
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a8edc4b91459d5d663f9dc2ca0b16c6d3}{LORA\+\_\+\+MS\+\_\+\+TO\+\_\+\+TICK}}~1/\mbox{\hyperlink{my__timer_8c_ab7340892e16cbd2cb62da0b75a453b6d}{LORA\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a21c73e7bc725cd3d50f08b02a550fd5d}{TIMER32\+\_\+\+TICK\+\_\+\+TO\+\_\+\+US}}~(1000000.\+0/1500000.\+00)
+\item 
+\#define \mbox{\hyperlink{my__timer_8c_a13ec6e5f64e548e4b2f2f2a8b0f58ffd}{TIMER32\+\_\+\+US\+\_\+\+TO\+\_\+\+TICK}}~1.\+0/\mbox{\hyperlink{my__timer_8c_a21c73e7bc725cd3d50f08b02a550fd5d}{TIMER32\+\_\+\+TICK\+\_\+\+TO\+\_\+\+US}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__timer_8c_a1ab0388836c442d3fb0c7e74cfbaf8f1}{Delayms}} (uint32\+\_\+t ms)
+\item 
+void \mbox{\hyperlink{my__timer_8c_a542166e79ad9c0f366f4b9fb11aad39d}{user\+\_\+delay\+\_\+ms}} (uint32\+\_\+t period, void $\ast$intf\+\_\+ptr)
+\item 
+void \mbox{\hyperlink{my__timer_8c_a7df41a93150f4b02bc55a64a44e0668f}{start\+Timer32\+Counter}} (uint32\+\_\+t period, bool $\ast$flag)
+\begin{DoxyCompactList}\small\item\em Timer with max value of approx. 47.\+5 minutes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_a0f2a479606e5101a7b8f66b946724e68}{T32\+\_\+\+INT1\+\_\+\+IRQHandler}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a13a3356b801c5588adea74ca44f51442}{timer32\+Get\+Ticks\+Remaining}} ()
+\item 
+void \mbox{\hyperlink{my__timer_8c_a8c93a71ef4218ccee7d7969bc973e25f}{Delay\+Timer\+Init}} (void)
+\item 
+void \mbox{\hyperlink{my__timer_8c_a5b70496e88ef76ae82b8a37059558b3b}{start\+Delay\+Timer}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a3e60760c7e9290074d490d0c2477c7b3}{stop\+Delay\+Timer}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a6df6bfe4f30b71ea0d12771ad9edb4fc}{get\+Delay\+Timer\+Value}} (void)
+\item 
+void \mbox{\hyperlink{my__timer_8c_abe8a5f50ac745b3b0df85ef3fd698518}{reset\+Delay\+Timer\+Value}} (void)
+\item 
+void \mbox{\hyperlink{my__timer_8c_a77f668acf02a5a302cfba8f2ac98b3da}{Timer\+ACounter\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Sets up timer for \mbox{\hyperlink{}{TICK\+\_\+\+TIME\+\_\+\+A3\+\_\+\+CONT}} us accuracy. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_a698c8af9aaf2830c0780c65b6b05d71f}{start\+Timer\+Acounter}} (uint32\+\_\+t period, bool $\ast$flag)
+\begin{DoxyCompactList}\small\item\em Starts Timing using Timer\+\_\+\+A0. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_af578bd8ec7e6f77fa61c5a158e597c9b}{stop\+Timer\+ACounter}} (void)
+\begin{DoxyCompactList}\small\item\em Stop the timer and returns time in us. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a64df0b59cac0aa20dcec47f6235e0685}{get\+Timer\+Acounter\+Value}} (void)
+\begin{DoxyCompactList}\small\item\em Gets the current elapsed time in us. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_a191bb7c594fd9808f900d8fb75092613}{reset\+Timer\+Acounter\+Value}} (void)
+\begin{DoxyCompactList}\small\item\em Sets the timer counter back to zero. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_ad6d7c59cb473fefa155fcff1c481c8c7}{start\+Lo\+Ra\+Timer}} (uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Start a timer which will interrupt after timeout ms. Used specifically for Lo\+Ra radio. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_ae065fe9643928b6e0efb4c92b3496184}{stop\+Lo\+Ra\+Timer}} ()
+\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a38af9793ed61d41956fa5566e26100b2}{Lo\+Ra\+Timer\+Ms2\+Tick}} (uint32\+\_\+t milliseconds)
+\begin{DoxyCompactList}\small\item\em converts time in ms to time in ticks \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a2ebd02138a032ad17281a190171430af}{Set\+Timer\+Context}} (void)
+\begin{DoxyCompactList}\small\item\em Sets the RTC timer reference, sets also the RTC\+\_\+\+Date\+Struct and RTC\+\_\+\+Time\+Struct. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a21b07f691ee35e1b388cf31b68a461c7}{Get\+Timer\+Elapsed\+Time}} (void)
+\begin{DoxyCompactList}\small\item\em Get the RTC timer elapsed time since the last Alarm was set. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a86f7b89d92fc3ae584dcbed8fa6cf371}{Get\+Timer\+Context}} (void)
+\begin{DoxyCompactList}\small\item\em Gets the RTC timer reference. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_ad1d89ce984c377803ab778620cef61da}{Stop\+Alarm}} (void)
+\begin{DoxyCompactList}\small\item\em Stops the Alarm. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_af12f8f69ad1190d1c5521d5c080ef5e5}{Get\+Timer\+Value}} (void)
+\begin{DoxyCompactList}\small\item\em Get the RTC timer value. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_aac2718f8aaee3850b7b2495d6ed01611}{Lo\+Ra\+Tick2\+Ms}} (uint32\+\_\+t tick)
+\begin{DoxyCompactList}\small\item\em converts time in ticks to time in ms \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__timer_8c_a3545bb3405c2a1d1bc94c122055b7623}{Get\+Minimum\+Timeout}} (void)
+\begin{DoxyCompactList}\small\item\em returns the wake up time in ticks \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_ad9d3c9bf76bce41744f45b33f610119a}{Set\+Alarm}} (uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the alarm. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_a220011af2783045ea4c23f8eda69b727}{Start\+Alarm}} (uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Starts wake up alarm. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__timer_8c_a67358ada1498a26b49ad4c0cbdfce21c}{TA0\+\_\+0\+\_\+\+IRQHandler}} (void)
+\item 
+void \mbox{\hyperlink{my__timer_8c_a8cd37e46ba2c06c5fdcb37362fb8e14a}{TA1\+\_\+0\+\_\+\+IRQHandler}} (void)
+\item 
+void \mbox{\hyperlink{my__timer_8c_a95e3293e6f4d2cc5a8dc1c986ddb389d}{TA2\+\_\+0\+\_\+\+IRQHandler}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{my__timer_8c_aa7de15d8ca7d0a6ac99e48dcf8a9db05}{timer\+Tick\+\_\+ms}} = false
+\item 
+bool \mbox{\hyperlink{my__timer_8c_aa11ce6f43b259c8d0666afaa5e623112}{is\+Delay\+Timer\+Running}} = false
+\item 
+bool \mbox{\hyperlink{my__timer_8c_aa4ec14d178b156636b449944d057a7d4}{Lo\+Ra\+Timer\+Running}} = false
+\item 
+bool \mbox{\hyperlink{my__timer_8c_a9ad9aa3998cae3413fd994c2d26d4e98}{send\+Flag}}
+\item 
+const Timer\+\_\+\+A\+\_\+\+Continuous\+Mode\+Config \mbox{\hyperlink{my__timer_8c_a624b62c07e3d15cb441cea15ad2bc574}{cont\+Config\+Delay}}
+\item 
+const Timer\+\_\+\+A\+\_\+\+Up\+Mode\+Config \mbox{\hyperlink{my__timer_8c_a214ce4b278ec9ea400e4e0ac9f2a07c9}{up\+Delay\+Config}}
+\item 
+Timer\+\_\+\+A\+\_\+\+Up\+Mode\+Config \mbox{\hyperlink{my__timer_8c_a76a0b711ee82c9af2865b760e9ec0054}{up\+Config\+Counter}}
+\item 
+bool \mbox{\hyperlink{my__timer_8c_acbe5280892c5a618bb187558b635f61d}{is\+Timer\+Acounter\+Running}} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my__timer_8c_a23d4b60421e9d40f1f8744ca4a323114}\label{my__timer_8c_a23d4b60421e9d40f1f8744ca4a323114}} 
+\index{my\_timer.c@{my\_timer.c}!COUNTER\_INT@{COUNTER\_INT}}
+\index{COUNTER\_INT@{COUNTER\_INT}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{COUNTER\_INT}{COUNTER\_INT}}
+{\footnotesize\ttfamily \#define COUNTER\+\_\+\+INT~INT\+\_\+\+TA1\+\_\+0}
+
+
+
+Definition at line 46 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_aee167d7a31618e6bfb5be68d71a055a4}\label{my__timer_8c_aee167d7a31618e6bfb5be68d71a055a4}} 
+\index{my\_timer.c@{my\_timer.c}!COUNTER\_MS\_TO\_TICK@{COUNTER\_MS\_TO\_TICK}}
+\index{COUNTER\_MS\_TO\_TICK@{COUNTER\_MS\_TO\_TICK}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{COUNTER\_MS\_TO\_TICK}{COUNTER\_MS\_TO\_TICK}}
+{\footnotesize\ttfamily \#define COUNTER\+\_\+\+MS\+\_\+\+TO\+\_\+\+TICK~1/\mbox{\hyperlink{my__timer_8c_a9b1aef3b12c76b4d22fce10a5a45e973}{COUNTER\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}}
+
+
+
+Definition at line 55 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a9b1aef3b12c76b4d22fce10a5a45e973}\label{my__timer_8c_a9b1aef3b12c76b4d22fce10a5a45e973}} 
+\index{my\_timer.c@{my\_timer.c}!COUNTER\_TICK\_TO\_MS@{COUNTER\_TICK\_TO\_MS}}
+\index{COUNTER\_TICK\_TO\_MS@{COUNTER\_TICK\_TO\_MS}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{COUNTER\_TICK\_TO\_MS}{COUNTER\_TICK\_TO\_MS}}
+{\footnotesize\ttfamily \#define COUNTER\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS~0.\+5}
+
+
+
+Definition at line 54 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a758105e3a6ef811c2fb0ae54adb47f91}\label{my__timer_8c_a758105e3a6ef811c2fb0ae54adb47f91}} 
+\index{my\_timer.c@{my\_timer.c}!COUNTER\_TIMER@{COUNTER\_TIMER}}
+\index{COUNTER\_TIMER@{COUNTER\_TIMER}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{COUNTER\_TIMER}{COUNTER\_TIMER}}
+{\footnotesize\ttfamily \#define COUNTER\+\_\+\+TIMER~TIMER\+\_\+\+A1\+\_\+\+BASE}
+
+
+
+Definition at line 45 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a47f28c3e6aaaa7b3c7301bfdfd08d033}\label{my__timer_8c_a47f28c3e6aaaa7b3c7301bfdfd08d033}} 
+\index{my\_timer.c@{my\_timer.c}!DELAY\_INT@{DELAY\_INT}}
+\index{DELAY\_INT@{DELAY\_INT}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{DELAY\_INT}{DELAY\_INT}}
+{\footnotesize\ttfamily \#define DELAY\+\_\+\+INT~INT\+\_\+\+TA0\+\_\+0}
+
+
+
+Definition at line 43 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_add0fca0080aa844e01814a8e84b24a90}\label{my__timer_8c_add0fca0080aa844e01814a8e84b24a90}} 
+\index{my\_timer.c@{my\_timer.c}!DELAY\_MS\_TO\_TICK@{DELAY\_MS\_TO\_TICK}}
+\index{DELAY\_MS\_TO\_TICK@{DELAY\_MS\_TO\_TICK}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{DELAY\_MS\_TO\_TICK}{DELAY\_MS\_TO\_TICK}}
+{\footnotesize\ttfamily \#define DELAY\+\_\+\+MS\+\_\+\+TO\+\_\+\+TICK~1/\mbox{\hyperlink{my__timer_8c_abae3e99578e3374af6a20546c6a8b32c}{DELAY\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}}
+
+
+
+Definition at line 52 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_abae3e99578e3374af6a20546c6a8b32c}\label{my__timer_8c_abae3e99578e3374af6a20546c6a8b32c}} 
+\index{my\_timer.c@{my\_timer.c}!DELAY\_TICK\_TO\_MS@{DELAY\_TICK\_TO\_MS}}
+\index{DELAY\_TICK\_TO\_MS@{DELAY\_TICK\_TO\_MS}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{DELAY\_TICK\_TO\_MS}{DELAY\_TICK\_TO\_MS}}
+{\footnotesize\ttfamily \#define DELAY\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS~0.\+5}
+
+
+
+Definition at line 51 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a093fb58c584374660f2459896c024b91}\label{my__timer_8c_a093fb58c584374660f2459896c024b91}} 
+\index{my\_timer.c@{my\_timer.c}!DELAY\_TIMER@{DELAY\_TIMER}}
+\index{DELAY\_TIMER@{DELAY\_TIMER}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{DELAY\_TIMER}{DELAY\_TIMER}}
+{\footnotesize\ttfamily \#define DELAY\+\_\+\+TIMER~TIMER\+\_\+\+A0\+\_\+\+BASE}
+
+
+
+Definition at line 42 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a62c20708a5aba05d73da4f4e88ad254b}\label{my__timer_8c_a62c20708a5aba05d73da4f4e88ad254b}} 
+\index{my\_timer.c@{my\_timer.c}!LORA\_INT@{LORA\_INT}}
+\index{LORA\_INT@{LORA\_INT}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LORA\_INT}{LORA\_INT}}
+{\footnotesize\ttfamily \#define LORA\+\_\+\+INT~INT\+\_\+\+TA2\+\_\+0}
+
+
+
+Definition at line 49 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a8edc4b91459d5d663f9dc2ca0b16c6d3}\label{my__timer_8c_a8edc4b91459d5d663f9dc2ca0b16c6d3}} 
+\index{my\_timer.c@{my\_timer.c}!LORA\_MS\_TO\_TICK@{LORA\_MS\_TO\_TICK}}
+\index{LORA\_MS\_TO\_TICK@{LORA\_MS\_TO\_TICK}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LORA\_MS\_TO\_TICK}{LORA\_MS\_TO\_TICK}}
+{\footnotesize\ttfamily \#define LORA\+\_\+\+MS\+\_\+\+TO\+\_\+\+TICK~1/\mbox{\hyperlink{my__timer_8c_ab7340892e16cbd2cb62da0b75a453b6d}{LORA\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS}}}
+
+
+
+Definition at line 58 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_ab7340892e16cbd2cb62da0b75a453b6d}\label{my__timer_8c_ab7340892e16cbd2cb62da0b75a453b6d}} 
+\index{my\_timer.c@{my\_timer.c}!LORA\_TICK\_TO\_MS@{LORA\_TICK\_TO\_MS}}
+\index{LORA\_TICK\_TO\_MS@{LORA\_TICK\_TO\_MS}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LORA\_TICK\_TO\_MS}{LORA\_TICK\_TO\_MS}}
+{\footnotesize\ttfamily \#define LORA\+\_\+\+TICK\+\_\+\+TO\+\_\+\+MS~0.\+5}
+
+
+
+Definition at line 57 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_af34f0ad1de9002073ec8b1c190aefc66}\label{my__timer_8c_af34f0ad1de9002073ec8b1c190aefc66}} 
+\index{my\_timer.c@{my\_timer.c}!LORA\_TIMER@{LORA\_TIMER}}
+\index{LORA\_TIMER@{LORA\_TIMER}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LORA\_TIMER}{LORA\_TIMER}}
+{\footnotesize\ttfamily \#define LORA\+\_\+\+TIMER~TIMER\+\_\+\+A2\+\_\+\+BASE}
+
+
+
+Definition at line 48 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a21c73e7bc725cd3d50f08b02a550fd5d}\label{my__timer_8c_a21c73e7bc725cd3d50f08b02a550fd5d}} 
+\index{my\_timer.c@{my\_timer.c}!TIMER32\_TICK\_TO\_US@{TIMER32\_TICK\_TO\_US}}
+\index{TIMER32\_TICK\_TO\_US@{TIMER32\_TICK\_TO\_US}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{TIMER32\_TICK\_TO\_US}{TIMER32\_TICK\_TO\_US}}
+{\footnotesize\ttfamily \#define TIMER32\+\_\+\+TICK\+\_\+\+TO\+\_\+\+US~(1000000.\+0/1500000.\+00)}
+
+
+
+Definition at line 60 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a13ec6e5f64e548e4b2f2f2a8b0f58ffd}\label{my__timer_8c_a13ec6e5f64e548e4b2f2f2a8b0f58ffd}} 
+\index{my\_timer.c@{my\_timer.c}!TIMER32\_US\_TO\_TICK@{TIMER32\_US\_TO\_TICK}}
+\index{TIMER32\_US\_TO\_TICK@{TIMER32\_US\_TO\_TICK}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{TIMER32\_US\_TO\_TICK}{TIMER32\_US\_TO\_TICK}}
+{\footnotesize\ttfamily \#define TIMER32\+\_\+\+US\+\_\+\+TO\+\_\+\+TICK~1.\+0/\mbox{\hyperlink{my__timer_8c_a21c73e7bc725cd3d50f08b02a550fd5d}{TIMER32\+\_\+\+TICK\+\_\+\+TO\+\_\+\+US}}}
+
+
+
+Definition at line 61 of file my\+\_\+timer.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__timer_8c_a1ab0388836c442d3fb0c7e74cfbaf8f1}\label{my__timer_8c_a1ab0388836c442d3fb0c7e74cfbaf8f1}} 
+\index{my\_timer.c@{my\_timer.c}!Delayms@{Delayms}}
+\index{Delayms@{Delayms}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{Delayms()}{Delayms()}}
+{\footnotesize\ttfamily void Delayms (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{ms }\end{DoxyParamCaption})}
+
+Delay function 1ms resolution 
+
+Definition at line 87 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a8c93a71ef4218ccee7d7969bc973e25f}\label{my__timer_8c_a8c93a71ef4218ccee7d7969bc973e25f}} 
+\index{my\_timer.c@{my\_timer.c}!DelayTimerInit@{DelayTimerInit}}
+\index{DelayTimerInit@{DelayTimerInit}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{DelayTimerInit()}{DelayTimerInit()}}
+{\footnotesize\ttfamily void Delay\+Timer\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 133 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a6df6bfe4f30b71ea0d12771ad9edb4fc}\label{my__timer_8c_a6df6bfe4f30b71ea0d12771ad9edb4fc}} 
+\index{my\_timer.c@{my\_timer.c}!getDelayTimerValue@{getDelayTimerValue}}
+\index{getDelayTimerValue@{getDelayTimerValue}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{getDelayTimerValue()}{getDelayTimerValue()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+Delay\+Timer\+Value (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 156 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a3545bb3405c2a1d1bc94c122055b7623}\label{my__timer_8c_a3545bb3405c2a1d1bc94c122055b7623}} 
+\index{my\_timer.c@{my\_timer.c}!GetMinimumTimeout@{GetMinimumTimeout}}
+\index{GetMinimumTimeout@{GetMinimumTimeout}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{GetMinimumTimeout()}{GetMinimumTimeout()}}
+{\footnotesize\ttfamily uint32\+\_\+t Get\+Minimum\+Timeout (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+returns the wake up time in ticks 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em wake} & up time in ticks \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 291 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a64df0b59cac0aa20dcec47f6235e0685}\label{my__timer_8c_a64df0b59cac0aa20dcec47f6235e0685}} 
+\index{my\_timer.c@{my\_timer.c}!getTimerAcounterValue@{getTimerAcounterValue}}
+\index{getTimerAcounterValue@{getTimerAcounterValue}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{getTimerAcounterValue()}{getTimerAcounterValue()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+Timer\+Acounter\+Value (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Gets the current elapsed time in us. 
+
+
+
+Definition at line 206 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a86f7b89d92fc3ae584dcbed8fa6cf371}\label{my__timer_8c_a86f7b89d92fc3ae584dcbed8fa6cf371}} 
+\index{my\_timer.c@{my\_timer.c}!GetTimerContext@{GetTimerContext}}
+\index{GetTimerContext@{GetTimerContext}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{GetTimerContext()}{GetTimerContext()}}
+{\footnotesize\ttfamily uint32\+\_\+t Get\+Timer\+Context (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Gets the RTC timer reference. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & Timer value in ticks \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 269 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a21b07f691ee35e1b388cf31b68a461c7}\label{my__timer_8c_a21b07f691ee35e1b388cf31b68a461c7}} 
+\index{my\_timer.c@{my\_timer.c}!GetTimerElapsedTime@{GetTimerElapsedTime}}
+\index{GetTimerElapsedTime@{GetTimerElapsedTime}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{GetTimerElapsedTime()}{GetTimerElapsedTime()}}
+{\footnotesize\ttfamily uint32\+\_\+t Get\+Timer\+Elapsed\+Time (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the RTC timer elapsed time since the last Alarm was set. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em RTC} & Elapsed time since the last alarm in ticks. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 262 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_af12f8f69ad1190d1c5521d5c080ef5e5}\label{my__timer_8c_af12f8f69ad1190d1c5521d5c080ef5e5}} 
+\index{my\_timer.c@{my\_timer.c}!GetTimerValue@{GetTimerValue}}
+\index{GetTimerValue@{GetTimerValue}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{GetTimerValue()}{GetTimerValue()}}
+{\footnotesize\ttfamily uint32\+\_\+t Get\+Timer\+Value (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the RTC timer value. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em RTC} & Timer value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 282 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_aac2718f8aaee3850b7b2495d6ed01611}\label{my__timer_8c_aac2718f8aaee3850b7b2495d6ed01611}} 
+\index{my\_timer.c@{my\_timer.c}!LoRaTick2Ms@{LoRaTick2Ms}}
+\index{LoRaTick2Ms@{LoRaTick2Ms}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LoRaTick2Ms()}{LoRaTick2Ms()}}
+{\footnotesize\ttfamily uint32\+\_\+t Lo\+Ra\+Tick2\+Ms (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{tick }\end{DoxyParamCaption})}
+
+
+
+converts time in ticks to time in ms 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & time in timer ticks \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em returns} & time in milliseconds \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 287 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a38af9793ed61d41956fa5566e26100b2}\label{my__timer_8c_a38af9793ed61d41956fa5566e26100b2}} 
+\index{my\_timer.c@{my\_timer.c}!LoRaTimerMs2Tick@{LoRaTimerMs2Tick}}
+\index{LoRaTimerMs2Tick@{LoRaTimerMs2Tick}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LoRaTimerMs2Tick()}{LoRaTimerMs2Tick()}}
+{\footnotesize\ttfamily uint32\+\_\+t Lo\+Ra\+Timer\+Ms2\+Tick (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{milliseconds }\end{DoxyParamCaption})}
+
+
+
+converts time in ms to time in ticks 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & milliseconds Time in milliseconds \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em returns} & time in timer ticks \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 253 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_abe8a5f50ac745b3b0df85ef3fd698518}\label{my__timer_8c_abe8a5f50ac745b3b0df85ef3fd698518}} 
+\index{my\_timer.c@{my\_timer.c}!resetDelayTimerValue@{resetDelayTimerValue}}
+\index{resetDelayTimerValue@{resetDelayTimerValue}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{resetDelayTimerValue()}{resetDelayTimerValue()}}
+{\footnotesize\ttfamily void reset\+Delay\+Timer\+Value (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 162 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a191bb7c594fd9808f900d8fb75092613}\label{my__timer_8c_a191bb7c594fd9808f900d8fb75092613}} 
+\index{my\_timer.c@{my\_timer.c}!resetTimerAcounterValue@{resetTimerAcounterValue}}
+\index{resetTimerAcounterValue@{resetTimerAcounterValue}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{resetTimerAcounterValue()}{resetTimerAcounterValue()}}
+{\footnotesize\ttfamily void reset\+Timer\+Acounter\+Value (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Sets the timer counter back to zero. 
+
+
+
+Definition at line 214 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_ad9d3c9bf76bce41744f45b33f610119a}\label{my__timer_8c_ad9d3c9bf76bce41744f45b33f610119a}} 
+\index{my\_timer.c@{my\_timer.c}!SetAlarm@{SetAlarm}}
+\index{SetAlarm@{SetAlarm}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{SetAlarm()}{SetAlarm()}}
+{\footnotesize\ttfamily void Set\+Alarm (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Sets the alarm. 
+
+\begin{DoxyNote}{Note}
+The alarm is set at now (read in this function) + timeout
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em timeout} & Duration of the Timer ticks \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 304 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a2ebd02138a032ad17281a190171430af}\label{my__timer_8c_a2ebd02138a032ad17281a190171430af}} 
+\index{my\_timer.c@{my\_timer.c}!SetTimerContext@{SetTimerContext}}
+\index{SetTimerContext@{SetTimerContext}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{SetTimerContext()}{SetTimerContext()}}
+{\footnotesize\ttfamily uint32\+\_\+t Set\+Timer\+Context (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Sets the RTC timer reference, sets also the RTC\+\_\+\+Date\+Struct and RTC\+\_\+\+Time\+Struct. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em timer\+Value} & In ticks \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 257 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a220011af2783045ea4c23f8eda69b727}\label{my__timer_8c_a220011af2783045ea4c23f8eda69b727}} 
+\index{my\_timer.c@{my\_timer.c}!StartAlarm@{StartAlarm}}
+\index{StartAlarm@{StartAlarm}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{StartAlarm()}{StartAlarm()}}
+{\footnotesize\ttfamily void Start\+Alarm (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Starts wake up alarm. 
+
+\begin{DoxyNote}{Note}
+Alarm in Rtc\+Timer\+Context.\+Time + timeout
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & timeout Timeout value in ticks \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & flag to be set when alarm expires \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 318 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a5b70496e88ef76ae82b8a37059558b3b}\label{my__timer_8c_a5b70496e88ef76ae82b8a37059558b3b}} 
+\index{my\_timer.c@{my\_timer.c}!startDelayTimer@{startDelayTimer}}
+\index{startDelayTimer@{startDelayTimer}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{startDelayTimer()}{startDelayTimer()}}
+{\footnotesize\ttfamily void start\+Delay\+Timer (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 140 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_ad6d7c59cb473fefa155fcff1c481c8c7}\label{my__timer_8c_ad6d7c59cb473fefa155fcff1c481c8c7}} 
+\index{my\_timer.c@{my\_timer.c}!startLoRaTimer@{startLoRaTimer}}
+\index{startLoRaTimer@{startLoRaTimer}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{startLoRaTimer()}{startLoRaTimer()}}
+{\footnotesize\ttfamily void start\+Lo\+Ra\+Timer (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Start a timer which will interrupt after timeout ms. Used specifically for Lo\+Ra radio. 
+
+Start a timer which will interupt after timeout ms.
+
+
+\begin{DoxyParams}{Parameters}
+{\em timeout,value} & in ms \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 227 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a7df41a93150f4b02bc55a64a44e0668f}\label{my__timer_8c_a7df41a93150f4b02bc55a64a44e0668f}} 
+\index{my\_timer.c@{my\_timer.c}!startTimer32Counter@{startTimer32Counter}}
+\index{startTimer32Counter@{startTimer32Counter}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{startTimer32Counter()}{startTimer32Counter()}}
+{\footnotesize\ttfamily void start\+Timer32\+Counter (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period,  }\item[{bool $\ast$}]{flag }\end{DoxyParamCaption})}
+
+
+
+Timer with max value of approx. 47.\+5 minutes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em period} & timer count in ms \\
+\hline
+{\em flag} & flag to be set true \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 112 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a698c8af9aaf2830c0780c65b6b05d71f}\label{my__timer_8c_a698c8af9aaf2830c0780c65b6b05d71f}} 
+\index{my\_timer.c@{my\_timer.c}!startTimerAcounter@{startTimerAcounter}}
+\index{startTimerAcounter@{startTimerAcounter}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{startTimerAcounter()}{startTimerAcounter()}}
+{\footnotesize\ttfamily void start\+Timer\+Acounter (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period,  }\item[{bool $\ast$}]{flag }\end{DoxyParamCaption})}
+
+
+
+Starts Timing using Timer\+\_\+\+A0. 
+
+
+
+Definition at line 180 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_ad1d89ce984c377803ab778620cef61da}\label{my__timer_8c_ad1d89ce984c377803ab778620cef61da}} 
+\index{my\_timer.c@{my\_timer.c}!StopAlarm@{StopAlarm}}
+\index{StopAlarm@{StopAlarm}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{StopAlarm()}{StopAlarm()}}
+{\footnotesize\ttfamily void Stop\+Alarm (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Stops the Alarm. 
+
+
+
+Definition at line 273 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a3e60760c7e9290074d490d0c2477c7b3}\label{my__timer_8c_a3e60760c7e9290074d490d0c2477c7b3}} 
+\index{my\_timer.c@{my\_timer.c}!stopDelayTimer@{stopDelayTimer}}
+\index{stopDelayTimer@{stopDelayTimer}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{stopDelayTimer()}{stopDelayTimer()}}
+{\footnotesize\ttfamily uint32\+\_\+t stop\+Delay\+Timer (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 148 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_ae065fe9643928b6e0efb4c92b3496184}\label{my__timer_8c_ae065fe9643928b6e0efb4c92b3496184}} 
+\index{my\_timer.c@{my\_timer.c}!stopLoRaTimer@{stopLoRaTimer}}
+\index{stopLoRaTimer@{stopLoRaTimer}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{stopLoRaTimer()}{stopLoRaTimer()}}
+{\footnotesize\ttfamily void stop\+Lo\+Ra\+Timer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Stopsthe Lo\+Ra module timer 
+
+Definition at line 245 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_af578bd8ec7e6f77fa61c5a158e597c9b}\label{my__timer_8c_af578bd8ec7e6f77fa61c5a158e597c9b}} 
+\index{my\_timer.c@{my\_timer.c}!stopTimerACounter@{stopTimerACounter}}
+\index{stopTimerACounter@{stopTimerACounter}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{stopTimerACounter()}{stopTimerACounter()}}
+{\footnotesize\ttfamily uint32\+\_\+t stop\+Timer\+ACounter (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Stop the timer and returns time in us. 
+
+
+
+Definition at line 193 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a0f2a479606e5101a7b8f66b946724e68}\label{my__timer_8c_a0f2a479606e5101a7b8f66b946724e68}} 
+\index{my\_timer.c@{my\_timer.c}!T32\_INT1\_IRQHandler@{T32\_INT1\_IRQHandler}}
+\index{T32\_INT1\_IRQHandler@{T32\_INT1\_IRQHandler}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{T32\_INT1\_IRQHandler()}{T32\_INT1\_IRQHandler()}}
+{\footnotesize\ttfamily void T32\+\_\+\+INT1\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 123 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a67358ada1498a26b49ad4c0cbdfce21c}\label{my__timer_8c_a67358ada1498a26b49ad4c0cbdfce21c}} 
+\index{my\_timer.c@{my\_timer.c}!TA0\_0\_IRQHandler@{TA0\_0\_IRQHandler}}
+\index{TA0\_0\_IRQHandler@{TA0\_0\_IRQHandler}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{TA0\_0\_IRQHandler()}{TA0\_0\_IRQHandler()}}
+{\footnotesize\ttfamily void TA0\+\_\+0\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 334 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a8cd37e46ba2c06c5fdcb37362fb8e14a}\label{my__timer_8c_a8cd37e46ba2c06c5fdcb37362fb8e14a}} 
+\index{my\_timer.c@{my\_timer.c}!TA1\_0\_IRQHandler@{TA1\_0\_IRQHandler}}
+\index{TA1\_0\_IRQHandler@{TA1\_0\_IRQHandler}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{TA1\_0\_IRQHandler()}{TA1\_0\_IRQHandler()}}
+{\footnotesize\ttfamily void TA1\+\_\+0\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Timer A ISR Handler 
+
+Definition at line 343 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a95e3293e6f4d2cc5a8dc1c986ddb389d}\label{my__timer_8c_a95e3293e6f4d2cc5a8dc1c986ddb389d}} 
+\index{my\_timer.c@{my\_timer.c}!TA2\_0\_IRQHandler@{TA2\_0\_IRQHandler}}
+\index{TA2\_0\_IRQHandler@{TA2\_0\_IRQHandler}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{TA2\_0\_IRQHandler()}{TA2\_0\_IRQHandler()}}
+{\footnotesize\ttfamily void TA2\+\_\+0\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 353 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a13a3356b801c5588adea74ca44f51442}\label{my__timer_8c_a13a3356b801c5588adea74ca44f51442}} 
+\index{my\_timer.c@{my\_timer.c}!timer32GetTicksRemaining@{timer32GetTicksRemaining}}
+\index{timer32GetTicksRemaining@{timer32GetTicksRemaining}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{timer32GetTicksRemaining()}{timer32GetTicksRemaining()}}
+{\footnotesize\ttfamily uint32\+\_\+t timer32\+Get\+Ticks\+Remaining (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 129 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a77f668acf02a5a302cfba8f2ac98b3da}\label{my__timer_8c_a77f668acf02a5a302cfba8f2ac98b3da}} 
+\index{my\_timer.c@{my\_timer.c}!TimerACounterInit@{TimerACounterInit}}
+\index{TimerACounterInit@{TimerACounterInit}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{TimerACounterInit()}{TimerACounterInit()}}
+{\footnotesize\ttfamily void Timer\+ACounter\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Sets up timer for \mbox{\hyperlink{}{TICK\+\_\+\+TIME\+\_\+\+A3\+\_\+\+CONT}} us accuracy. 
+
+Sets up timer for 10 us accuracy. 
+
+Definition at line 174 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a542166e79ad9c0f366f4b9fb11aad39d}\label{my__timer_8c_a542166e79ad9c0f366f4b9fb11aad39d}} 
+\index{my\_timer.c@{my\_timer.c}!user\_delay\_ms@{user\_delay\_ms}}
+\index{user\_delay\_ms@{user\_delay\_ms}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{user\_delay\_ms()}{user\_delay\_ms()}}
+{\footnotesize\ttfamily void user\+\_\+delay\+\_\+ms (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period,  }\item[{void $\ast$}]{intf\+\_\+ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 99 of file my\+\_\+timer.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my__timer_8c_a624b62c07e3d15cb441cea15ad2bc574}\label{my__timer_8c_a624b62c07e3d15cb441cea15ad2bc574}} 
+\index{my\_timer.c@{my\_timer.c}!contConfigDelay@{contConfigDelay}}
+\index{contConfigDelay@{contConfigDelay}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{contConfigDelay}{contConfigDelay}}
+{\footnotesize\ttfamily const Timer\+\_\+\+A\+\_\+\+Continuous\+Mode\+Config cont\+Config\+Delay}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        TIMER\_A\_CLOCKSOURCE\_ACLK,}
+\DoxyCodeLine{        TIMER\_A\_CLOCKSOURCE\_DIVIDER\_64,}
+\DoxyCodeLine{        TIMER\_A\_TAIE\_INTERRUPT\_DISABLE,}
+\DoxyCodeLine{        TIMER\_A\_SKIP\_CLEAR \}}
+
+\end{DoxyCode}
+
+
+Definition at line 64 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_aa11ce6f43b259c8d0666afaa5e623112}\label{my__timer_8c_aa11ce6f43b259c8d0666afaa5e623112}} 
+\index{my\_timer.c@{my\_timer.c}!isDelayTimerRunning@{isDelayTimerRunning}}
+\index{isDelayTimerRunning@{isDelayTimerRunning}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{isDelayTimerRunning}{isDelayTimerRunning}}
+{\footnotesize\ttfamily bool is\+Delay\+Timer\+Running = false}
+
+
+
+Definition at line 36 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_acbe5280892c5a618bb187558b635f61d}\label{my__timer_8c_acbe5280892c5a618bb187558b635f61d}} 
+\index{my\_timer.c@{my\_timer.c}!isTimerAcounterRunning@{isTimerAcounterRunning}}
+\index{isTimerAcounterRunning@{isTimerAcounterRunning}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{isTimerAcounterRunning}{isTimerAcounterRunning}}
+{\footnotesize\ttfamily bool is\+Timer\+Acounter\+Running = false}
+
+
+
+Definition at line 85 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_aa4ec14d178b156636b449944d057a7d4}\label{my__timer_8c_aa4ec14d178b156636b449944d057a7d4}} 
+\index{my\_timer.c@{my\_timer.c}!LoRaTimerRunning@{LoRaTimerRunning}}
+\index{LoRaTimerRunning@{LoRaTimerRunning}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{LoRaTimerRunning}{LoRaTimerRunning}}
+{\footnotesize\ttfamily bool Lo\+Ra\+Timer\+Running = false}
+
+
+
+Definition at line 37 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a9ad9aa3998cae3413fd994c2d26d4e98}\label{my__timer_8c_a9ad9aa3998cae3413fd994c2d26d4e98}} 
+\index{my\_timer.c@{my\_timer.c}!sendFlag@{sendFlag}}
+\index{sendFlag@{sendFlag}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{sendFlag}{sendFlag}}
+{\footnotesize\ttfamily bool send\+Flag\hspace{0.3cm}{\ttfamily [extern]}}
+
+\mbox{\Hypertarget{my__timer_8c_aa7de15d8ca7d0a6ac99e48dcf8a9db05}\label{my__timer_8c_aa7de15d8ca7d0a6ac99e48dcf8a9db05}} 
+\index{my\_timer.c@{my\_timer.c}!timerTick\_ms@{timerTick\_ms}}
+\index{timerTick\_ms@{timerTick\_ms}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{timerTick\_ms}{timerTick\_ms}}
+{\footnotesize\ttfamily bool timer\+Tick\+\_\+ms = false}
+
+
+
+Definition at line 35 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a76a0b711ee82c9af2865b760e9ec0054}\label{my__timer_8c_a76a0b711ee82c9af2865b760e9ec0054}} 
+\index{my\_timer.c@{my\_timer.c}!upConfigCounter@{upConfigCounter}}
+\index{upConfigCounter@{upConfigCounter}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{upConfigCounter}{upConfigCounter}}
+{\footnotesize\ttfamily Timer\+\_\+\+A\+\_\+\+Up\+Mode\+Config up\+Config\+Counter}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{TIMER\_A\_CLOCKSOURCE\_ACLK,}
+\DoxyCodeLine{                                            TIMER\_A\_CLOCKSOURCE\_DIVIDER\_64, 1,}
+\DoxyCodeLine{                                            TIMER\_A\_TAIE\_INTERRUPT\_DISABLE,}
+\DoxyCodeLine{                                            TIMER\_A\_CCIE\_CCR0\_INTERRUPT\_ENABLE,}
+\DoxyCodeLine{                                            TIMER\_A\_DO\_CLEAR \}}
+
+\end{DoxyCode}
+
+
+Definition at line 78 of file my\+\_\+timer.\+c.
+
+\mbox{\Hypertarget{my__timer_8c_a214ce4b278ec9ea400e4e0ac9f2a07c9}\label{my__timer_8c_a214ce4b278ec9ea400e4e0ac9f2a07c9}} 
+\index{my\_timer.c@{my\_timer.c}!upDelayConfig@{upDelayConfig}}
+\index{upDelayConfig@{upDelayConfig}!my\_timer.c@{my\_timer.c}}
+\doxysubsubsection{\texorpdfstring{upDelayConfig}{upDelayConfig}}
+{\footnotesize\ttfamily const Timer\+\_\+\+A\+\_\+\+Up\+Mode\+Config up\+Delay\+Config}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        TIMER\_A\_CLOCKSOURCE\_ACLK,}
+\DoxyCodeLine{        TIMER\_A\_CLOCKSOURCE\_DIVIDER\_64,}
+\DoxyCodeLine{        65535,}
+\DoxyCodeLine{        TIMER\_A\_TAIE\_INTERRUPT\_DISABLE,}
+\DoxyCodeLine{        TIMER\_A\_CCIE\_CCR0\_INTERRUPT\_ENABLE,}
+\DoxyCodeLine{        TIMER\_A\_DO\_CLEAR \}}
+
+\end{DoxyCode}
+
+
+Definition at line 70 of file my\+\_\+timer.\+c.
+

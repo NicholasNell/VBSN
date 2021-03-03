@@ -1,0 +1,500 @@
+\hypertarget{my__gps_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+gps.h File Reference}
+\label{my__gps_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_gps.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_gps.h}}
+
+
+Created on\+: 15 Sep 2020 Author\+: njnel.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_location_data}{Location\+Data}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a9f9517bab81c20d1cd8a4d1513add56c}{GPS\+\_\+\+PPS\+\_\+\+PORT}}~GPIO\+\_\+\+PORT\+\_\+\+P3
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a0ce809cb17fb06c7373abc0ae56eb911}{GPS\+\_\+\+PPS\+\_\+\+PIN}}~GPIO\+\_\+\+PIN0
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a37cf09e3054b9adea045f8dadee84806}{UART\+\_\+\+GPS\+\_\+\+PORT}}~GPIO\+\_\+\+PORT\+\_\+\+P9
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_af4962ff8e87b5e79712f9e34269f8119}{UART\+\_\+\+GPS\+\_\+\+PINS}}~GPIO\+\_\+\+PIN6 $\vert$ GPIO\+\_\+\+PIN7
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a817966e57027147c8991515f5ba46582}{UART\+\_\+\+GPS\+\_\+\+MODULE}}~EUSCI\+\_\+\+A3\+\_\+\+BASE
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a8216060abef88bcec2d40c6ec348d617}{UART\+\_\+\+GPS\+\_\+\+INT}}~INT\+\_\+\+EUSCIA3
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_ad3ef467bb9e1b74df1b5e704864a5286}{GPS\+\_\+\+PPS\+\_\+\+INT\+\_\+\+PORT}}~INT\+\_\+\+PORT3
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a5b7205e1bfd890305c8977d700882b03}{PMTK\+\_\+\+FULL\+\_\+\+POWER\+\_\+\+MODE}}~\char`\"{}\$PMTK225,0$\ast$2B\textbackslash{}r\textbackslash{}n\char`\"{}
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a4a35e4375d294b6da6cb943633e33109}{PMTK\+\_\+\+BACKUP\+\_\+\+MODE}}~\char`\"{}\$PMTK225,4$\ast$2F\textbackslash{}r\textbackslash{}n\char`\"{}
+\item 
+\#define \mbox{\hyperlink{my__gps_8h_a9772abe32307f50632edef118f08454a}{PMTK\+\_\+\+STANDBY}}~\char`\"{}\$PMTK161,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em standby command \& boot successful message \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a8b3fa1db8c1110419f51c72c2b017009}{PMTK\+\_\+\+AWAKE}}~\char`\"{}\$PMTK010,002$\ast$2D\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Wake up. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a1a7102e1c13603381ba56656ae10d68c}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+UPDATE\+\_\+1\+HZ}}~\char`\"{}\$PMTK220,1000$\ast$1F\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em 1 Hz \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_aa6ac1789ed1c9e0abb27499867dbf1d3}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+UPDATE\+\_\+200\+\_\+\+MILLIHERTZ}}~\char`\"{}\$PMTK220,5000$\ast$1B\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Once every 5 seconds, 200 millihertz. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a2e204a667cc4757479fb23a1df5764af}{PMTK\+\_\+\+API\+\_\+\+SET\+\_\+\+FIX\+\_\+\+CTL\+\_\+1\+HZ}}~\char`\"{}\$PMTK300,1000,0,0,0,0$\ast$1C\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em 1 Hz \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a8354e3e8bdca1ad8dd4b4e356e79a822}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GLLONLY}}~\char`\"{}\$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on only the GPGLL sentence \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a4c352344763c1ae0f1293dc15c51a824}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+RMCONLY}}~\char`\"{}\$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on only the GPRMC sentence \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a211f1db5c03fa0a0e7d307920e04b335}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+VTGONLY}}~\char`\"{}\$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on only the GPVTG \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a7bbd33aebbc2c55557ea9c1f1c8ef2f4}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GGAONLY}}~\char`\"{}\$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on just the GPGGA \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a299d233ba1cfee1693132a63c1bc0d6c}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GSAONLY}}~\char`\"{}\$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on just the GPGSA \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_ab1ccddfffabbb66cf69872b728e1f69e}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GSVONLY}}~\char`\"{}\$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on just the GPGSV \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_af29abbfb3588c15b2b6cd6c8e96a34e9}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+RMCGGA}}~\char`\"{}\$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on GPRMC and GPGGA \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a95ee80f53d11d05c6a593330679c89b2}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+RMCGGAGSA}}~\char`\"{}\$PMTK314,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on GPRMC, GPGGA and GPGSA \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_ac31cfcc416ba69780e3894a559404914}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+ALLDATA}}~\char`\"{}\$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn on ALL THE DATA \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_aef371298391fd30cc08c4980f8502ce9}{PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+OFF}}~\char`\"{}\$PMTK314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em turn off output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_af4786d88703fbfe424a3f19491d1c1a3}{PMTK\+\_\+\+SET\+\_\+\+BAUD\+\_\+115200}}~\char`\"{}\$PMTK251,115200$\ast$1F\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em 115200 bps \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a549460207c65eb13674930fdf6fc2bac}{PMTK\+\_\+\+SET\+\_\+\+BAUD\+\_\+57600}}~\char`\"{}\$PMTK251,57600$\ast$2C\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em 57600 bps \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a139bab811447a6f82469032f71343717}{PMTK\+\_\+\+SET\+\_\+\+BAUD\+\_\+9600}}~\char`\"{}\$PMTK251,9600$\ast$17\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em 9600 bps \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a9d5efe2fb6c9312003116f35fff29dc9}{PMTK\+\_\+\+LOCUS\+\_\+\+STARTLOG}}~\char`\"{}\$PMTK185,0$\ast$22\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Start logging data. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a4c44c7abcfe149f1d72bdbb207c86eeb}{PMTK\+\_\+\+LOCUS\+\_\+\+STOPLOG}}~\char`\"{}\$PMTK185,1$\ast$23\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Stop logging data. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a5fa8379e8ed611060b16d5f02b1c1dd8}{PMTK\+\_\+\+LOCUS\+\_\+\+STARTSTOPACK}}~\char`\"{}\$PMTK001,185,3$\ast$3C\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Acknowledge the start or stop command. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a905517539269b7556f0b2f6277c646d6}{PMTK\+\_\+\+LOCUS\+\_\+\+QUERY\+\_\+\+STATUS}}~\char`\"{}\$PMTK183$\ast$38\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Query the logging status. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{my__gps_8h_a025d0ccfe506309e4dda8240bbd67ff6}{PMTK\+\_\+\+LOCUS\+\_\+\+ERASE\+\_\+\+FLASH}}~\char`\"{}\$PMTK184,1$\ast$22\textbackslash{}r\textbackslash{}n\char`\"{}
+\begin{DoxyCompactList}\small\item\em Erase the log flash data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 15 Sep 2020 Author\+: njnel. 
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my__gps_8h_ad3ef467bb9e1b74df1b5e704864a5286}\label{my__gps_8h_ad3ef467bb9e1b74df1b5e704864a5286}} 
+\index{my\_gps.h@{my\_gps.h}!GPS\_PPS\_INT\_PORT@{GPS\_PPS\_INT\_PORT}}
+\index{GPS\_PPS\_INT\_PORT@{GPS\_PPS\_INT\_PORT}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{GPS\_PPS\_INT\_PORT}{GPS\_PPS\_INT\_PORT}}
+{\footnotesize\ttfamily \#define GPS\+\_\+\+PPS\+\_\+\+INT\+\_\+\+PORT~INT\+\_\+\+PORT3}
+
+
+
+Definition at line 18 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a0ce809cb17fb06c7373abc0ae56eb911}\label{my__gps_8h_a0ce809cb17fb06c7373abc0ae56eb911}} 
+\index{my\_gps.h@{my\_gps.h}!GPS\_PPS\_PIN@{GPS\_PPS\_PIN}}
+\index{GPS\_PPS\_PIN@{GPS\_PPS\_PIN}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{GPS\_PPS\_PIN}{GPS\_PPS\_PIN}}
+{\footnotesize\ttfamily \#define GPS\+\_\+\+PPS\+\_\+\+PIN~GPIO\+\_\+\+PIN0}
+
+
+
+Definition at line 13 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a9f9517bab81c20d1cd8a4d1513add56c}\label{my__gps_8h_a9f9517bab81c20d1cd8a4d1513add56c}} 
+\index{my\_gps.h@{my\_gps.h}!GPS\_PPS\_PORT@{GPS\_PPS\_PORT}}
+\index{GPS\_PPS\_PORT@{GPS\_PPS\_PORT}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{GPS\_PPS\_PORT}{GPS\_PPS\_PORT}}
+{\footnotesize\ttfamily \#define GPS\+\_\+\+PPS\+\_\+\+PORT~GPIO\+\_\+\+PORT\+\_\+\+P3}
+
+
+
+Definition at line 12 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a2e204a667cc4757479fb23a1df5764af}\label{my__gps_8h_a2e204a667cc4757479fb23a1df5764af}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_API\_SET\_FIX\_CTL\_1HZ@{PMTK\_API\_SET\_FIX\_CTL\_1HZ}}
+\index{PMTK\_API\_SET\_FIX\_CTL\_1HZ@{PMTK\_API\_SET\_FIX\_CTL\_1HZ}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_API\_SET\_FIX\_CTL\_1HZ}{PMTK\_API\_SET\_FIX\_CTL\_1HZ}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+API\+\_\+\+SET\+\_\+\+FIX\+\_\+\+CTL\+\_\+1\+HZ~\char`\"{}\$PMTK300,1000,0,0,0,0$\ast$1C\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+1 Hz 
+
+
+
+Definition at line 29 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a8b3fa1db8c1110419f51c72c2b017009}\label{my__gps_8h_a8b3fa1db8c1110419f51c72c2b017009}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_AWAKE@{PMTK\_AWAKE}}
+\index{PMTK\_AWAKE@{PMTK\_AWAKE}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_AWAKE}{PMTK\_AWAKE}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+AWAKE~\char`\"{}\$PMTK010,002$\ast$2D\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Wake up. 
+
+
+
+Definition at line 24 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a4a35e4375d294b6da6cb943633e33109}\label{my__gps_8h_a4a35e4375d294b6da6cb943633e33109}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_BACKUP\_MODE@{PMTK\_BACKUP\_MODE}}
+\index{PMTK\_BACKUP\_MODE@{PMTK\_BACKUP\_MODE}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_BACKUP\_MODE}{PMTK\_BACKUP\_MODE}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+BACKUP\+\_\+\+MODE~\char`\"{}\$PMTK225,4$\ast$2F\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Definition at line 22 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a5b7205e1bfd890305c8977d700882b03}\label{my__gps_8h_a5b7205e1bfd890305c8977d700882b03}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_FULL\_POWER\_MODE@{PMTK\_FULL\_POWER\_MODE}}
+\index{PMTK\_FULL\_POWER\_MODE@{PMTK\_FULL\_POWER\_MODE}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_FULL\_POWER\_MODE}{PMTK\_FULL\_POWER\_MODE}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+FULL\+\_\+\+POWER\+\_\+\+MODE~\char`\"{}\$PMTK225,0$\ast$2B\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Definition at line 21 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a025d0ccfe506309e4dda8240bbd67ff6}\label{my__gps_8h_a025d0ccfe506309e4dda8240bbd67ff6}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_LOCUS\_ERASE\_FLASH@{PMTK\_LOCUS\_ERASE\_FLASH}}
+\index{PMTK\_LOCUS\_ERASE\_FLASH@{PMTK\_LOCUS\_ERASE\_FLASH}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_LOCUS\_ERASE\_FLASH}{PMTK\_LOCUS\_ERASE\_FLASH}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+LOCUS\+\_\+\+ERASE\+\_\+\+FLASH~\char`\"{}\$PMTK184,1$\ast$22\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Erase the log flash data. 
+
+
+
+Definition at line 50 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a905517539269b7556f0b2f6277c646d6}\label{my__gps_8h_a905517539269b7556f0b2f6277c646d6}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_LOCUS\_QUERY\_STATUS@{PMTK\_LOCUS\_QUERY\_STATUS}}
+\index{PMTK\_LOCUS\_QUERY\_STATUS@{PMTK\_LOCUS\_QUERY\_STATUS}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_LOCUS\_QUERY\_STATUS}{PMTK\_LOCUS\_QUERY\_STATUS}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+LOCUS\+\_\+\+QUERY\+\_\+\+STATUS~\char`\"{}\$PMTK183$\ast$38\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Query the logging status. 
+
+
+
+Definition at line 49 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a9d5efe2fb6c9312003116f35fff29dc9}\label{my__gps_8h_a9d5efe2fb6c9312003116f35fff29dc9}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_LOCUS\_STARTLOG@{PMTK\_LOCUS\_STARTLOG}}
+\index{PMTK\_LOCUS\_STARTLOG@{PMTK\_LOCUS\_STARTLOG}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_LOCUS\_STARTLOG}{PMTK\_LOCUS\_STARTLOG}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+LOCUS\+\_\+\+STARTLOG~\char`\"{}\$PMTK185,0$\ast$22\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Start logging data. 
+
+
+
+Definition at line 46 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a5fa8379e8ed611060b16d5f02b1c1dd8}\label{my__gps_8h_a5fa8379e8ed611060b16d5f02b1c1dd8}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_LOCUS\_STARTSTOPACK@{PMTK\_LOCUS\_STARTSTOPACK}}
+\index{PMTK\_LOCUS\_STARTSTOPACK@{PMTK\_LOCUS\_STARTSTOPACK}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_LOCUS\_STARTSTOPACK}{PMTK\_LOCUS\_STARTSTOPACK}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+LOCUS\+\_\+\+STARTSTOPACK~\char`\"{}\$PMTK001,185,3$\ast$3C\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Acknowledge the start or stop command. 
+
+
+
+Definition at line 48 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a4c44c7abcfe149f1d72bdbb207c86eeb}\label{my__gps_8h_a4c44c7abcfe149f1d72bdbb207c86eeb}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_LOCUS\_STOPLOG@{PMTK\_LOCUS\_STOPLOG}}
+\index{PMTK\_LOCUS\_STOPLOG@{PMTK\_LOCUS\_STOPLOG}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_LOCUS\_STOPLOG}{PMTK\_LOCUS\_STOPLOG}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+LOCUS\+\_\+\+STOPLOG~\char`\"{}\$PMTK185,1$\ast$23\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Stop logging data. 
+
+
+
+Definition at line 47 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_af4786d88703fbfe424a3f19491d1c1a3}\label{my__gps_8h_af4786d88703fbfe424a3f19491d1c1a3}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_BAUD\_115200@{PMTK\_SET\_BAUD\_115200}}
+\index{PMTK\_SET\_BAUD\_115200@{PMTK\_SET\_BAUD\_115200}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_BAUD\_115200}{PMTK\_SET\_BAUD\_115200}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+BAUD\+\_\+115200~\char`\"{}\$PMTK251,115200$\ast$1F\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+115200 bps 
+
+
+
+Definition at line 42 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a549460207c65eb13674930fdf6fc2bac}\label{my__gps_8h_a549460207c65eb13674930fdf6fc2bac}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_BAUD\_57600@{PMTK\_SET\_BAUD\_57600}}
+\index{PMTK\_SET\_BAUD\_57600@{PMTK\_SET\_BAUD\_57600}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_BAUD\_57600}{PMTK\_SET\_BAUD\_57600}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+BAUD\+\_\+57600~\char`\"{}\$PMTK251,57600$\ast$2C\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+57600 bps 
+
+
+
+Definition at line 43 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a139bab811447a6f82469032f71343717}\label{my__gps_8h_a139bab811447a6f82469032f71343717}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_BAUD\_9600@{PMTK\_SET\_BAUD\_9600}}
+\index{PMTK\_SET\_BAUD\_9600@{PMTK\_SET\_BAUD\_9600}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_BAUD\_9600}{PMTK\_SET\_BAUD\_9600}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+BAUD\+\_\+9600~\char`\"{}\$PMTK251,9600$\ast$17\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+9600 bps 
+
+
+
+Definition at line 44 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_ac31cfcc416ba69780e3894a559404914}\label{my__gps_8h_ac31cfcc416ba69780e3894a559404914}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_ALLDATA@{PMTK\_SET\_NMEA\_OUTPUT\_ALLDATA}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_ALLDATA@{PMTK\_SET\_NMEA\_OUTPUT\_ALLDATA}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_ALLDATA}{PMTK\_SET\_NMEA\_OUTPUT\_ALLDATA}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+ALLDATA~\char`\"{}\$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on ALL THE DATA 
+
+
+
+Definition at line 39 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a7bbd33aebbc2c55557ea9c1f1c8ef2f4}\label{my__gps_8h_a7bbd33aebbc2c55557ea9c1f1c8ef2f4}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_GGAONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GGAONLY}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_GGAONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GGAONLY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_GGAONLY}{PMTK\_SET\_NMEA\_OUTPUT\_GGAONLY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GGAONLY~\char`\"{}\$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on just the GPGGA 
+
+
+
+Definition at line 34 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a8354e3e8bdca1ad8dd4b4e356e79a822}\label{my__gps_8h_a8354e3e8bdca1ad8dd4b4e356e79a822}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_GLLONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GLLONLY}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_GLLONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GLLONLY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_GLLONLY}{PMTK\_SET\_NMEA\_OUTPUT\_GLLONLY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GLLONLY~\char`\"{}\$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on only the GPGLL sentence 
+
+
+
+Definition at line 31 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a299d233ba1cfee1693132a63c1bc0d6c}\label{my__gps_8h_a299d233ba1cfee1693132a63c1bc0d6c}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_GSAONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GSAONLY}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_GSAONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GSAONLY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_GSAONLY}{PMTK\_SET\_NMEA\_OUTPUT\_GSAONLY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GSAONLY~\char`\"{}\$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on just the GPGSA 
+
+
+
+Definition at line 35 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_ab1ccddfffabbb66cf69872b728e1f69e}\label{my__gps_8h_ab1ccddfffabbb66cf69872b728e1f69e}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_GSVONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GSVONLY}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_GSVONLY@{PMTK\_SET\_NMEA\_OUTPUT\_GSVONLY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_GSVONLY}{PMTK\_SET\_NMEA\_OUTPUT\_GSVONLY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+GSVONLY~\char`\"{}\$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on just the GPGSV 
+
+
+
+Definition at line 36 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_aef371298391fd30cc08c4980f8502ce9}\label{my__gps_8h_aef371298391fd30cc08c4980f8502ce9}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_OFF@{PMTK\_SET\_NMEA\_OUTPUT\_OFF}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_OFF@{PMTK\_SET\_NMEA\_OUTPUT\_OFF}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_OFF}{PMTK\_SET\_NMEA\_OUTPUT\_OFF}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+OFF~\char`\"{}\$PMTK314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn off output 
+
+
+
+Definition at line 40 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_af29abbfb3588c15b2b6cd6c8e96a34e9}\label{my__gps_8h_af29abbfb3588c15b2b6cd6c8e96a34e9}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_RMCGGA@{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGA}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGA@{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGA}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGA}{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGA}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+RMCGGA~\char`\"{}\$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on GPRMC and GPGGA 
+
+
+
+Definition at line 37 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a95ee80f53d11d05c6a593330679c89b2}\label{my__gps_8h_a95ee80f53d11d05c6a593330679c89b2}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_RMCGGAGSA@{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGAGSA}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGAGSA@{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGAGSA}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGAGSA}{PMTK\_SET\_NMEA\_OUTPUT\_RMCGGAGSA}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+RMCGGAGSA~\char`\"{}\$PMTK314,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on GPRMC, GPGGA and GPGSA 
+
+
+
+Definition at line 38 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a4c352344763c1ae0f1293dc15c51a824}\label{my__gps_8h_a4c352344763c1ae0f1293dc15c51a824}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_RMCONLY@{PMTK\_SET\_NMEA\_OUTPUT\_RMCONLY}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_RMCONLY@{PMTK\_SET\_NMEA\_OUTPUT\_RMCONLY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_RMCONLY}{PMTK\_SET\_NMEA\_OUTPUT\_RMCONLY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+RMCONLY~\char`\"{}\$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on only the GPRMC sentence 
+
+
+
+Definition at line 32 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a211f1db5c03fa0a0e7d307920e04b335}\label{my__gps_8h_a211f1db5c03fa0a0e7d307920e04b335}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_OUTPUT\_VTGONLY@{PMTK\_SET\_NMEA\_OUTPUT\_VTGONLY}}
+\index{PMTK\_SET\_NMEA\_OUTPUT\_VTGONLY@{PMTK\_SET\_NMEA\_OUTPUT\_VTGONLY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_OUTPUT\_VTGONLY}{PMTK\_SET\_NMEA\_OUTPUT\_VTGONLY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+OUTPUT\+\_\+\+VTGONLY~\char`\"{}\$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0$\ast$29\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+turn on only the GPVTG 
+
+
+
+Definition at line 33 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a1a7102e1c13603381ba56656ae10d68c}\label{my__gps_8h_a1a7102e1c13603381ba56656ae10d68c}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_UPDATE\_1HZ@{PMTK\_SET\_NMEA\_UPDATE\_1HZ}}
+\index{PMTK\_SET\_NMEA\_UPDATE\_1HZ@{PMTK\_SET\_NMEA\_UPDATE\_1HZ}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_UPDATE\_1HZ}{PMTK\_SET\_NMEA\_UPDATE\_1HZ}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+UPDATE\+\_\+1\+HZ~\char`\"{}\$PMTK220,1000$\ast$1F\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+1 Hz 
+
+
+
+Definition at line 26 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_aa6ac1789ed1c9e0abb27499867dbf1d3}\label{my__gps_8h_aa6ac1789ed1c9e0abb27499867dbf1d3}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_SET\_NMEA\_UPDATE\_200\_MILLIHERTZ@{PMTK\_SET\_NMEA\_UPDATE\_200\_MILLIHERTZ}}
+\index{PMTK\_SET\_NMEA\_UPDATE\_200\_MILLIHERTZ@{PMTK\_SET\_NMEA\_UPDATE\_200\_MILLIHERTZ}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_SET\_NMEA\_UPDATE\_200\_MILLIHERTZ}{PMTK\_SET\_NMEA\_UPDATE\_200\_MILLIHERTZ}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+SET\+\_\+\+NMEA\+\_\+\+UPDATE\+\_\+200\+\_\+\+MILLIHERTZ~\char`\"{}\$PMTK220,5000$\ast$1B\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Once every 5 seconds, 200 millihertz. 
+
+
+
+Definition at line 27 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a9772abe32307f50632edef118f08454a}\label{my__gps_8h_a9772abe32307f50632edef118f08454a}} 
+\index{my\_gps.h@{my\_gps.h}!PMTK\_STANDBY@{PMTK\_STANDBY}}
+\index{PMTK\_STANDBY@{PMTK\_STANDBY}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{PMTK\_STANDBY}{PMTK\_STANDBY}}
+{\footnotesize\ttfamily \#define PMTK\+\_\+\+STANDBY~\char`\"{}\$PMTK161,0$\ast$28\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+standby command \& boot successful message 
+
+
+
+Definition at line 23 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a8216060abef88bcec2d40c6ec348d617}\label{my__gps_8h_a8216060abef88bcec2d40c6ec348d617}} 
+\index{my\_gps.h@{my\_gps.h}!UART\_GPS\_INT@{UART\_GPS\_INT}}
+\index{UART\_GPS\_INT@{UART\_GPS\_INT}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{UART\_GPS\_INT}{UART\_GPS\_INT}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+GPS\+\_\+\+INT~INT\+\_\+\+EUSCIA3}
+
+
+
+Definition at line 17 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a817966e57027147c8991515f5ba46582}\label{my__gps_8h_a817966e57027147c8991515f5ba46582}} 
+\index{my\_gps.h@{my\_gps.h}!UART\_GPS\_MODULE@{UART\_GPS\_MODULE}}
+\index{UART\_GPS\_MODULE@{UART\_GPS\_MODULE}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{UART\_GPS\_MODULE}{UART\_GPS\_MODULE}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+GPS\+\_\+\+MODULE~EUSCI\+\_\+\+A3\+\_\+\+BASE}
+
+
+
+Definition at line 16 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_af4962ff8e87b5e79712f9e34269f8119}\label{my__gps_8h_af4962ff8e87b5e79712f9e34269f8119}} 
+\index{my\_gps.h@{my\_gps.h}!UART\_GPS\_PINS@{UART\_GPS\_PINS}}
+\index{UART\_GPS\_PINS@{UART\_GPS\_PINS}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{UART\_GPS\_PINS}{UART\_GPS\_PINS}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+GPS\+\_\+\+PINS~GPIO\+\_\+\+PIN6 $\vert$ GPIO\+\_\+\+PIN7}
+
+
+
+Definition at line 15 of file my\+\_\+gps.\+h.
+
+\mbox{\Hypertarget{my__gps_8h_a37cf09e3054b9adea045f8dadee84806}\label{my__gps_8h_a37cf09e3054b9adea045f8dadee84806}} 
+\index{my\_gps.h@{my\_gps.h}!UART\_GPS\_PORT@{UART\_GPS\_PORT}}
+\index{UART\_GPS\_PORT@{UART\_GPS\_PORT}!my\_gps.h@{my\_gps.h}}
+\doxysubsubsection{\texorpdfstring{UART\_GPS\_PORT}{UART\_GPS\_PORT}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+GPS\+\_\+\+PORT~GPIO\+\_\+\+PORT\+\_\+\+P9}
+
+
+
+Definition at line 14 of file my\+\_\+gps.\+h.
+

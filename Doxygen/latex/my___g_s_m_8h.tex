@@ -1,0 +1,410 @@
+\hypertarget{my___g_s_m_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+\+GSM.h File Reference}
+\label{my___g_s_m_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_GSM.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_GSM.h}}
+
+
+Created on\+: 30 Nov 2020 Author\+: njnel.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_a4dea39042071768c1e115b0ebbfc52f2}{SIZE\+\_\+\+BUFFER}}~80
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}{SIZE\+\_\+\+COMMAND}}~10
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_abd257b9627f734b30501c000125000fd}{TOTAL\+\_\+\+STRINGS}}~7
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_aba51915c87d64af47fb1cc59348961c9}{OK}}~0
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_a78d05100a105cf6352fa112ba110bf77}{CMTI}}~1
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_a8fe83ac76edc595f6b98cd4a4127aed5}{ERROR}}~2
+\item 
+\#define \mbox{\hyperlink{my___g_s_m_8h_afb1b75f51dc5e2c70ac6797383499d5a}{TEST\+\_\+\+API\+\_\+\+KEY}}~\char`\"{}8DXP0\+M9\+I0\+CD8\+Y8\+PK\char`\"{}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{my___g_s_m_8h_af6efe73c7887b94ec8144ce2d6804c13}{init\+GSM}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a9315a69c01ad2cbac6582f5a35a96140}{GSM\+\_\+startup}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a9c3db792ffad0a2e554302e70569b6d3}{send\+\_\+gsm\+UART}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_aeadc86bd00fdcdb107dfbe6fd01e312b}{EUSCIA0\+\_\+\+IRQHandler}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_aaa26fcaa58d0e9fbebb461908cd02917}{EUSCIA2\+\_\+\+IRQHandler}} (void)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8h_a93b830f44043998f9b3256e4255c151f}{delay\+\_\+gsm\+\_\+respond}} (int Delay\+\_\+ctr)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_aeed65a50ab48ac560fcba61aa6e74b25}{gsm\+Power\+Save\+OFF}} ()
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a4df98db140a21784646a776324157a91}{gsm\+Power\+Save\+ON}} ()
+\item 
+int \mbox{\hyperlink{my___g_s_m_8h_a530903357ef031d1047f434e1adf9a1b}{CHECK\+\_\+\+COM}} ()
+\item 
+int \mbox{\hyperlink{my___g_s_m_8h_a05b4c7b60dfa9d495245ef95ff775108}{modem\+\_\+start}} (void)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8h_a5fe66f2d5269a63b311e870e6e4a046a}{STRING\+\_\+\+SEARCH}} (int index)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_aabaa9703904011becd441b4d4682f8fa}{CMD\+\_\+\+LOAD}} (int index)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_aca22b05750026887b9bdad9329db9190}{sendmsg}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_af0fc4f0b49c484b050a4505f2e6b21c4}{gsm\+\_\+setup\+Modem\+Ping}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_af2f7006384ce651257d6189e661a7ae3}{gsm\+\_\+ping\+\_\+google}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a815842ff4da0c1d6e567bf6fff7333c6}{check\+Registration}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_aa331f3bae3b862285754d5a6f784a61e}{check\+GPRSattached}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a0e825524f7717cf0b6f41d5a75b4ab78}{setup\+\_\+\+GPRSSettings}} (void)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8h_a87c806b969ff8076986aa9ea9922556b}{check\+For\+Stringposition}} (char $\ast$check\+For)
+\item 
+bool \mbox{\hyperlink{my___g_s_m_8h_a6e60c4d1745e9cb4c422efb2e9ff2d02}{wait\+\_\+\+Check\+\_\+\+For\+Reply}} (char $\ast$reply, uint8\+\_\+t delay\+\_\+s)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a977fba31c29f9467d31b3efb9e0f8706}{check\+Signal}} ()
+\item 
+int \mbox{\hyperlink{my___g_s_m_8h_a19af7101234306f2f445cc662cfdbe74}{get\+Signal\+Strength}} (int index)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_a81682fd1025ffe5f3201f726195e37b3}{HTTP\+\_\+connect}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_ad20979127a7a0dc1adfffea2df734663}{HTTP\+\_\+send\+Data}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8h_afd62e0d46bd3c12306fac14f731f38bd}{disablecommand\+Echo}} (void)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 30 Nov 2020 Author\+: njnel. 
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my___g_s_m_8h_a78d05100a105cf6352fa112ba110bf77}\label{my___g_s_m_8h_a78d05100a105cf6352fa112ba110bf77}} 
+\index{my\_GSM.h@{my\_GSM.h}!CMTI@{CMTI}}
+\index{CMTI@{CMTI}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{CMTI}{CMTI}}
+{\footnotesize\ttfamily \#define CMTI~1}
+
+
+
+Definition at line 20 of file my\+\_\+\+GSM.\+h.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a8fe83ac76edc595f6b98cd4a4127aed5}\label{my___g_s_m_8h_a8fe83ac76edc595f6b98cd4a4127aed5}} 
+\index{my\_GSM.h@{my\_GSM.h}!ERROR@{ERROR}}
+\index{ERROR@{ERROR}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{ERROR}{ERROR}}
+{\footnotesize\ttfamily \#define ERROR~2}
+
+
+
+Definition at line 21 of file my\+\_\+\+GSM.\+h.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aba51915c87d64af47fb1cc59348961c9}\label{my___g_s_m_8h_aba51915c87d64af47fb1cc59348961c9}} 
+\index{my\_GSM.h@{my\_GSM.h}!OK@{OK}}
+\index{OK@{OK}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{OK}{OK}}
+{\footnotesize\ttfamily \#define OK~0}
+
+
+
+Definition at line 19 of file my\+\_\+\+GSM.\+h.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a4dea39042071768c1e115b0ebbfc52f2}\label{my___g_s_m_8h_a4dea39042071768c1e115b0ebbfc52f2}} 
+\index{my\_GSM.h@{my\_GSM.h}!SIZE\_BUFFER@{SIZE\_BUFFER}}
+\index{SIZE\_BUFFER@{SIZE\_BUFFER}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{SIZE\_BUFFER}{SIZE\_BUFFER}}
+{\footnotesize\ttfamily \#define SIZE\+\_\+\+BUFFER~80}
+
+
+
+Definition at line 16 of file my\+\_\+\+GSM.\+h.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}\label{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}} 
+\index{my\_GSM.h@{my\_GSM.h}!SIZE\_COMMAND@{SIZE\_COMMAND}}
+\index{SIZE\_COMMAND@{SIZE\_COMMAND}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{SIZE\_COMMAND}{SIZE\_COMMAND}}
+{\footnotesize\ttfamily \#define SIZE\+\_\+\+COMMAND~10}
+
+
+
+Definition at line 17 of file my\+\_\+\+GSM.\+h.
+
+\mbox{\Hypertarget{my___g_s_m_8h_afb1b75f51dc5e2c70ac6797383499d5a}\label{my___g_s_m_8h_afb1b75f51dc5e2c70ac6797383499d5a}} 
+\index{my\_GSM.h@{my\_GSM.h}!TEST\_API\_KEY@{TEST\_API\_KEY}}
+\index{TEST\_API\_KEY@{TEST\_API\_KEY}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{TEST\_API\_KEY}{TEST\_API\_KEY}}
+{\footnotesize\ttfamily \#define TEST\+\_\+\+API\+\_\+\+KEY~\char`\"{}8DXP0\+M9\+I0\+CD8\+Y8\+PK\char`\"{}}
+
+
+
+Definition at line 23 of file my\+\_\+\+GSM.\+h.
+
+\mbox{\Hypertarget{my___g_s_m_8h_abd257b9627f734b30501c000125000fd}\label{my___g_s_m_8h_abd257b9627f734b30501c000125000fd}} 
+\index{my\_GSM.h@{my\_GSM.h}!TOTAL\_STRINGS@{TOTAL\_STRINGS}}
+\index{TOTAL\_STRINGS@{TOTAL\_STRINGS}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{TOTAL\_STRINGS}{TOTAL\_STRINGS}}
+{\footnotesize\ttfamily \#define TOTAL\+\_\+\+STRINGS~7}
+
+
+
+Definition at line 18 of file my\+\_\+\+GSM.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my___g_s_m_8h_a530903357ef031d1047f434e1adf9a1b}\label{my___g_s_m_8h_a530903357ef031d1047f434e1adf9a1b}} 
+\index{my\_GSM.h@{my\_GSM.h}!CHECK\_COM@{CHECK\_COM}}
+\index{CHECK\_COM@{CHECK\_COM}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{CHECK\_COM()}{CHECK\_COM()}}
+{\footnotesize\ttfamily int CHECK\+\_\+\+COM (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 142 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a87c806b969ff8076986aa9ea9922556b}\label{my___g_s_m_8h_a87c806b969ff8076986aa9ea9922556b}} 
+\index{my\_GSM.h@{my\_GSM.h}!checkForStringposition@{checkForStringposition}}
+\index{checkForStringposition@{checkForStringposition}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{checkForStringposition()}{checkForStringposition()}}
+{\footnotesize\ttfamily int check\+For\+Stringposition (\begin{DoxyParamCaption}\item[{char $\ast$}]{check\+For }\end{DoxyParamCaption})}
+
+
+
+Definition at line 169 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aa331f3bae3b862285754d5a6f784a61e}\label{my___g_s_m_8h_aa331f3bae3b862285754d5a6f784a61e}} 
+\index{my\_GSM.h@{my\_GSM.h}!checkGPRSattached@{checkGPRSattached}}
+\index{checkGPRSattached@{checkGPRSattached}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{checkGPRSattached()}{checkGPRSattached()}}
+{\footnotesize\ttfamily void check\+GPRSattached (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 296 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a815842ff4da0c1d6e567bf6fff7333c6}\label{my___g_s_m_8h_a815842ff4da0c1d6e567bf6fff7333c6}} 
+\index{my\_GSM.h@{my\_GSM.h}!checkRegistration@{checkRegistration}}
+\index{checkRegistration@{checkRegistration}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{checkRegistration()}{checkRegistration()}}
+{\footnotesize\ttfamily void check\+Registration (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 287 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a977fba31c29f9467d31b3efb9e0f8706}\label{my___g_s_m_8h_a977fba31c29f9467d31b3efb9e0f8706}} 
+\index{my\_GSM.h@{my\_GSM.h}!checkSignal@{checkSignal}}
+\index{checkSignal@{checkSignal}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{checkSignal()}{checkSignal()}}
+{\footnotesize\ttfamily void check\+Signal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 161 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aabaa9703904011becd441b4d4682f8fa}\label{my___g_s_m_8h_aabaa9703904011becd441b4d4682f8fa}} 
+\index{my\_GSM.h@{my\_GSM.h}!CMD\_LOAD@{CMD\_LOAD}}
+\index{CMD\_LOAD@{CMD\_LOAD}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{CMD\_LOAD()}{CMD\_LOAD()}}
+{\footnotesize\ttfamily void CMD\+\_\+\+LOAD (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 379 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a93b830f44043998f9b3256e4255c151f}\label{my___g_s_m_8h_a93b830f44043998f9b3256e4255c151f}} 
+\index{my\_GSM.h@{my\_GSM.h}!delay\_gsm\_respond@{delay\_gsm\_respond}}
+\index{delay\_gsm\_respond@{delay\_gsm\_respond}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{delay\_gsm\_respond()}{delay\_gsm\_respond()}}
+{\footnotesize\ttfamily int delay\+\_\+gsm\+\_\+respond (\begin{DoxyParamCaption}\item[{int}]{Delay\+\_\+ctr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 245 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_afd62e0d46bd3c12306fac14f731f38bd}\label{my___g_s_m_8h_afd62e0d46bd3c12306fac14f731f38bd}} 
+\index{my\_GSM.h@{my\_GSM.h}!disablecommandEcho@{disablecommandEcho}}
+\index{disablecommandEcho@{disablecommandEcho}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{disablecommandEcho()}{disablecommandEcho()}}
+{\footnotesize\ttfamily void disablecommand\+Echo (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 240 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aeadc86bd00fdcdb107dfbe6fd01e312b}\label{my___g_s_m_8h_aeadc86bd00fdcdb107dfbe6fd01e312b}} 
+\index{my\_GSM.h@{my\_GSM.h}!EUSCIA0\_IRQHandler@{EUSCIA0\_IRQHandler}}
+\index{EUSCIA0\_IRQHandler@{EUSCIA0\_IRQHandler}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{EUSCIA0\_IRQHandler()}{EUSCIA0\_IRQHandler()}}
+{\footnotesize\ttfamily void EUSCIA0\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 447 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aaa26fcaa58d0e9fbebb461908cd02917}\label{my___g_s_m_8h_aaa26fcaa58d0e9fbebb461908cd02917}} 
+\index{my\_GSM.h@{my\_GSM.h}!EUSCIA2\_IRQHandler@{EUSCIA2\_IRQHandler}}
+\index{EUSCIA2\_IRQHandler@{EUSCIA2\_IRQHandler}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{EUSCIA2\_IRQHandler()}{EUSCIA2\_IRQHandler()}}
+{\footnotesize\ttfamily void EUSCIA2\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 123 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a19af7101234306f2f445cc662cfdbe74}\label{my___g_s_m_8h_a19af7101234306f2f445cc662cfdbe74}} 
+\index{my\_GSM.h@{my\_GSM.h}!getSignalStrength@{getSignalStrength}}
+\index{getSignalStrength@{getSignalStrength}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{getSignalStrength()}{getSignalStrength()}}
+{\footnotesize\ttfamily int get\+Signal\+Strength (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 181 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_af2f7006384ce651257d6189e661a7ae3}\label{my___g_s_m_8h_af2f7006384ce651257d6189e661a7ae3}} 
+\index{my\_GSM.h@{my\_GSM.h}!gsm\_ping\_google@{gsm\_ping\_google}}
+\index{gsm\_ping\_google@{gsm\_ping\_google}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{gsm\_ping\_google()}{gsm\_ping\_google()}}
+{\footnotesize\ttfamily void gsm\+\_\+ping\+\_\+google (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 279 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_af0fc4f0b49c484b050a4505f2e6b21c4}\label{my___g_s_m_8h_af0fc4f0b49c484b050a4505f2e6b21c4}} 
+\index{my\_GSM.h@{my\_GSM.h}!gsm\_setupModemPing@{gsm\_setupModemPing}}
+\index{gsm\_setupModemPing@{gsm\_setupModemPing}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{gsm\_setupModemPing()}{gsm\_setupModemPing()}}
+{\footnotesize\ttfamily void gsm\+\_\+setup\+Modem\+Ping (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 274 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a9315a69c01ad2cbac6582f5a35a96140}\label{my___g_s_m_8h_a9315a69c01ad2cbac6582f5a35a96140}} 
+\index{my\_GSM.h@{my\_GSM.h}!GSM\_startup@{GSM\_startup}}
+\index{GSM\_startup@{GSM\_startup}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{GSM\_startup()}{GSM\_startup()}}
+{\footnotesize\ttfamily void GSM\+\_\+startup (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 69 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aeed65a50ab48ac560fcba61aa6e74b25}\label{my___g_s_m_8h_aeed65a50ab48ac560fcba61aa6e74b25}} 
+\index{my\_GSM.h@{my\_GSM.h}!gsmPowerSaveOFF@{gsmPowerSaveOFF}}
+\index{gsmPowerSaveOFF@{gsmPowerSaveOFF}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{gsmPowerSaveOFF()}{gsmPowerSaveOFF()}}
+{\footnotesize\ttfamily void gsm\+Power\+Save\+OFF (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 232 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a4df98db140a21784646a776324157a91}\label{my___g_s_m_8h_a4df98db140a21784646a776324157a91}} 
+\index{my\_GSM.h@{my\_GSM.h}!gsmPowerSaveON@{gsmPowerSaveON}}
+\index{gsmPowerSaveON@{gsmPowerSaveON}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{gsmPowerSaveON()}{gsmPowerSaveON()}}
+{\footnotesize\ttfamily void gsm\+Power\+Save\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 224 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a81682fd1025ffe5f3201f726195e37b3}\label{my___g_s_m_8h_a81682fd1025ffe5f3201f726195e37b3}} 
+\index{my\_GSM.h@{my\_GSM.h}!HTTP\_connect@{HTTP\_connect}}
+\index{HTTP\_connect@{HTTP\_connect}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{HTTP\_connect()}{HTTP\_connect()}}
+{\footnotesize\ttfamily void HTTP\+\_\+connect (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 340 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_ad20979127a7a0dc1adfffea2df734663}\label{my___g_s_m_8h_ad20979127a7a0dc1adfffea2df734663}} 
+\index{my\_GSM.h@{my\_GSM.h}!HTTP\_sendData@{HTTP\_sendData}}
+\index{HTTP\_sendData@{HTTP\_sendData}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{HTTP\_sendData()}{HTTP\_sendData()}}
+{\footnotesize\ttfamily void HTTP\+\_\+send\+Data (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 454 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_af6efe73c7887b94ec8144ce2d6804c13}\label{my___g_s_m_8h_af6efe73c7887b94ec8144ce2d6804c13}} 
+\index{my\_GSM.h@{my\_GSM.h}!initGSM@{initGSM}}
+\index{initGSM@{initGSM}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{initGSM()}{initGSM()}}
+{\footnotesize\ttfamily bool init\+GSM (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 87 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a05b4c7b60dfa9d495245ef95ff775108}\label{my___g_s_m_8h_a05b4c7b60dfa9d495245ef95ff775108}} 
+\index{my\_GSM.h@{my\_GSM.h}!modem\_start@{modem\_start}}
+\index{modem\_start@{modem\_start}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{modem\_start()}{modem\_start()}}
+{\footnotesize\ttfamily int modem\+\_\+start (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 193 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a9c3db792ffad0a2e554302e70569b6d3}\label{my___g_s_m_8h_a9c3db792ffad0a2e554302e70569b6d3}} 
+\index{my\_GSM.h@{my\_GSM.h}!send\_gsmUART@{send\_gsmUART}}
+\index{send\_gsmUART@{send\_gsmUART}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{send\_gsmUART()}{send\_gsmUART()}}
+{\footnotesize\ttfamily void send\+\_\+gsm\+UART (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 113 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_aca22b05750026887b9bdad9329db9190}\label{my___g_s_m_8h_aca22b05750026887b9bdad9329db9190}} 
+\index{my\_GSM.h@{my\_GSM.h}!sendmsg@{sendmsg}}
+\index{sendmsg@{sendmsg}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{sendmsg()}{sendmsg()}}
+{\footnotesize\ttfamily void sendmsg (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 153 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a0e825524f7717cf0b6f41d5a75b4ab78}\label{my___g_s_m_8h_a0e825524f7717cf0b6f41d5a75b4ab78}} 
+\index{my\_GSM.h@{my\_GSM.h}!setup\_GPRSSettings@{setup\_GPRSSettings}}
+\index{setup\_GPRSSettings@{setup\_GPRSSettings}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{setup\_GPRSSettings()}{setup\_GPRSSettings()}}
+{\footnotesize\ttfamily void setup\+\_\+\+GPRSSettings (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 334 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a5fe66f2d5269a63b311e870e6e4a046a}\label{my___g_s_m_8h_a5fe66f2d5269a63b311e870e6e4a046a}} 
+\index{my\_GSM.h@{my\_GSM.h}!STRING\_SEARCH@{STRING\_SEARCH}}
+\index{STRING\_SEARCH@{STRING\_SEARCH}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{STRING\_SEARCH()}{STRING\_SEARCH()}}
+{\footnotesize\ttfamily int STRING\+\_\+\+SEARCH (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 388 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8h_a6e60c4d1745e9cb4c422efb2e9ff2d02}\label{my___g_s_m_8h_a6e60c4d1745e9cb4c422efb2e9ff2d02}} 
+\index{my\_GSM.h@{my\_GSM.h}!wait\_Check\_ForReply@{wait\_Check\_ForReply}}
+\index{wait\_Check\_ForReply@{wait\_Check\_ForReply}!my\_GSM.h@{my\_GSM.h}}
+\doxysubsubsection{\texorpdfstring{wait\_Check\_ForReply()}{wait\_Check\_ForReply()}}
+{\footnotesize\ttfamily bool wait\+\_\+\+Check\+\_\+\+For\+Reply (\begin{DoxyParamCaption}\item[{char $\ast$}]{reply,  }\item[{uint8\+\_\+t}]{delay\+\_\+s }\end{DoxyParamCaption})}
+
+
+
+Definition at line 319 of file my\+\_\+\+GSM.\+c.
+

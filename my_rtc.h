@@ -10,7 +10,7 @@
 #define MY_RTC_H_
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
-void RtcInit();
+void rtc_init();
 
 #endif  /*MY_RTC_H_*/
 

@@ -1,0 +1,473 @@
+\hypertarget{main_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/main.c File Reference}
+\label{main_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/main.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/main.c}}
+{\ttfamily \#include $<$bme280.\+h$>$}\newline
+{\ttfamily \#include $<$bme280\+\_\+defs.\+h$>$}\newline
+{\ttfamily \#include $<$board.\+h$>$}\newline
+{\ttfamily \#include $<$main.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+flash.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+gpio.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+GSM.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+MAC.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+rtc.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+RFM9x.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+scheduler.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+spi.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+systick.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+timer.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+UART.\+h$>$}\newline
+{\ttfamily \#include $<$my\+Net.\+h$>$}\newline
+{\ttfamily \#include $<$MAX44009.\+h$>$}\newline
+{\ttfamily \#include $<$radio.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$EC5.\+h$>$}\newline
+{\ttfamily \#include $<$sx1276\+Regs-\/\+Fsk.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/gpio.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/interrupt.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rom\+\_\+map.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8c_a0050eb707fd363d8d8996940f8a83b7a}{print\+Lo\+Ra\+Registers}} (void)
+\item 
+void \mbox{\hyperlink{main_8c_af3eca2145f72543188f720317a59928e}{On\+Tx\+Done}} (void)
+\begin{DoxyCompactList}\small\item\em Function to be executed on Radio Tx Done event. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a110fa69817f6afafb4df3d7ebbc51bf7}{On\+Rx\+Done}} (uint8\+\_\+t $\ast$payload, uint16\+\_\+t size, int16\+\_\+t rssi, int8\+\_\+t snr)
+\begin{DoxyCompactList}\small\item\em Function to be executed on Radio Rx Done event. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a4bf38bca437ea5c5b0bba7d52723be64}{On\+Tx\+Timeout}} (void)
+\begin{DoxyCompactList}\small\item\em Function executed on Radio Tx Timeout event. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a1c71484aad63462cce84a5087eef4603}{On\+Rx\+Timeout}} (void)
+\begin{DoxyCompactList}\small\item\em Function executed on Radio Rx Timeout event. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a17c074df1296329f7fed1abc4f8a17b9}{On\+Rx\+Error}} (void)
+\begin{DoxyCompactList}\small\item\em Function executed on Radio Rx Error event. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_ac5977b3237b6f96b58d3fdf2e4470a63}{Radio\+Init}} ()
+\item 
+int \mbox{\hyperlink{main_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\item 
+void \mbox{\hyperlink{main_8c_ac0aff8cc8320d524894c51ccb693aa39}{PORT1\+\_\+\+IRQHandler}} (void)
+\item 
+void \mbox{\hyperlink{main_8c_a7ca37072ef5f4704e442fad813e4fa31}{PORT3\+\_\+\+IRQHandler}} (void)
+\item 
+void \mbox{\hyperlink{main_8c_a3a2a9d76254167e4bf224651056faaa2}{PORT2\+\_\+\+IRQHandler}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{main_8c_ad3ec6450f435e343802b9be9f7d08c71}{RXBuffer}} \mbox{[}255\mbox{]} = \{ 0 \}
+\item 
+volatile uint8\+\_\+t \mbox{\hyperlink{main_8c_a98962e338eed7e99030aa052d1833314}{lora\+Rx\+Buffer\+Size}} = \mbox{\hyperlink{main_8h_a9d6b844a15082d0e8d54069f7c2c5a80}{LORA\+\_\+\+MAX\+\_\+\+PAYLOAD\+\_\+\+LEN}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{main_8c_a1b0f3fb204737e421e64e89f440868c6}{lora\+Txtimes}} \mbox{[}255\mbox{]}
+\item 
+volatile int8\+\_\+t \mbox{\hyperlink{main_8c_a4899a13126ec18dcefe875c81002c31a}{Rssi\+Value}} = 0
+\item 
+volatile int8\+\_\+t \mbox{\hyperlink{main_8c_aa5592aac1ce49cb14fe5040388c40ebb}{Snr\+Value}} = 0
+\item 
+struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} \mbox{\hyperlink{main_8c_a29c054e412a9172bada57bc985137d01}{bme280\+Data}}
+\item 
+struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} \mbox{\hyperlink{main_8c_acf49615fa6291ac4def5fe342a492cec}{bme280\+Dev}}
+\item 
+bool \mbox{\hyperlink{main_8c_ad00d4162577b8fd1052ac7ee269cd74d}{bme280\+Working}} = false
+\item 
+bool \mbox{\hyperlink{main_8c_a5ff214cffb02387ecf2dba5457b6d674}{light\+Sensor\+Working}} = false
+\item 
+bool \mbox{\hyperlink{main_8c_ac3b9aa5a732990e83f6d5559bed928ea}{gps\+Working}} = false
+\item 
+bool \mbox{\hyperlink{main_8c_ada28284ef3af3876b8cffdbfe4361ed3}{has\+GSM}} = false
+\item 
+bool \mbox{\hyperlink{main_8c_a935e16b34378fedec81ea259cb05373e}{MACFlag}} = true
+\item 
+bool \mbox{\hyperlink{main_8c_a6074db44afdfae414aa50e7ad7b6cd05}{rfm95\+Working}} = false
+\item 
+bool \mbox{\hyperlink{main_8c_a1903a4fa60ef039c429c376a623419c1}{sched\+Flag}}
+\item 
+bool \mbox{\hyperlink{main_8c_af4a1086c40862e0744efc488a9549fa6}{gps\+Wake\+Flag}} = false
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{main_8c_a307e69f6614a8688ec7b144a09c5ec9f}{Led\+\_\+rgb\+\_\+red}}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{main_8c_a06a0b640a37d5a1058d63e1262832a18}{Led\+\_\+rgb\+\_\+green}}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{main_8c_ab73e2a92d033258457f7dbf0fd2f66d6}{Led\+\_\+user\+\_\+red}}
+\item 
+\mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40f}{Lo\+Ra\+Radio\+State\+\_\+t}} \mbox{\hyperlink{main_8c_a40d162a4eee5ebd1b41ddb9a7b18be94}{Radio\+State}}
+\item 
+RTC\+\_\+\+C\+\_\+\+Calendar \mbox{\hyperlink{main_8c_a7603e92cd5154e676532cd41ec1802be}{current\+Time}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Simple RTC Config\mbox{]} \end{DoxyCompactList}\item 
+volatile \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fff}{MACapp\+State\+\_\+t}} \mbox{\hyperlink{main_8c_af1f4fa4ab6a1149044d015cf9298c35b}{MACState}}
+\item 
+bool \mbox{\hyperlink{main_8c_a61b17b321d790317c97ecceab463b33a}{sched\+Change}}
+\item 
+bool \mbox{\hyperlink{main_8c_a5ed9357e8eb0800b9391eadf4807bd7c}{set\+RTCFlag}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{main_8c_a840291bc02cba5474a4cb46a9b9566fe}\label{main_8c_a840291bc02cba5474a4cb46a9b9566fe}} 
+\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 197 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a110fa69817f6afafb4df3d7ebbc51bf7}\label{main_8c_a110fa69817f6afafb4df3d7ebbc51bf7}} 
+\index{main.c@{main.c}!OnRxDone@{OnRxDone}}
+\index{OnRxDone@{OnRxDone}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{OnRxDone()}{OnRxDone()}}
+{\footnotesize\ttfamily void On\+Rx\+Done (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{payload,  }\item[{uint16\+\_\+t}]{size,  }\item[{int16\+\_\+t}]{rssi,  }\item[{int8\+\_\+t}]{snr }\end{DoxyParamCaption})}
+
+
+
+Function to be executed on Radio Rx Done event. 
+
+
+
+Definition at line 361 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a17c074df1296329f7fed1abc4f8a17b9}\label{main_8c_a17c074df1296329f7fed1abc4f8a17b9}} 
+\index{main.c@{main.c}!OnRxError@{OnRxError}}
+\index{OnRxError@{OnRxError}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{OnRxError()}{OnRxError()}}
+{\footnotesize\ttfamily void On\+Rx\+Error (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Function executed on Radio Rx Error event. 
+
+
+
+Definition at line 393 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a1c71484aad63462cce84a5087eef4603}\label{main_8c_a1c71484aad63462cce84a5087eef4603}} 
+\index{main.c@{main.c}!OnRxTimeout@{OnRxTimeout}}
+\index{OnRxTimeout@{OnRxTimeout}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{OnRxTimeout()}{OnRxTimeout()}}
+{\footnotesize\ttfamily void On\+Rx\+Timeout (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Function executed on Radio Rx Timeout event. 
+
+
+
+Definition at line 382 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_af3eca2145f72543188f720317a59928e}\label{main_8c_af3eca2145f72543188f720317a59928e}} 
+\index{main.c@{main.c}!OnTxDone@{OnTxDone}}
+\index{OnTxDone@{OnTxDone}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{OnTxDone()}{OnTxDone()}}
+{\footnotesize\ttfamily void On\+Tx\+Done (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Function to be executed on Radio Tx Done event. 
+
+
+
+Definition at line 353 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a4bf38bca437ea5c5b0bba7d52723be64}\label{main_8c_a4bf38bca437ea5c5b0bba7d52723be64}} 
+\index{main.c@{main.c}!OnTxTimeout@{OnTxTimeout}}
+\index{OnTxTimeout@{OnTxTimeout}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{OnTxTimeout()}{OnTxTimeout()}}
+{\footnotesize\ttfamily void On\+Tx\+Timeout (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Function executed on Radio Tx Timeout event. 
+
+
+
+Definition at line 374 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ac0aff8cc8320d524894c51ccb693aa39}\label{main_8c_ac0aff8cc8320d524894c51ccb693aa39}} 
+\index{main.c@{main.c}!PORT1\_IRQHandler@{PORT1\_IRQHandler}}
+\index{PORT1\_IRQHandler@{PORT1\_IRQHandler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{PORT1\_IRQHandler()}{PORT1\_IRQHandler()}}
+{\footnotesize\ttfamily void PORT1\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 295 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a3a2a9d76254167e4bf224651056faaa2}\label{main_8c_a3a2a9d76254167e4bf224651056faaa2}} 
+\index{main.c@{main.c}!PORT2\_IRQHandler@{PORT2\_IRQHandler}}
+\index{PORT2\_IRQHandler@{PORT2\_IRQHandler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{PORT2\_IRQHandler()}{PORT2\_IRQHandler()}}
+{\footnotesize\ttfamily void PORT2\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 334 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a7ca37072ef5f4704e442fad813e4fa31}\label{main_8c_a7ca37072ef5f4704e442fad813e4fa31}} 
+\index{main.c@{main.c}!PORT3\_IRQHandler@{PORT3\_IRQHandler}}
+\index{PORT3\_IRQHandler@{PORT3\_IRQHandler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{PORT3\_IRQHandler()}{PORT3\_IRQHandler()}}
+{\footnotesize\ttfamily void PORT3\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 307 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a0050eb707fd363d8d8996940f8a83b7a}\label{main_8c_a0050eb707fd363d8d8996940f8a83b7a}} 
+\index{main.c@{main.c}!printLoRaRegisters@{printLoRaRegisters}}
+\index{printLoRaRegisters@{printLoRaRegisters}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{printLoRaRegisters()}{printLoRaRegisters()}}
+{\footnotesize\ttfamily void print\+Lo\+Ra\+Registers (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 402 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ac5977b3237b6f96b58d3fdf2e4470a63}\label{main_8c_ac5977b3237b6f96b58d3fdf2e4470a63}} 
+\index{main.c@{main.c}!RadioInit@{RadioInit}}
+\index{RadioInit@{RadioInit}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{RadioInit()}{RadioInit()}}
+{\footnotesize\ttfamily void Radio\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 141 of file main.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{main_8c_a29c054e412a9172bada57bc985137d01}\label{main_8c_a29c054e412a9172bada57bc985137d01}} 
+\index{main.c@{main.c}!bme280Data@{bme280Data}}
+\index{bme280Data@{bme280Data}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{bme280Data}{bme280Data}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} bme280\+Data}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_acf49615fa6291ac4def5fe342a492cec}\label{main_8c_acf49615fa6291ac4def5fe342a492cec}} 
+\index{main.c@{main.c}!bme280Dev@{bme280Dev}}
+\index{bme280Dev@{bme280Dev}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{bme280Dev}{bme280Dev}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} bme280\+Dev}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ad00d4162577b8fd1052ac7ee269cd74d}\label{main_8c_ad00d4162577b8fd1052ac7ee269cd74d}} 
+\index{main.c@{main.c}!bme280Working@{bme280Working}}
+\index{bme280Working@{bme280Working}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{bme280Working}{bme280Working}}
+{\footnotesize\ttfamily bool bme280\+Working = false}
+
+
+
+Definition at line 83 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a7603e92cd5154e676532cd41ec1802be}\label{main_8c_a7603e92cd5154e676532cd41ec1802be}} 
+\index{main.c@{main.c}!currentTime@{currentTime}}
+\index{currentTime@{currentTime}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{currentTime}{currentTime}}
+{\footnotesize\ttfamily RTC\+\_\+\+C\+\_\+\+Calendar current\+Time\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+\mbox{[}Simple RTC Config\mbox{]} 
+
+
+
+Definition at line 51 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{main_8c_af4a1086c40862e0744efc488a9549fa6}\label{main_8c_af4a1086c40862e0744efc488a9549fa6}} 
+\index{main.c@{main.c}!gpsWakeFlag@{gpsWakeFlag}}
+\index{gpsWakeFlag@{gpsWakeFlag}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{gpsWakeFlag}{gpsWakeFlag}}
+{\footnotesize\ttfamily bool gps\+Wake\+Flag = false}
+
+
+
+Definition at line 96 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ac3b9aa5a732990e83f6d5559bed928ea}\label{main_8c_ac3b9aa5a732990e83f6d5559bed928ea}} 
+\index{main.c@{main.c}!gpsWorking@{gpsWorking}}
+\index{gpsWorking@{gpsWorking}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{gpsWorking}{gpsWorking}}
+{\footnotesize\ttfamily bool gps\+Working = false}
+
+
+
+Definition at line 85 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ada28284ef3af3876b8cffdbfe4361ed3}\label{main_8c_ada28284ef3af3876b8cffdbfe4361ed3}} 
+\index{main.c@{main.c}!hasGSM@{hasGSM}}
+\index{hasGSM@{hasGSM}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{hasGSM}{hasGSM}}
+{\footnotesize\ttfamily bool has\+GSM = false}
+
+
+
+Definition at line 87 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a06a0b640a37d5a1058d63e1262832a18}\label{main_8c_a06a0b640a37d5a1058d63e1262832a18}} 
+\index{main.c@{main.c}!Led\_rgb\_green@{Led\_rgb\_green}}
+\index{Led\_rgb\_green@{Led\_rgb\_green}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{Led\_rgb\_green}{Led\_rgb\_green}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+rgb\+\_\+green\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 23 of file board.\+c.
+
+\mbox{\Hypertarget{main_8c_a307e69f6614a8688ec7b144a09c5ec9f}\label{main_8c_a307e69f6614a8688ec7b144a09c5ec9f}} 
+\index{main.c@{main.c}!Led\_rgb\_red@{Led\_rgb\_red}}
+\index{Led\_rgb\_red@{Led\_rgb\_red}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{Led\_rgb\_red}{Led\_rgb\_red}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+rgb\+\_\+red\hspace{0.3cm}{\ttfamily [extern]}}
+
+LED GPIO pins objects 
+
+Definition at line 22 of file board.\+c.
+
+\mbox{\Hypertarget{main_8c_ab73e2a92d033258457f7dbf0fd2f66d6}\label{main_8c_ab73e2a92d033258457f7dbf0fd2f66d6}} 
+\index{main.c@{main.c}!Led\_user\_red@{Led\_user\_red}}
+\index{Led\_user\_red@{Led\_user\_red}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{Led\_user\_red}{Led\_user\_red}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+user\+\_\+red\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 25 of file board.\+c.
+
+\mbox{\Hypertarget{main_8c_a5ff214cffb02387ecf2dba5457b6d674}\label{main_8c_a5ff214cffb02387ecf2dba5457b6d674}} 
+\index{main.c@{main.c}!lightSensorWorking@{lightSensorWorking}}
+\index{lightSensorWorking@{lightSensorWorking}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{lightSensorWorking}{lightSensorWorking}}
+{\footnotesize\ttfamily bool light\+Sensor\+Working = false}
+
+
+
+Definition at line 84 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a98962e338eed7e99030aa052d1833314}\label{main_8c_a98962e338eed7e99030aa052d1833314}} 
+\index{main.c@{main.c}!loraRxBufferSize@{loraRxBufferSize}}
+\index{loraRxBufferSize@{loraRxBufferSize}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{loraRxBufferSize}{loraRxBufferSize}}
+{\footnotesize\ttfamily volatile uint8\+\_\+t lora\+Rx\+Buffer\+Size = \mbox{\hyperlink{main_8h_a9d6b844a15082d0e8d54069f7c2c5a80}{LORA\+\_\+\+MAX\+\_\+\+PAYLOAD\+\_\+\+LEN}}}
+
+
+
+Definition at line 71 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a1b0f3fb204737e421e64e89f440868c6}\label{main_8c_a1b0f3fb204737e421e64e89f440868c6}} 
+\index{main.c@{main.c}!loraTxtimes@{loraTxtimes}}
+\index{loraTxtimes@{loraTxtimes}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{loraTxtimes}{loraTxtimes}}
+{\footnotesize\ttfamily uint16\+\_\+t lora\+Txtimes\mbox{[}255\mbox{]}}
+
+
+
+Definition at line 73 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a935e16b34378fedec81ea259cb05373e}\label{main_8c_a935e16b34378fedec81ea259cb05373e}} 
+\index{main.c@{main.c}!MACFlag@{MACFlag}}
+\index{MACFlag@{MACFlag}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{MACFlag}{MACFlag}}
+{\footnotesize\ttfamily bool MACFlag = true}
+
+
+
+Definition at line 89 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_af1f4fa4ab6a1149044d015cf9298c35b}\label{main_8c_af1f4fa4ab6a1149044d015cf9298c35b}} 
+\index{main.c@{main.c}!MACState@{MACState}}
+\index{MACState@{MACState}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{MACState}{MACState}}
+{\footnotesize\ttfamily volatile \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fff}{MACapp\+State\+\_\+t}} MACState\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 42 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{main_8c_a40d162a4eee5ebd1b41ddb9a7b18be94}\label{main_8c_a40d162a4eee5ebd1b41ddb9a7b18be94}} 
+\index{main.c@{main.c}!RadioState@{RadioState}}
+\index{RadioState@{RadioState}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{RadioState}{RadioState}}
+{\footnotesize\ttfamily \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40f}{Lo\+Ra\+Radio\+State\+\_\+t}} Radio\+State\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 89 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{main_8c_a6074db44afdfae414aa50e7ad7b6cd05}\label{main_8c_a6074db44afdfae414aa50e7ad7b6cd05}} 
+\index{main.c@{main.c}!rfm95Working@{rfm95Working}}
+\index{rfm95Working@{rfm95Working}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{rfm95Working}{rfm95Working}}
+{\footnotesize\ttfamily bool rfm95\+Working = false}
+
+
+
+Definition at line 92 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a4899a13126ec18dcefe875c81002c31a}\label{main_8c_a4899a13126ec18dcefe875c81002c31a}} 
+\index{main.c@{main.c}!RssiValue@{RssiValue}}
+\index{RssiValue@{RssiValue}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{RssiValue}{RssiValue}}
+{\footnotesize\ttfamily volatile int8\+\_\+t Rssi\+Value = 0}
+
+
+
+Definition at line 75 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ad3ec6450f435e343802b9be9f7d08c71}\label{main_8c_ad3ec6450f435e343802b9be9f7d08c71}} 
+\index{main.c@{main.c}!RXBuffer@{RXBuffer}}
+\index{RXBuffer@{RXBuffer}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{RXBuffer}{RXBuffer}}
+{\footnotesize\ttfamily uint8\+\_\+t RXBuffer\mbox{[}255\mbox{]} = \{ 0 \}}
+
+
+
+Definition at line 70 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a61b17b321d790317c97ecceab463b33a}\label{main_8c_a61b17b321d790317c97ecceab463b33a}} 
+\index{main.c@{main.c}!schedChange@{schedChange}}
+\index{schedChange@{schedChange}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{schedChange}{schedChange}}
+{\footnotesize\ttfamily bool sched\+Change\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 30 of file my\+\_\+scheduler.\+c.
+
+\mbox{\Hypertarget{main_8c_a1903a4fa60ef039c429c376a623419c1}\label{main_8c_a1903a4fa60ef039c429c376a623419c1}} 
+\index{main.c@{main.c}!schedFlag@{schedFlag}}
+\index{schedFlag@{schedFlag}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{schedFlag}{schedFlag}}
+{\footnotesize\ttfamily bool sched\+Flag\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 20 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{main_8c_a5ed9357e8eb0800b9391eadf4807bd7c}\label{main_8c_a5ed9357e8eb0800b9391eadf4807bd7c}} 
+\index{main.c@{main.c}!setRTCFlag@{setRTCFlag}}
+\index{setRTCFlag@{setRTCFlag}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{setRTCFlag}{setRTCFlag}}
+{\footnotesize\ttfamily bool set\+RTCFlag\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 49 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{main_8c_aa5592aac1ce49cb14fe5040388c40ebb}\label{main_8c_aa5592aac1ce49cb14fe5040388c40ebb}} 
+\index{main.c@{main.c}!SnrValue@{SnrValue}}
+\index{SnrValue@{SnrValue}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{SnrValue}{SnrValue}}
+{\footnotesize\ttfamily volatile int8\+\_\+t Snr\+Value = 0}
+
+
+
+Definition at line 76 of file main.\+c.
+

@@ -1,0 +1,158 @@
+\hypertarget{my__spi_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+spi.h File Reference}
+\label{my__spi_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_spi.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_spi.h}}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my__spi_8h_aba3661b55b5932789f4c6830b62c4f9f}{RFM\+\_\+\+SPI\+\_\+\+WRITE\+\_\+\+MASK}}~0x80
+\item 
+\#define \mbox{\hyperlink{my__spi_8h_afd135d22b40fec5b6b86b4547d8b0636}{RFM95\+\_\+\+NSS\+\_\+\+HIGH}}~P5-\/$>$OUT $\vert$= BIT2
+\item 
+\#define \mbox{\hyperlink{my__spi_8h_a2fa78c48cf96a1224b8d5993aed4116a}{RFM95\+\_\+\+NSS\+\_\+\+LOW}}~P5-\/$>$OUT \&= $\sim$BIT2
+\item 
+\#define \mbox{\hyperlink{my__spi_8h_a6034163b27f45c57e8e6f12ad4d5de51}{BME280\+\_\+\+CS\+\_\+\+LOW}}~P3-\/$>$OUT \&= $\sim$BIT6
+\item 
+\#define \mbox{\hyperlink{my__spi_8h_ac2c4205b127ac3761b45938dfb5716bf}{BME280\+\_\+\+CS\+\_\+\+HIGH}}~P3-\/$>$OUT $\vert$= BIT6
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__spi_8h_a683677556c892aff06c778dfd8bbb140}{spi\+\_\+open}} (void)
+\item 
+void \mbox{\hyperlink{my__spi_8h_af071a463f4b6be2b6d96a5adc15ee828}{spi\+\_\+close}} (void)
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my__spi_8h_a26dcb634cc3935785c278431b2ba8131}{spi\+Read\+\_\+\+RFM}} (uint16\+\_\+t addr)
+\item 
+void \mbox{\hyperlink{my__spi_8h_af7b37294366e42663d1a2691ea612a8d}{spi\+Write\+\_\+\+RFM}} (uint16\+\_\+t addr, uint8\+\_\+t val)
+\item 
+int \mbox{\hyperlink{my__spi_8h_a3106f768d103bea9eba7034e3f365f4b}{spi\+\_\+read\+\_\+write}} (uint8\+\_\+t p\+Buff)
+\item 
+int8\+\_\+t \mbox{\hyperlink{my__spi_8h_ae9f324fc02aeb029d8e3dd5dc72206d7}{user\+\_\+spi\+\_\+write\+\_\+bme280}} (uint8\+\_\+t reg\+\_\+addr, const uint8\+\_\+t $\ast$reg\+\_\+data, uint32\+\_\+t len, void $\ast$intf\+\_\+ptr)
+\item 
+int8\+\_\+t \mbox{\hyperlink{my__spi_8h_ace8ae3f659a05e8015742da7a2655adf}{user\+\_\+spi\+\_\+read\+\_\+bme280}} (uint8\+\_\+t reg\+\_\+addr, uint8\+\_\+t $\ast$reg\+\_\+data, uint32\+\_\+t len, void $\ast$intf\+\_\+ptr)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my__spi_8h_ac2c4205b127ac3761b45938dfb5716bf}\label{my__spi_8h_ac2c4205b127ac3761b45938dfb5716bf}} 
+\index{my\_spi.h@{my\_spi.h}!BME280\_CS\_HIGH@{BME280\_CS\_HIGH}}
+\index{BME280\_CS\_HIGH@{BME280\_CS\_HIGH}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{BME280\_CS\_HIGH}{BME280\_CS\_HIGH}}
+{\footnotesize\ttfamily \#define BME280\+\_\+\+CS\+\_\+\+HIGH~P3-\/$>$OUT $\vert$= BIT6}
+
+
+
+Definition at line 15 of file my\+\_\+spi.\+h.
+
+\mbox{\Hypertarget{my__spi_8h_a6034163b27f45c57e8e6f12ad4d5de51}\label{my__spi_8h_a6034163b27f45c57e8e6f12ad4d5de51}} 
+\index{my\_spi.h@{my\_spi.h}!BME280\_CS\_LOW@{BME280\_CS\_LOW}}
+\index{BME280\_CS\_LOW@{BME280\_CS\_LOW}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{BME280\_CS\_LOW}{BME280\_CS\_LOW}}
+{\footnotesize\ttfamily \#define BME280\+\_\+\+CS\+\_\+\+LOW~P3-\/$>$OUT \&= $\sim$BIT6}
+
+
+
+Definition at line 14 of file my\+\_\+spi.\+h.
+
+\mbox{\Hypertarget{my__spi_8h_afd135d22b40fec5b6b86b4547d8b0636}\label{my__spi_8h_afd135d22b40fec5b6b86b4547d8b0636}} 
+\index{my\_spi.h@{my\_spi.h}!RFM95\_NSS\_HIGH@{RFM95\_NSS\_HIGH}}
+\index{RFM95\_NSS\_HIGH@{RFM95\_NSS\_HIGH}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{RFM95\_NSS\_HIGH}{RFM95\_NSS\_HIGH}}
+{\footnotesize\ttfamily \#define RFM95\+\_\+\+NSS\+\_\+\+HIGH~P5-\/$>$OUT $\vert$= BIT2}
+
+
+
+Definition at line 12 of file my\+\_\+spi.\+h.
+
+\mbox{\Hypertarget{my__spi_8h_a2fa78c48cf96a1224b8d5993aed4116a}\label{my__spi_8h_a2fa78c48cf96a1224b8d5993aed4116a}} 
+\index{my\_spi.h@{my\_spi.h}!RFM95\_NSS\_LOW@{RFM95\_NSS\_LOW}}
+\index{RFM95\_NSS\_LOW@{RFM95\_NSS\_LOW}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{RFM95\_NSS\_LOW}{RFM95\_NSS\_LOW}}
+{\footnotesize\ttfamily \#define RFM95\+\_\+\+NSS\+\_\+\+LOW~P5-\/$>$OUT \&= $\sim$BIT2}
+
+
+
+Definition at line 13 of file my\+\_\+spi.\+h.
+
+\mbox{\Hypertarget{my__spi_8h_aba3661b55b5932789f4c6830b62c4f9f}\label{my__spi_8h_aba3661b55b5932789f4c6830b62c4f9f}} 
+\index{my\_spi.h@{my\_spi.h}!RFM\_SPI\_WRITE\_MASK@{RFM\_SPI\_WRITE\_MASK}}
+\index{RFM\_SPI\_WRITE\_MASK@{RFM\_SPI\_WRITE\_MASK}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{RFM\_SPI\_WRITE\_MASK}{RFM\_SPI\_WRITE\_MASK}}
+{\footnotesize\ttfamily \#define RFM\+\_\+\+SPI\+\_\+\+WRITE\+\_\+\+MASK~0x80}
+
+
+
+Definition at line 11 of file my\+\_\+spi.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__spi_8h_af071a463f4b6be2b6d96a5adc15ee828}\label{my__spi_8h_af071a463f4b6be2b6d96a5adc15ee828}} 
+\index{my\_spi.h@{my\_spi.h}!spi\_close@{spi\_close}}
+\index{spi\_close@{spi\_close}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_close()}{spi\_close()}}
+{\footnotesize\ttfamily void spi\+\_\+close (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 39 of file my\+\_\+spi.\+c.
+
+\mbox{\Hypertarget{my__spi_8h_a683677556c892aff06c778dfd8bbb140}\label{my__spi_8h_a683677556c892aff06c778dfd8bbb140}} 
+\index{my\_spi.h@{my\_spi.h}!spi\_open@{spi\_open}}
+\index{spi\_open@{spi\_open}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_open()}{spi\_open()}}
+{\footnotesize\ttfamily void spi\+\_\+open (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file my\+\_\+spi.\+c.
+
+\mbox{\Hypertarget{my__spi_8h_a3106f768d103bea9eba7034e3f365f4b}\label{my__spi_8h_a3106f768d103bea9eba7034e3f365f4b}} 
+\index{my\_spi.h@{my\_spi.h}!spi\_read\_write@{spi\_read\_write}}
+\index{spi\_read\_write@{spi\_read\_write}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_read\_write()}{spi\_read\_write()}}
+{\footnotesize\ttfamily int spi\+\_\+read\+\_\+write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{p\+Buff }\end{DoxyParamCaption})}
+
+
+
+Definition at line 131 of file my\+\_\+spi.\+c.
+
+\mbox{\Hypertarget{my__spi_8h_a26dcb634cc3935785c278431b2ba8131}\label{my__spi_8h_a26dcb634cc3935785c278431b2ba8131}} 
+\index{my\_spi.h@{my\_spi.h}!spiRead\_RFM@{spiRead\_RFM}}
+\index{spiRead\_RFM@{spiRead\_RFM}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{spiRead\_RFM()}{spiRead\_RFM()}}
+{\footnotesize\ttfamily uint8\+\_\+t spi\+Read\+\_\+\+RFM (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{addr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 54 of file my\+\_\+spi.\+c.
+
+\mbox{\Hypertarget{my__spi_8h_af7b37294366e42663d1a2691ea612a8d}\label{my__spi_8h_af7b37294366e42663d1a2691ea612a8d}} 
+\index{my\_spi.h@{my\_spi.h}!spiWrite\_RFM@{spiWrite\_RFM}}
+\index{spiWrite\_RFM@{spiWrite\_RFM}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{spiWrite\_RFM()}{spiWrite\_RFM()}}
+{\footnotesize\ttfamily void spi\+Write\+\_\+\+RFM (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{addr,  }\item[{uint8\+\_\+t}]{val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 44 of file my\+\_\+spi.\+c.
+
+\mbox{\Hypertarget{my__spi_8h_ace8ae3f659a05e8015742da7a2655adf}\label{my__spi_8h_ace8ae3f659a05e8015742da7a2655adf}} 
+\index{my\_spi.h@{my\_spi.h}!user\_spi\_read\_bme280@{user\_spi\_read\_bme280}}
+\index{user\_spi\_read\_bme280@{user\_spi\_read\_bme280}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{user\_spi\_read\_bme280()}{user\_spi\_read\_bme280()}}
+{\footnotesize\ttfamily int8\+\_\+t user\+\_\+spi\+\_\+read\+\_\+bme280 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg\+\_\+addr,  }\item[{uint8\+\_\+t $\ast$}]{reg\+\_\+data,  }\item[{uint32\+\_\+t}]{len,  }\item[{void $\ast$}]{intf\+\_\+ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 64 of file my\+\_\+spi.\+c.
+
+\mbox{\Hypertarget{my__spi_8h_ae9f324fc02aeb029d8e3dd5dc72206d7}\label{my__spi_8h_ae9f324fc02aeb029d8e3dd5dc72206d7}} 
+\index{my\_spi.h@{my\_spi.h}!user\_spi\_write\_bme280@{user\_spi\_write\_bme280}}
+\index{user\_spi\_write\_bme280@{user\_spi\_write\_bme280}!my\_spi.h@{my\_spi.h}}
+\doxysubsubsection{\texorpdfstring{user\_spi\_write\_bme280()}{user\_spi\_write\_bme280()}}
+{\footnotesize\ttfamily int8\+\_\+t user\+\_\+spi\+\_\+write\+\_\+bme280 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg\+\_\+addr,  }\item[{const uint8\+\_\+t $\ast$}]{reg\+\_\+data,  }\item[{uint32\+\_\+t}]{len,  }\item[{void $\ast$}]{intf\+\_\+ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 98 of file my\+\_\+spi.\+c.
+

@@ -26,7 +26,7 @@ EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
 		EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 		};
 
-void i2cInit( ) {
+void i2c_init( ) {
 	/* Select Port 6 for I2C - Set Pin 4, 5 to input Primary Module Function,
 	 *   (UCB1SIMO/UCB1SDA, UCB1SOMI/UCB1SCL).
 	 */
@@ -47,7 +47,7 @@ void i2cInit( ) {
 //	Interrupt_enableInterrupt(INT_EUSCIB1);
 }
 
-uint8_t i2cSend( uint8_t addr, uint8_t *buffer, uint8_t bufLen ) {
+uint8_t i2c_send( uint8_t addr, uint8_t *buffer, uint8_t bufLen ) {
 	uint8_t retval;
 	I2C_setSlaveAddress(EUSCI_B1_BASE, addr); // Make sure correct i2c slave selected
 	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
@@ -56,15 +56,11 @@ uint8_t i2cSend( uint8_t addr, uint8_t *buffer, uint8_t bufLen ) {
 
 	int index = 0;
 	retval = I2C_masterSendMultiByteStartWithTimeout(
-			EUSCI_B1_BASE,
-			buffer[index++],
-			10); // first byte is reg to be configured
+	EUSCI_B1_BASE, buffer[index++], 10); // first byte is reg to be configured
 	int count = 0;
 	while (count < bufLen) {
 		retval = I2C_masterSendMultiByteNextWithTimeout(
-				EUSCI_B1_BASE,
-				buffer[index++],
-				10); // Set in non continuous mode 800ms integration time
+		EUSCI_B1_BASE, buffer[index++], 10); // Set in non continuous mode 800ms integration time
 		count++;
 	}
 
@@ -72,12 +68,11 @@ uint8_t i2cSend( uint8_t addr, uint8_t *buffer, uint8_t bufLen ) {
 	return retval;
 }
 
-uint8_t i2cTxRxSingleBytes(
+uint8_t i2c_tx_rx_single_bytes(
 		uint8_t addr,
 		uint8_t *txBuf,
 		uint8_t *rxBuf,
 		uint8_t numBytes ) {
-	uint8_t retval;
 	I2C_setSlaveAddress(EUSCI_B1_BASE, addr); // Make sure correct i2c slave selected
 	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
 	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))

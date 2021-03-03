@@ -44,7 +44,7 @@ const struct Radio_s Radio = { SX1276Init, SX1276GetStatus, SX1276SetModem,
 								SX1276SetRx,
 								SX1276StartCad,
 								NULL, // dont need contWave
-								SX1276ReadRssi, spiWrite_RFM, spiRead_RFM,
+								SX1276ReadRssi, spi_write_rfm, spi_read_rfm,
 								SX1276WriteBuffer, SX1276ReadBuffer,
 								SX1276SetMaxPayloadLength,
 								SX1276SetPublicNetwork, SX1276GetWakeupTime,
@@ -55,38 +55,38 @@ const struct Radio_s Radio = { SX1276Init, SX1276GetStatus, SX1276SetModem,
 
 void SX1276IoInit( void ) {
 
-	GpioInit(
+	gpio_init(
 			&SX1276.Reset,
 			RADIO_RESET,
 			PIN_OUTPUT,
 			PIN_PUSH_PULL,
 			PIN_NO_PULL,
 			1);
-	GpioInit(&SX1276.NSS, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
+	gpio_init(&SX1276.NSS, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 	spi_open();
 
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO0,
 			RADIO_DIO_0,
 			PIN_INPUT,
 			PIN_PUSH_PULL,
 			PIN_PULL_UP,
 			0);
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO1,
 			RADIO_DIO_1,
 			PIN_INPUT,
 			PIN_PUSH_PULL,
 			PIN_PULL_UP,
 			0);
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO2,
 			RADIO_DIO_2,
 			PIN_INPUT,
 			PIN_PUSH_PULL,
 			PIN_PULL_UP,
 			0);
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO3,
 			RADIO_DIO_3,
 			PIN_INPUT,
@@ -166,40 +166,40 @@ void SX1276IoInit( void ) {
  }*/
 
 void SX1276IoIrqInit( void ) {
-	GpioSetInterrupt(&SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
-	GpioSetInterrupt(&SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
-	GpioSetInterrupt(&SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
-	GpioSetInterrupt(&SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
+	gpio_set_interrupt(&SX1276.DIO0, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
+	gpio_set_interrupt(&SX1276.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
+	gpio_set_interrupt(&SX1276.DIO2, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
+	gpio_set_interrupt(&SX1276.DIO3, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
 //	GpioSetInterrupt(&SX1276.DIO4, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
 //	GpioSetInterrupt(&SX1276.DIO5, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY);
 }
 
 void SX1276IoDeInit( void ) {
-	GpioInit(&SX1276.NSS, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1);
+	gpio_init(&SX1276.NSS, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1);
 	spi_close();
 
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO0,
 			RADIO_DIO_0,
 			PIN_INPUT,
 			PIN_PUSH_PULL,
 			PIN_NO_PULL,
 			0);
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO1,
 			RADIO_DIO_1,
 			PIN_INPUT,
 			PIN_PUSH_PULL,
 			PIN_NO_PULL,
 			0);
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO2,
 			RADIO_DIO_2,
 			PIN_INPUT,
 			PIN_PUSH_PULL,
 			PIN_NO_PULL,
 			0);
-	GpioInit(
+	gpio_init(
 			&SX1276.DIO3,
 			RADIO_DIO_3,
 			PIN_INPUT,
@@ -228,20 +228,20 @@ uint32_t SX1276GetBoardTcxoWakeupTime( void ) {
 }
 
 void SX1276Reset( void ) {
-	GpioWrite(&SX1276.Reset, 0);
+	gpio_write(&SX1276.Reset, 0);
 //    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
-	Delayms(5);
-	GpioWrite(&SX1276.Reset, 1);
+	delay_ms(5);
+	gpio_write(&SX1276.Reset, 1);
 //    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
-	Delayms(6);
+	delay_ms(6);
 }
 
 void SX1276SetRfTxPower( int8_t power ) {
 	uint8_t paConfig = 0;
 	uint8_t paDac = 0;
 
-	paConfig = spiRead_RFM( REG_PACONFIG);
-	paDac = spiRead_RFM( REG_PADAC);
+	paConfig = spi_read_rfm( REG_PACONFIG);
+	paDac = spi_read_rfm( REG_PADAC);
 
 	paConfig = (paConfig & RF_PACONFIG_PASELECT_MASK)
 			| SX1276GetPaSelect(power);
@@ -291,8 +291,8 @@ void SX1276SetRfTxPower( int8_t power ) {
 					& RF_PACONFIG_OUTPUTPOWER_MASK) | (0 << 4) | (power + 4);
 		}
 	}
-	spiWrite_RFM( REG_PACONFIG, paConfig);
-	spiWrite_RFM( REG_PADAC, paDac);
+	spi_write_rfm( REG_PACONFIG, paConfig);
+	spi_write_rfm( REG_PADAC, paDac);
 }
 
 static uint8_t SX1276GetPaSelect( uint32_t channel ) {
@@ -311,11 +311,11 @@ bool SX1276CheckRfFrequency( uint32_t frequency ) {
 #if defined( USE_RADIO_DEBUG )
 void SX1276DbgPinTxWrite( uint8_t state )
 {
-    GpioWrite( &DbgPinTx, state );
+    gpio_write( &DbgPinTx, state );
 }
 
 void SX1276DbgPinRxWrite( uint8_t state )
 {
-    GpioWrite( &DbgPinRx, state );
+    gpio_write( &DbgPinRx, state );
 }
 #endif

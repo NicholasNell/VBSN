@@ -1,0 +1,36 @@
+\hypertarget{group__bme280_api_init}{}\doxysection{Initialization}
+\label{group__bme280_api_init}\index{Initialization@{Initialization}}
+
+
+Initialize the sensor and device structure.  
+
+
+Initialize the sensor and device structure. 
+
+\hypertarget{bme280_api_bme280_init}{}\doxysubsubsection{bme280\+\_\+init}\label{bme280_api_bme280_init}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_af0b7d7a19bb48ec9eb3651b79f0c3e85}{bme280\_init}}(\textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API reads the chip-\/id of the sensor which is the first step to verify the sensor and also calibrates the sensor As this API is the entry point, call this API before using other APIs.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of API execution status.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}

@@ -12,8 +12,9 @@
 #define EC5_POWER_PORT GPIO_PORT_P2
 #define EC5_POWER_PIN GPIO_PIN2
 
-void initADC( void );
-float getVWC( );
+void init_adc( void );
+float get_vwc( );
+float get_latest_value( void );
 
 #endif /* EC5_H_ */
 

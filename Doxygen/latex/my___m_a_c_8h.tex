@@ -1,0 +1,377 @@
+\hypertarget{my___m_a_c_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+\+MAC.h File Reference}
+\label{my___m_a_c_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_MAC.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_MAC.h}}
+{\ttfamily \#include $<$datagram.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_a294b587d460b14170d2ce3f4da9083ce}{BROADCAST\+\_\+\+ADDRESS}}~0x\+FF
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_a26981092914a185d90eab9705fba6a65}{GATEWAY\+\_\+\+ADDRESS}}~0x00
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_aa3fbd1b7db5563bc97af47943afa34a4}{MAX\+\_\+\+MESSAGE\+\_\+\+LEN}}~255
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_ae736cff75d544c5d658196eaa6425e3d}{DEFAULT\+\_\+\+RX\+\_\+\+TIME}}~1000
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_abe0b7b2a0ec4b64b92585808a051e1fa}{SLEEP\+\_\+\+TIME}}~60 $\ast$ 2 $\ast$ 1000
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}{MAX\+\_\+\+NEIGHBOURS}}~255
+\item 
+\#define \mbox{\hyperlink{my___m_a_c_8h_a234d459440c1582d4eeadc7aae73cf95}{MAX\+\_\+\+STORED\+\_\+\+MSG}}~10
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40f}{Lo\+Ra\+Radio\+State\+\_\+t}} \{ \newline
+\mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa951f819598b53b2729ee0e4c05e6888e}{TX}} = 0
+, \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa4aca20d6e60fffb66e9668b3a6592531}{RX}}
+, \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa8f8d15cf0434309bb9b5ac97471c30ea}{TXDONE}}
+, \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa813fe9b8b11d1938cca5793347287d1c}{RXDONE}}
+, \newline
+\mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa2113e63f35da6c7ab6785e052e2281c4}{RXTIMEOUT}}
+, \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fab4beba9fe17a65067f166e85bc0bc699}{TXTIMEOUT}}
+, \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa13d098019b3ca7f7c164c0ae4308eb9c}{RXERROR}}
+, \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa6491425ea51e1bc7afc60a8cb2e823ab}{RADIO\+\_\+\+SLEEP}}
+ \}
+\item 
+enum \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fff}{MACapp\+State\+\_\+t}} \{ \newline
+\mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaa272fea9663c72fa8c11fe52c75f3a86}{MAC\+\_\+\+SLEEP}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa4810e389069c14c2707dcf16b31491ff}{NODE\+\_\+\+DISC}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffad5de11752614e4e38a17024bd6e4ece8}{MAC\+\_\+\+RTS}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa5a8fe0da63c1f57440a90ea696193a1c}{MAC\+\_\+\+CTS}}
+, \newline
+\mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaaa1d21d28be23281b552fb7a028db977}{MAC\+\_\+\+DATA}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa137db7b0b7c9ccd1507db747fce38a7f}{MAC\+\_\+\+LISTEN}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffac21fe8dcfc689c03bd08c5b7ba6e9d54}{MAC\+\_\+\+ACK}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa74a0d04bf371691e70b1fa8cc0bd3b68}{MAC\+\_\+\+SYNC\+\_\+\+BROADCAST}}
+, \newline
+\mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa2b22d32bedcc563760a8e919929243d3}{MAC\+\_\+\+WAIT}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa265ff1832993222dfbab2289976027f3}{MAC\+\_\+\+NET\+\_\+\+OP}}
+, \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaf4b420070e079f0ffe5e3712ba5447c7}{MAC\+\_\+\+HOP\+\_\+\+MESSAGE}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my___m_a_c_8h_affba8a10437b2dda1bdaedcc0a9e6fae}{Mac\+Init}} ()
+\begin{DoxyCompactList}\small\item\em Initialise the mac protocol and all node parameters. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my___m_a_c_8h_ad4e07f2607353f1458e2307c71050ec2}{MACState\+Machine}} ()
+\begin{DoxyCompactList}\small\item\em the state machine that control the mac protocol \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my___m_a_c_8h_a0b548793df5c107c949b0b58839162fc}{MACStart\+Transaction}} (\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} destination, uint8\+\_\+t msg\+Type, bool is\+Source)
+\item 
+bool \mbox{\hyperlink{my___m_a_c_8h_a80f0ecae62941e25059fbb3744cd84f3}{is\+Neighbour}} (\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} node)
+\item 
+void \mbox{\hyperlink{my___m_a_c_8h_a8aefa039f0cbdad1776c5a2b486590d1}{add\+Neighbour}} (\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} neighbour, uint16\+\_\+t tx\+Slot)
+\begin{DoxyCompactList}\small\item\em add node to neighbour table \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my___m_a_c_8h_a5af4f10596f72ef0d2dfcdacb8ee6e95}{MACSend\+Tx\+Datagram}} ()
+\begin{DoxyCompactList}\small\item\em copies the contents of the txdatagram into the tx\+Buffer and then transmits it. Only use if txdatagram has already been set up correctly. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}} $\ast$ \mbox{\hyperlink{my___m_a_c_8h_ade756bf259fcdbbb1b2353cec0265fc3}{get\+Neighbour\+Table}} ()
+\item 
+\mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} $\ast$ \mbox{\hyperlink{my___m_a_c_8h_af9e286a8c89af9a034346e2b8cbfc594}{get\+Received\+Messages}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my___m_a_c_8h_a294b587d460b14170d2ce3f4da9083ce}\label{my___m_a_c_8h_a294b587d460b14170d2ce3f4da9083ce}} 
+\index{my\_MAC.h@{my\_MAC.h}!BROADCAST\_ADDRESS@{BROADCAST\_ADDRESS}}
+\index{BROADCAST\_ADDRESS@{BROADCAST\_ADDRESS}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{BROADCAST\_ADDRESS}{BROADCAST\_ADDRESS}}
+{\footnotesize\ttfamily \#define BROADCAST\+\_\+\+ADDRESS~0x\+FF}
+
+
+
+Definition at line 15 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_ae736cff75d544c5d658196eaa6425e3d}\label{my___m_a_c_8h_ae736cff75d544c5d658196eaa6425e3d}} 
+\index{my\_MAC.h@{my\_MAC.h}!DEFAULT\_RX\_TIME@{DEFAULT\_RX\_TIME}}
+\index{DEFAULT\_RX\_TIME@{DEFAULT\_RX\_TIME}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{DEFAULT\_RX\_TIME}{DEFAULT\_RX\_TIME}}
+{\footnotesize\ttfamily \#define DEFAULT\+\_\+\+RX\+\_\+\+TIME~1000}
+
+
+
+Definition at line 18 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_a26981092914a185d90eab9705fba6a65}\label{my___m_a_c_8h_a26981092914a185d90eab9705fba6a65}} 
+\index{my\_MAC.h@{my\_MAC.h}!GATEWAY\_ADDRESS@{GATEWAY\_ADDRESS}}
+\index{GATEWAY\_ADDRESS@{GATEWAY\_ADDRESS}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{GATEWAY\_ADDRESS}{GATEWAY\_ADDRESS}}
+{\footnotesize\ttfamily \#define GATEWAY\+\_\+\+ADDRESS~0x00}
+
+
+
+Definition at line 16 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_aa3fbd1b7db5563bc97af47943afa34a4}\label{my___m_a_c_8h_aa3fbd1b7db5563bc97af47943afa34a4}} 
+\index{my\_MAC.h@{my\_MAC.h}!MAX\_MESSAGE\_LEN@{MAX\_MESSAGE\_LEN}}
+\index{MAX\_MESSAGE\_LEN@{MAX\_MESSAGE\_LEN}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MAX\_MESSAGE\_LEN}{MAX\_MESSAGE\_LEN}}
+{\footnotesize\ttfamily \#define MAX\+\_\+\+MESSAGE\+\_\+\+LEN~255}
+
+
+
+Definition at line 17 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}\label{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}} 
+\index{my\_MAC.h@{my\_MAC.h}!MAX\_NEIGHBOURS@{MAX\_NEIGHBOURS}}
+\index{MAX\_NEIGHBOURS@{MAX\_NEIGHBOURS}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MAX\_NEIGHBOURS}{MAX\_NEIGHBOURS}}
+{\footnotesize\ttfamily \#define MAX\+\_\+\+NEIGHBOURS~255}
+
+
+
+Definition at line 20 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_a234d459440c1582d4eeadc7aae73cf95}\label{my___m_a_c_8h_a234d459440c1582d4eeadc7aae73cf95}} 
+\index{my\_MAC.h@{my\_MAC.h}!MAX\_STORED\_MSG@{MAX\_STORED\_MSG}}
+\index{MAX\_STORED\_MSG@{MAX\_STORED\_MSG}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MAX\_STORED\_MSG}{MAX\_STORED\_MSG}}
+{\footnotesize\ttfamily \#define MAX\+\_\+\+STORED\+\_\+\+MSG~10}
+
+
+
+Definition at line 21 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_abe0b7b2a0ec4b64b92585808a051e1fa}\label{my___m_a_c_8h_abe0b7b2a0ec4b64b92585808a051e1fa}} 
+\index{my\_MAC.h@{my\_MAC.h}!SLEEP\_TIME@{SLEEP\_TIME}}
+\index{SLEEP\_TIME@{SLEEP\_TIME}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{SLEEP\_TIME}{SLEEP\_TIME}}
+{\footnotesize\ttfamily \#define SLEEP\+\_\+\+TIME~60 $\ast$ 2 $\ast$ 1000}
+
+
+
+Definition at line 19 of file my\+\_\+\+MAC.\+h.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40f}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40f}} 
+\index{my\_MAC.h@{my\_MAC.h}!LoRaRadioState\_t@{LoRaRadioState\_t}}
+\index{LoRaRadioState\_t@{LoRaRadioState\_t}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{LoRaRadioState\_t}{LoRaRadioState\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40f}{Lo\+Ra\+Radio\+State\+\_\+t}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TX@{TX}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!TX@{TX}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa951f819598b53b2729ee0e4c05e6888e}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa951f819598b53b2729ee0e4c05e6888e}} 
+TX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RX@{RX}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!RX@{RX}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa4aca20d6e60fffb66e9668b3a6592531}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa4aca20d6e60fffb66e9668b3a6592531}} 
+RX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TXDONE@{TXDONE}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!TXDONE@{TXDONE}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa8f8d15cf0434309bb9b5ac97471c30ea}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa8f8d15cf0434309bb9b5ac97471c30ea}} 
+TXDONE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RXDONE@{RXDONE}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!RXDONE@{RXDONE}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa813fe9b8b11d1938cca5793347287d1c}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa813fe9b8b11d1938cca5793347287d1c}} 
+RXDONE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RXTIMEOUT@{RXTIMEOUT}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!RXTIMEOUT@{RXTIMEOUT}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa2113e63f35da6c7ab6785e052e2281c4}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa2113e63f35da6c7ab6785e052e2281c4}} 
+RXTIMEOUT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TXTIMEOUT@{TXTIMEOUT}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!TXTIMEOUT@{TXTIMEOUT}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fab4beba9fe17a65067f166e85bc0bc699}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fab4beba9fe17a65067f166e85bc0bc699}} 
+TXTIMEOUT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RXERROR@{RXERROR}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!RXERROR@{RXERROR}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa13d098019b3ca7f7c164c0ae4308eb9c}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa13d098019b3ca7f7c164c0ae4308eb9c}} 
+RXERROR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_SLEEP@{RADIO\_SLEEP}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!RADIO\_SLEEP@{RADIO\_SLEEP}}}\mbox{\Hypertarget{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa6491425ea51e1bc7afc60a8cb2e823ab}\label{my___m_a_c_8h_ab5cd61b379059d3e304c234435e7d40fa6491425ea51e1bc7afc60a8cb2e823ab}} 
+RADIO\+\_\+\+SLEEP&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 23 of file my\+\_\+\+MAC.\+h.
+
+\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fff}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fff}} 
+\index{my\_MAC.h@{my\_MAC.h}!MACappState\_t@{MACappState\_t}}
+\index{MACappState\_t@{MACappState\_t}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MACappState\_t}{MACappState\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fff}{MACapp\+State\+\_\+t}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_SLEEP@{MAC\_SLEEP}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_SLEEP@{MAC\_SLEEP}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaa272fea9663c72fa8c11fe52c75f3a86}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaa272fea9663c72fa8c11fe52c75f3a86}} 
+MAC\+\_\+\+SLEEP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NODE\_DISC@{NODE\_DISC}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!NODE\_DISC@{NODE\_DISC}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa4810e389069c14c2707dcf16b31491ff}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa4810e389069c14c2707dcf16b31491ff}} 
+NODE\+\_\+\+DISC&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_RTS@{MAC\_RTS}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_RTS@{MAC\_RTS}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffad5de11752614e4e38a17024bd6e4ece8}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffad5de11752614e4e38a17024bd6e4ece8}} 
+MAC\+\_\+\+RTS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_CTS@{MAC\_CTS}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_CTS@{MAC\_CTS}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa5a8fe0da63c1f57440a90ea696193a1c}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa5a8fe0da63c1f57440a90ea696193a1c}} 
+MAC\+\_\+\+CTS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_DATA@{MAC\_DATA}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_DATA@{MAC\_DATA}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaaa1d21d28be23281b552fb7a028db977}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaaa1d21d28be23281b552fb7a028db977}} 
+MAC\+\_\+\+DATA&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_LISTEN@{MAC\_LISTEN}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_LISTEN@{MAC\_LISTEN}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa137db7b0b7c9ccd1507db747fce38a7f}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa137db7b0b7c9ccd1507db747fce38a7f}} 
+MAC\+\_\+\+LISTEN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_ACK@{MAC\_ACK}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_ACK@{MAC\_ACK}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffac21fe8dcfc689c03bd08c5b7ba6e9d54}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffac21fe8dcfc689c03bd08c5b7ba6e9d54}} 
+MAC\+\_\+\+ACK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_SYNC\_BROADCAST@{MAC\_SYNC\_BROADCAST}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_SYNC\_BROADCAST@{MAC\_SYNC\_BROADCAST}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa74a0d04bf371691e70b1fa8cc0bd3b68}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa74a0d04bf371691e70b1fa8cc0bd3b68}} 
+MAC\+\_\+\+SYNC\+\_\+\+BROADCAST&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_WAIT@{MAC\_WAIT}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_WAIT@{MAC\_WAIT}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa2b22d32bedcc563760a8e919929243d3}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa2b22d32bedcc563760a8e919929243d3}} 
+MAC\+\_\+\+WAIT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_NET\_OP@{MAC\_NET\_OP}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_NET\_OP@{MAC\_NET\_OP}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa265ff1832993222dfbab2289976027f3}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffa265ff1832993222dfbab2289976027f3}} 
+MAC\+\_\+\+NET\+\_\+\+OP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAC\_HOP\_MESSAGE@{MAC\_HOP\_MESSAGE}!my\_MAC.h@{my\_MAC.h}}\index{my\_MAC.h@{my\_MAC.h}!MAC\_HOP\_MESSAGE@{MAC\_HOP\_MESSAGE}}}\mbox{\Hypertarget{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaf4b420070e079f0ffe5e3712ba5447c7}\label{my___m_a_c_8h_a4f09a5af0c7092112cb61da420919fffaf4b420070e079f0ffe5e3712ba5447c7}} 
+MAC\+\_\+\+HOP\+\_\+\+MESSAGE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 27 of file my\+\_\+\+MAC.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my___m_a_c_8h_a8aefa039f0cbdad1776c5a2b486590d1}\label{my___m_a_c_8h_a8aefa039f0cbdad1776c5a2b486590d1}} 
+\index{my\_MAC.h@{my\_MAC.h}!addNeighbour@{addNeighbour}}
+\index{addNeighbour@{addNeighbour}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{addNeighbour()}{addNeighbour()}}
+{\footnotesize\ttfamily void add\+Neighbour (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}]{neighbour,  }\item[{uint16\+\_\+t}]{tx\+Slot }\end{DoxyParamCaption})}
+
+
+
+add node to neighbour table 
+
+
+\begin{DoxyParams}{Parameters}
+{\em neighbour} & \\
+\hline
+{\em tx\+Slot} & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 478 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my___m_a_c_8h_ade756bf259fcdbbb1b2353cec0265fc3}\label{my___m_a_c_8h_ade756bf259fcdbbb1b2353cec0265fc3}} 
+\index{my\_MAC.h@{my\_MAC.h}!getNeighbourTable@{getNeighbourTable}}
+\index{getNeighbourTable@{getNeighbourTable}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{getNeighbourTable()}{getNeighbourTable()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}}$\ast$ get\+Neighbour\+Table (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+a reference to the neighour table 
+
+return a referce to neighbour table 
+\end{DoxyReturn}
+
+
+Definition at line 622 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my___m_a_c_8h_af9e286a8c89af9a034346e2b8cbfc594}\label{my___m_a_c_8h_af9e286a8c89af9a034346e2b8cbfc594}} 
+\index{my\_MAC.h@{my\_MAC.h}!getReceivedMessages@{getReceivedMessages}}
+\index{getReceivedMessages@{getReceivedMessages}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{getReceivedMessages()}{getReceivedMessages()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}}$\ast$ get\+Received\+Messages (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+ref to received msg buffer 
+\end{DoxyReturn}
+
+
+Definition at line 626 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my___m_a_c_8h_a80f0ecae62941e25059fbb3744cd84f3}\label{my___m_a_c_8h_a80f0ecae62941e25059fbb3744cd84f3}} 
+\index{my\_MAC.h@{my\_MAC.h}!isNeighbour@{isNeighbour}}
+\index{isNeighbour@{isNeighbour}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{isNeighbour()}{isNeighbour()}}
+{\footnotesize\ttfamily bool is\+Neighbour (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}]{node }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em checks} & if given node address is a neighbour of this node \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return true if node is a neighbour 
+\end{DoxyReturn}
+
+
+Definition at line 561 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my___m_a_c_8h_affba8a10437b2dda1bdaedcc0a9e6fae}\label{my___m_a_c_8h_affba8a10437b2dda1bdaedcc0a9e6fae}} 
+\index{my\_MAC.h@{my\_MAC.h}!MacInit@{MacInit}}
+\index{MacInit@{MacInit}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MacInit()}{MacInit()}}
+{\footnotesize\ttfamily void Mac\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialise the mac protocol and all node parameters. 
+
+
+
+Definition at line 147 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my___m_a_c_8h_a5af4f10596f72ef0d2dfcdacb8ee6e95}\label{my___m_a_c_8h_a5af4f10596f72ef0d2dfcdacb8ee6e95}} 
+\index{my\_MAC.h@{my\_MAC.h}!MACSendTxDatagram@{MACSendTxDatagram}}
+\index{MACSendTxDatagram@{MACSendTxDatagram}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MACSendTxDatagram()}{MACSendTxDatagram()}}
+{\footnotesize\ttfamily bool MACSend\+Tx\+Datagram (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+copies the contents of the txdatagram into the tx\+Buffer and then transmits it. Only use if txdatagram has already been set up correctly. 
+
+\begin{DoxyReturn}{Returns}
+returns true if succesfully sent 
+\end{DoxyReturn}
+
+
+Definition at line 572 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my___m_a_c_8h_a0b548793df5c107c949b0b58839162fc}\label{my___m_a_c_8h_a0b548793df5c107c949b0b58839162fc}} 
+\index{my\_MAC.h@{my\_MAC.h}!MACStartTransaction@{MACStartTransaction}}
+\index{MACStartTransaction@{MACStartTransaction}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MACStartTransaction()}{MACStartTransaction()}}
+{\footnotesize\ttfamily bool MACStart\+Transaction (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}]{destination,  }\item[{uint8\+\_\+t}]{msg\+Type,  }\item[{bool}]{is\+Source }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{my___m_a_c_8h_ad4e07f2607353f1458e2307c71050ec2}\label{my___m_a_c_8h_ad4e07f2607353f1458e2307c71050ec2}} 
+\index{my\_MAC.h@{my\_MAC.h}!MACStateMachine@{MACStateMachine}}
+\index{MACStateMachine@{MACStateMachine}!my\_MAC.h@{my\_MAC.h}}
+\doxysubsubsection{\texorpdfstring{MACStateMachine()}{MACStateMachine()}}
+{\footnotesize\ttfamily bool MACState\+Machine (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+the state machine that control the mac protocol 
+
+\begin{DoxyReturn}{Returns}
+returns true if succesful 
+\end{DoxyReturn}
+
+
+Definition at line 182 of file my\+\_\+\+MAC.\+c.
+

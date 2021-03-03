@@ -1,0 +1,346 @@
+\hypertarget{utilities_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/utilities.h File Reference}
+\label{utilities_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/utilities.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/utilities.h}}
+
+
+Helper functions implementation.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{utilities_8h_aa90cac659d18e8ef6294c7ae337f6b58}{SUCCESS}}~1
+\item 
+\#define \mbox{\hyperlink{utilities_8h_abb508ea8227673f419e9fe3a86c30d8e}{FAIL}}~0
+\item 
+\#define \mbox{\hyperlink{utilities_8h_a3acffbd305ee72dcd4593c0d8af64a4f}{MIN}}(a,  b)~( ( ( a ) $<$ ( b ) ) ? ( a ) \+: ( b ) )
+\begin{DoxyCompactList}\small\item\em Returns the minimum value between a and b. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{utilities_8h_afa99ec4acc4ecb2dc3c2d05da15d0e3f}{MAX}}(a,  b)~( ( ( a ) $>$ ( b ) ) ? ( a ) \+: ( b ) )
+\begin{DoxyCompactList}\small\item\em Returns the maximum value between a and b. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{utilities_8h_a4ccbcb603250aaa348c37eafb950cd48}{POW2}}(n)~( 1 $<$$<$ n )
+\begin{DoxyCompactList}\small\item\em Returns 2 raised to the power of n. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{utilities_8h_a0f48dcf260a482a204f5582ddd0a321f}{CRITICAL\+\_\+\+SECTION\+\_\+\+BEGIN}}()~uint32\+\_\+t mask; \mbox{\hyperlink{utilities_8h_a0f9e7aec44080ee7c4a4730f72d56d3f}{Board\+Critical\+Section\+Begin}}( \&mask )
+\item 
+\#define \mbox{\hyperlink{utilities_8h_a5a426c9904f25a94af2bedfabd066b6e}{CRITICAL\+\_\+\+SECTION\+\_\+\+END}}()~\mbox{\hyperlink{utilities_8h_a7e1be95c29253206322b8f8e6a8369f8}{Board\+Critical\+Section\+End}}( \&mask )
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{utilities_8h_aeb9a45da74fe6c260b78b181882d7275}{srand1}} (uint32\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Initializes the pseudo random generator initial value. \end{DoxyCompactList}\item 
+int32\+\_\+t \mbox{\hyperlink{utilities_8h_af5d8ad6dae489ac64821e7d4f004595d}{randr}} (int32\+\_\+t min, int32\+\_\+t max)
+\begin{DoxyCompactList}\small\item\em Computes a random number between min and max. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{utilities_8h_abfbe672c7136122f16c9214bc4ba8d21}{memcpy1}} (uint8\+\_\+t $\ast$dst, const uint8\+\_\+t $\ast$src, uint16\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Copies size elements of src array to dst array. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{utilities_8h_a0cb4146b2cc797dcabcb7b0d50c64558}{memcpyr}} (uint8\+\_\+t $\ast$dst, const uint8\+\_\+t $\ast$src, uint16\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Copies size elements of src array to dst array reversing the byte order. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{utilities_8h_a272ed6d691263d9762c98ed720b1fa3a}{memset1}} (uint8\+\_\+t $\ast$dst, uint8\+\_\+t value, uint16\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Set size elements of dst array with value. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{utilities_8h_a8976c21b18144ae2cc8b6395768e5863}{Nibble2\+Hex\+Char}} (uint8\+\_\+t a)
+\begin{DoxyCompactList}\small\item\em Converts a nibble to an hexadecimal character. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{utilities_8h_a0f9e7aec44080ee7c4a4730f72d56d3f}{Board\+Critical\+Section\+Begin}} (uint32\+\_\+t $\ast$mask)
+\item 
+void \mbox{\hyperlink{utilities_8h_a7e1be95c29253206322b8f8e6a8369f8}{Board\+Critical\+Section\+End}} (uint32\+\_\+t $\ast$mask)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Helper functions implementation. 
+
+\begin{DoxyCopyright}{Copyright}
+Revised BSD License, see section LICENSE.
+\end{DoxyCopyright}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \_\_\_\_\_\_                              \_}
+\DoxyCodeLine{ / \_\_\_\_\_)             \_              | |}
+\DoxyCodeLine{( (\_\_\_\_  \_\_\_\_\_ \_\_\_\_ \_| |\_ \_\_\_\_\_  \_\_\_\_| |\_\_}
+\DoxyCodeLine{ \(\backslash\)\_\_\_\_ \(\backslash\)| \_\_\_ |    (\_   \_) \_\_\_ |/ \_\_\_)  \_ \(\backslash\)}
+\DoxyCodeLine{ \_\_\_\_\_) ) \_\_\_\_| | | || |\_| \_\_\_\_( (\_\_\_| | | |}
+\DoxyCodeLine{(\_\_\_\_\_\_/|\_\_\_\_\_)\_|\_|\_| \(\backslash\)\_\_)\_\_\_\_\_)\(\backslash\)\_\_\_\_)\_| |\_|}
+\DoxyCodeLine{(C)2013-\/2017 Semtech}
+
+\end{DoxyCode}
+
+
+\begin{DoxyAuthor}{Author}
+Miguel Luis ( Semtech )
+
+Gregory Cristian ( Semtech ) 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{utilities_8h_a0f48dcf260a482a204f5582ddd0a321f}\label{utilities_8h_a0f48dcf260a482a204f5582ddd0a321f}} 
+\index{utilities.h@{utilities.h}!CRITICAL\_SECTION\_BEGIN@{CRITICAL\_SECTION\_BEGIN}}
+\index{CRITICAL\_SECTION\_BEGIN@{CRITICAL\_SECTION\_BEGIN}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{CRITICAL\_SECTION\_BEGIN}{CRITICAL\_SECTION\_BEGIN}}
+{\footnotesize\ttfamily \#define CRITICAL\+\_\+\+SECTION\+\_\+\+BEGIN(\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})~uint32\+\_\+t mask; \mbox{\hyperlink{utilities_8h_a0f9e7aec44080ee7c4a4730f72d56d3f}{Board\+Critical\+Section\+Begin}}( \&mask )}
+
+Begins critical section 
+
+Definition at line 131 of file utilities.\+h.
+
+\mbox{\Hypertarget{utilities_8h_a5a426c9904f25a94af2bedfabd066b6e}\label{utilities_8h_a5a426c9904f25a94af2bedfabd066b6e}} 
+\index{utilities.h@{utilities.h}!CRITICAL\_SECTION\_END@{CRITICAL\_SECTION\_END}}
+\index{CRITICAL\_SECTION\_END@{CRITICAL\_SECTION\_END}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{CRITICAL\_SECTION\_END}{CRITICAL\_SECTION\_END}}
+{\footnotesize\ttfamily \#define CRITICAL\+\_\+\+SECTION\+\_\+\+END(\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})~\mbox{\hyperlink{utilities_8h_a7e1be95c29253206322b8f8e6a8369f8}{Board\+Critical\+Section\+End}}( \&mask )}
+
+Ends critical section 
+
+Definition at line 136 of file utilities.\+h.
+
+\mbox{\Hypertarget{utilities_8h_abb508ea8227673f419e9fe3a86c30d8e}\label{utilities_8h_abb508ea8227673f419e9fe3a86c30d8e}} 
+\index{utilities.h@{utilities.h}!FAIL@{FAIL}}
+\index{FAIL@{FAIL}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{FAIL}{FAIL}}
+{\footnotesize\ttfamily \#define FAIL~0}
+
+
+
+Definition at line 40 of file utilities.\+h.
+
+\mbox{\Hypertarget{utilities_8h_afa99ec4acc4ecb2dc3c2d05da15d0e3f}\label{utilities_8h_afa99ec4acc4ecb2dc3c2d05da15d0e3f}} 
+\index{utilities.h@{utilities.h}!MAX@{MAX}}
+\index{MAX@{MAX}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{MAX}{MAX}}
+{\footnotesize\ttfamily \#define MAX(\begin{DoxyParamCaption}\item[{}]{a,  }\item[{}]{b }\end{DoxyParamCaption})~( ( ( a ) $>$ ( b ) ) ? ( a ) \+: ( b ) )}
+
+
+
+Returns the maximum value between a and b. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & a 1st value \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & b 2nd value \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em max\+Value} & Maximum value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 62 of file utilities.\+h.
+
+\mbox{\Hypertarget{utilities_8h_a3acffbd305ee72dcd4593c0d8af64a4f}\label{utilities_8h_a3acffbd305ee72dcd4593c0d8af64a4f}} 
+\index{utilities.h@{utilities.h}!MIN@{MIN}}
+\index{MIN@{MIN}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{MIN}{MIN}}
+{\footnotesize\ttfamily \#define MIN(\begin{DoxyParamCaption}\item[{}]{a,  }\item[{}]{b }\end{DoxyParamCaption})~( ( ( a ) $<$ ( b ) ) ? ( a ) \+: ( b ) )}
+
+
+
+Returns the minimum value between a and b. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & a 1st value \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & b 2nd value \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em min\+Value} & Minimum value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 51 of file utilities.\+h.
+
+\mbox{\Hypertarget{utilities_8h_a4ccbcb603250aaa348c37eafb950cd48}\label{utilities_8h_a4ccbcb603250aaa348c37eafb950cd48}} 
+\index{utilities.h@{utilities.h}!POW2@{POW2}}
+\index{POW2@{POW2}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{POW2}{POW2}}
+{\footnotesize\ttfamily \#define POW2(\begin{DoxyParamCaption}\item[{}]{n }\end{DoxyParamCaption})~( 1 $<$$<$ n )}
+
+
+
+Returns 2 raised to the power of n. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & n power value \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em result} & of raising 2 to the power n \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 71 of file utilities.\+h.
+
+\mbox{\Hypertarget{utilities_8h_aa90cac659d18e8ef6294c7ae337f6b58}\label{utilities_8h_aa90cac659d18e8ef6294c7ae337f6b58}} 
+\index{utilities.h@{utilities.h}!SUCCESS@{SUCCESS}}
+\index{SUCCESS@{SUCCESS}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{SUCCESS}{SUCCESS}}
+{\footnotesize\ttfamily \#define SUCCESS~1}
+
+Generic definition 
+
+Definition at line 36 of file utilities.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{utilities_8h_a0f9e7aec44080ee7c4a4730f72d56d3f}\label{utilities_8h_a0f9e7aec44080ee7c4a4730f72d56d3f}} 
+\index{utilities.h@{utilities.h}!BoardCriticalSectionBegin@{BoardCriticalSectionBegin}}
+\index{BoardCriticalSectionBegin@{BoardCriticalSectionBegin}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{BoardCriticalSectionBegin()}{BoardCriticalSectionBegin()}}
+{\footnotesize\ttfamily void Board\+Critical\+Section\+Begin (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{mask }\end{DoxyParamCaption})}
+
+Disable interrupts, begins critical section
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & mask Pointer to a variable where to store the CPU IRQ mask \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file board.\+c.
+
+\mbox{\Hypertarget{utilities_8h_a7e1be95c29253206322b8f8e6a8369f8}\label{utilities_8h_a7e1be95c29253206322b8f8e6a8369f8}} 
+\index{utilities.h@{utilities.h}!BoardCriticalSectionEnd@{BoardCriticalSectionEnd}}
+\index{BoardCriticalSectionEnd@{BoardCriticalSectionEnd}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{BoardCriticalSectionEnd()}{BoardCriticalSectionEnd()}}
+{\footnotesize\ttfamily void Board\+Critical\+Section\+End (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{mask }\end{DoxyParamCaption})}
+
+Ends critical section
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & mask Pointer to a variable where the CPU IRQ mask was stored \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 55 of file board.\+c.
+
+\mbox{\Hypertarget{utilities_8h_abfbe672c7136122f16c9214bc4ba8d21}\label{utilities_8h_abfbe672c7136122f16c9214bc4ba8d21}} 
+\index{utilities.h@{utilities.h}!memcpy1@{memcpy1}}
+\index{memcpy1@{memcpy1}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{memcpy1()}{memcpy1()}}
+{\footnotesize\ttfamily void memcpy1 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{dst,  }\item[{const uint8\+\_\+t $\ast$}]{src,  }\item[{uint16\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Copies size elements of src array to dst array. 
+
+\begin{DoxyRemark}{Remarks}
+STM32 Standard memcpy function only works on pointers that are aligned
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+OUT\mbox{]}} & dst Destination array \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & src Source array \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of bytes to be copied \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{utilities_8h_a0cb4146b2cc797dcabcb7b0d50c64558}\label{utilities_8h_a0cb4146b2cc797dcabcb7b0d50c64558}} 
+\index{utilities.h@{utilities.h}!memcpyr@{memcpyr}}
+\index{memcpyr@{memcpyr}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{memcpyr()}{memcpyr()}}
+{\footnotesize\ttfamily void memcpyr (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{dst,  }\item[{const uint8\+\_\+t $\ast$}]{src,  }\item[{uint16\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Copies size elements of src array to dst array reversing the byte order. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+OUT\mbox{]}} & dst Destination array \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & src Source array \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of bytes to be copied \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{utilities_8h_a272ed6d691263d9762c98ed720b1fa3a}\label{utilities_8h_a272ed6d691263d9762c98ed720b1fa3a}} 
+\index{utilities.h@{utilities.h}!memset1@{memset1}}
+\index{memset1@{memset1}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{memset1()}{memset1()}}
+{\footnotesize\ttfamily void memset1 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{dst,  }\item[{uint8\+\_\+t}]{value,  }\item[{uint16\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Set size elements of dst array with value. 
+
+\begin{DoxyRemark}{Remarks}
+STM32 Standard memset function only works on pointers that are aligned
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+OUT\mbox{]}} & dst Destination array \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & value Default value \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of bytes to be copied \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{utilities_8h_a8976c21b18144ae2cc8b6395768e5863}\label{utilities_8h_a8976c21b18144ae2cc8b6395768e5863}} 
+\index{utilities.h@{utilities.h}!Nibble2HexChar@{Nibble2HexChar}}
+\index{Nibble2HexChar@{Nibble2HexChar}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{Nibble2HexChar()}{Nibble2HexChar()}}
+{\footnotesize\ttfamily int8\+\_\+t Nibble2\+Hex\+Char (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{a }\end{DoxyParamCaption})}
+
+
+
+Converts a nibble to an hexadecimal character. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & a Nibble to be converted \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em hex\+Char} & Converted hexadecimal character \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{utilities_8h_af5d8ad6dae489ac64821e7d4f004595d}\label{utilities_8h_af5d8ad6dae489ac64821e7d4f004595d}} 
+\index{utilities.h@{utilities.h}!randr@{randr}}
+\index{randr@{randr}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{randr()}{randr()}}
+{\footnotesize\ttfamily int32\+\_\+t randr (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{min,  }\item[{int32\+\_\+t}]{max }\end{DoxyParamCaption})}
+
+
+
+Computes a random number between min and max. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & min range minimum value \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & max range maximum value \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em random} & random value in range min..max \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{utilities_8h_aeb9a45da74fe6c260b78b181882d7275}\label{utilities_8h_aeb9a45da74fe6c260b78b181882d7275}} 
+\index{utilities.h@{utilities.h}!srand1@{srand1}}
+\index{srand1@{srand1}!utilities.h@{utilities.h}}
+\doxysubsubsection{\texorpdfstring{srand1()}{srand1()}}
+{\footnotesize\ttfamily void srand1 (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+
+
+Initializes the pseudo random generator initial value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & seed Pseudo random generator initial value \\
+\hline
+\end{DoxyParams}

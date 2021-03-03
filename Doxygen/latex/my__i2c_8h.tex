@@ -1,0 +1,66 @@
+\hypertarget{my__i2c_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+i2c.h File Reference}
+\label{my__i2c_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_i2c.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_i2c.h}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my__i2c_8h_af8edc6c53152291cc0deead4c4a2c302}{SLAVE\+\_\+\+ADDRESS\+\_\+\+LIGHT\+\_\+\+SENSOR}}~0x4A
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__i2c_8h_aeb7a85378bf2caee4ff575af15ad2d72}{i2c\+Init}} ()
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my__i2c_8h_a6649e706117e1e4f958873dcc81400c0}{i2c\+Send}} (uint8\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t buf\+Len)
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my__i2c_8h_ad1dcf374f1582a050195bf6ce9e8cdef}{i2c\+Tx\+Rx\+Single\+Bytes}} (uint8\+\_\+t addr, uint8\+\_\+t $\ast$tx\+Buf, uint8\+\_\+t $\ast$rx\+Buf, uint8\+\_\+t num\+Bytes)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 08 Sep 2020 Author\+: njnel 
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my__i2c_8h_af8edc6c53152291cc0deead4c4a2c302}\label{my__i2c_8h_af8edc6c53152291cc0deead4c4a2c302}} 
+\index{my\_i2c.h@{my\_i2c.h}!SLAVE\_ADDRESS\_LIGHT\_SENSOR@{SLAVE\_ADDRESS\_LIGHT\_SENSOR}}
+\index{SLAVE\_ADDRESS\_LIGHT\_SENSOR@{SLAVE\_ADDRESS\_LIGHT\_SENSOR}!my\_i2c.h@{my\_i2c.h}}
+\doxysubsubsection{\texorpdfstring{SLAVE\_ADDRESS\_LIGHT\_SENSOR}{SLAVE\_ADDRESS\_LIGHT\_SENSOR}}
+{\footnotesize\ttfamily \#define SLAVE\+\_\+\+ADDRESS\+\_\+\+LIGHT\+\_\+\+SENSOR~0x4A}
+
+
+
+Definition at line 11 of file my\+\_\+i2c.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__i2c_8h_aeb7a85378bf2caee4ff575af15ad2d72}\label{my__i2c_8h_aeb7a85378bf2caee4ff575af15ad2d72}} 
+\index{my\_i2c.h@{my\_i2c.h}!i2cInit@{i2cInit}}
+\index{i2cInit@{i2cInit}!my\_i2c.h@{my\_i2c.h}}
+\doxysubsubsection{\texorpdfstring{i2cInit()}{i2cInit()}}
+{\footnotesize\ttfamily void i2c\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 29 of file my\+\_\+i2c.\+c.
+
+\mbox{\Hypertarget{my__i2c_8h_a6649e706117e1e4f958873dcc81400c0}\label{my__i2c_8h_a6649e706117e1e4f958873dcc81400c0}} 
+\index{my\_i2c.h@{my\_i2c.h}!i2cSend@{i2cSend}}
+\index{i2cSend@{i2cSend}!my\_i2c.h@{my\_i2c.h}}
+\doxysubsubsection{\texorpdfstring{i2cSend()}{i2cSend()}}
+{\footnotesize\ttfamily uint8\+\_\+t i2c\+Send (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{addr,  }\item[{uint8\+\_\+t $\ast$}]{buffer,  }\item[{uint8\+\_\+t}]{buf\+Len }\end{DoxyParamCaption})}
+
+
+
+Definition at line 50 of file my\+\_\+i2c.\+c.
+
+\mbox{\Hypertarget{my__i2c_8h_ad1dcf374f1582a050195bf6ce9e8cdef}\label{my__i2c_8h_ad1dcf374f1582a050195bf6ce9e8cdef}} 
+\index{my\_i2c.h@{my\_i2c.h}!i2cTxRxSingleBytes@{i2cTxRxSingleBytes}}
+\index{i2cTxRxSingleBytes@{i2cTxRxSingleBytes}!my\_i2c.h@{my\_i2c.h}}
+\doxysubsubsection{\texorpdfstring{i2cTxRxSingleBytes()}{i2cTxRxSingleBytes()}}
+{\footnotesize\ttfamily uint8\+\_\+t i2c\+Tx\+Rx\+Single\+Bytes (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{addr,  }\item[{uint8\+\_\+t $\ast$}]{tx\+Buf,  }\item[{uint8\+\_\+t $\ast$}]{rx\+Buf,  }\item[{uint8\+\_\+t}]{num\+Bytes }\end{DoxyParamCaption})}
+
+
+
+Definition at line 75 of file my\+\_\+i2c.\+c.
+

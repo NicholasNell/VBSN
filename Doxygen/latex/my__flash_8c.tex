@@ -1,0 +1,232 @@
+\hypertarget{my__flash_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+flash.c File Reference}
+\label{my__flash_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_flash.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_flash.c}}
+
+
+Created on\+: 17 Sep 2020 Author\+: njnel.  
+
+
+{\ttfamily \#include $<$my\+\_\+\+MAC.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+flash.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/driverlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rtc\+\_\+c.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my__flash_8c_a935e3e07271a4bb7d0a9c1826c0f26ff}{MY\+\_\+\+FLASH\+\_\+\+DATA\+\_\+\+LEN}}~4096
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{my__flash_8c_a17a3a3d70e3c83e401f7b5ae7ba95e31}{flash\+Write\+Buffer}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_a90cfb97c8b5afef9898d83cb13ead784}{flash\+Read\+Buffer}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_ad1092cf9b8ed1394d2d84df897c48326}{flash\+Erase\+All}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_ad761ea84510329d85b532418cd5d5450}{flash\+Write\+Node\+ID}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_ac9d2e238fa891afaec8bfe372cbc0ae5}{flash\+Read\+Node\+ID}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_a7e1f7be99eedd792dd874e0d9b609f4e}{flash\+Init\+Buffer}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_a1ba2a4f6d5590ce88160936583d6dc5f}{flash\+Write\+Neighbours}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_a9b84fafc459b836224732b826219f049}{flash\+Read\+Neighbours}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_aba6ef0fadc8140867c2bc9d667b56921}{flash\+Fill\+Struct\+For\+Write}} ()
+\item 
+int \mbox{\hyperlink{my__flash_8c_a3509ee7859d41774797cc9e39bc92929}{flash\+Write\+Struct\+To\+Flash}} ()
+\begin{DoxyCompactList}\small\item\em writes the struct to the flash memory \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{my__flash_8c_a842f81fa7343c77c4b557182401dc0f0}{flash\+Read\+From\+Flash}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{my__flash_8c_a562ccfa18234138c1ce0b2d9f024520f}{last\+Write}} = \mbox{\hyperlink{my__flash_8h_add6f18758c2226ec97b4c10a524709d1}{MYDATA\+\_\+\+MEM\+\_\+\+START}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{my__flash_8c_abebf907a65d52ab8a88ee47805793542}{\+\_\+node\+ID}}
+\item 
+\mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}} \mbox{\hyperlink{my__flash_8c_a50c1d30c1b97af1385b0520cc1601ec8}{neighbour\+Table}} \mbox{[}\mbox{\hyperlink{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}{MAX\+\_\+\+NEIGHBOURS}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 17 Sep 2020 Author\+: njnel. 
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my__flash_8c_a935e3e07271a4bb7d0a9c1826c0f26ff}\label{my__flash_8c_a935e3e07271a4bb7d0a9c1826c0f26ff}} 
+\index{my\_flash.c@{my\_flash.c}!MY\_FLASH\_DATA\_LEN@{MY\_FLASH\_DATA\_LEN}}
+\index{MY\_FLASH\_DATA\_LEN@{MY\_FLASH\_DATA\_LEN}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{MY\_FLASH\_DATA\_LEN}{MY\_FLASH\_DATA\_LEN}}
+{\footnotesize\ttfamily \#define MY\+\_\+\+FLASH\+\_\+\+DATA\+\_\+\+LEN~4096}
+
+
+
+Definition at line 21 of file my\+\_\+flash.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__flash_8c_ad1092cf9b8ed1394d2d84df897c48326}\label{my__flash_8c_ad1092cf9b8ed1394d2d84df897c48326}} 
+\index{my\_flash.c@{my\_flash.c}!flashEraseAll@{flashEraseAll}}
+\index{flashEraseAll@{flashEraseAll}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashEraseAll()}{flashEraseAll()}}
+{\footnotesize\ttfamily int flash\+Erase\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 61 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_aba6ef0fadc8140867c2bc9d667b56921}\label{my__flash_8c_aba6ef0fadc8140867c2bc9d667b56921}} 
+\index{my\_flash.c@{my\_flash.c}!flashFillStructForWrite@{flashFillStructForWrite}}
+\index{flashFillStructForWrite@{flashFillStructForWrite}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashFillStructForWrite()}{flashFillStructForWrite()}}
+{\footnotesize\ttfamily int flash\+Fill\+Struct\+For\+Write (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Fills the structure with current values from RAM \begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+Definition at line 105 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a7e1f7be99eedd792dd874e0d9b609f4e}\label{my__flash_8c_a7e1f7be99eedd792dd874e0d9b609f4e}} 
+\index{my\_flash.c@{my\_flash.c}!flashInitBuffer@{flashInitBuffer}}
+\index{flashInitBuffer@{flashInitBuffer}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashInitBuffer()}{flashInitBuffer()}}
+{\footnotesize\ttfamily int flash\+Init\+Buffer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 82 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a90cfb97c8b5afef9898d83cb13ead784}\label{my__flash_8c_a90cfb97c8b5afef9898d83cb13ead784}} 
+\index{my\_flash.c@{my\_flash.c}!flashReadBuffer@{flashReadBuffer}}
+\index{flashReadBuffer@{flashReadBuffer}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashReadBuffer()}{flashReadBuffer()}}
+{\footnotesize\ttfamily int flash\+Read\+Buffer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 56 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a842f81fa7343c77c4b557182401dc0f0}\label{my__flash_8c_a842f81fa7343c77c4b557182401dc0f0}} 
+\index{my\_flash.c@{my\_flash.c}!flashReadFromFlash@{flashReadFromFlash}}
+\index{flashReadFromFlash@{flashReadFromFlash}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashReadFromFlash()}{flashReadFromFlash()}}
+{\footnotesize\ttfamily int flash\+Read\+From\+Flash (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+fills the data struct with data from flash
+
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+Definition at line 127 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a9b84fafc459b836224732b826219f049}\label{my__flash_8c_a9b84fafc459b836224732b826219f049}} 
+\index{my\_flash.c@{my\_flash.c}!flashReadNeighbours@{flashReadNeighbours}}
+\index{flashReadNeighbours@{flashReadNeighbours}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashReadNeighbours()}{flashReadNeighbours()}}
+{\footnotesize\ttfamily int flash\+Read\+Neighbours (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 95 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_ac9d2e238fa891afaec8bfe372cbc0ae5}\label{my__flash_8c_ac9d2e238fa891afaec8bfe372cbc0ae5}} 
+\index{my\_flash.c@{my\_flash.c}!flashReadNodeID@{flashReadNodeID}}
+\index{flashReadNodeID@{flashReadNodeID}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashReadNodeID()}{flashReadNodeID()}}
+{\footnotesize\ttfamily int flash\+Read\+Node\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 75 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a17a3a3d70e3c83e401f7b5ae7ba95e31}\label{my__flash_8c_a17a3a3d70e3c83e401f7b5ae7ba95e31}} 
+\index{my\_flash.c@{my\_flash.c}!flashWriteBuffer@{flashWriteBuffer}}
+\index{flashWriteBuffer@{flashWriteBuffer}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashWriteBuffer()}{flashWriteBuffer()}}
+{\footnotesize\ttfamily int flash\+Write\+Buffer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a1ba2a4f6d5590ce88160936583d6dc5f}\label{my__flash_8c_a1ba2a4f6d5590ce88160936583d6dc5f}} 
+\index{my\_flash.c@{my\_flash.c}!flashWriteNeighbours@{flashWriteNeighbours}}
+\index{flashWriteNeighbours@{flashWriteNeighbours}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashWriteNeighbours()}{flashWriteNeighbours()}}
+{\footnotesize\ttfamily int flash\+Write\+Neighbours (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 87 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_ad761ea84510329d85b532418cd5d5450}\label{my__flash_8c_ad761ea84510329d85b532418cd5d5450}} 
+\index{my\_flash.c@{my\_flash.c}!flashWriteNodeID@{flashWriteNodeID}}
+\index{flashWriteNodeID@{flashWriteNodeID}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashWriteNodeID()}{flashWriteNodeID()}}
+{\footnotesize\ttfamily int flash\+Write\+Node\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 70 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a3509ee7859d41774797cc9e39bc92929}\label{my__flash_8c_a3509ee7859d41774797cc9e39bc92929}} 
+\index{my\_flash.c@{my\_flash.c}!flashWriteStructToFlash@{flashWriteStructToFlash}}
+\index{flashWriteStructToFlash@{flashWriteStructToFlash}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{flashWriteStructToFlash()}{flashWriteStructToFlash()}}
+{\footnotesize\ttfamily int flash\+Write\+Struct\+To\+Flash (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+writes the struct to the flash memory 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 121 of file my\+\_\+flash.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my__flash_8c_abebf907a65d52ab8a88ee47805793542}\label{my__flash_8c_abebf907a65d52ab8a88ee47805793542}} 
+\index{my\_flash.c@{my\_flash.c}!\_nodeID@{\_nodeID}}
+\index{\_nodeID@{\_nodeID}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{\_nodeID}{\_nodeID}}
+{\footnotesize\ttfamily uint8\+\_\+t \+\_\+node\+ID\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 62 of file my\+\_\+\+MAC.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a562ccfa18234138c1ce0b2d9f024520f}\label{my__flash_8c_a562ccfa18234138c1ce0b2d9f024520f}} 
+\index{my\_flash.c@{my\_flash.c}!lastWrite@{lastWrite}}
+\index{lastWrite@{lastWrite}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{lastWrite}{lastWrite}}
+{\footnotesize\ttfamily uint32\+\_\+t last\+Write = \mbox{\hyperlink{my__flash_8h_add6f18758c2226ec97b4c10a524709d1}{MYDATA\+\_\+\+MEM\+\_\+\+START}}}
+
+
+
+Definition at line 26 of file my\+\_\+flash.\+c.
+
+\mbox{\Hypertarget{my__flash_8c_a50c1d30c1b97af1385b0520cc1601ec8}\label{my__flash_8c_a50c1d30c1b97af1385b0520cc1601ec8}} 
+\index{my\_flash.c@{my\_flash.c}!neighbourTable@{neighbourTable}}
+\index{neighbourTable@{neighbourTable}!my\_flash.c@{my\_flash.c}}
+\doxysubsubsection{\texorpdfstring{neighbourTable}{neighbourTable}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}} neighbour\+Table\mbox{[}\mbox{\hyperlink{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}{MAX\+\_\+\+NEIGHBOURS}}\mbox{]}\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 59 of file my\+\_\+\+MAC.\+c.
+

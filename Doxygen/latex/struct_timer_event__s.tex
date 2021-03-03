@@ -1,0 +1,137 @@
+\hypertarget{struct_timer_event__s}{}\doxysection{Timer\+Event\+\_\+s Struct Reference}
+\label{struct_timer_event__s}\index{TimerEvent\_s@{TimerEvent\_s}}
+
+
+Timer object description.  
+
+
+
+
+{\ttfamily \#include $<$timer.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_timer_event__s_ae6678057e9ed5db32d6d2db84671c146}{Timestamp}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_timer_event__s_a670045cfad50e7e4b3a31c0119d6e4fd}{Reload\+Value}}
+\begin{DoxyCompactList}\small\item\em Current timer value. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_timer_event__s_a9414c6daba9ce4aab80fa4c7ed02d507}{Is\+Started}}
+\begin{DoxyCompactList}\small\item\em Timer delay value. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_timer_event__s_aa207e5d895a841402da94d68199bed4f}{Is\+Next2\+Expire}}
+\begin{DoxyCompactList}\small\item\em Is the timer currently running. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct_timer_event__s_afedbf350e582ddf8a8d393095cac5062}{Callback}} )(void $\ast$context)
+\begin{DoxyCompactList}\small\item\em Is the next timer to expire. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{struct_timer_event__s_a547d4c5c292585220c627b4011073f81}{Context}}
+\begin{DoxyCompactList}\small\item\em Timer IRQ callback function. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_timer_event__s}{Timer\+Event\+\_\+s}} $\ast$ \mbox{\hyperlink{struct_timer_event__s_ab4d4ae1079c4e3d4842a2cdf30ffad86}{Next}}
+\begin{DoxyCompactList}\small\item\em User defined data object pointer to pass back. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Timer object description. 
+
+Definition at line 37 of file timer.\+h.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{struct_timer_event__s_afedbf350e582ddf8a8d393095cac5062}\label{struct_timer_event__s_afedbf350e582ddf8a8d393095cac5062}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!Callback@{Callback}}
+\index{Callback@{Callback}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{Callback}{Callback}}
+{\footnotesize\ttfamily void($\ast$ Callback) (void $\ast$context)}
+
+
+
+Is the next timer to expire. 
+
+
+
+Definition at line 42 of file timer.\+h.
+
+\mbox{\Hypertarget{struct_timer_event__s_a547d4c5c292585220c627b4011073f81}\label{struct_timer_event__s_a547d4c5c292585220c627b4011073f81}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!Context@{Context}}
+\index{Context@{Context}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{Context}{Context}}
+{\footnotesize\ttfamily void$\ast$ Context}
+
+
+
+Timer IRQ callback function. 
+
+
+
+Definition at line 43 of file timer.\+h.
+
+\mbox{\Hypertarget{struct_timer_event__s_aa207e5d895a841402da94d68199bed4f}\label{struct_timer_event__s_aa207e5d895a841402da94d68199bed4f}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!IsNext2Expire@{IsNext2Expire}}
+\index{IsNext2Expire@{IsNext2Expire}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{IsNext2Expire}{IsNext2Expire}}
+{\footnotesize\ttfamily bool Is\+Next2\+Expire}
+
+
+
+Is the timer currently running. 
+
+
+
+Definition at line 41 of file timer.\+h.
+
+\mbox{\Hypertarget{struct_timer_event__s_a9414c6daba9ce4aab80fa4c7ed02d507}\label{struct_timer_event__s_a9414c6daba9ce4aab80fa4c7ed02d507}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!IsStarted@{IsStarted}}
+\index{IsStarted@{IsStarted}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{IsStarted}{IsStarted}}
+{\footnotesize\ttfamily bool Is\+Started}
+
+
+
+Timer delay value. 
+
+
+
+Definition at line 40 of file timer.\+h.
+
+\mbox{\Hypertarget{struct_timer_event__s_ab4d4ae1079c4e3d4842a2cdf30ffad86}\label{struct_timer_event__s_ab4d4ae1079c4e3d4842a2cdf30ffad86}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!Next@{Next}}
+\index{Next@{Next}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{Next}{Next}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{struct_timer_event__s}{Timer\+Event\+\_\+s}}$\ast$ Next}
+
+
+
+User defined data object pointer to pass back. 
+
+
+
+Definition at line 44 of file timer.\+h.
+
+\mbox{\Hypertarget{struct_timer_event__s_a670045cfad50e7e4b3a31c0119d6e4fd}\label{struct_timer_event__s_a670045cfad50e7e4b3a31c0119d6e4fd}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!ReloadValue@{ReloadValue}}
+\index{ReloadValue@{ReloadValue}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{ReloadValue}{ReloadValue}}
+{\footnotesize\ttfamily uint32\+\_\+t Reload\+Value}
+
+
+
+Current timer value. 
+
+
+
+Definition at line 39 of file timer.\+h.
+
+\mbox{\Hypertarget{struct_timer_event__s_ae6678057e9ed5db32d6d2db84671c146}\label{struct_timer_event__s_ae6678057e9ed5db32d6d2db84671c146}} 
+\index{TimerEvent\_s@{TimerEvent\_s}!Timestamp@{Timestamp}}
+\index{Timestamp@{Timestamp}!TimerEvent\_s@{TimerEvent\_s}}
+\doxysubsubsection{\texorpdfstring{Timestamp}{Timestamp}}
+{\footnotesize\ttfamily uint32\+\_\+t Timestamp}
+
+
+
+Definition at line 38 of file timer.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/\mbox{\hyperlink{timer_8h}{timer.\+h}}\end{DoxyCompactItemize}

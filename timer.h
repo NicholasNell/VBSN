@@ -63,7 +63,7 @@ typedef uint32_t TimerTime_t;
  * \param [IN] obj          Structure containing the timer object parameters
  * \param [IN] callback     Function callback called at the end of the timeout
  */
-void TimerInit(TimerEvent_t *obj, void (*callback)(void *context));
+void timer_init(TimerEvent_t *obj, void (*callback)(void *context));
 
 /*!
  * \brief Sets a user defined object pointer
@@ -71,19 +71,19 @@ void TimerInit(TimerEvent_t *obj, void (*callback)(void *context));
  * \param [IN] context User defined data object pointer to pass back
  *                     on IRQ handler callback
  */
-void TimerSetContext(TimerEvent_t *obj, void *context);
+void timer_set_context(TimerEvent_t *obj, void *context);
 
 /*!
  * Timer IRQ event handler
  */
-void TimerIrqHandler(void);
+void timer_irq_handler(void);
 
 /*!
  * \brief Starts and adds the timer object to the list of timer events
  *
  * \param [IN] obj Structure containing the timer object parameters
  */
-void TimerStart(TimerEvent_t *obj);
+void timer_start(TimerEvent_t *obj);
 
 /*!
  * \brief Checks if the provided timer is running
@@ -93,21 +93,21 @@ void TimerStart(TimerEvent_t *obj);
  * \retval status  returns the timer activity status [true: Started,
  *                                                    false: Stopped]
  */
-bool TimerIsStarted(TimerEvent_t *obj);
+bool timer_is_started(TimerEvent_t *obj);
 
 /*!
  * \brief Stops and removes the timer object from the list of timer events
  *
  * \param [IN] obj Structure containing the timer object parameters
  */
-void TimerStop(TimerEvent_t *obj);
+void timer_stop(TimerEvent_t *obj);
 
 /*!
  * \brief Resets the timer object
  *
  * \param [IN] obj Structure containing the timer object parameters
  */
-void TimerReset(TimerEvent_t *obj);
+void timer_reset(TimerEvent_t *obj);
 
 /*!
  * \brief Set timer new timeout value
@@ -115,14 +115,14 @@ void TimerReset(TimerEvent_t *obj);
  * \param [IN] obj   Structure containing the timer object parameters
  * \param [IN] value New timer timeout value
  */
-void TimerSetValue(TimerEvent_t *obj, uint32_t value);
+void timer_set_value(TimerEvent_t *obj, uint32_t value);
 
 /*!
  * \brief Read the current time
  *
  * \retval time returns current time
  */
-TimerTime_t TimerGetCurrentTime(void);
+TimerTime_t timer_get_current_time(void);
 
 /*!
  * \brief Return the Time elapsed since a fix moment in Time
@@ -132,7 +132,7 @@ TimerTime_t TimerGetCurrentTime(void);
  * \param [IN] past         fix moment in Time
  * \retval time             returns elapsed time
  */
-TimerTime_t TimerGetElapsedTime(TimerTime_t past);
+TimerTime_t timer_get_elapsed_time(TimerTime_t past);
 
 #ifdef __cplusplus
 }

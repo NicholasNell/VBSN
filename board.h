@@ -62,79 +62,35 @@ enum BoardPowerSources {
 /*!
  * \brief Initializes the mcu.
  */
-void BoardInitMcu(void);
+void board_init_mcu( void );
 
 /*!
  * \brief Resets the mcu.
  */
-void BoardResetMcu(void);
+void board_reset_mcu( void );
 
 /*!
  * \brief Initializes the boards peripherals.
  */
-void BoardInitPeriph(void);
+void board_init_periph( void );
 
 /*!
  * \brief De-initializes the target board peripherals to decrease power
  *        consumption.
  */
-void BoardDeInitMcu(void);
-
-/*!
- * \brief Gets the current potentiometer level value
- *
- * \retval value  Potentiometer level ( value in percent )
- */
-uint8_t BoardGetPotiLevel(void);
+void board_deinit_mcu( void );
 
 /*!
  * \brief Measure the Battery voltage
  *
  * \retval value  battery voltage in volts
  */
-uint32_t BoardGetBatteryVoltage(void);
-
-/*!
- * \brief Get the current battery level
- *
- * \retval value  battery level [  0: USB,
- *                                 1: Min level,
- *                                 x: level
- *                               254: fully charged,
- *                               255: Error]
- */
-uint8_t BoardGetBatteryLevel(void);
-
-/*!
- * Returns a pseudo random seed generated using the MCU Unique ID
- *
- * \retval seed Generated pseudo random seed
- */
-uint32_t BoardGetRandomSeed(void);
-
-/*!
- * \brief Gets the board 64 bits unique ID
- *
- * \param [IN] id Pointer to an array that will contain the Unique ID
- */
-void BoardGetUniqueId(uint8_t *id);
-
-/*!
- * \brief Manages the entry into ARM cortex deep-sleep mode
- */
-void BoardLowPowerHandler(void);
+uint32_t board_get_battery_voltage( void );
 
 /*!
  * \brief configures the system clock
  */
-void SystemClockConfig(void);
-
-/*!
- * \brief Get the board power source
- *
- * \retval value  power source [0: USB_POWER, 1: BATTERY_POWER]
- */
-uint8_t GetBoardPowerSource(void);
+void system_clock_config( void );
 
 #ifdef __cplusplus
 }

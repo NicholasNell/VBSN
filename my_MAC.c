@@ -134,17 +134,17 @@ static void genID( bool genNew ) {
 		_nodeID = tempID;
 	}
 	else {
-		tempID = flashReadNodeID();
+		tempID = flash_read_node_id();
 
 		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
 			tempID = (nodeAddress) rand();
 		}
 		_nodeID = tempID;
 	}
-	flashWriteNodeID();
+	flash_write_node_id();
 }
 
-void MacInit( ) {
+void mac_init( ) {
 	memset(&receivedDatagrams, 0x00, sizeof(receivedDatagrams));
 	uint8_t i;
 	for (i = 0; i < 255; ++i) {
@@ -179,7 +179,7 @@ void MacInit( ) {
 	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 }
 
-bool MACStateMachine( ) {
+bool mac_state_machine( ) {
 	RouteEntry_t *route = NULL;
 	while (true) {
 		switch (MACState) {
@@ -213,7 +213,7 @@ bool MACStateMachine( ) {
 			case MAC_RTS:
 				// Send RTS
 
-				if (hasRouteToNode(GATEWAY_ADDRESS, route)) {
+				if (has_route_to_node(GATEWAY_ADDRESS, route)) {
 					if (SX1276IsChannelFree(MODEM_LORA,
 					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
 
@@ -246,7 +246,7 @@ bool MACStateMachine( ) {
 								RF_FREQUENCY,
 								-60,
 								carrierSenseTimes[carrierSenseSlot++])) {
-							if (netReRReq()) {
+							if (net_re_rreq()) {
 								nextNetOp = NET_WAIT;
 							}
 							else {
@@ -260,7 +260,7 @@ bool MACStateMachine( ) {
 								RF_FREQUENCY,
 								-60,
 								carrierSenseTimes[carrierSenseSlot++])) {
-							if (sendRREQ()) {
+							if (send_rreq()) {
 								nextNetOp = NET_WAIT;
 							}
 							else {
@@ -283,7 +283,7 @@ bool MACStateMachine( ) {
 				break;
 //			return true;
 			case MAC_HOP_MESSAGE:
-				if (hasRouteToNode(GATEWAY_ADDRESS, route)) {
+				if (has_route_to_node(GATEWAY_ADDRESS, route)) {
 					if (SX1276IsChannelFree(MODEM_LORA,
 					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
 
@@ -325,20 +325,20 @@ bool MACSend( msgType_t msgType, nodeAddress dest ) {
 		txDatagram.data.sensData.hum = bme280Data.humidity;
 		txDatagram.data.sensData.press = bme280Data.pressure;
 		txDatagram.data.sensData.temp = bme280Data.temperature;
-		txDatagram.data.sensData.lux = getLux();
+		txDatagram.data.sensData.lux = get_lux();
 		txDatagram.data.sensData.gpsData = gpsData;
 		txDatagram.data.sensData.soilMoisture = soilMoisture;
 		txDatagram.data.sensData.tim = timeStamp;
 
 		int size = sizeof(txDatagram);
 		memcpy(TXBuffer, &txDatagram, size);
-		startLoRaTimer(loraTxtimes[size + 1]);
+		start_lora_timer(loraTxtimes[size + 1]);
 		SX1276Send(TXBuffer, size);
 	}
 	else {
 		int size = sizeof(txDatagram.msgHeader);
 		memcpy(TXBuffer, &txDatagram, size);
-		startLoRaTimer(loraTxtimes[size + 1]);
+		start_lora_timer(loraTxtimes[size + 1]);
 		SX1276Send(TXBuffer, size);
 	}
 
@@ -354,14 +354,14 @@ bool MACSend( msgType_t msgType, nodeAddress dest ) {
 			break;
 		}
 	}
-	stopLoRaTimer();
+	stop_lora_timer();
 	return retVal;
 }
 
 bool MACRx( uint32_t timeout ) {
 	Radio.Rx(0);
 	RadioState = RX;
-	startLoRaTimer(timeout);
+	start_lora_timer(timeout);
 	bool retVal = false;
 	while (true) {
 		if (RadioState == RXTIMEOUT) {
@@ -383,7 +383,7 @@ bool MACRx( uint32_t timeout ) {
 			}
 		}
 	}
-	stopLoRaTimer();
+	stop_lora_timer();
 	return retVal;
 }
 
@@ -437,7 +437,7 @@ static bool processRXBuffer( ) {
 				break;
 			case MSG_RREP: 	// RREP
 				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
-				nextNetOp = processRrep();
+				nextNetOp = process_rrep();
 				MACState = MAC_NET_OP;
 				netOp = true;
 				break;
@@ -445,7 +445,7 @@ static bool processRXBuffer( ) {
 				/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
 			case MSG_SYNC: 	// SYNC
 			{
-				addNeighbour(
+				add_neighbour(
 						rxDatagram.msgHeader.localSource,
 						rxDatagram.msgHeader.txSlot);
 
@@ -455,12 +455,12 @@ static bool processRXBuffer( ) {
 					genID(true);
 					schedChange = true;
 				}
-				addRoutetoNeighbour(rxDatagram.msgHeader.localSource);
+				add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 				break;
 			}
 			case MSG_RREQ: 	// RREQ
 				// when a rreq is received, determine what actions to do next.
-				nextNetOp = processRreq();
+				nextNetOp = process_rreq();
 				MACState = MAC_NET_OP;
 				netOp = true;
 				break;
@@ -475,14 +475,14 @@ static bool processRXBuffer( ) {
 	}
 }
 
-void addNeighbour( nodeAddress neighbour, uint16_t txSlot ) {
+void add_neighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	Neighbour_t receivedNeighbour;
 	receivedNeighbour.neighbourID = neighbour;
 	receivedNeighbour.neighbourTxSlot = txSlot;
 	neighbourTable[_numNeighbours++] = receivedNeighbour;
 }
 
-bool MACStartTransaction( nodeAddress destination, msgType_t msgType,
+bool mac_start_transaction( nodeAddress destination, msgType_t msgType,
 bool isSource ) {
 	/*
 	 *	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
@@ -516,12 +516,12 @@ bool isSource ) {
 			break;
 		case MSG_DATA:
 			rxDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
-			rxDatagram.msgHeader.nextHop = getDest(GATEWAY_ADDRESS);
+			rxDatagram.msgHeader.nextHop = get_dest(GATEWAY_ADDRESS);
 
 			txDatagram.data.sensData.hum = bme280Data.humidity;
 			txDatagram.data.sensData.press = bme280Data.pressure;
 			txDatagram.data.sensData.temp = bme280Data.temperature;
-			txDatagram.data.sensData.lux = getLux();
+			txDatagram.data.sensData.lux = get_lux();
 			txDatagram.data.sensData.gpsData = gpsData;
 			txDatagram.data.sensData.soilMoisture = soilMoisture;
 			txDatagram.data.sensData.tim = timeStamp;
@@ -558,7 +558,7 @@ bool isSource ) {
 	return 0;
 }
 
-bool isNeighbour( nodeAddress node ) {
+bool is_neighbour( nodeAddress node ) {
 	bool retVal = false;
 	int i;
 	for (i = 0; i < _numNeighbours; ++i) {
@@ -569,11 +569,11 @@ bool isNeighbour( nodeAddress node ) {
 	return retVal;
 }
 
-bool MACSendTxDatagram( ) {
+bool mac_send_tx_datagram( ) {
 	bool retVal = false;
 	int size = sizeof(txDatagram);
 	memcpy(TXBuffer, &txDatagram, size);
-	startLoRaTimer(loraTxtimes[size + 1]);
+	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
 
 	RadioState = TX;
@@ -587,7 +587,7 @@ bool MACSendTxDatagram( ) {
 			break;
 		}
 	}
-	stopLoRaTimer();
+	stop_lora_timer();
 	return retVal;
 }
 
@@ -600,7 +600,7 @@ static bool MAChopMessage( nodeAddress dest ) {
 	txDatagram.msgHeader.txSlot = _txSlot;
 	int size = sizeof(txDatagram);
 	memcpy(TXBuffer, &txDatagram, size);
-	startLoRaTimer(loraTxtimes[size + 1]);
+	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
 
 	RadioState = TX;
@@ -615,14 +615,14 @@ static bool MAChopMessage( nodeAddress dest ) {
 			break;
 		}
 	}
-	stopLoRaTimer();
+	stop_lora_timer();
 	return retVal;
 }
 
-Neighbour_t* getNeighbourTable( ) {
+Neighbour_t* get_neighbour_table( ) {
 	return neighbourTable;
 }
 
-Datagram_t* getReceivedMessages( ) {
+Datagram_t* get_received_messages( ) {
 	return receivedDatagrams;
 }

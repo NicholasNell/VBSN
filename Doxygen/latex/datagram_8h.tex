@@ -1,0 +1,126 @@
+\hypertarget{datagram_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/datagram.h File Reference}
+\label{datagram_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/datagram.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/datagram.h}}
+{\ttfamily \#include $<$my\+\_\+gps.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rtc\+\_\+c.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_header__t}{Header\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{struct_msg_data__t}{Msg\+Data\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{struct_r_req__t}{RReq\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{struct_r_rep__t}{RRep\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}}
+\item 
+union \mbox{\hyperlink{union_datagram__t_1_1_data}{Datagram\+\_\+t\+::\+Data}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{datagram_8h_ad07e48b0d2082296c1527f12e1be1953}{RH\+\_\+\+MAX\+\_\+\+MESSAGE\+\_\+\+LEN}}~255
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6}{msg\+Flags}} \mbox{\hyperlink{datagram_8h_ae147d06a56f5d13ceb824a7ea9988165}{msg\+Type\+\_\+t}}
+\item 
+typedef uint8\+\_\+t \mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6}{msg\+Flags}} \{ \newline
+\mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a40e71b65f54da2ea5d97c37e720346b1}{MSG\+\_\+\+NONE}} = 0
+, \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a0a090f4666246c299cf653b06cc4cb45}{MSG\+\_\+\+RTS}}
+, \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6af5aa1699976191b535a4b27155874703}{MSG\+\_\+\+CTS}}
+, \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a5370d1cae95de6f2fd5874a2ac0142a5}{MSG\+\_\+\+DATA}}
+, \newline
+\mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a505d3dca17e2c4b466ddcd406422dc4f}{MSG\+\_\+\+ACK}}
+, \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a844912741e048bc455662dfa2af55f43}{MSG\+\_\+\+SYNC}}
+, \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6ac2613484a00aeed82d53a48d7aefeb70}{MSG\+\_\+\+RREQ}}
+, \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a8f2b2c97cb57fd5fa983c6d2562ff4c6}{MSG\+\_\+\+RREP}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{datagram_8h_ad07e48b0d2082296c1527f12e1be1953}\label{datagram_8h_ad07e48b0d2082296c1527f12e1be1953}} 
+\index{datagram.h@{datagram.h}!RH\_MAX\_MESSAGE\_LEN@{RH\_MAX\_MESSAGE\_LEN}}
+\index{RH\_MAX\_MESSAGE\_LEN@{RH\_MAX\_MESSAGE\_LEN}!datagram.h@{datagram.h}}
+\doxysubsubsection{\texorpdfstring{RH\_MAX\_MESSAGE\_LEN}{RH\_MAX\_MESSAGE\_LEN}}
+{\footnotesize\ttfamily \#define RH\+\_\+\+MAX\+\_\+\+MESSAGE\+\_\+\+LEN~255}
+
+
+
+Definition at line 15 of file datagram.\+h.
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{datagram_8h_ae147d06a56f5d13ceb824a7ea9988165}\label{datagram_8h_ae147d06a56f5d13ceb824a7ea9988165}} 
+\index{datagram.h@{datagram.h}!msgType\_t@{msgType\_t}}
+\index{msgType\_t@{msgType\_t}!datagram.h@{datagram.h}}
+\doxysubsubsection{\texorpdfstring{msgType\_t}{msgType\_t}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6}{msg\+Flags}} \mbox{\hyperlink{datagram_8h_ae147d06a56f5d13ceb824a7ea9988165}{msg\+Type\+\_\+t}}}
+
+\mbox{\Hypertarget{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}\label{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}} 
+\index{datagram.h@{datagram.h}!nodeAddress@{nodeAddress}}
+\index{nodeAddress@{nodeAddress}!datagram.h@{datagram.h}}
+\doxysubsubsection{\texorpdfstring{nodeAddress}{nodeAddress}}
+{\footnotesize\ttfamily typedef uint8\+\_\+t \mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}}}
+
+
+
+Definition at line 38 of file datagram.\+h.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6}} 
+\index{datagram.h@{datagram.h}!msgFlags@{msgFlags}}
+\index{msgFlags@{msgFlags}!datagram.h@{datagram.h}}
+\doxysubsubsection{\texorpdfstring{msgFlags}{msgFlags}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6}{msg\+Flags}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_NONE@{MSG\_NONE}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_NONE@{MSG\_NONE}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a40e71b65f54da2ea5d97c37e720346b1}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a40e71b65f54da2ea5d97c37e720346b1}} 
+MSG\+\_\+\+NONE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_RTS@{MSG\_RTS}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_RTS@{MSG\_RTS}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a0a090f4666246c299cf653b06cc4cb45}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a0a090f4666246c299cf653b06cc4cb45}} 
+MSG\+\_\+\+RTS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_CTS@{MSG\_CTS}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_CTS@{MSG\_CTS}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6af5aa1699976191b535a4b27155874703}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6af5aa1699976191b535a4b27155874703}} 
+MSG\+\_\+\+CTS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_DATA@{MSG\_DATA}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_DATA@{MSG\_DATA}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a5370d1cae95de6f2fd5874a2ac0142a5}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a5370d1cae95de6f2fd5874a2ac0142a5}} 
+MSG\+\_\+\+DATA&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_ACK@{MSG\_ACK}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_ACK@{MSG\_ACK}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a505d3dca17e2c4b466ddcd406422dc4f}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a505d3dca17e2c4b466ddcd406422dc4f}} 
+MSG\+\_\+\+ACK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_SYNC@{MSG\_SYNC}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_SYNC@{MSG\_SYNC}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a844912741e048bc455662dfa2af55f43}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a844912741e048bc455662dfa2af55f43}} 
+MSG\+\_\+\+SYNC&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_RREQ@{MSG\_RREQ}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_RREQ@{MSG\_RREQ}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6ac2613484a00aeed82d53a48d7aefeb70}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6ac2613484a00aeed82d53a48d7aefeb70}} 
+MSG\+\_\+\+RREQ&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_RREP@{MSG\_RREP}!datagram.h@{datagram.h}}\index{datagram.h@{datagram.h}!MSG\_RREP@{MSG\_RREP}}}\mbox{\Hypertarget{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a8f2b2c97cb57fd5fa983c6d2562ff4c6}\label{datagram_8h_a2ff75ac084911b0c69ec544a7a7b84d6a8f2b2c97cb57fd5fa983c6d2562ff4c6}} 
+MSG\+\_\+\+RREP&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 27 of file datagram.\+h.
+

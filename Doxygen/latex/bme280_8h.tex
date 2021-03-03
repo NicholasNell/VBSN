@@ -1,0 +1,256 @@
+\hypertarget{bme280_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/bme280.h File Reference}
+\label{bme280_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/bme280.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/bme280.h}}
+
+
+Sensor driver for BME280 sensor.  
+
+
+{\ttfamily \#include \char`\"{}bme280\+\_\+defs.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a4383ac3d323b389a55b99df220f26e42}{bme280\+User\+Init}} (struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev, struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$comp\+\_\+data)
+\item 
+void \mbox{\hyperlink{bme280_8h_a4937e7cd712ae7cbb7cda118ab163d66}{bme280\+Get\+Data}} (struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev, struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$comp\+\_\+data)
+\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_af0b7d7a19bb48ec9eb3651b79f0c3e85}{bme280\+\_\+init}} (struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API is the entry point. It reads the chip-\/id and calibration data from the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a631b93eb751d5260f66090655b276d38}{bme280\+\_\+set\+\_\+regs}} (uint8\+\_\+t $\ast$reg\+\_\+addr, const uint8\+\_\+t $\ast$reg\+\_\+data, uint8\+\_\+t len, struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API writes the given data to the register address of the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a90217ff8a635240c20b763a88554da8c}{bme280\+\_\+get\+\_\+regs}} (uint8\+\_\+t reg\+\_\+addr, uint8\+\_\+t $\ast$reg\+\_\+data, uint16\+\_\+t len, struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API reads the data from the given register address of the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_afd93f268d8109802cffa06b89f868922}{bme280\+\_\+set\+\_\+sensor\+\_\+settings}} (uint8\+\_\+t desired\+\_\+settings, struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API sets the oversampling, filter and standby duration (normal mode) settings in the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_af3bef90d33942197a98715ea8657211f}{bme280\+\_\+get\+\_\+sensor\+\_\+settings}} (struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API gets the oversampling, filter and standby duration (normal mode) settings from the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a6373385e51038a9b982c42e0dce4ba9f}{bme280\+\_\+set\+\_\+sensor\+\_\+mode}} (uint8\+\_\+t sensor\+\_\+mode, struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API sets the power mode of the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_aab44df556ac18f4e7800d8869a5d483f}{bme280\+\_\+get\+\_\+sensor\+\_\+mode}} (uint8\+\_\+t $\ast$sensor\+\_\+mode, struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API gets the power mode of the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a6f874563c32b64cb625677e81ac20740}{bme280\+\_\+soft\+\_\+reset}} (struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API performs the soft reset of the sensor. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a6671fea2c1e01f40029a653b9ab4410d}{bme280\+\_\+get\+\_\+sensor\+\_\+data}} (uint8\+\_\+t sensor\+\_\+comp, struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$comp\+\_\+data, struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$dev)
+\begin{DoxyCompactList}\small\item\em This API reads the pressure, temperature and humidity data from the sensor, compensates the data and store it in the \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} structure instance passed by the user. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bme280_8h_a84be45ccf7a3a82138ff2170123462c3}{bme280\+\_\+parse\+\_\+sensor\+\_\+data}} (const uint8\+\_\+t $\ast$reg\+\_\+data, struct \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} $\ast$uncomp\+\_\+data)
+\begin{DoxyCompactList}\small\item\em This API is used to parse the pressure, temperature and humidity data and store it in the \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} structure instance. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{bme280_8h_a9f2c3c8c683b434ca10447515f85c0de}{bme280\+\_\+compensate\+\_\+data}} (uint8\+\_\+t sensor\+\_\+comp, const struct \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} $\ast$uncomp\+\_\+data, struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$comp\+\_\+data, struct \mbox{\hyperlink{structbme280__calib__data}{bme280\+\_\+calib\+\_\+data}} $\ast$calib\+\_\+data)
+\begin{DoxyCompactList}\small\item\em This API is used to compensate the pressure and/or temperature and/or humidity data according to the component selected by the user. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{bme280_8h_af9ea40fe8f8243c6d24b6a19d5ab6226}{bme280\+\_\+cal\+\_\+meas\+\_\+delay}} (const struct \mbox{\hyperlink{structbme280__settings}{bme280\+\_\+settings}} $\ast$settings)
+\begin{DoxyCompactList}\small\item\em This API is used to calculate the maximum delay in milliseconds required for the temperature/pressure/humidity(which ever at enabled) measurement to complete. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Sensor driver for BME280 sensor. 
+
+Copyright (c) 2020 Bosch Sensortec GmbH. All rights reserved.
+
+BSD-\/3-\/\+Clause
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met\+:
+
+
+\begin{DoxyEnumerate}
+\item Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+\item Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+\item Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+\end{DoxyEnumerate}
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \char`\"{}\+AS IS\char`\"{} AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+\begin{DoxyDate}{Date}
+2020-\/03-\/28 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+v3.\+5.\+0
+\end{DoxyVersion}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{bme280_8h_af9ea40fe8f8243c6d24b6a19d5ab6226}\label{bme280_8h_af9ea40fe8f8243c6d24b6a19d5ab6226}} 
+\index{bme280.h@{bme280.h}!bme280\_cal\_meas\_delay@{bme280\_cal\_meas\_delay}}
+\index{bme280\_cal\_meas\_delay@{bme280\_cal\_meas\_delay}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_cal\_meas\_delay()}{bme280\_cal\_meas\_delay()}}
+{\footnotesize\ttfamily uint32\+\_\+t bme280\+\_\+cal\+\_\+meas\+\_\+delay (\begin{DoxyParamCaption}\item[{const struct \mbox{\hyperlink{structbme280__settings}{bme280\+\_\+settings}} $\ast$}]{settings }\end{DoxyParamCaption})}
+
+
+
+This API is used to calculate the maximum delay in milliseconds required for the temperature/pressure/humidity(which ever at enabled) measurement to complete. 
+
+
+
+Definition at line 820 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a9f2c3c8c683b434ca10447515f85c0de}\label{bme280_8h_a9f2c3c8c683b434ca10447515f85c0de}} 
+\index{bme280.h@{bme280.h}!bme280\_compensate\_data@{bme280\_compensate\_data}}
+\index{bme280\_compensate\_data@{bme280\_compensate\_data}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_compensate\_data()}{bme280\_compensate\_data()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+compensate\+\_\+data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{sensor\+\_\+comp,  }\item[{const struct \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} $\ast$}]{uncomp\+\_\+data,  }\item[{struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$}]{comp\+\_\+data,  }\item[{struct \mbox{\hyperlink{structbme280__calib__data}{bme280\+\_\+calib\+\_\+data}} $\ast$}]{calib\+\_\+data }\end{DoxyParamCaption})}
+
+
+
+This API is used to compensate the pressure and/or temperature and/or humidity data according to the component selected by the user. 
+
+
+
+Definition at line 782 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a90217ff8a635240c20b763a88554da8c}\label{bme280_8h_a90217ff8a635240c20b763a88554da8c}} 
+\index{bme280.h@{bme280.h}!bme280\_get\_regs@{bme280\_get\_regs}}
+\index{bme280\_get\_regs@{bme280\_get\_regs}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_get\_regs()}{bme280\_get\_regs()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+get\+\_\+regs (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg\+\_\+addr,  }\item[{uint8\+\_\+t $\ast$}]{reg\+\_\+data,  }\item[{uint16\+\_\+t}]{len,  }\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API reads the data from the given register address of the sensor. 
+
+
+
+Definition at line 464 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a6671fea2c1e01f40029a653b9ab4410d}\label{bme280_8h_a6671fea2c1e01f40029a653b9ab4410d}} 
+\index{bme280.h@{bme280.h}!bme280\_get\_sensor\_data@{bme280\_get\_sensor\_data}}
+\index{bme280\_get\_sensor\_data@{bme280\_get\_sensor\_data}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_get\_sensor\_data()}{bme280\_get\_sensor\_data()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+get\+\_\+sensor\+\_\+data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{sensor\+\_\+comp,  }\item[{struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$}]{comp\+\_\+data,  }\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API reads the pressure, temperature and humidity data from the sensor, compensates the data and store it in the \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} structure instance passed by the user. 
+
+
+
+Definition at line 713 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_aab44df556ac18f4e7800d8869a5d483f}\label{bme280_8h_aab44df556ac18f4e7800d8869a5d483f}} 
+\index{bme280.h@{bme280.h}!bme280\_get\_sensor\_mode@{bme280\_get\_sensor\_mode}}
+\index{bme280\_get\_sensor\_mode@{bme280\_get\_sensor\_mode}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_get\_sensor\_mode()}{bme280\_get\_sensor\_mode()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+get\+\_\+sensor\+\_\+mode (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{sensor\+\_\+mode,  }\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API gets the power mode of the sensor. 
+
+
+
+Definition at line 649 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_af3bef90d33942197a98715ea8657211f}\label{bme280_8h_af3bef90d33942197a98715ea8657211f}} 
+\index{bme280.h@{bme280.h}!bme280\_get\_sensor\_settings@{bme280\_get\_sensor\_settings}}
+\index{bme280\_get\_sensor\_settings@{bme280\_get\_sensor\_settings}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_get\_sensor\_settings()}{bme280\_get\_sensor\_settings()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+get\+\_\+sensor\+\_\+settings (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API gets the oversampling, filter and standby duration (normal mode) settings from the sensor. 
+
+
+
+Definition at line 598 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_af0b7d7a19bb48ec9eb3651b79f0c3e85}\label{bme280_8h_af0b7d7a19bb48ec9eb3651b79f0c3e85}} 
+\index{bme280.h@{bme280.h}!bme280\_init@{bme280\_init}}
+\index{bme280\_init@{bme280\_init}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_init()}{bme280\_init()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+init (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API is the entry point. It reads the chip-\/id and calibration data from the sensor. 
+
+
+
+Definition at line 416 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a84be45ccf7a3a82138ff2170123462c3}\label{bme280_8h_a84be45ccf7a3a82138ff2170123462c3}} 
+\index{bme280.h@{bme280.h}!bme280\_parse\_sensor\_data@{bme280\_parse\_sensor\_data}}
+\index{bme280\_parse\_sensor\_data@{bme280\_parse\_sensor\_data}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_parse\_sensor\_data()}{bme280\_parse\_sensor\_data()}}
+{\footnotesize\ttfamily void bme280\+\_\+parse\+\_\+sensor\+\_\+data (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{reg\+\_\+data,  }\item[{struct \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} $\ast$}]{uncomp\+\_\+data }\end{DoxyParamCaption})}
+
+
+
+This API is used to parse the pressure, temperature and humidity data and store it in the \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} structure instance. 
+
+
+
+Definition at line 752 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a631b93eb751d5260f66090655b276d38}\label{bme280_8h_a631b93eb751d5260f66090655b276d38}} 
+\index{bme280.h@{bme280.h}!bme280\_set\_regs@{bme280\_set\_regs}}
+\index{bme280\_set\_regs@{bme280\_set\_regs}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_set\_regs()}{bme280\_set\_regs()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+set\+\_\+regs (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{reg\+\_\+addr,  }\item[{const uint8\+\_\+t $\ast$}]{reg\+\_\+data,  }\item[{uint8\+\_\+t}]{len,  }\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API writes the given data to the register address of the sensor. 
+
+
+
+Definition at line 496 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a6373385e51038a9b982c42e0dce4ba9f}\label{bme280_8h_a6373385e51038a9b982c42e0dce4ba9f}} 
+\index{bme280.h@{bme280.h}!bme280\_set\_sensor\_mode@{bme280\_set\_sensor\_mode}}
+\index{bme280\_set\_sensor\_mode@{bme280\_set\_sensor\_mode}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_set\_sensor\_mode()}{bme280\_set\_sensor\_mode()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+set\+\_\+sensor\+\_\+mode (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{sensor\+\_\+mode,  }\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API sets the power mode of the sensor. 
+
+
+
+Definition at line 620 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_afd93f268d8109802cffa06b89f868922}\label{bme280_8h_afd93f268d8109802cffa06b89f868922}} 
+\index{bme280.h@{bme280.h}!bme280\_set\_sensor\_settings@{bme280\_set\_sensor\_settings}}
+\index{bme280\_set\_sensor\_settings@{bme280\_set\_sensor\_settings}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_set\_sensor\_settings()}{bme280\_set\_sensor\_settings()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+set\+\_\+sensor\+\_\+settings (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{desired\+\_\+settings,  }\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API sets the oversampling, filter and standby duration (normal mode) settings in the sensor. 
+
+
+
+Definition at line 555 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a6f874563c32b64cb625677e81ac20740}\label{bme280_8h_a6f874563c32b64cb625677e81ac20740}} 
+\index{bme280.h@{bme280.h}!bme280\_soft\_reset@{bme280\_soft\_reset}}
+\index{bme280\_soft\_reset@{bme280\_soft\_reset}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280\_soft\_reset()}{bme280\_soft\_reset()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+\_\+soft\+\_\+reset (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+
+
+This API performs the soft reset of the sensor. 
+
+
+
+Definition at line 671 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a4937e7cd712ae7cbb7cda118ab163d66}\label{bme280_8h_a4937e7cd712ae7cbb7cda118ab163d66}} 
+\index{bme280.h@{bme280.h}!bme280GetData@{bme280GetData}}
+\index{bme280GetData@{bme280GetData}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280GetData()}{bme280GetData()}}
+{\footnotesize\ttfamily void bme280\+Get\+Data (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev,  }\item[{struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$}]{comp\+\_\+data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1564 of file bme280.\+c.
+
+\mbox{\Hypertarget{bme280_8h_a4383ac3d323b389a55b99df220f26e42}\label{bme280_8h_a4383ac3d323b389a55b99df220f26e42}} 
+\index{bme280.h@{bme280.h}!bme280UserInit@{bme280UserInit}}
+\index{bme280UserInit@{bme280UserInit}!bme280.h@{bme280.h}}
+\doxysubsubsection{\texorpdfstring{bme280UserInit()}{bme280UserInit()}}
+{\footnotesize\ttfamily int8\+\_\+t bme280\+User\+Init (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} $\ast$}]{dev,  }\item[{struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} $\ast$}]{comp\+\_\+data }\end{DoxyParamCaption})}
+
+CPP guard 
+
+Definition at line 1524 of file bme280.\+c.
+

@@ -1,0 +1,139 @@
+\hypertarget{my__systick_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+systick.c File Reference}
+\label{my__systick_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_systick.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_systick.c}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/systick.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rom\+\_\+map.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+systick.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__systick_8c_ab5e09814056d617c521549e542639b7e}{Sys\+Tick\+\_\+\+Handler}} (void)
+\item 
+void \mbox{\hyperlink{my__systick_8c_a03519cb735d03dfc57f6231a712d5d8c}{setup\+Sys\+Tick\+\_\+ms}} (void)
+\item 
+void \mbox{\hyperlink{my__systick_8c_aa386c56aede7cfcea704415424631c6b}{setup\+Sys\+Tick\+\_\+second}} (void)
+\item 
+void \mbox{\hyperlink{my__systick_8c_a4fe7974ac7a7169f983f549ba161c769}{runsystick\+Function\+\_\+ms}} (uint16\+\_\+t ms\+\_\+delay)
+\item 
+void \mbox{\hyperlink{my__systick_8c_a71ac851b703c82ea653c142a0c00ff44}{run\+Systick\+Function\+\_\+second}} (uint16\+\_\+t second\+\_\+delay)
+\item 
+void \mbox{\hyperlink{my__systick_8c_af6402e2df520f7a8a749f1374eca2963}{stop\+Systick}} (void)
+\item 
+bool \mbox{\hyperlink{my__systick_8c_a2851ac21f7041dfef9f4925d32357594}{Systimer\+Ready\+Check}} (void)
+\item 
+uint16\+\_\+t \mbox{\hyperlink{my__systick_8c_ad63473ca52dad614674241029be13500}{delay\+Left}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{my__systick_8c_adc4674f6ea53803d98fa2ec36759e77d}{delay}} = 0
+\item 
+bool \mbox{\hyperlink{my__systick_8c_a7301cfd92660c1b9df12240f2bcd0497}{timer\+Ready}} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__systick_8c_ad63473ca52dad614674241029be13500}\label{my__systick_8c_ad63473ca52dad614674241029be13500}} 
+\index{my\_systick.c@{my\_systick.c}!delayLeft@{delayLeft}}
+\index{delayLeft@{delayLeft}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{delayLeft()}{delayLeft()}}
+{\footnotesize\ttfamily uint16\+\_\+t delay\+Left (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 64 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_a4fe7974ac7a7169f983f549ba161c769}\label{my__systick_8c_a4fe7974ac7a7169f983f549ba161c769}} 
+\index{my\_systick.c@{my\_systick.c}!runsystickFunction\_ms@{runsystickFunction\_ms}}
+\index{runsystickFunction\_ms@{runsystickFunction\_ms}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{runsystickFunction\_ms()}{runsystickFunction\_ms()}}
+{\footnotesize\ttfamily void runsystick\+Function\+\_\+ms (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{ms\+\_\+delay }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_a71ac851b703c82ea653c142a0c00ff44}\label{my__systick_8c_a71ac851b703c82ea653c142a0c00ff44}} 
+\index{my\_systick.c@{my\_systick.c}!runSystickFunction\_second@{runSystickFunction\_second}}
+\index{runSystickFunction\_second@{runSystickFunction\_second}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{runSystickFunction\_second()}{runSystickFunction\_second()}}
+{\footnotesize\ttfamily void run\+Systick\+Function\+\_\+second (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{second\+\_\+delay }\end{DoxyParamCaption})}
+
+
+
+Definition at line 48 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_a03519cb735d03dfc57f6231a712d5d8c}\label{my__systick_8c_a03519cb735d03dfc57f6231a712d5d8c}} 
+\index{my\_systick.c@{my\_systick.c}!setupSysTick\_ms@{setupSysTick\_ms}}
+\index{setupSysTick\_ms@{setupSysTick\_ms}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{setupSysTick\_ms()}{setupSysTick\_ms()}}
+{\footnotesize\ttfamily void setup\+Sys\+Tick\+\_\+ms (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_aa386c56aede7cfcea704415424631c6b}\label{my__systick_8c_aa386c56aede7cfcea704415424631c6b}} 
+\index{my\_systick.c@{my\_systick.c}!setupSysTick\_second@{setupSysTick\_second}}
+\index{setupSysTick\_second@{setupSysTick\_second}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{setupSysTick\_second()}{setupSysTick\_second()}}
+{\footnotesize\ttfamily void setup\+Sys\+Tick\+\_\+second (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 34 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_af6402e2df520f7a8a749f1374eca2963}\label{my__systick_8c_af6402e2df520f7a8a749f1374eca2963}} 
+\index{my\_systick.c@{my\_systick.c}!stopSystick@{stopSystick}}
+\index{stopSystick@{stopSystick}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{stopSystick()}{stopSystick()}}
+{\footnotesize\ttfamily void stop\+Systick (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 55 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_ab5e09814056d617c521549e542639b7e}\label{my__systick_8c_ab5e09814056d617c521549e542639b7e}} 
+\index{my\_systick.c@{my\_systick.c}!SysTick\_Handler@{SysTick\_Handler}}
+\index{SysTick\_Handler@{SysTick\_Handler}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{SysTick\_Handler()}{SysTick\_Handler()}}
+{\footnotesize\ttfamily void Sys\+Tick\+\_\+\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 18 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_a2851ac21f7041dfef9f4925d32357594}\label{my__systick_8c_a2851ac21f7041dfef9f4925d32357594}} 
+\index{my\_systick.c@{my\_systick.c}!SystimerReadyCheck@{SystimerReadyCheck}}
+\index{SystimerReadyCheck@{SystimerReadyCheck}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{SystimerReadyCheck()}{SystimerReadyCheck()}}
+{\footnotesize\ttfamily bool Systimer\+Ready\+Check (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 60 of file my\+\_\+systick.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my__systick_8c_adc4674f6ea53803d98fa2ec36759e77d}\label{my__systick_8c_adc4674f6ea53803d98fa2ec36759e77d}} 
+\index{my\_systick.c@{my\_systick.c}!delay@{delay}}
+\index{delay@{delay}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{delay}{delay}}
+{\footnotesize\ttfamily uint16\+\_\+t delay = 0}
+
+
+
+Definition at line 14 of file my\+\_\+systick.\+c.
+
+\mbox{\Hypertarget{my__systick_8c_a7301cfd92660c1b9df12240f2bcd0497}\label{my__systick_8c_a7301cfd92660c1b9df12240f2bcd0497}} 
+\index{my\_systick.c@{my\_systick.c}!timerReady@{timerReady}}
+\index{timerReady@{timerReady}!my\_systick.c@{my\_systick.c}}
+\doxysubsubsection{\texorpdfstring{timerReady}{timerReady}}
+{\footnotesize\ttfamily bool timer\+Ready = false}
+
+
+
+Definition at line 15 of file my\+\_\+systick.\+c.
+

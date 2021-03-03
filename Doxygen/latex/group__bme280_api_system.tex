@@ -1,0 +1,36 @@
+\hypertarget{group__bme280_api_system}{}\doxysection{System}
+\label{group__bme280_api_system}\index{System@{System}}
+
+
+API that performs system-\/level operations.  
+
+
+API that performs system-\/level operations. 
+
+\hypertarget{bme280_api_bme280_soft_reset}{}\doxysubsubsection{bme280\+\_\+soft\+\_\+reset}\label{bme280_api_bme280_soft_reset}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_a6f874563c32b64cb625677e81ac20740}{bme280\_soft\_reset}}(\textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API soft-\/resets the sensor.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of API execution status.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}

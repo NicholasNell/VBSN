@@ -42,7 +42,7 @@ extern "C"
  * \param [IN] type   Pin type [PIN_NO_PULL, PIN_PULL_UP, PIN_PULL_DOWN]
  * \param [IN] value  Default output value at initialization
  */
-void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value );
+void gpio_mcu_init( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value );
 
 /*!
  * \brief Sets a user defined object pointer
@@ -50,7 +50,7 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
  * \param [IN] context User defined data object pointer to pass back
  *                     on IRQ handler callback
  */
-void GpioMcuSetContext( Gpio_t *obj, void* context );
+void gpio_mcu_set_context( Gpio_t *obj, void* context );
 
 /*!
  * \brief GPIO IRQ Initialization
@@ -63,14 +63,14 @@ void GpioMcuSetContext( Gpio_t *obj, void* context );
  *                                       IRQ_VERY_HIGH_PRIORITY]
  * \param [IN] irqHandler  Callback function pointer
  */
-void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority );
+void gpio_mcu_set_interrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority );
 
 /*!
  * \brief Removes the interrupt from the object
  *
  * \param [IN] obj Pointer to the GPIO object
  */
-void GpioMcuRemoveInterrupt( Gpio_t *obj );
+void gpio_mcu_remove_interrupt( Gpio_t *obj );
 
 /*!
  * \brief Writes the given value to the GPIO output
@@ -78,14 +78,14 @@ void GpioMcuRemoveInterrupt( Gpio_t *obj );
  * \param [IN] obj   Pointer to the GPIO object
  * \param [IN] value New GPIO output value
  */
-void GpioMcuWrite( Gpio_t *obj, uint32_t value );
+void gpio_mcu_write( Gpio_t *obj, uint32_t value );
 
 /*!
  * \brief Toggle the value to the GPIO output
  *
  * \param [IN] obj   Pointer to the GPIO object
  */
-void GpioMcuToggle( Gpio_t *obj );
+void gpio_mcu_toggle( Gpio_t *obj );
 
 /*!
  * \brief Reads the current GPIO input value
@@ -93,7 +93,7 @@ void GpioMcuToggle( Gpio_t *obj );
  * \param [IN] obj Pointer to the GPIO object
  * \retval value   Current GPIO input value
  */
-uint32_t GpioMcuRead( Gpio_t *obj );
+uint32_t gpio_mcu_read( Gpio_t *obj );
 
 #ifdef __cplusplus
 }

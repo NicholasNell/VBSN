@@ -1,0 +1,86 @@
+\hypertarget{group__bme280_api_sensor_settings}{}\doxysection{Sensor Settings}
+\label{group__bme280_api_sensor_settings}\index{Sensor Settings@{Sensor Settings}}
+
+
+Generic API for accessing sensor settings.  
+
+
+Generic API for accessing sensor settings. 
+
+\hypertarget{bme280_api_bme280_set_sensor_settings}{}\doxysubsubsection{bme280\+\_\+set\+\_\+sensor\+\_\+settings}\label{bme280_api_bme280_set_sensor_settings}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_afd93f268d8109802cffa06b89f868922}{bme280\_set\_sensor\_settings}}(uint8\_t desired\_settings, \textcolor{keyword}{const} \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API sets the oversampling, filter and standby duration (normal mode) settings in the sensor.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}. \\
+\hline
+\mbox{\texttt{ in}}  & {\em desired\+\_\+settings} & \+: Variable used to select the settings which are to be set in the sensor.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+\+: Below are the macros to be used by the user for selecting the desired settings. User can do OR operation of these macros for configuring multiple settings.
+\end{DoxyNote}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Functionality    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Functionality    }\\\cline{1-2}
+\endhead
+BME280\+\_\+\+OSR\+\_\+\+PRESS\+\_\+\+SEL   &To set pressure oversampling.    \\\cline{1-2}
+BME280\+\_\+\+OSR\+\_\+\+TEMP\+\_\+\+SEL   &To set temperature oversampling.    \\\cline{1-2}
+BME280\+\_\+\+OSR\+\_\+\+HUM\+\_\+\+SEL   &To set humidity oversampling.    \\\cline{1-2}
+BME280\+\_\+\+FILTER\+\_\+\+SEL   &To set filter setting.    \\\cline{1-2}
+BME280\+\_\+\+STANDBY\+\_\+\+SEL   &To set standby duration setting.   \\\cline{1-2}
+\end{longtabu}
+
+
+\begin{DoxyReturn}{Returns}
+Result of API execution status
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}
+\hypertarget{bme280_api_bme280_get_sensor_settings}{}\doxysubsubsection{bme280\+\_\+get\+\_\+sensor\+\_\+settings}\label{bme280_api_bme280_get_sensor_settings}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_af3bef90d33942197a98715ea8657211f}{bme280\_get\_sensor\_settings}}(\textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API gets the oversampling, filter and standby duration (normal mode) settings from the sensor.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of API execution status
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}

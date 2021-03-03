@@ -12,13 +12,13 @@
 void setupSysTick_ms( void );
 void setupSysTick_second( void );
 
-void runsystickFunction_ms( uint16_t ms_delay );
-void runSystickFunction_second( uint16_t second_delay );
-bool SystimerReadyCheck( void );
+void run_systick_function_ms( uint16_t ms_delay );
+void run_systick_function_second( uint16_t second_delay );
+bool systimer_ready_check( void );
 /*
  * Sets the delay left to 0, and disables the interrupt for the module
  */
-void stopSystick( void );
-uint16_t delayLeft( void );
+void stop_systick( void );
+uint16_t delay_left( void );
 
 #endif

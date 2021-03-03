@@ -1,0 +1,246 @@
+\hypertarget{_m_a_x44009_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/\+MAX44009.h File Reference}
+\label{_m_a_x44009_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/MAX44009.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/MAX44009.h}}
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_acb5b7ae346b6e14d66dde98d7b437ebb}{MAX44009\+\_\+\+ADDR}}~0x4A
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_abe24b1eee9e8e07580793056a462cf2c}{MAX44009\+\_\+\+INT\+\_\+\+STATUS}}~0x00
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a29905620df03e8b7a4e6921efa22d9cd}{MAX44009\+\_\+\+INT\+\_\+\+ENABLE}}~0x01
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_ae2891cd3a08fc9c9f66dbb4f8d3d252f}{MAX44009\+\_\+\+REG\+\_\+\+CONFIG}}~0x02
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a959685cdd816e81990a1c413d1933d56}{MAX44009\+\_\+\+LUX\+\_\+\+HIGH\+\_\+\+BYTE}}~0x03
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_aa09c7e80b34dad67025d91a112e61a94}{MAX44009\+\_\+\+LUX\+\_\+\+LOW\+\_\+\+BYTE}}~0x04
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a7f7f5f5447b13c9dc4e543abb798f380}{MAX44009\+\_\+\+UP\+\_\+\+THRESH\+\_\+\+HIGH\+\_\+\+BYTE}}~0x05
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_ae710c1652451327dd69c23cbdf65e926}{MAX44009\+\_\+\+LOW\+\_\+\+THRESH\+\_\+\+HIGH\+\_\+\+BYTE}}~0x06
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_ade1439c33a0127ede1b787b92f7844e4}{MAX44009\+\_\+\+THRESH\+\_\+\+TIM}}~0x07
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a5ad671a082096c7ab560144b105aa257}{MAX44009\+\_\+\+INT\+\_\+\+MASK}}~0x01
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a5000ea503deafbce19c1c20f87fd9521}{MAX44009\+\_\+\+INT\+\_\+\+ENABLE\+\_\+\+MASK}}~0x01
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a1119209ad4f461e67ddc31344c21bc52}{MAX44009\+\_\+\+CONFIG\+\_\+\+CONT\+\_\+\+MODE\+\_\+\+MASK}}~0x40
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}~P5
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}}~BIT5
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_aaeb51d37dbedefe57017ef38e847d45a}{MAX44009\+\_\+\+ON}}~\{\mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}-\/$>$DIR $\vert$= \mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}}; \mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}-\/$>$OUT $\vert$= \mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}};\}
+\item 
+\#define \mbox{\hyperlink{_m_a_x44009_8h_a7338040f615133751e81e43074853353}{MAX44009\+\_\+\+OFF}}~\{\mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}-\/$>$OUT \&= $\sim$\mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}};\}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{_m_a_x44009_8h_a76e3f0264a6a13fd2e919675d70a0458}{init\+MAX}} ()
+\item 
+void \mbox{\hyperlink{_m_a_x44009_8h_a15d72e97777e2a97dd20550fe03e0aac}{get\+Light}} ()
+\item 
+float \mbox{\hyperlink{_m_a_x44009_8h_a094e167d17417e94a55acf501ce2f9b0}{get\+Lux}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_m_a_x44009_8h_acb5b7ae346b6e14d66dde98d7b437ebb}\label{_m_a_x44009_8h_acb5b7ae346b6e14d66dde98d7b437ebb}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_ADDR@{MAX44009\_ADDR}}
+\index{MAX44009\_ADDR@{MAX44009\_ADDR}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_ADDR}{MAX44009\_ADDR}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+ADDR~0x4A}
+
+
+
+Definition at line 14 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a1119209ad4f461e67ddc31344c21bc52}\label{_m_a_x44009_8h_a1119209ad4f461e67ddc31344c21bc52}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_CONFIG\_CONT\_MODE\_MASK@{MAX44009\_CONFIG\_CONT\_MODE\_MASK}}
+\index{MAX44009\_CONFIG\_CONT\_MODE\_MASK@{MAX44009\_CONFIG\_CONT\_MODE\_MASK}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_CONFIG\_CONT\_MODE\_MASK}{MAX44009\_CONFIG\_CONT\_MODE\_MASK}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+CONFIG\+\_\+\+CONT\+\_\+\+MODE\+\_\+\+MASK~0x40}
+
+
+
+Definition at line 27 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a29905620df03e8b7a4e6921efa22d9cd}\label{_m_a_x44009_8h_a29905620df03e8b7a4e6921efa22d9cd}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_INT\_ENABLE@{MAX44009\_INT\_ENABLE}}
+\index{MAX44009\_INT\_ENABLE@{MAX44009\_INT\_ENABLE}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_INT\_ENABLE}{MAX44009\_INT\_ENABLE}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+INT\+\_\+\+ENABLE~0x01}
+
+
+
+Definition at line 16 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a5000ea503deafbce19c1c20f87fd9521}\label{_m_a_x44009_8h_a5000ea503deafbce19c1c20f87fd9521}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_INT\_ENABLE\_MASK@{MAX44009\_INT\_ENABLE\_MASK}}
+\index{MAX44009\_INT\_ENABLE\_MASK@{MAX44009\_INT\_ENABLE\_MASK}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_INT\_ENABLE\_MASK}{MAX44009\_INT\_ENABLE\_MASK}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+INT\+\_\+\+ENABLE\+\_\+\+MASK~0x01}
+
+
+
+Definition at line 26 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a5ad671a082096c7ab560144b105aa257}\label{_m_a_x44009_8h_a5ad671a082096c7ab560144b105aa257}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_INT\_MASK@{MAX44009\_INT\_MASK}}
+\index{MAX44009\_INT\_MASK@{MAX44009\_INT\_MASK}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_INT\_MASK}{MAX44009\_INT\_MASK}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+INT\+\_\+\+MASK~0x01}
+
+
+
+Definition at line 25 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_abe24b1eee9e8e07580793056a462cf2c}\label{_m_a_x44009_8h_abe24b1eee9e8e07580793056a462cf2c}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_INT\_STATUS@{MAX44009\_INT\_STATUS}}
+\index{MAX44009\_INT\_STATUS@{MAX44009\_INT\_STATUS}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_INT\_STATUS}{MAX44009\_INT\_STATUS}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+INT\+\_\+\+STATUS~0x00}
+
+
+
+Definition at line 15 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_ae710c1652451327dd69c23cbdf65e926}\label{_m_a_x44009_8h_ae710c1652451327dd69c23cbdf65e926}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_LOW\_THRESH\_HIGH\_BYTE@{MAX44009\_LOW\_THRESH\_HIGH\_BYTE}}
+\index{MAX44009\_LOW\_THRESH\_HIGH\_BYTE@{MAX44009\_LOW\_THRESH\_HIGH\_BYTE}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_LOW\_THRESH\_HIGH\_BYTE}{MAX44009\_LOW\_THRESH\_HIGH\_BYTE}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+LOW\+\_\+\+THRESH\+\_\+\+HIGH\+\_\+\+BYTE~0x06}
+
+
+
+Definition at line 21 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a959685cdd816e81990a1c413d1933d56}\label{_m_a_x44009_8h_a959685cdd816e81990a1c413d1933d56}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_LUX\_HIGH\_BYTE@{MAX44009\_LUX\_HIGH\_BYTE}}
+\index{MAX44009\_LUX\_HIGH\_BYTE@{MAX44009\_LUX\_HIGH\_BYTE}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_LUX\_HIGH\_BYTE}{MAX44009\_LUX\_HIGH\_BYTE}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+LUX\+\_\+\+HIGH\+\_\+\+BYTE~0x03}
+
+
+
+Definition at line 18 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_aa09c7e80b34dad67025d91a112e61a94}\label{_m_a_x44009_8h_aa09c7e80b34dad67025d91a112e61a94}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_LUX\_LOW\_BYTE@{MAX44009\_LUX\_LOW\_BYTE}}
+\index{MAX44009\_LUX\_LOW\_BYTE@{MAX44009\_LUX\_LOW\_BYTE}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_LUX\_LOW\_BYTE}{MAX44009\_LUX\_LOW\_BYTE}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+LUX\+\_\+\+LOW\+\_\+\+BYTE~0x04}
+
+
+
+Definition at line 19 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a7338040f615133751e81e43074853353}\label{_m_a_x44009_8h_a7338040f615133751e81e43074853353}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_OFF@{MAX44009\_OFF}}
+\index{MAX44009\_OFF@{MAX44009\_OFF}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_OFF}{MAX44009\_OFF}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+OFF~\{\mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}-\/$>$OUT \&= $\sim$\mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}};\}}
+
+
+
+Definition at line 33 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_aaeb51d37dbedefe57017ef38e847d45a}\label{_m_a_x44009_8h_aaeb51d37dbedefe57017ef38e847d45a}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_ON@{MAX44009\_ON}}
+\index{MAX44009\_ON@{MAX44009\_ON}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_ON}{MAX44009\_ON}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+ON~\{\mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}-\/$>$DIR $\vert$= \mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}}; \mbox{\hyperlink{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}{MAX44009\+\_\+\+POWER\+\_\+\+PORT}}-\/$>$OUT $\vert$= \mbox{\hyperlink{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}{MAX44009\+\_\+\+POWER\+\_\+\+PIN}};\}}
+
+
+
+Definition at line 32 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}\label{_m_a_x44009_8h_acbf3d6aebc18a6d313ea8166c5b73081}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_POWER\_PIN@{MAX44009\_POWER\_PIN}}
+\index{MAX44009\_POWER\_PIN@{MAX44009\_POWER\_PIN}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_POWER\_PIN}{MAX44009\_POWER\_PIN}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+POWER\+\_\+\+PIN~BIT5}
+
+
+
+Definition at line 30 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}\label{_m_a_x44009_8h_a36b6c6be68cf2e428e7dadb7c7d436fb}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_POWER\_PORT@{MAX44009\_POWER\_PORT}}
+\index{MAX44009\_POWER\_PORT@{MAX44009\_POWER\_PORT}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_POWER\_PORT}{MAX44009\_POWER\_PORT}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+POWER\+\_\+\+PORT~P5}
+
+
+
+Definition at line 29 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_ae2891cd3a08fc9c9f66dbb4f8d3d252f}\label{_m_a_x44009_8h_ae2891cd3a08fc9c9f66dbb4f8d3d252f}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_REG\_CONFIG@{MAX44009\_REG\_CONFIG}}
+\index{MAX44009\_REG\_CONFIG@{MAX44009\_REG\_CONFIG}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_REG\_CONFIG}{MAX44009\_REG\_CONFIG}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+REG\+\_\+\+CONFIG~0x02}
+
+
+
+Definition at line 17 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_ade1439c33a0127ede1b787b92f7844e4}\label{_m_a_x44009_8h_ade1439c33a0127ede1b787b92f7844e4}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_THRESH\_TIM@{MAX44009\_THRESH\_TIM}}
+\index{MAX44009\_THRESH\_TIM@{MAX44009\_THRESH\_TIM}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_THRESH\_TIM}{MAX44009\_THRESH\_TIM}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+THRESH\+\_\+\+TIM~0x07}
+
+
+
+Definition at line 22 of file MAX44009.\+h.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a7f7f5f5447b13c9dc4e543abb798f380}\label{_m_a_x44009_8h_a7f7f5f5447b13c9dc4e543abb798f380}} 
+\index{MAX44009.h@{MAX44009.h}!MAX44009\_UP\_THRESH\_HIGH\_BYTE@{MAX44009\_UP\_THRESH\_HIGH\_BYTE}}
+\index{MAX44009\_UP\_THRESH\_HIGH\_BYTE@{MAX44009\_UP\_THRESH\_HIGH\_BYTE}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{MAX44009\_UP\_THRESH\_HIGH\_BYTE}{MAX44009\_UP\_THRESH\_HIGH\_BYTE}}
+{\footnotesize\ttfamily \#define MAX44009\+\_\+\+UP\+\_\+\+THRESH\+\_\+\+HIGH\+\_\+\+BYTE~0x05}
+
+
+
+Definition at line 20 of file MAX44009.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_m_a_x44009_8h_a15d72e97777e2a97dd20550fe03e0aac}\label{_m_a_x44009_8h_a15d72e97777e2a97dd20550fe03e0aac}} 
+\index{MAX44009.h@{MAX44009.h}!getLight@{getLight}}
+\index{getLight@{getLight}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{getLight()}{getLight()}}
+{\footnotesize\ttfamily void get\+Light (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file MAX44009.\+c.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a094e167d17417e94a55acf501ce2f9b0}\label{_m_a_x44009_8h_a094e167d17417e94a55acf501ce2f9b0}} 
+\index{MAX44009.h@{MAX44009.h}!getLux@{getLux}}
+\index{getLux@{getLux}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{getLux()}{getLux()}}
+{\footnotesize\ttfamily float get\+Lux (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 54 of file MAX44009.\+c.
+
+\mbox{\Hypertarget{_m_a_x44009_8h_a76e3f0264a6a13fd2e919675d70a0458}\label{_m_a_x44009_8h_a76e3f0264a6a13fd2e919675d70a0458}} 
+\index{MAX44009.h@{MAX44009.h}!initMAX@{initMAX}}
+\index{initMAX@{initMAX}!MAX44009.h@{MAX44009.h}}
+\doxysubsubsection{\texorpdfstring{initMAX()}{initMAX()}}
+{\footnotesize\ttfamily bool init\+MAX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+bool, true if max is succesfully found 
+\end{DoxyReturn}
+
+
+Definition at line 21 of file MAX44009.\+c.
+

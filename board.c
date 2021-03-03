@@ -38,11 +38,6 @@ static void BoardUnusedIoInit( void );
  */
 //static bool McuInitialized = false;
 /*!
- * Flag used to indicate if board is powered from the USB
- */
-static bool UsbIsConnected = false;
-
-/*!
  * Flag to indicate if the SystemWakeupTime is Calibrated
  */
 static volatile bool SystemWakeupTimeCalibrated = false;
@@ -56,40 +51,40 @@ void BoardCriticalSectionEnd( uint32_t *mask ) {
 	__set_PRIMASK(*mask);
 }
 
-void BoardInitPeriph( void ) {
+void board_init_periph( void ) {
 
 }
 
-void BoardInitMcu( void ) {
+void board_init_mcu( void ) {
 	BoardUnusedIoInit();
 
-	SystemClockConfig();
+	system_clock_config();
 
-	DelayTimerInit();
+	delay_timer_init();
 
-	i2cInit();
+	i2c_init();
 
 	// LEDs
-	GpioInit(&Led_rgb_red,
+	gpio_init(&Led_rgb_red,
 	LED_RGB_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
-	GpioInit(&Led_rgb_green,
+	gpio_init(&Led_rgb_green,
 	LED_RGB_GREEN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 //	GpioInit(&Led_rgb_blue,
 //	LED_RGB_BLUE, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
-	GpioInit(&Led_user_red,
+	gpio_init(&Led_user_red,
 	LED_USER_RED, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
 
 	SX1276IoInit();
 	SX1276IoIrqInit();
 
-	GpioWrite(&Led_rgb_red, 0);
-	GpioWrite(&Led_rgb_green, 0);
+	gpio_write(&Led_rgb_red, 0);
+	gpio_write(&Led_rgb_green, 0);
 //	GpioWrite(&Led_rgb_blue, 0);
-	GpioWrite(&Led_user_red, 0);
+	gpio_write(&Led_user_red, 0);
 
 }
 
-void BoardResetMcu( void ) {
+void board_reset_mcu( void ) {
 
 	CRITICAL_SECTION_BEGIN();
 	//Restart system
@@ -97,7 +92,7 @@ void BoardResetMcu( void ) {
 	CRITICAL_SECTION_END();
 }
 
-void BoardDeInitMcu( void ) {
+void board_deinit_mcu( void ) {
 	spi_close();
 	SX1276IoDeInit();
 }
@@ -106,11 +101,7 @@ uint16_t BoardBatteryMeasureVolage( void ) {
 	return 0;
 }
 
-uint32_t BoardGetBatteryVoltage( void ) {
-	return 0;
-}
-
-uint8_t BoardGetBatteryLevel( void ) {
+uint32_t board_get_battery_voltage( void ) {
 	return 0;
 }
 
@@ -154,16 +145,7 @@ static void BoardUnusedIoInit( void ) {
 	MAP_GPIO_setOutputLowOnPin(GPIO_PORT_PJ, PIN_ALL16);
 }
 
-uint8_t GetBoardPowerSource( void ) {
-	if (UsbIsConnected == false) {
-		return BATTERY_POWER;
-	}
-	else {
-		return USB_POWER;
-	}
-}
-
-void SystemClockConfig( void ) {
+void system_clock_config( void ) {
 	/*
 	 * What clock goes where??:
 	 * ACLK:	use with TIMER_A and SPI

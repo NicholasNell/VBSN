@@ -1,0 +1,419 @@
+\hypertarget{my__gpio_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+gpio.h File Reference}
+\label{my__gpio_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_gpio.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_gpio.h}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}pin\+Name-\/board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pin\+Name-\/ioe.\+h\char`\"{}}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef void() \mbox{\hyperlink{my__gpio_8h_aad3ddb25bb3e09377ae84df9ce222d74}{Gpio\+Irq\+Handler}}(void $\ast$context)
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}{Pin\+Names}} \{ \mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736a68eb88555224d11a9f17930a61d749c5}{MCU\+\_\+\+PINS}}
+, \mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736a3dbd1016ea99d087d747530418b89a01}{NC}} = (int)0x\+FFFFFFFF
+ \}
+\item 
+enum \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}{Pin\+Modes}} \{ \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a9473a73f5d4f521d8dd4459d84a5e580}{PIN\+\_\+\+INPUT}} = 0
+, \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a7a0976acb2666b52e320497c547ea647}{PIN\+\_\+\+OUTPUT}}
+, \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32aade9af23affea71c706c9628237ceee8}{PIN\+\_\+\+ALTERNATE\+\_\+\+FCT}}
+, \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a77e10c907644f94e135b733875ba8e40}{PIN\+\_\+\+ANALOGIC}}
+ \}
+\item 
+enum \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}{Pin\+Types}} \{ \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4acaaea9f9c670c6da0984230f22fde97b}{PIN\+\_\+\+NO\+\_\+\+PULL}} = 0
+, \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4a2cf1cc28261096cc5f52bb572ffccba1}{PIN\+\_\+\+PULL\+\_\+\+UP}}
+, \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4af6f51c667f2c52190215ff843b6eeb8e}{PIN\+\_\+\+PULL\+\_\+\+DOWN}}
+ \}
+\item 
+enum \mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}{Pin\+Configs}} \{ \mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1fa347c9828d7a016da26fb6e79388f9461}{PIN\+\_\+\+PUSH\+\_\+\+PULL}} = 0
+, \mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1fa0b8337f542710b57abd36e0ca1d245e5}{PIN\+\_\+\+OPEN\+\_\+\+DRAIN}}
+ \}
+\item 
+enum \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}{Irq\+Modes}} \{ \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a947b1ef26e4371cdd817b747e2e53fae}{NO\+\_\+\+IRQ}} = 0
+, \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a1fa7dae114f7117731f62d3b0cb8198e}{IRQ\+\_\+\+RISING\+\_\+\+EDGE}}
+, \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9ae4f854187fcbe6036ffc9ddc0ca72e62}{IRQ\+\_\+\+FALLING\+\_\+\+EDGE}}
+, \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a7056de800f7ccd628298a59c4fe30654}{IRQ\+\_\+\+RISING\+\_\+\+FALLING\+\_\+\+EDGE}}
+ \}
+\item 
+enum \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}{Irq\+Priorities}} \{ \newline
+\mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815ae18e69a438340496bd986f708fe0d38c}{IRQ\+\_\+\+VERY\+\_\+\+LOW\+\_\+\+PRIORITY}} = 0
+, \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815ac3cb0cb82ecd3be9f5de654c6a8bb8c9}{IRQ\+\_\+\+LOW\+\_\+\+PRIORITY}}
+, \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a57d36b98fb4ded2c9b52c9d446683274}{IRQ\+\_\+\+MEDIUM\+\_\+\+PRIORITY}}
+, \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a049db1e6a5694572733b0dd9714b7223}{IRQ\+\_\+\+HIGH\+\_\+\+PRIORITY}}
+, \newline
+\mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a4271308d0409cdb5257d7e7c8ad449a7}{IRQ\+\_\+\+VERY\+\_\+\+HIGH\+\_\+\+PRIORITY}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__gpio_8h_adf7f243137431ce2436b97ad70a4d1df}{Gpio\+Init}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, \mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}{Pin\+Names}} pin, \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}{Pin\+Modes}} mode, \mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}{Pin\+Configs}} config, \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}{Pin\+Types}} type, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Initializes the given GPIO object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__gpio_8h_a5eb390eb5a9ce3637fc50f232021fa9a}{Gpio\+Set\+Context}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, void $\ast$context)
+\begin{DoxyCompactList}\small\item\em Sets a user defined object pointer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__gpio_8h_a068d8942a1a5b81656f4580bd061f90f}{Gpio\+Flash\+LED}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, uint8\+\_\+t \mbox{\hyperlink{my__systick_8c_adc4674f6ea53803d98fa2ec36759e77d}{delay}})
+\begin{DoxyCompactList}\small\item\em toggles pin on and off \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__gpio_8h_acc144d78267c5ea4f16534e2dce4917c}{Gpio\+Set\+Interrupt}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}{Irq\+Modes}} irq\+Mode, \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}{Irq\+Priorities}} irq\+Priority)
+\begin{DoxyCompactList}\small\item\em GPIO IRQ Initialization. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__gpio_8h_a636c427d98d8c6143c6b9bca1ab61820}{Gpio\+Remove\+Interrupt}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Removes the interrupt from the object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__gpio_8h_aa918d086ecee95be2c7fdfcbaa45d685}{Gpio\+Write}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Writes the given value to the GPIO output. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__gpio_8h_a51f0baa800df083a46518846fab6ca94}{Gpio\+Toggle}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Toggle the value to the GPIO output. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my__gpio_8h_a1cf784a1f685e5c403b6f8be201d4dbe}{Gpio\+Read}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Reads the current GPIO input value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{my__gpio_8h_aad3ddb25bb3e09377ae84df9ce222d74}\label{my__gpio_8h_aad3ddb25bb3e09377ae84df9ce222d74}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioIrqHandler@{GpioIrqHandler}}
+\index{GpioIrqHandler@{GpioIrqHandler}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioIrqHandler}{GpioIrqHandler}}
+{\footnotesize\ttfamily typedef void() Gpio\+Irq\+Handler(void $\ast$context)}
+
+GPIO IRQ handler function prototype 
+
+Definition at line 103 of file my\+\_\+gpio.\+h.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}\label{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}} 
+\index{my\_gpio.h@{my\_gpio.h}!IrqModes@{IrqModes}}
+\index{IrqModes@{IrqModes}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{IrqModes}{IrqModes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}{Irq\+Modes}}}
+
+Define the GPIO IRQ on a rising, falling or both edges \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_IRQ@{NO\_IRQ}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!NO\_IRQ@{NO\_IRQ}}}\mbox{\Hypertarget{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a947b1ef26e4371cdd817b747e2e53fae}\label{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a947b1ef26e4371cdd817b747e2e53fae}} 
+NO\+\_\+\+IRQ&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_RISING\_EDGE@{IRQ\_RISING\_EDGE}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_RISING\_EDGE@{IRQ\_RISING\_EDGE}}}\mbox{\Hypertarget{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a1fa7dae114f7117731f62d3b0cb8198e}\label{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a1fa7dae114f7117731f62d3b0cb8198e}} 
+IRQ\+\_\+\+RISING\+\_\+\+EDGE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_FALLING\_EDGE@{IRQ\_FALLING\_EDGE}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_FALLING\_EDGE@{IRQ\_FALLING\_EDGE}}}\mbox{\Hypertarget{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9ae4f854187fcbe6036ffc9ddc0ca72e62}\label{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9ae4f854187fcbe6036ffc9ddc0ca72e62}} 
+IRQ\+\_\+\+FALLING\+\_\+\+EDGE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_RISING\_FALLING\_EDGE@{IRQ\_RISING\_FALLING\_EDGE}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_RISING\_FALLING\_EDGE@{IRQ\_RISING\_FALLING\_EDGE}}}\mbox{\Hypertarget{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a7056de800f7ccd628298a59c4fe30654}\label{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9a7056de800f7ccd628298a59c4fe30654}} 
+IRQ\+\_\+\+RISING\+\_\+\+FALLING\+\_\+\+EDGE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 80 of file my\+\_\+gpio.\+h.
+
+\mbox{\Hypertarget{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}\label{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}} 
+\index{my\_gpio.h@{my\_gpio.h}!IrqPriorities@{IrqPriorities}}
+\index{IrqPriorities@{IrqPriorities}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{IrqPriorities}{IrqPriorities}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}{Irq\+Priorities}}}
+
+Define the IRQ priority on the GPIO \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_VERY\_LOW\_PRIORITY@{IRQ\_VERY\_LOW\_PRIORITY}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_VERY\_LOW\_PRIORITY@{IRQ\_VERY\_LOW\_PRIORITY}}}\mbox{\Hypertarget{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815ae18e69a438340496bd986f708fe0d38c}\label{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815ae18e69a438340496bd986f708fe0d38c}} 
+IRQ\+\_\+\+VERY\+\_\+\+LOW\+\_\+\+PRIORITY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_LOW\_PRIORITY@{IRQ\_LOW\_PRIORITY}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_LOW\_PRIORITY@{IRQ\_LOW\_PRIORITY}}}\mbox{\Hypertarget{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815ac3cb0cb82ecd3be9f5de654c6a8bb8c9}\label{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815ac3cb0cb82ecd3be9f5de654c6a8bb8c9}} 
+IRQ\+\_\+\+LOW\+\_\+\+PRIORITY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_MEDIUM\_PRIORITY@{IRQ\_MEDIUM\_PRIORITY}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_MEDIUM\_PRIORITY@{IRQ\_MEDIUM\_PRIORITY}}}\mbox{\Hypertarget{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a57d36b98fb4ded2c9b52c9d446683274}\label{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a57d36b98fb4ded2c9b52c9d446683274}} 
+IRQ\+\_\+\+MEDIUM\+\_\+\+PRIORITY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_HIGH\_PRIORITY@{IRQ\_HIGH\_PRIORITY}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_HIGH\_PRIORITY@{IRQ\_HIGH\_PRIORITY}}}\mbox{\Hypertarget{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a049db1e6a5694572733b0dd9714b7223}\label{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a049db1e6a5694572733b0dd9714b7223}} 
+IRQ\+\_\+\+HIGH\+\_\+\+PRIORITY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRQ\_VERY\_HIGH\_PRIORITY@{IRQ\_VERY\_HIGH\_PRIORITY}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!IRQ\_VERY\_HIGH\_PRIORITY@{IRQ\_VERY\_HIGH\_PRIORITY}}}\mbox{\Hypertarget{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a4271308d0409cdb5257d7e7c8ad449a7}\label{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815a4271308d0409cdb5257d7e7c8ad449a7}} 
+IRQ\+\_\+\+VERY\+\_\+\+HIGH\+\_\+\+PRIORITY&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 91 of file my\+\_\+gpio.\+h.
+
+\mbox{\Hypertarget{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}\label{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}} 
+\index{my\_gpio.h@{my\_gpio.h}!PinConfigs@{PinConfigs}}
+\index{PinConfigs@{PinConfigs}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{PinConfigs}{PinConfigs}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}{Pin\+Configs}}}
+
+Define the GPIO as Push-\/pull type or Open Drain \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_PUSH\_PULL@{PIN\_PUSH\_PULL}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_PUSH\_PULL@{PIN\_PUSH\_PULL}}}\mbox{\Hypertarget{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1fa347c9828d7a016da26fb6e79388f9461}\label{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1fa347c9828d7a016da26fb6e79388f9461}} 
+PIN\+\_\+\+PUSH\+\_\+\+PULL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_OPEN\_DRAIN@{PIN\_OPEN\_DRAIN}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_OPEN\_DRAIN@{PIN\_OPEN\_DRAIN}}}\mbox{\Hypertarget{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1fa0b8337f542710b57abd36e0ca1d245e5}\label{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1fa0b8337f542710b57abd36e0ca1d245e5}} 
+PIN\+\_\+\+OPEN\+\_\+\+DRAIN&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 71 of file my\+\_\+gpio.\+h.
+
+\mbox{\Hypertarget{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}\label{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}} 
+\index{my\_gpio.h@{my\_gpio.h}!PinModes@{PinModes}}
+\index{PinModes@{PinModes}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{PinModes}{PinModes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}{Pin\+Modes}}}
+
+Operation Mode for the GPIO \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_INPUT@{PIN\_INPUT}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_INPUT@{PIN\_INPUT}}}\mbox{\Hypertarget{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a9473a73f5d4f521d8dd4459d84a5e580}\label{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a9473a73f5d4f521d8dd4459d84a5e580}} 
+PIN\+\_\+\+INPUT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_OUTPUT@{PIN\_OUTPUT}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_OUTPUT@{PIN\_OUTPUT}}}\mbox{\Hypertarget{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a7a0976acb2666b52e320497c547ea647}\label{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a7a0976acb2666b52e320497c547ea647}} 
+PIN\+\_\+\+OUTPUT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_ALTERNATE\_FCT@{PIN\_ALTERNATE\_FCT}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_ALTERNATE\_FCT@{PIN\_ALTERNATE\_FCT}}}\mbox{\Hypertarget{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32aade9af23affea71c706c9628237ceee8}\label{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32aade9af23affea71c706c9628237ceee8}} 
+PIN\+\_\+\+ALTERNATE\+\_\+\+FCT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_ANALOGIC@{PIN\_ANALOGIC}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_ANALOGIC@{PIN\_ANALOGIC}}}\mbox{\Hypertarget{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a77e10c907644f94e135b733875ba8e40}\label{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32a77e10c907644f94e135b733875ba8e40}} 
+PIN\+\_\+\+ANALOGIC&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 50 of file my\+\_\+gpio.\+h.
+
+\mbox{\Hypertarget{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}\label{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}} 
+\index{my\_gpio.h@{my\_gpio.h}!PinNames@{PinNames}}
+\index{PinNames@{PinNames}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{PinNames}{PinNames}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}{Pin\+Names}}}
+
+Board GPIO pin names \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MCU\_PINS@{MCU\_PINS}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!MCU\_PINS@{MCU\_PINS}}}\mbox{\Hypertarget{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736a68eb88555224d11a9f17930a61d749c5}\label{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736a68eb88555224d11a9f17930a61d749c5}} 
+MCU\+\_\+\+PINS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NC@{NC}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!NC@{NC}}}\mbox{\Hypertarget{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736a3dbd1016ea99d087d747530418b89a01}\label{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736a3dbd1016ea99d087d747530418b89a01}} 
+NC&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 41 of file my\+\_\+gpio.\+h.
+
+\mbox{\Hypertarget{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}\label{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}} 
+\index{my\_gpio.h@{my\_gpio.h}!PinTypes@{PinTypes}}
+\index{PinTypes@{PinTypes}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{PinTypes}{PinTypes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}{Pin\+Types}}}
+
+Add a pull-\/up, a pull-\/down or nothing on the GPIO line \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_NO\_PULL@{PIN\_NO\_PULL}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_NO\_PULL@{PIN\_NO\_PULL}}}\mbox{\Hypertarget{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4acaaea9f9c670c6da0984230f22fde97b}\label{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4acaaea9f9c670c6da0984230f22fde97b}} 
+PIN\+\_\+\+NO\+\_\+\+PULL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_PULL\_UP@{PIN\_PULL\_UP}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_PULL\_UP@{PIN\_PULL\_UP}}}\mbox{\Hypertarget{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4a2cf1cc28261096cc5f52bb572ffccba1}\label{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4a2cf1cc28261096cc5f52bb572ffccba1}} 
+PIN\+\_\+\+PULL\+\_\+\+UP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PIN\_PULL\_DOWN@{PIN\_PULL\_DOWN}!my\_gpio.h@{my\_gpio.h}}\index{my\_gpio.h@{my\_gpio.h}!PIN\_PULL\_DOWN@{PIN\_PULL\_DOWN}}}\mbox{\Hypertarget{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4af6f51c667f2c52190215ff843b6eeb8e}\label{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4af6f51c667f2c52190215ff843b6eeb8e}} 
+PIN\+\_\+\+PULL\+\_\+\+DOWN&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 61 of file my\+\_\+gpio.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__gpio_8h_a068d8942a1a5b81656f4580bd061f90f}\label{my__gpio_8h_a068d8942a1a5b81656f4580bd061f90f}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioFlashLED@{GpioFlashLED}}
+\index{GpioFlashLED@{GpioFlashLED}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioFlashLED()}{GpioFlashLED()}}
+{\footnotesize\ttfamily void Gpio\+Flash\+LED (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{uint8\+\_\+t}]{delay }\end{DoxyParamCaption})}
+
+
+
+toggles pin on and off 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & config pin \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & flash delay \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 61 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_adf7f243137431ce2436b97ad70a4d1df}\label{my__gpio_8h_adf7f243137431ce2436b97ad70a4d1df}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioInit@{GpioInit}}
+\index{GpioInit@{GpioInit}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioInit()}{GpioInit()}}
+{\footnotesize\ttfamily void Gpio\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{\mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}{Pin\+Names}}}]{pin,  }\item[{\mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}{Pin\+Modes}}}]{mode,  }\item[{\mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}{Pin\+Configs}}}]{config,  }\item[{\mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}{Pin\+Types}}}]{type,  }\item[{uint32\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+Initializes the given GPIO object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & pin Pin name ( please look in \mbox{\hyperlink{pin_name-board_8h}{pin\+Name-\/board.\+h}} file ) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & mode Pin mode \mbox{[}PIN\+\_\+\+INPUT, PIN\+\_\+\+OUTPUT, PIN\+\_\+\+ALTERNATE\+\_\+\+FCT, PIN\+\_\+\+ANALOGIC\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & config Pin config \mbox{[}PIN\+\_\+\+PUSH\+\_\+\+PULL, PIN\+\_\+\+OPEN\+\_\+\+DRAIN\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & type Pin type \mbox{[}PIN\+\_\+\+NO\+\_\+\+PULL, PIN\+\_\+\+PULL\+\_\+\+UP, PIN\+\_\+\+PULL\+\_\+\+DOWN\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & value Default output value at initialization \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 31 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_a1cf784a1f685e5c403b6f8be201d4dbe}\label{my__gpio_8h_a1cf784a1f685e5c403b6f8be201d4dbe}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioRead@{GpioRead}}
+\index{GpioRead@{GpioRead}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioRead()}{GpioRead()}}
+{\footnotesize\ttfamily uint32\+\_\+t Gpio\+Read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Reads the current GPIO input value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & Current GPIO input value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 57 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_a636c427d98d8c6143c6b9bca1ab61820}\label{my__gpio_8h_a636c427d98d8c6143c6b9bca1ab61820}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioRemoveInterrupt@{GpioRemoveInterrupt}}
+\index{GpioRemoveInterrupt@{GpioRemoveInterrupt}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioRemoveInterrupt()}{GpioRemoveInterrupt()}}
+{\footnotesize\ttfamily void Gpio\+Remove\+Interrupt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Removes the interrupt from the object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 45 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_a5eb390eb5a9ce3637fc50f232021fa9a}\label{my__gpio_8h_a5eb390eb5a9ce3637fc50f232021fa9a}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioSetContext@{GpioSetContext}}
+\index{GpioSetContext@{GpioSetContext}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioSetContext()}{GpioSetContext()}}
+{\footnotesize\ttfamily void Gpio\+Set\+Context (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{void $\ast$}]{context }\end{DoxyParamCaption})}
+
+
+
+Sets a user defined object pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & context User defined data object pointer to pass back on IRQ handler callback \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_acc144d78267c5ea4f16534e2dce4917c}\label{my__gpio_8h_acc144d78267c5ea4f16534e2dce4917c}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioSetInterrupt@{GpioSetInterrupt}}
+\index{GpioSetInterrupt@{GpioSetInterrupt}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioSetInterrupt()}{GpioSetInterrupt()}}
+{\footnotesize\ttfamily void Gpio\+Set\+Interrupt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{\mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}{Irq\+Modes}}}]{irq\+Mode,  }\item[{\mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}{Irq\+Priorities}}}]{irq\+Priority }\end{DoxyParamCaption})}
+
+
+
+GPIO IRQ Initialization. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Mode IRQ mode \mbox{[}NO\+\_\+\+IRQ, IRQ\+\_\+\+RISING\+\_\+\+EDGE, IRQ\+\_\+\+FALLING\+\_\+\+EDGE, IRQ\+\_\+\+RISING\+\_\+\+FALLING\+\_\+\+EDGE\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Priority IRQ priority \mbox{[}IRQ\+\_\+\+VERY\+\_\+\+LOW\+\_\+\+PRIORITY, IRQ\+\_\+\+LOW\+\_\+\+PRIORITY IRQ\+\_\+\+MEDIUM\+\_\+\+PRIORITY, IRQ\+\_\+\+HIGH\+\_\+\+PRIORITY IRQ\+\_\+\+VERY\+\_\+\+HIGH\+\_\+\+PRIORITY\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Handler Callback function pointer \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 40 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_a51f0baa800df083a46518846fab6ca94}\label{my__gpio_8h_a51f0baa800df083a46518846fab6ca94}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioToggle@{GpioToggle}}
+\index{GpioToggle@{GpioToggle}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioToggle()}{GpioToggle()}}
+{\footnotesize\ttfamily void Gpio\+Toggle (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Toggle the value to the GPIO output. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 53 of file my\+\_\+gpio.\+c.
+
+\mbox{\Hypertarget{my__gpio_8h_aa918d086ecee95be2c7fdfcbaa45d685}\label{my__gpio_8h_aa918d086ecee95be2c7fdfcbaa45d685}} 
+\index{my\_gpio.h@{my\_gpio.h}!GpioWrite@{GpioWrite}}
+\index{GpioWrite@{GpioWrite}!my\_gpio.h@{my\_gpio.h}}
+\doxysubsubsection{\texorpdfstring{GpioWrite()}{GpioWrite()}}
+{\footnotesize\ttfamily void Gpio\+Write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{uint32\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+Writes the given value to the GPIO output. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & value New GPIO output value \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file my\+\_\+gpio.\+c.
+

@@ -1,0 +1,108 @@
+\hypertarget{struct_flash_data__t}{}\doxysection{Flash\+Data\+\_\+t Struct Reference}
+\label{struct_flash_data__t}\index{FlashData\_t@{FlashData\_t}}
+
+
+{\ttfamily \#include $<$my\+\_\+flash.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{struct_flash_data__t_acba2d19980e5a2f3b2cdf6eb8a13c05c}{len\+Of\+Buffer}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_flash_data__t_a7dfa8f800bd2e82b18bded2f12254497}{flash\+Valid\+Identifier}}
+\item 
+RTC\+\_\+\+C\+\_\+\+Calendar \mbox{\hyperlink{struct_flash_data__t_a0431c09f2f7c168172cd6d12767b85f1}{last\+Write\+Time}}
+\item 
+\mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} \mbox{\hyperlink{struct_flash_data__t_aa30a826a0431fb5b26d6f0da37ed6b69}{this\+Node\+Id}}
+\item 
+\mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}} \mbox{\hyperlink{struct_flash_data__t_a50c1d30c1b97af1385b0520cc1601ec8}{neighbour\+Table}} \mbox{[}\mbox{\hyperlink{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}{MAX\+\_\+\+NEIGHBOURS}}\mbox{]}
+\item 
+\mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} \mbox{\hyperlink{struct_flash_data__t_ae45295e435dcec019964f6b8a6fdf72b}{routingtable}} \mbox{[}\mbox{\hyperlink{my_net_8h_af40843a876a06522a44e5e8a362b0e66}{MAX\+\_\+\+ROUTES}}\mbox{]}
+\item 
+\mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} \mbox{\hyperlink{struct_flash_data__t_a492967552e40d0ba1d34ddd99e98715b}{received\+Messages}} \mbox{[}\mbox{\hyperlink{my___m_a_c_8h_a234d459440c1582d4eeadc7aae73cf95}{MAX\+\_\+\+STORED\+\_\+\+MSG}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 23 of file my\+\_\+flash.\+h.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{struct_flash_data__t_a7dfa8f800bd2e82b18bded2f12254497}\label{struct_flash_data__t_a7dfa8f800bd2e82b18bded2f12254497}} 
+\index{FlashData\_t@{FlashData\_t}!flashValidIdentifier@{flashValidIdentifier}}
+\index{flashValidIdentifier@{flashValidIdentifier}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{flashValidIdentifier}{flashValidIdentifier}}
+{\footnotesize\ttfamily uint32\+\_\+t flash\+Valid\+Identifier}
+
+
+
+Definition at line 26 of file my\+\_\+flash.\+h.
+
+\mbox{\Hypertarget{struct_flash_data__t_a0431c09f2f7c168172cd6d12767b85f1}\label{struct_flash_data__t_a0431c09f2f7c168172cd6d12767b85f1}} 
+\index{FlashData\_t@{FlashData\_t}!lastWriteTime@{lastWriteTime}}
+\index{lastWriteTime@{lastWriteTime}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{lastWriteTime}{lastWriteTime}}
+{\footnotesize\ttfamily RTC\+\_\+\+C\+\_\+\+Calendar last\+Write\+Time}
+
+
+
+Definition at line 27 of file my\+\_\+flash.\+h.
+
+\mbox{\Hypertarget{struct_flash_data__t_acba2d19980e5a2f3b2cdf6eb8a13c05c}\label{struct_flash_data__t_acba2d19980e5a2f3b2cdf6eb8a13c05c}} 
+\index{FlashData\_t@{FlashData\_t}!lenOfBuffer@{lenOfBuffer}}
+\index{lenOfBuffer@{lenOfBuffer}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{lenOfBuffer}{lenOfBuffer}}
+{\footnotesize\ttfamily int len\+Of\+Buffer}
+
+
+
+Definition at line 25 of file my\+\_\+flash.\+h.
+
+\mbox{\Hypertarget{struct_flash_data__t_a50c1d30c1b97af1385b0520cc1601ec8}\label{struct_flash_data__t_a50c1d30c1b97af1385b0520cc1601ec8}} 
+\index{FlashData\_t@{FlashData\_t}!neighbourTable@{neighbourTable}}
+\index{neighbourTable@{neighbourTable}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{neighbourTable}{neighbourTable}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_neighbour__t}{Neighbour\+\_\+t}} neighbour\+Table\mbox{[}\mbox{\hyperlink{my___m_a_c_8h_ae35694bd71aaa8aa2608ba5d24de667d}{MAX\+\_\+\+NEIGHBOURS}}\mbox{]}}
+
+
+
+Definition at line 29 of file my\+\_\+flash.\+h.
+
+\mbox{\Hypertarget{struct_flash_data__t_a492967552e40d0ba1d34ddd99e98715b}\label{struct_flash_data__t_a492967552e40d0ba1d34ddd99e98715b}} 
+\index{FlashData\_t@{FlashData\_t}!receivedMessages@{receivedMessages}}
+\index{receivedMessages@{receivedMessages}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{receivedMessages}{receivedMessages}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_datagram__t}{Datagram\+\_\+t}} received\+Messages\mbox{[}\mbox{\hyperlink{my___m_a_c_8h_a234d459440c1582d4eeadc7aae73cf95}{MAX\+\_\+\+STORED\+\_\+\+MSG}}\mbox{]}}
+
+
+
+Definition at line 31 of file my\+\_\+flash.\+h.
+
+\mbox{\Hypertarget{struct_flash_data__t_ae45295e435dcec019964f6b8a6fdf72b}\label{struct_flash_data__t_ae45295e435dcec019964f6b8a6fdf72b}} 
+\index{FlashData\_t@{FlashData\_t}!routingtable@{routingtable}}
+\index{routingtable@{routingtable}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{routingtable}{routingtable}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_route_entry__t}{Route\+Entry\+\_\+t}} routingtable\mbox{[}\mbox{\hyperlink{my_net_8h_af40843a876a06522a44e5e8a362b0e66}{MAX\+\_\+\+ROUTES}}\mbox{]}}
+
+
+
+Definition at line 30 of file my\+\_\+flash.\+h.
+
+\mbox{\Hypertarget{struct_flash_data__t_aa30a826a0431fb5b26d6f0da37ed6b69}\label{struct_flash_data__t_aa30a826a0431fb5b26d6f0da37ed6b69}} 
+\index{FlashData\_t@{FlashData\_t}!thisNodeId@{thisNodeId}}
+\index{thisNodeId@{thisNodeId}!FlashData\_t@{FlashData\_t}}
+\doxysubsubsection{\texorpdfstring{thisNodeId}{thisNodeId}}
+{\footnotesize\ttfamily \mbox{\hyperlink{datagram_8h_ab7b8488f3ece4cf0053191a99de0056c}{node\+Address}} this\+Node\+Id}
+
+
+
+Definition at line 28 of file my\+\_\+flash.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/\mbox{\hyperlink{my__flash_8h}{my\+\_\+flash.\+h}}\end{DoxyCompactItemize}

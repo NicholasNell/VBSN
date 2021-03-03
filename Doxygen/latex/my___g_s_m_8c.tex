@@ -1,0 +1,451 @@
+\hypertarget{my___g_s_m_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+\+GSM.c File Reference}
+\label{my___g_s_m_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_GSM.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_GSM.c}}
+{\ttfamily \#include $<$bme280\+\_\+defs.\+h$>$}\newline
+{\ttfamily \#include $<$helper.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+\+GSM.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+systick.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+timer.\+h$>$}\newline
+{\ttfamily \#include $<$MAX44009.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/gpio.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/interrupt.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rom\+\_\+map.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/uart.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/inc/msp\+\_\+compatibility.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/inc/msp432p401r.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a184091762280d6393d9dabf187e8dd08}{GSM\+\_\+disable}} (void)
+\begin{DoxyCompactList}\small\item\em Uninitialises the UART port for the gsm module. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a9315a69c01ad2cbac6582f5a35a96140}{GSM\+\_\+startup}} (void)
+\item 
+bool \mbox{\hyperlink{my___g_s_m_8c_af6efe73c7887b94ec8144ce2d6804c13}{init\+GSM}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a9c3db792ffad0a2e554302e70569b6d3}{send\+\_\+gsm\+UART}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_aaa26fcaa58d0e9fbebb461908cd02917}{EUSCIA2\+\_\+\+IRQHandler}} (void)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a530903357ef031d1047f434e1adf9a1b}{CHECK\+\_\+\+COM}} ()
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_aca22b05750026887b9bdad9329db9190}{sendmsg}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a977fba31c29f9467d31b3efb9e0f8706}{check\+Signal}} ()
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a87c806b969ff8076986aa9ea9922556b}{check\+For\+Stringposition}} (char $\ast$check\+For)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a19af7101234306f2f445cc662cfdbe74}{get\+Signal\+Strength}} (int index)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a05b4c7b60dfa9d495245ef95ff775108}{modem\+\_\+start}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a4df98db140a21784646a776324157a91}{gsm\+Power\+Save\+ON}} ()
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_aeed65a50ab48ac560fcba61aa6e74b25}{gsm\+Power\+Save\+OFF}} ()
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_ab60d493e72a6ae3d5dbf033b5dce0503}{disablecommand\+Echo}} ()
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a93b830f44043998f9b3256e4255c151f}{delay\+\_\+gsm\+\_\+respond}} (int Delay\+\_\+ctr)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a650480b48cebc3eabc1a1d867c8ac87c}{delay\+\_\+\+UART\+\_\+respond}} (int Delay\+\_\+ctr)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_af0fc4f0b49c484b050a4505f2e6b21c4}{gsm\+\_\+setup\+Modem\+Ping}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_af2f7006384ce651257d6189e661a7ae3}{gsm\+\_\+ping\+\_\+google}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a815842ff4da0c1d6e567bf6fff7333c6}{check\+Registration}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_aa331f3bae3b862285754d5a6f784a61e}{check\+GPRSattached}} (void)
+\item 
+bool \mbox{\hyperlink{my___g_s_m_8c_a6e60c4d1745e9cb4c422efb2e9ff2d02}{wait\+\_\+\+Check\+\_\+\+For\+Reply}} (char $\ast$reply, uint8\+\_\+t delay\+\_\+s)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a0e825524f7717cf0b6f41d5a75b4ab78}{setup\+\_\+\+GPRSSettings}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_a81682fd1025ffe5f3201f726195e37b3}{HTTP\+\_\+connect}} (void)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_aabaa9703904011becd441b4d4682f8fa}{CMD\+\_\+\+LOAD}} (int index)
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a5fe66f2d5269a63b311e870e6e4a046a}{STRING\+\_\+\+SEARCH}} (int index)
+\item 
+void \mbox{\hyperlink{my___g_s_m_8c_ad20979127a7a0dc1adfffea2df734663}{HTTP\+\_\+send\+Data}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{my___g_s_m_8c_a6cd9bd0b07a175bb4deaf8448272140b}{counter\+\_\+read\+\_\+gsm}} = 0
+\item 
+char \mbox{\hyperlink{my___g_s_m_8c_a5954a8d03e5279902badea6358f46448}{Uart\+GSMRX}} \mbox{[}\mbox{\hyperlink{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}{SIZE\+\_\+\+BUFFER}}\mbox{]}
+\item 
+const char \mbox{\hyperlink{my___g_s_m_8c_a3f8e676b69f6dafdbe8139d28b28fc4e}{Strings}} \mbox{[}\mbox{\hyperlink{my___g_s_m_8h_abd257b9627f734b30501c000125000fd}{TOTAL\+\_\+\+STRINGS}}\mbox{]}\mbox{[}\mbox{\hyperlink{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}{SIZE\+\_\+\+COMMAND}}\mbox{]}
+\item 
+char \mbox{\hyperlink{my___g_s_m_8c_a010032292bcd9b25ab6a7b14270e8022}{Command}} \mbox{[}\mbox{\hyperlink{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}{SIZE\+\_\+\+COMMAND}}\mbox{]}
+\item 
+const e\+USCI\+\_\+\+UART\+\_\+\+Config\+V1 \mbox{\hyperlink{my___g_s_m_8c_a69073cd540f9558e3de266c2f60fdde8}{uart\+Config\+GSM}}
+\item 
+struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} \mbox{\hyperlink{my___g_s_m_8c_acf49615fa6291ac4def5fe342a492cec}{bme280\+Dev}}
+\item 
+struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} \mbox{\hyperlink{my___g_s_m_8c_a29c054e412a9172bada57bc985137d01}{bme280\+Data}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my___g_s_m_8c_a530903357ef031d1047f434e1adf9a1b}\label{my___g_s_m_8c_a530903357ef031d1047f434e1adf9a1b}} 
+\index{my\_GSM.c@{my\_GSM.c}!CHECK\_COM@{CHECK\_COM}}
+\index{CHECK\_COM@{CHECK\_COM}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{CHECK\_COM()}{CHECK\_COM()}}
+{\footnotesize\ttfamily int CHECK\+\_\+\+COM (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 142 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a87c806b969ff8076986aa9ea9922556b}\label{my___g_s_m_8c_a87c806b969ff8076986aa9ea9922556b}} 
+\index{my\_GSM.c@{my\_GSM.c}!checkForStringposition@{checkForStringposition}}
+\index{checkForStringposition@{checkForStringposition}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{checkForStringposition()}{checkForStringposition()}}
+{\footnotesize\ttfamily int check\+For\+Stringposition (\begin{DoxyParamCaption}\item[{char $\ast$}]{check\+For }\end{DoxyParamCaption})}
+
+
+
+Definition at line 169 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_aa331f3bae3b862285754d5a6f784a61e}\label{my___g_s_m_8c_aa331f3bae3b862285754d5a6f784a61e}} 
+\index{my\_GSM.c@{my\_GSM.c}!checkGPRSattached@{checkGPRSattached}}
+\index{checkGPRSattached@{checkGPRSattached}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{checkGPRSattached()}{checkGPRSattached()}}
+{\footnotesize\ttfamily void check\+GPRSattached (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 296 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a815842ff4da0c1d6e567bf6fff7333c6}\label{my___g_s_m_8c_a815842ff4da0c1d6e567bf6fff7333c6}} 
+\index{my\_GSM.c@{my\_GSM.c}!checkRegistration@{checkRegistration}}
+\index{checkRegistration@{checkRegistration}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{checkRegistration()}{checkRegistration()}}
+{\footnotesize\ttfamily void check\+Registration (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 287 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a977fba31c29f9467d31b3efb9e0f8706}\label{my___g_s_m_8c_a977fba31c29f9467d31b3efb9e0f8706}} 
+\index{my\_GSM.c@{my\_GSM.c}!checkSignal@{checkSignal}}
+\index{checkSignal@{checkSignal}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{checkSignal()}{checkSignal()}}
+{\footnotesize\ttfamily void check\+Signal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 161 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_aabaa9703904011becd441b4d4682f8fa}\label{my___g_s_m_8c_aabaa9703904011becd441b4d4682f8fa}} 
+\index{my\_GSM.c@{my\_GSM.c}!CMD\_LOAD@{CMD\_LOAD}}
+\index{CMD\_LOAD@{CMD\_LOAD}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{CMD\_LOAD()}{CMD\_LOAD()}}
+{\footnotesize\ttfamily void CMD\+\_\+\+LOAD (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 379 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a93b830f44043998f9b3256e4255c151f}\label{my___g_s_m_8c_a93b830f44043998f9b3256e4255c151f}} 
+\index{my\_GSM.c@{my\_GSM.c}!delay\_gsm\_respond@{delay\_gsm\_respond}}
+\index{delay\_gsm\_respond@{delay\_gsm\_respond}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{delay\_gsm\_respond()}{delay\_gsm\_respond()}}
+{\footnotesize\ttfamily int delay\+\_\+gsm\+\_\+respond (\begin{DoxyParamCaption}\item[{int}]{Delay\+\_\+ctr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 245 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a650480b48cebc3eabc1a1d867c8ac87c}\label{my___g_s_m_8c_a650480b48cebc3eabc1a1d867c8ac87c}} 
+\index{my\_GSM.c@{my\_GSM.c}!delay\_UART\_respond@{delay\_UART\_respond}}
+\index{delay\_UART\_respond@{delay\_UART\_respond}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{delay\_UART\_respond()}{delay\_UART\_respond()}}
+{\footnotesize\ttfamily int delay\+\_\+\+UART\+\_\+respond (\begin{DoxyParamCaption}\item[{int}]{Delay\+\_\+ctr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 259 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_ab60d493e72a6ae3d5dbf033b5dce0503}\label{my___g_s_m_8c_ab60d493e72a6ae3d5dbf033b5dce0503}} 
+\index{my\_GSM.c@{my\_GSM.c}!disablecommandEcho@{disablecommandEcho}}
+\index{disablecommandEcho@{disablecommandEcho}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{disablecommandEcho()}{disablecommandEcho()}}
+{\footnotesize\ttfamily void disablecommand\+Echo (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 240 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_aaa26fcaa58d0e9fbebb461908cd02917}\label{my___g_s_m_8c_aaa26fcaa58d0e9fbebb461908cd02917}} 
+\index{my\_GSM.c@{my\_GSM.c}!EUSCIA2\_IRQHandler@{EUSCIA2\_IRQHandler}}
+\index{EUSCIA2\_IRQHandler@{EUSCIA2\_IRQHandler}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{EUSCIA2\_IRQHandler()}{EUSCIA2\_IRQHandler()}}
+{\footnotesize\ttfamily void EUSCIA2\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 123 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a19af7101234306f2f445cc662cfdbe74}\label{my___g_s_m_8c_a19af7101234306f2f445cc662cfdbe74}} 
+\index{my\_GSM.c@{my\_GSM.c}!getSignalStrength@{getSignalStrength}}
+\index{getSignalStrength@{getSignalStrength}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{getSignalStrength()}{getSignalStrength()}}
+{\footnotesize\ttfamily int get\+Signal\+Strength (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 181 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a184091762280d6393d9dabf187e8dd08}\label{my___g_s_m_8c_a184091762280d6393d9dabf187e8dd08}} 
+\index{my\_GSM.c@{my\_GSM.c}!GSM\_disable@{GSM\_disable}}
+\index{GSM\_disable@{GSM\_disable}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{GSM\_disable()}{GSM\_disable()}}
+{\footnotesize\ttfamily void GSM\+\_\+disable (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Uninitialises the UART port for the gsm module. 
+
+
+
+Definition at line 58 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_af2f7006384ce651257d6189e661a7ae3}\label{my___g_s_m_8c_af2f7006384ce651257d6189e661a7ae3}} 
+\index{my\_GSM.c@{my\_GSM.c}!gsm\_ping\_google@{gsm\_ping\_google}}
+\index{gsm\_ping\_google@{gsm\_ping\_google}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{gsm\_ping\_google()}{gsm\_ping\_google()}}
+{\footnotesize\ttfamily void gsm\+\_\+ping\+\_\+google (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 279 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_af0fc4f0b49c484b050a4505f2e6b21c4}\label{my___g_s_m_8c_af0fc4f0b49c484b050a4505f2e6b21c4}} 
+\index{my\_GSM.c@{my\_GSM.c}!gsm\_setupModemPing@{gsm\_setupModemPing}}
+\index{gsm\_setupModemPing@{gsm\_setupModemPing}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{gsm\_setupModemPing()}{gsm\_setupModemPing()}}
+{\footnotesize\ttfamily void gsm\+\_\+setup\+Modem\+Ping (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 274 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a9315a69c01ad2cbac6582f5a35a96140}\label{my___g_s_m_8c_a9315a69c01ad2cbac6582f5a35a96140}} 
+\index{my\_GSM.c@{my\_GSM.c}!GSM\_startup@{GSM\_startup}}
+\index{GSM\_startup@{GSM\_startup}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{GSM\_startup()}{GSM\_startup()}}
+{\footnotesize\ttfamily void GSM\+\_\+startup (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 69 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_aeed65a50ab48ac560fcba61aa6e74b25}\label{my___g_s_m_8c_aeed65a50ab48ac560fcba61aa6e74b25}} 
+\index{my\_GSM.c@{my\_GSM.c}!gsmPowerSaveOFF@{gsmPowerSaveOFF}}
+\index{gsmPowerSaveOFF@{gsmPowerSaveOFF}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{gsmPowerSaveOFF()}{gsmPowerSaveOFF()}}
+{\footnotesize\ttfamily void gsm\+Power\+Save\+OFF (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 232 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a4df98db140a21784646a776324157a91}\label{my___g_s_m_8c_a4df98db140a21784646a776324157a91}} 
+\index{my\_GSM.c@{my\_GSM.c}!gsmPowerSaveON@{gsmPowerSaveON}}
+\index{gsmPowerSaveON@{gsmPowerSaveON}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{gsmPowerSaveON()}{gsmPowerSaveON()}}
+{\footnotesize\ttfamily void gsm\+Power\+Save\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 224 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a81682fd1025ffe5f3201f726195e37b3}\label{my___g_s_m_8c_a81682fd1025ffe5f3201f726195e37b3}} 
+\index{my\_GSM.c@{my\_GSM.c}!HTTP\_connect@{HTTP\_connect}}
+\index{HTTP\_connect@{HTTP\_connect}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{HTTP\_connect()}{HTTP\_connect()}}
+{\footnotesize\ttfamily void HTTP\+\_\+connect (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 340 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_ad20979127a7a0dc1adfffea2df734663}\label{my___g_s_m_8c_ad20979127a7a0dc1adfffea2df734663}} 
+\index{my\_GSM.c@{my\_GSM.c}!HTTP\_sendData@{HTTP\_sendData}}
+\index{HTTP\_sendData@{HTTP\_sendData}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{HTTP\_sendData()}{HTTP\_sendData()}}
+{\footnotesize\ttfamily void HTTP\+\_\+send\+Data (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 454 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_af6efe73c7887b94ec8144ce2d6804c13}\label{my___g_s_m_8c_af6efe73c7887b94ec8144ce2d6804c13}} 
+\index{my\_GSM.c@{my\_GSM.c}!initGSM@{initGSM}}
+\index{initGSM@{initGSM}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{initGSM()}{initGSM()}}
+{\footnotesize\ttfamily bool init\+GSM (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 87 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a05b4c7b60dfa9d495245ef95ff775108}\label{my___g_s_m_8c_a05b4c7b60dfa9d495245ef95ff775108}} 
+\index{my\_GSM.c@{my\_GSM.c}!modem\_start@{modem\_start}}
+\index{modem\_start@{modem\_start}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{modem\_start()}{modem\_start()}}
+{\footnotesize\ttfamily int modem\+\_\+start (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 193 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a9c3db792ffad0a2e554302e70569b6d3}\label{my___g_s_m_8c_a9c3db792ffad0a2e554302e70569b6d3}} 
+\index{my\_GSM.c@{my\_GSM.c}!send\_gsmUART@{send\_gsmUART}}
+\index{send\_gsmUART@{send\_gsmUART}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{send\_gsmUART()}{send\_gsmUART()}}
+{\footnotesize\ttfamily void send\+\_\+gsm\+UART (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 113 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_aca22b05750026887b9bdad9329db9190}\label{my___g_s_m_8c_aca22b05750026887b9bdad9329db9190}} 
+\index{my\_GSM.c@{my\_GSM.c}!sendmsg@{sendmsg}}
+\index{sendmsg@{sendmsg}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{sendmsg()}{sendmsg()}}
+{\footnotesize\ttfamily void sendmsg (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 153 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a0e825524f7717cf0b6f41d5a75b4ab78}\label{my___g_s_m_8c_a0e825524f7717cf0b6f41d5a75b4ab78}} 
+\index{my\_GSM.c@{my\_GSM.c}!setup\_GPRSSettings@{setup\_GPRSSettings}}
+\index{setup\_GPRSSettings@{setup\_GPRSSettings}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{setup\_GPRSSettings()}{setup\_GPRSSettings()}}
+{\footnotesize\ttfamily void setup\+\_\+\+GPRSSettings (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 334 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a5fe66f2d5269a63b311e870e6e4a046a}\label{my___g_s_m_8c_a5fe66f2d5269a63b311e870e6e4a046a}} 
+\index{my\_GSM.c@{my\_GSM.c}!STRING\_SEARCH@{STRING\_SEARCH}}
+\index{STRING\_SEARCH@{STRING\_SEARCH}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{STRING\_SEARCH()}{STRING\_SEARCH()}}
+{\footnotesize\ttfamily int STRING\+\_\+\+SEARCH (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 388 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a6e60c4d1745e9cb4c422efb2e9ff2d02}\label{my___g_s_m_8c_a6e60c4d1745e9cb4c422efb2e9ff2d02}} 
+\index{my\_GSM.c@{my\_GSM.c}!wait\_Check\_ForReply@{wait\_Check\_ForReply}}
+\index{wait\_Check\_ForReply@{wait\_Check\_ForReply}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{wait\_Check\_ForReply()}{wait\_Check\_ForReply()}}
+{\footnotesize\ttfamily bool wait\+\_\+\+Check\+\_\+\+For\+Reply (\begin{DoxyParamCaption}\item[{char $\ast$}]{reply,  }\item[{uint8\+\_\+t}]{delay\+\_\+s }\end{DoxyParamCaption})}
+
+
+
+Definition at line 319 of file my\+\_\+\+GSM.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my___g_s_m_8c_a29c054e412a9172bada57bc985137d01}\label{my___g_s_m_8c_a29c054e412a9172bada57bc985137d01}} 
+\index{my\_GSM.c@{my\_GSM.c}!bme280Data@{bme280Data}}
+\index{bme280Data@{bme280Data}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{bme280Data}{bme280Data}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} bme280\+Data\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_acf49615fa6291ac4def5fe342a492cec}\label{my___g_s_m_8c_acf49615fa6291ac4def5fe342a492cec}} 
+\index{my\_GSM.c@{my\_GSM.c}!bme280Dev@{bme280Dev}}
+\index{bme280Dev@{bme280Dev}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{bme280Dev}{bme280Dev}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} bme280\+Dev\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a010032292bcd9b25ab6a7b14270e8022}\label{my___g_s_m_8c_a010032292bcd9b25ab6a7b14270e8022}} 
+\index{my\_GSM.c@{my\_GSM.c}!Command@{Command}}
+\index{Command@{Command}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{Command}{Command}}
+{\footnotesize\ttfamily char Command\mbox{[}\mbox{\hyperlink{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}{SIZE\+\_\+\+COMMAND}}\mbox{]}}
+
+
+
+Definition at line 23 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a6cd9bd0b07a175bb4deaf8448272140b}\label{my___g_s_m_8c_a6cd9bd0b07a175bb4deaf8448272140b}} 
+\index{my\_GSM.c@{my\_GSM.c}!counter\_read\_gsm@{counter\_read\_gsm}}
+\index{counter\_read\_gsm@{counter\_read\_gsm}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{counter\_read\_gsm}{counter\_read\_gsm}}
+{\footnotesize\ttfamily int counter\+\_\+read\+\_\+gsm = 0}
+
+
+
+Definition at line 18 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a3f8e676b69f6dafdbe8139d28b28fc4e}\label{my___g_s_m_8c_a3f8e676b69f6dafdbe8139d28b28fc4e}} 
+\index{my\_GSM.c@{my\_GSM.c}!Strings@{Strings}}
+\index{Strings@{Strings}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{Strings}{Strings}}
+{\footnotesize\ttfamily const char Strings\mbox{[}\mbox{\hyperlink{my___g_s_m_8h_abd257b9627f734b30501c000125000fd}{TOTAL\+\_\+\+STRINGS}}\mbox{]}\mbox{[}\mbox{\hyperlink{my___g_s_m_8h_a847aabe1a472ef27b20baeca3950f023}{SIZE\+\_\+\+COMMAND}}\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ \textcolor{stringliteral}{"{}OK\(\backslash\)0"{}},           }
+\DoxyCodeLine{        \textcolor{stringliteral}{"{}+CMTI\(\backslash\)0"{}},            }
+\DoxyCodeLine{        \textcolor{stringliteral}{"{}ERROR\(\backslash\)0"{}} \}}
+
+\end{DoxyCode}
+
+
+Definition at line 20 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a69073cd540f9558e3de266c2f60fdde8}\label{my___g_s_m_8c_a69073cd540f9558e3de266c2f60fdde8}} 
+\index{my\_GSM.c@{my\_GSM.c}!uartConfigGSM@{uartConfigGSM}}
+\index{uartConfigGSM@{uartConfigGSM}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{uartConfigGSM}{uartConfigGSM}}
+{\footnotesize\ttfamily const e\+USCI\+\_\+\+UART\+\_\+\+Config\+V1 uart\+Config\+GSM}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ EUSCI\_A\_UART\_CLOCKSOURCE\_SMCLK, }
+\DoxyCodeLine{        78,                                     }
+\DoxyCodeLine{        2,                                       }
+\DoxyCodeLine{        0,                                       }
+\DoxyCodeLine{        EUSCI\_A\_UART\_NO\_PARITY,                  }
+\DoxyCodeLine{        EUSCI\_A\_UART\_LSB\_FIRST,                  }
+\DoxyCodeLine{        EUSCI\_A\_UART\_ONE\_STOP\_BIT,               }
+\DoxyCodeLine{        EUSCI\_A\_UART\_MODE,                       }
+\DoxyCodeLine{        EUSCI\_A\_UART\_OVERSAMPLING\_BAUDRATE\_GENERATION  }
+\DoxyCodeLine{        \}}
+
+\end{DoxyCode}
+
+
+Definition at line 47 of file my\+\_\+\+GSM.\+c.
+
+\mbox{\Hypertarget{my___g_s_m_8c_a5954a8d03e5279902badea6358f46448}\label{my___g_s_m_8c_a5954a8d03e5279902badea6358f46448}} 
+\index{my\_GSM.c@{my\_GSM.c}!UartGSMRX@{UartGSMRX}}
+\index{UartGSMRX@{UartGSMRX}!my\_GSM.c@{my\_GSM.c}}
+\doxysubsubsection{\texorpdfstring{UartGSMRX}{UartGSMRX}}
+{\footnotesize\ttfamily char Uart\+GSMRX\mbox{[}\mbox{\hyperlink{my___u_a_r_t_8c_a4dea39042071768c1e115b0ebbfc52f2}{SIZE\+\_\+\+BUFFER}}\mbox{]}}
+
+
+
+Definition at line 19 of file my\+\_\+\+GSM.\+c.
+

@@ -1,0 +1,200 @@
+\hypertarget{my__scheduler_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+scheduler.h File Reference}
+\label{my__scheduler_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_scheduler.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_scheduler.h}}
+
+
+Created on\+: 23 Sep 2020 Author\+: njnel.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_a9b61d4c3842266e74a8ff12bb478448d}{SLOT\+\_\+\+LENGTH\+\_\+\+MS}}~1000
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}{SLOT\+\_\+\+SCALER}}~1
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_a42c63670db2e806f9c43c98347007016}{MAX\+\_\+\+SLOT\+\_\+\+COUNT}}~(60.\+0 $\ast$ 1.\+0 / \mbox{\hyperlink{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}{SLOT\+\_\+\+SCALER}})
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_ae00b70c067d441108ee497df6e5fcd44}{POSSIBLE\+\_\+\+TX\+\_\+\+SLOT}}~1
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_aba6d250b3f67101a8937a6a064563e89}{GLOBAL\+\_\+\+RX}}~(5 / \mbox{\hyperlink{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}{SLOT\+\_\+\+SCALER}})
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_a2f8239bcc5aa009012bf8ef21bd8b0db}{COLLECT\+\_\+\+DATA\+\_\+\+SLOT\+\_\+\+REL}}~10
+\item 
+\#define \mbox{\hyperlink{my__scheduler_8h_a6a5e3d754be16d6c772f7732c882ff72}{SYNC\+\_\+\+PROB}}~5
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__scheduler_8h_aec0c4943af093ad42d2d099ceeadb98c}{init\+Scheduler}} ()
+\begin{DoxyCompactList}\small\item\em inititial the scheduler, set tx slot and data collection slot \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{my__scheduler_8h_a74d55f758a9415f53f9f4f7a053bfea3}{scheduler}} ()
+\begin{DoxyCompactList}\small\item\em decides what happes in this particular slot \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{my__scheduler_8h_afa317d7a18ad40c272fa2ffb09e05cf8}{get\+Slot\+Count}} ()
+\begin{DoxyCompactList}\small\item\em returns the current slot count \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__scheduler_8h_ac3aace27a2648729e8f90b96e2dbfaa8}{set\+Slot\+Count}} (uint16\+\_\+t new\+Slot\+Count)
+\begin{DoxyCompactList}\small\item\em sets the slot counter to the given value \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my__scheduler_8h_ace089e2222d5e8ec70f353f5578cc743}{increment\+Slot\+Count}} ()
+\begin{DoxyCompactList}\small\item\em increments the slot counter by one \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 23 Sep 2020 Author\+: njnel. 
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my__scheduler_8h_a2f8239bcc5aa009012bf8ef21bd8b0db}\label{my__scheduler_8h_a2f8239bcc5aa009012bf8ef21bd8b0db}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!COLLECT\_DATA\_SLOT\_REL@{COLLECT\_DATA\_SLOT\_REL}}
+\index{COLLECT\_DATA\_SLOT\_REL@{COLLECT\_DATA\_SLOT\_REL}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{COLLECT\_DATA\_SLOT\_REL}{COLLECT\_DATA\_SLOT\_REL}}
+{\footnotesize\ttfamily \#define COLLECT\+\_\+\+DATA\+\_\+\+SLOT\+\_\+\+REL~10}
+
+
+
+Definition at line 19 of file my\+\_\+scheduler.\+h.
+
+\mbox{\Hypertarget{my__scheduler_8h_aba6d250b3f67101a8937a6a064563e89}\label{my__scheduler_8h_aba6d250b3f67101a8937a6a064563e89}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!GLOBAL\_RX@{GLOBAL\_RX}}
+\index{GLOBAL\_RX@{GLOBAL\_RX}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{GLOBAL\_RX}{GLOBAL\_RX}}
+{\footnotesize\ttfamily \#define GLOBAL\+\_\+\+RX~(5 / \mbox{\hyperlink{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}{SLOT\+\_\+\+SCALER}})}
+
+
+
+Definition at line 18 of file my\+\_\+scheduler.\+h.
+
+\mbox{\Hypertarget{my__scheduler_8h_a42c63670db2e806f9c43c98347007016}\label{my__scheduler_8h_a42c63670db2e806f9c43c98347007016}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!MAX\_SLOT\_COUNT@{MAX\_SLOT\_COUNT}}
+\index{MAX\_SLOT\_COUNT@{MAX\_SLOT\_COUNT}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{MAX\_SLOT\_COUNT}{MAX\_SLOT\_COUNT}}
+{\footnotesize\ttfamily \#define MAX\+\_\+\+SLOT\+\_\+\+COUNT~(60.\+0 $\ast$ 1.\+0 / \mbox{\hyperlink{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}{SLOT\+\_\+\+SCALER}})}
+
+
+
+Definition at line 16 of file my\+\_\+scheduler.\+h.
+
+\mbox{\Hypertarget{my__scheduler_8h_ae00b70c067d441108ee497df6e5fcd44}\label{my__scheduler_8h_ae00b70c067d441108ee497df6e5fcd44}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!POSSIBLE\_TX\_SLOT@{POSSIBLE\_TX\_SLOT}}
+\index{POSSIBLE\_TX\_SLOT@{POSSIBLE\_TX\_SLOT}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{POSSIBLE\_TX\_SLOT}{POSSIBLE\_TX\_SLOT}}
+{\footnotesize\ttfamily \#define POSSIBLE\+\_\+\+TX\+\_\+\+SLOT~1}
+
+
+
+Definition at line 17 of file my\+\_\+scheduler.\+h.
+
+\mbox{\Hypertarget{my__scheduler_8h_a9b61d4c3842266e74a8ff12bb478448d}\label{my__scheduler_8h_a9b61d4c3842266e74a8ff12bb478448d}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!SLOT\_LENGTH\_MS@{SLOT\_LENGTH\_MS}}
+\index{SLOT\_LENGTH\_MS@{SLOT\_LENGTH\_MS}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{SLOT\_LENGTH\_MS}{SLOT\_LENGTH\_MS}}
+{\footnotesize\ttfamily \#define SLOT\+\_\+\+LENGTH\+\_\+\+MS~1000}
+
+
+
+Definition at line 14 of file my\+\_\+scheduler.\+h.
+
+\mbox{\Hypertarget{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}\label{my__scheduler_8h_a573fdb5601d368f7c37232456cba2272}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!SLOT\_SCALER@{SLOT\_SCALER}}
+\index{SLOT\_SCALER@{SLOT\_SCALER}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{SLOT\_SCALER}{SLOT\_SCALER}}
+{\footnotesize\ttfamily \#define SLOT\+\_\+\+SCALER~1}
+
+
+
+Definition at line 15 of file my\+\_\+scheduler.\+h.
+
+\mbox{\Hypertarget{my__scheduler_8h_a6a5e3d754be16d6c772f7732c882ff72}\label{my__scheduler_8h_a6a5e3d754be16d6c772f7732c882ff72}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!SYNC\_PROB@{SYNC\_PROB}}
+\index{SYNC\_PROB@{SYNC\_PROB}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{SYNC\_PROB}{SYNC\_PROB}}
+{\footnotesize\ttfamily \#define SYNC\+\_\+\+PROB~5}
+
+
+
+Definition at line 20 of file my\+\_\+scheduler.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__scheduler_8h_afa317d7a18ad40c272fa2ffb09e05cf8}\label{my__scheduler_8h_afa317d7a18ad40c272fa2ffb09e05cf8}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!getSlotCount@{getSlotCount}}
+\index{getSlotCount@{getSlotCount}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{getSlotCount()}{getSlotCount()}}
+{\footnotesize\ttfamily uint16\+\_\+t get\+Slot\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+returns the current slot count 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 95 of file my\+\_\+scheduler.\+c.
+
+\mbox{\Hypertarget{my__scheduler_8h_ace089e2222d5e8ec70f353f5578cc743}\label{my__scheduler_8h_ace089e2222d5e8ec70f353f5578cc743}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!incrementSlotCount@{incrementSlotCount}}
+\index{incrementSlotCount@{incrementSlotCount}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{incrementSlotCount()}{incrementSlotCount()}}
+{\footnotesize\ttfamily void increment\+Slot\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+increments the slot counter by one 
+
+
+
+Definition at line 103 of file my\+\_\+scheduler.\+c.
+
+\mbox{\Hypertarget{my__scheduler_8h_aec0c4943af093ad42d2d099ceeadb98c}\label{my__scheduler_8h_aec0c4943af093ad42d2d099ceeadb98c}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!initScheduler@{initScheduler}}
+\index{initScheduler@{initScheduler}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{initScheduler()}{initScheduler()}}
+{\footnotesize\ttfamily void init\+Scheduler (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+inititial the scheduler, set tx slot and data collection slot 
+
+
+
+Definition at line 33 of file my\+\_\+scheduler.\+c.
+
+\mbox{\Hypertarget{my__scheduler_8h_a74d55f758a9415f53f9f4f7a053bfea3}\label{my__scheduler_8h_a74d55f758a9415f53f9f4f7a053bfea3}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!scheduler@{scheduler}}
+\index{scheduler@{scheduler}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{scheduler()}{scheduler()}}
+{\footnotesize\ttfamily int scheduler (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+decides what happes in this particular slot 
+
+\begin{DoxyReturn}{Returns}
+int return value 
+\end{DoxyReturn}
+
+
+Definition at line 39 of file my\+\_\+scheduler.\+c.
+
+\mbox{\Hypertarget{my__scheduler_8h_ac3aace27a2648729e8f90b96e2dbfaa8}\label{my__scheduler_8h_ac3aace27a2648729e8f90b96e2dbfaa8}} 
+\index{my\_scheduler.h@{my\_scheduler.h}!setSlotCount@{setSlotCount}}
+\index{setSlotCount@{setSlotCount}!my\_scheduler.h@{my\_scheduler.h}}
+\doxysubsubsection{\texorpdfstring{setSlotCount()}{setSlotCount()}}
+{\footnotesize\ttfamily void set\+Slot\+Count (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{new\+Slot\+Count }\end{DoxyParamCaption})}
+
+
+
+sets the slot counter to the given value 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Slot\+Count} & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 99 of file my\+\_\+scheduler.\+c.
+

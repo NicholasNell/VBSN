@@ -30,7 +30,7 @@ extern uint8_t _nodeID;
 // array of known neighbours
 extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
-int flashWriteBuffer( ) {
+int flash_write_buffer( ) {
 
 	/* Unprotecting Info Bank 0, Sector 0  */
 	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
@@ -50,17 +50,15 @@ int flashWriteBuffer( ) {
 
 	/* Setting the sector back to protected  */
 	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
-
 	return Completed;
 }
 
-int flashReadBuffer( ) {
-
+int flash_read_buffer( ) {
 	memcpy(&myFlashData, (uint32_t*) (MYDATA_MEM_START), MY_FLASH_DATA_LEN);
 	return true;
 }
 
-int flashEraseAll( ) {
+int flash_erase_all( ) {
 	/* Unprotecting Info Bank 0, Sector 0  */
 	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR31);
 	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START)) while (1)
@@ -69,32 +67,32 @@ int flashEraseAll( ) {
 	return 0;
 }
 
-int flashWriteNodeID( ) {
+int flash_write_node_id( ) {
 	myFlashData[NODE_ID_LOCATION] = _nodeID;
-	return flashWriteBuffer();
+	return flash_write_buffer();
 }
 
-int flashReadNodeID( ) {
+int flash_read_node_id( ) {
 	myFlashData[NODE_ID_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
 			+ NODE_ID_LOCATION);
 	_nodeID = myFlashData[NODE_ID_LOCATION];
 	return _nodeID;
 }
 
-int flashInitBuffer( ) {
+int flash_init_buffer( ) {
 	memcpy(myFlashData, &myFlashDataStruct, sizeof(myFlashDataStruct));
 	return true;
 }
 
-int flashWriteNeighbours( ) {
+int flash_write_neighbours( ) {
 	memcpy(
 			&myFlashData + NODE_NEIGHBOUR_SYNC_TABLE_LOCATION,
 			&neighbourTable,
 			sizeof(neighbourTable));
-	return flashWriteBuffer();
+	return flash_write_buffer();
 }
 
-int flashReadNeighbours( ) {
+int flash_read_neighbours( ) {
 	myFlashData[NODE_NEIGHBOUR_TABLE_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
 			+ NODE_NEIGHBOUR_TABLE_LOCATION);
 	memcpy(
@@ -104,15 +102,15 @@ int flashReadNeighbours( ) {
 	return true;
 }
 
-int flashFillStructForWrite( ) {
+int flash_fill_struct_for_write( ) {
 	myFlashDataStruct.flashValidIdentifier = FLASH_OK_IDENTIFIER;
 	myFlashDataStruct.thisNodeId = _nodeID;
 	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
-	Neighbour_t *ptr = getNeighbourTable();
+	Neighbour_t *ptr = get_neighbour_table();
 	memcpy(&myFlashDataStruct.neighbourTable, &ptr, sizeof(*ptr));
-	RouteEntry_t *ptr1 = getRoutingTable();
+	RouteEntry_t *ptr1 = get_routing_table();
 	memcpy(&myFlashDataStruct.routingtable, &ptr1, sizeof(*ptr1));
-	Datagram_t *ptr2 = getReceivedMessages();
+	Datagram_t *ptr2 = get_received_messages();
 	memcpy(&myFlashDataStruct.receivedMessages, &ptr2, sizeof(*ptr2));
 	myFlashDataStruct.lenOfBuffer = 2 + 4 + sizeof(RTC_C_Calendar)
 			+ sizeof(nodeAddress) + sizeof(*ptr) * MAX_NEIGHBOURS
@@ -120,13 +118,13 @@ int flashFillStructForWrite( ) {
 	return 1;
 }
 
-int flashWriteStructToFlash( ) {
+int flash_write_struct_to_flash( ) {
 	memcpy(&myFlashData, &myFlashDataStruct, MY_FLASH_DATA_LEN);
-	flashWriteBuffer();
+	flash_write_buffer();
 	return 1;
 }
 
-int flashReadFromFlash( void ) {
+int flash_read_from_flash( void ) {
 	memcpy(&myFlashDataStruct, (uint8_t*) MYDATA_MEM_START, 1);
 	return 1;
 }

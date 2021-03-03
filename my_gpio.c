@@ -28,38 +28,38 @@
 #include <my_gpio.h>
 #include "my_timer.h"
 
-void GpioInit(Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config,
+void gpio_init(Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config,
 		PinTypes type, uint32_t value) {
-	GpioMcuInit(obj, pin, mode, config, type, value);
+	gpio_mcu_init(obj, pin, mode, config, type, value);
 }
 
-void GpioSetContext(Gpio_t *obj, void *context) {
-	GpioMcuSetContext(obj, context);
+void gpio_set_context(Gpio_t *obj, void *context) {
+	gpio_mcu_set_context(obj, context);
 }
 
-void GpioSetInterrupt(Gpio_t *obj, IrqModes irqMode,
+void gpio_set_interrupt(Gpio_t *obj, IrqModes irqMode,
 		IrqPriorities irqPriority) {
-	GpioMcuSetInterrupt(obj, irqMode, irqPriority);
+	gpio_mcu_set_interrupt(obj, irqMode, irqPriority);
 }
 
-void GpioRemoveInterrupt(Gpio_t *obj) {
-	GpioMcuRemoveInterrupt(obj);
+void gpio_remove_interrupt(Gpio_t *obj) {
+	gpio_mcu_remove_interrupt(obj);
 }
 
-void GpioWrite(Gpio_t *obj, uint32_t value) {
-	GpioMcuWrite(obj, value);
+void gpio_write(Gpio_t *obj, uint32_t value) {
+	gpio_mcu_write(obj, value);
 }
 
-void GpioToggle(Gpio_t *obj) {
-	GpioMcuToggle(obj);
+void gpio_toggle(Gpio_t *obj) {
+	gpio_mcu_toggle(obj);
 }
 
-uint32_t GpioRead(Gpio_t *obj) {
-	return GpioMcuRead(obj);
+uint32_t gpio_read(Gpio_t *obj) {
+	return gpio_mcu_read(obj);
 }
 
-void GpioFlashLED(Gpio_t *obj, uint8_t delay) {
-	GpioWrite(obj, 1);
-	Delayms(delay);
-	GpioWrite(obj, 0);
+void gpio_flash_lED(Gpio_t *obj, uint8_t delay) {
+	gpio_write(obj, 1);
+	delay_ms(delay);
+	gpio_write(obj, 0);
 }

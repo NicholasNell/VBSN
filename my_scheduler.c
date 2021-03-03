@@ -7,6 +7,7 @@
  */
 
 #include <helper.h>
+#include <my_GSM.h>
 #include <my_MAC.h>
 #include <my_scheduler.h>
 #include <stdbool.h>
@@ -27,10 +28,12 @@ extern bool hasData;
 
 extern bool hopMessageFlag;
 
+extern bool isRoot;
+
 bool schedChange = false;
 bool netOp = false;
 
-void initScheduler( ) {
+void init_scheduler( ) {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
 	collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
 	slotCount = 1;
@@ -38,6 +41,7 @@ void initScheduler( ) {
 
 int scheduler( ) {
 	bool macStateMachineEnable = false;
+	bool uploadOwnData = false;
 
 	int var = 0;
 	for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
@@ -54,8 +58,14 @@ int scheduler( ) {
 	}
 
 	if ((slotCount == _txSlot) && (hasData)) { // if it is the nodes tx slot and it has data to send and it is in its correct bracket
-		MACState = MAC_RTS;
-		macStateMachineEnable = true;
+		if (!isRoot) {
+			MACState = MAC_RTS;
+			macStateMachineEnable = true;
+		}
+		else {
+			MACState = MAC_SLEEP;
+			uploadOwnData = true;
+		}
 	}
 
 	if ((schedChange && (slotCount % GLOBAL_RX == 0))
@@ -66,7 +76,7 @@ int scheduler( ) {
 	}
 
 	if (slotCount == collectDataSlot) {	// if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
-		helper_collectSensorData();
+		helper_collect_sensor_data();
 		hasData = true;
 	}
 
@@ -87,19 +97,22 @@ int scheduler( ) {
 	}
 
 	if (macStateMachineEnable) {
-		MACStateMachine();
+		mac_state_machine();
+	}
+	if (uploadOwnData) {
+		gsm_upload_my_data();
 	}
 	return true;
 }
 
-uint16_t getSlotCount( ) {
+uint16_t get_slot_count( ) {
 	return slotCount;
 }
 
-void setSlotCount( uint16_t newSlotCount ) {
+void set_slot_count( uint16_t newSlotCount ) {
 	slotCount = newSlotCount;
 }
 
-void incrementSlotCount( ) {
+void increment_slot_count( ) {
 	slotCount++;
 }

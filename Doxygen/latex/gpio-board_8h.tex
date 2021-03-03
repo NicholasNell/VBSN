@@ -1,0 +1,211 @@
+\hypertarget{gpio-board_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/gpio-\/board.h File Reference}
+\label{gpio-board_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/gpio-\/board.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/gpio-\/board.h}}
+
+
+Target board GPIO driver implementation.  
+
+
+{\ttfamily \#include \char`\"{}my\+\_\+gpio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ti/drivers/\+GPIO.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{gpio-board_8h_a1c4877e87f37326ceedbbcde06289171}{Gpio\+Mcu\+Init}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, \mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}{Pin\+Names}} pin, \mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}{Pin\+Modes}} mode, \mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}{Pin\+Configs}} config, \mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}{Pin\+Types}} type, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Initializes the given GPIO object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{gpio-board_8h_a1976ea578662c2e82d5159072ec36092}{Gpio\+Mcu\+Set\+Context}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, void $\ast$context)
+\begin{DoxyCompactList}\small\item\em Sets a user defined object pointer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{gpio-board_8h_ae8648f09ba8ac1b4750bda272b02f2ad}{Gpio\+Mcu\+Set\+Interrupt}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, \mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}{Irq\+Modes}} irq\+Mode, \mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}{Irq\+Priorities}} irq\+Priority)
+\begin{DoxyCompactList}\small\item\em GPIO IRQ Initialization. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{gpio-board_8h_a115eb49de263c7aea98c94c0623b2d48}{Gpio\+Mcu\+Remove\+Interrupt}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Removes the interrupt from the object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{gpio-board_8h_af1c119fea881cc76986f5a62578b1369}{Gpio\+Mcu\+Write}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Writes the given value to the GPIO output. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{gpio-board_8h_a020b26a45e1191b2ef9a586dabcdbe58}{Gpio\+Mcu\+Toggle}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Toggle the value to the GPIO output. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{gpio-board_8h_a7423c255017574938566c0b194a2f39a}{Gpio\+Mcu\+Read}} (\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Reads the current GPIO input value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Target board GPIO driver implementation. 
+
+\begin{DoxyCopyright}{Copyright}
+Revised BSD License, see section LICENSE.
+\end{DoxyCopyright}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \_\_\_\_\_\_                              \_}
+\DoxyCodeLine{ / \_\_\_\_\_)             \_              | |}
+\DoxyCodeLine{( (\_\_\_\_  \_\_\_\_\_ \_\_\_\_ \_| |\_ \_\_\_\_\_  \_\_\_\_| |\_\_}
+\DoxyCodeLine{ \(\backslash\)\_\_\_\_ \(\backslash\)| \_\_\_ |    (\_   \_) \_\_\_ |/ \_\_\_)  \_ \(\backslash\)}
+\DoxyCodeLine{ \_\_\_\_\_) ) \_\_\_\_| | | || |\_| \_\_\_\_( (\_\_\_| | | |}
+\DoxyCodeLine{(\_\_\_\_\_\_/|\_\_\_\_\_)\_|\_|\_| \(\backslash\)\_\_)\_\_\_\_\_)\(\backslash\)\_\_\_\_)\_| |\_|}
+\DoxyCodeLine{(C)2013-\/2017 Semtech}
+
+\end{DoxyCode}
+
+
+\begin{DoxyAuthor}{Author}
+Miguel Luis ( Semtech )
+
+Gregory Cristian ( Semtech ) 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{gpio-board_8h_a1c4877e87f37326ceedbbcde06289171}\label{gpio-board_8h_a1c4877e87f37326ceedbbcde06289171}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuInit@{GpioMcuInit}}
+\index{GpioMcuInit@{GpioMcuInit}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuInit()}{GpioMcuInit()}}
+{\footnotesize\ttfamily void Gpio\+Mcu\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{\mbox{\hyperlink{my__gpio_8h_ace3ab5509d7e5ecfb572978843f15736}{Pin\+Names}}}]{pin,  }\item[{\mbox{\hyperlink{my__gpio_8h_afb1146621d8b78009a0be8a48a18fa32}{Pin\+Modes}}}]{mode,  }\item[{\mbox{\hyperlink{my__gpio_8h_aba30cc7e0aff2374e68eb239e51d8c1f}{Pin\+Configs}}}]{config,  }\item[{\mbox{\hyperlink{my__gpio_8h_ac2b9b7b83557d5b1eb35b0c921c842f4}{Pin\+Types}}}]{type,  }\item[{uint32\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+Initializes the given GPIO object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & pin Pin name ( please look in \mbox{\hyperlink{pin_name-board_8h}{pin\+Name-\/board.\+h}} file ) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & mode Pin mode \mbox{[}PIN\+\_\+\+INPUT, PIN\+\_\+\+OUTPUT, PIN\+\_\+\+ALTERNATE\+\_\+\+FCT, PIN\+\_\+\+ANALOGIC\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & config Pin config \mbox{[}PIN\+\_\+\+PUSH\+\_\+\+PULL, PIN\+\_\+\+OPEN\+\_\+\+DRAIN\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & type Pin type \mbox{[}PIN\+\_\+\+NO\+\_\+\+PULL, PIN\+\_\+\+PULL\+\_\+\+UP, PIN\+\_\+\+PULL\+\_\+\+DOWN\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & value Default output value at initialization \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 13 of file gpio-\/board.\+c.
+
+\mbox{\Hypertarget{gpio-board_8h_a7423c255017574938566c0b194a2f39a}\label{gpio-board_8h_a7423c255017574938566c0b194a2f39a}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuRead@{GpioMcuRead}}
+\index{GpioMcuRead@{GpioMcuRead}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuRead()}{GpioMcuRead()}}
+{\footnotesize\ttfamily uint32\+\_\+t Gpio\+Mcu\+Read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Reads the current GPIO input value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & Current GPIO input value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 206 of file gpio-\/board.\+c.
+
+\mbox{\Hypertarget{gpio-board_8h_a115eb49de263c7aea98c94c0623b2d48}\label{gpio-board_8h_a115eb49de263c7aea98c94c0623b2d48}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuRemoveInterrupt@{GpioMcuRemoveInterrupt}}
+\index{GpioMcuRemoveInterrupt@{GpioMcuRemoveInterrupt}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuRemoveInterrupt()}{GpioMcuRemoveInterrupt()}}
+{\footnotesize\ttfamily void Gpio\+Mcu\+Remove\+Interrupt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Removes the interrupt from the object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 171 of file gpio-\/board.\+c.
+
+\mbox{\Hypertarget{gpio-board_8h_a1976ea578662c2e82d5159072ec36092}\label{gpio-board_8h_a1976ea578662c2e82d5159072ec36092}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuSetContext@{GpioMcuSetContext}}
+\index{GpioMcuSetContext@{GpioMcuSetContext}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuSetContext()}{GpioMcuSetContext()}}
+{\footnotesize\ttfamily void Gpio\+Mcu\+Set\+Context (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{void $\ast$}]{context }\end{DoxyParamCaption})}
+
+
+
+Sets a user defined object pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & context User defined data object pointer to pass back on IRQ handler callback \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 110 of file gpio-\/board.\+c.
+
+\mbox{\Hypertarget{gpio-board_8h_ae8648f09ba8ac1b4750bda272b02f2ad}\label{gpio-board_8h_ae8648f09ba8ac1b4750bda272b02f2ad}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuSetInterrupt@{GpioMcuSetInterrupt}}
+\index{GpioMcuSetInterrupt@{GpioMcuSetInterrupt}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuSetInterrupt()}{GpioMcuSetInterrupt()}}
+{\footnotesize\ttfamily void Gpio\+Mcu\+Set\+Interrupt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{\mbox{\hyperlink{my__gpio_8h_a42beef94b4a6dc7871d148ccb4ad1ca9}{Irq\+Modes}}}]{irq\+Mode,  }\item[{\mbox{\hyperlink{my__gpio_8h_adb54c9d088aed5272f3c38c807de0815}{Irq\+Priorities}}}]{irq\+Priority }\end{DoxyParamCaption})}
+
+
+
+GPIO IRQ Initialization. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Mode IRQ mode \mbox{[}NO\+\_\+\+IRQ, IRQ\+\_\+\+RISING\+\_\+\+EDGE, IRQ\+\_\+\+FALLING\+\_\+\+EDGE, IRQ\+\_\+\+RISING\+\_\+\+FALLING\+\_\+\+EDGE\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Priority IRQ priority \mbox{[}IRQ\+\_\+\+VERY\+\_\+\+LOW\+\_\+\+PRIORITY, IRQ\+\_\+\+LOW\+\_\+\+PRIORITY IRQ\+\_\+\+MEDIUM\+\_\+\+PRIORITY, IRQ\+\_\+\+HIGH\+\_\+\+PRIORITY IRQ\+\_\+\+VERY\+\_\+\+HIGH\+\_\+\+PRIORITY\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Handler Callback function pointer \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 114 of file gpio-\/board.\+c.
+
+\mbox{\Hypertarget{gpio-board_8h_a020b26a45e1191b2ef9a586dabcdbe58}\label{gpio-board_8h_a020b26a45e1191b2ef9a586dabcdbe58}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuToggle@{GpioMcuToggle}}
+\index{GpioMcuToggle@{GpioMcuToggle}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuToggle()}{GpioMcuToggle()}}
+{\footnotesize\ttfamily void Gpio\+Mcu\+Toggle (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Toggle the value to the GPIO output. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 193 of file gpio-\/board.\+c.
+
+\mbox{\Hypertarget{gpio-board_8h_af1c119fea881cc76986f5a62578b1369}\label{gpio-board_8h_af1c119fea881cc76986f5a62578b1369}} 
+\index{gpio-\/board.h@{gpio-\/board.h}!GpioMcuWrite@{GpioMcuWrite}}
+\index{GpioMcuWrite@{GpioMcuWrite}!gpio-\/board.h@{gpio-\/board.h}}
+\doxysubsubsection{\texorpdfstring{GpioMcuWrite()}{GpioMcuWrite()}}
+{\footnotesize\ttfamily void Gpio\+Mcu\+Write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} $\ast$}]{obj,  }\item[{uint32\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+Writes the given value to the GPIO output. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Pointer to the GPIO object \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & value New GPIO output value \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 175 of file gpio-\/board.\+c.
+

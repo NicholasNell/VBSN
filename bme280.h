@@ -57,8 +57,8 @@ extern "C" {
 /* Header includes */
 #include "bme280_defs.h"
 
-int8_t bme280UserInit(struct bme280_dev *dev, struct bme280_data *comp_data);
-void bme280GetData(struct bme280_dev *dev, struct bme280_data *comp_data);
+int8_t bme280_user_init(struct bme280_dev *dev, struct bme280_data *comp_data);
+void bme280_get_data(struct bme280_dev *dev, struct bme280_data *comp_data);
 
 /**
  * \ingroup bme280

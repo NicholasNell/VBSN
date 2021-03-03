@@ -1,0 +1,113 @@
+\hypertarget{group__bme280_api_sensor_data}{}\doxysection{Sensor Data}
+\label{group__bme280_api_sensor_data}\index{Sensor Data@{Sensor Data}}
+
+
+Data processing of sensor.  
+
+
+Data processing of sensor. 
+
+\hypertarget{bme280_api_bme280_get_sensor_data}{}\doxysubsubsection{bme280\+\_\+get\+\_\+sensor\+\_\+data}\label{bme280_api_bme280_get_sensor_data}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_a6671fea2c1e01f40029a653b9ab4410d}{bme280\_get\_sensor\_data}}(uint8\_t sensor\_comp, \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__data}{bme280\_data}} *comp\_data, \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__dev}{bme280\_dev}} *dev);}
+
+\end{DoxyCode}
+
+
+This API reads the pressure, temperature and humidity data from the sensor, compensates the data and store it in the \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} structure instance passed by the user.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sensor\+\_\+comp} & \+: Variable which selects which data to be read from the sensor.\\
+\hline
+\end{DoxyParams}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ sensor\+\_\+comp   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ sensor\+\_\+comp   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Macros    }\\\cline{1-2}
+\endhead
+1   &BME280\+\_\+\+PRESS    \\\cline{1-2}
+2   &BME280\+\_\+\+TEMP    \\\cline{1-2}
+4   &BME280\+\_\+\+HUM    \\\cline{1-2}
+7   &BME280\+\_\+\+ALL   \\\cline{1-2}
+\end{longtabu}
+
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em comp\+\_\+data} & \+: Structure instance of \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}}. \\
+\hline
+\mbox{\texttt{ in}}  & {\em dev} & \+: Structure instance of \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of API execution status
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}
+\hypertarget{bme280_api_bme280_parse_sensor_data}{}\doxysubsubsection{bme280\+\_\+parse\+\_\+sensor\+\_\+data}\label{bme280_api_bme280_parse_sensor_data}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} \mbox{\hyperlink{bme280_8c_a84be45ccf7a3a82138ff2170123462c3}{bme280\_parse\_sensor\_data}}(\textcolor{keyword}{const} uint8\_t *reg\_data, \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__uncomp__data}{bme280\_uncomp\_data}} *uncomp\_data);}
+
+\end{DoxyCode}
+
+
+This API is used to parse the pressure, temperature and humidity data and store it in the \mbox{\hyperlink{structbme280__uncomp__data}{bme280\+\_\+uncomp\+\_\+data}} structure instance.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em reg\+\_\+data} & \+: Contains register data which needs to be parsed \\
+\hline
+\mbox{\texttt{ out}}  & {\em uncomp\+\_\+data} & \+: Contains the uncompensated pressure, temperature and humidity data. \\
+\hline
+\end{DoxyParams}
+\hypertarget{bme280_api_bme280_compensate_data}{}\doxysubsubsection{bme280\+\_\+compensate\+\_\+data}\label{bme280_api_bme280_compensate_data}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{int8\_t \mbox{\hyperlink{bme280_8c_a9f2c3c8c683b434ca10447515f85c0de}{bme280\_compensate\_data}}(uint8\_t sensor\_comp,}
+\DoxyCodeLine{                            \textcolor{keyword}{const} \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__uncomp__data}{bme280\_uncomp\_data}} *uncomp\_data,}
+\DoxyCodeLine{                            \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__data}{bme280\_data}} *comp\_data,}
+\DoxyCodeLine{                            \textcolor{keyword}{struct} \mbox{\hyperlink{structbme280__calib__data}{bme280\_calib\_data}} *calib\_data);}
+
+\end{DoxyCode}
+
+
+This API is used to compensate the pressure and/or temperature and/or humidity data according to the component selected by the user.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sensor\+\_\+comp} & \+: Used to select pressure and/or temperature and/or humidity. \\
+\hline
+\mbox{\texttt{ in}}  & {\em uncomp\+\_\+data} & \+: Contains the uncompensated pressure, temperature and humidity data. \\
+\hline
+\mbox{\texttt{ out}}  & {\em comp\+\_\+data} & \+: Contains the compensated pressure and/or temperature and/or humidity data. \\
+\hline
+\mbox{\texttt{ in}}  & {\em calib\+\_\+data} & \+: Pointer to the calibration data structure.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of API execution status.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & -\/$>$ Success. \\
+\hline
+{\em $>$} & 0 -\/$>$ Warning. \\
+\hline
+{\em $<$} & 0 -\/$>$ Fail. \\
+\hline
+\end{DoxyRetVals}

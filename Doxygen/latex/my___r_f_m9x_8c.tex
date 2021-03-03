@@ -1,0 +1,997 @@
+\hypertarget{my___r_f_m9x_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+\+RFM9x.c File Reference}
+\label{my___r_f_m9x_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_RFM9x.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_RFM9x.c}}
+{\ttfamily \#include $<$my\+\_\+\+RFM9x.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+spi.\+h$>$}\newline
+{\ttfamily \#include $<$my\+\_\+timer.\+h$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sx1276-\/board.\+h$>$}\newline
+{\ttfamily \#include $<$sx1276\+Regs-\/\+Fsk.\+h$>$}\newline
+{\ttfamily \#include $<$sx1276\+Regs-\/\+Lo\+Ra.\+h$>$}\newline
+{\ttfamily \#include $<$timer.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_radio_registers__t}{Radio\+Registers\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{struct_fsk_bandwidth__t}{Fsk\+Bandwidth\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my___r_f_m9x_8c_ab77d55822a59f8bf947a409624084335}{RSSI\+\_\+\+OFFSET\+\_\+\+LF}}~-\/164
+\item 
+\#define \mbox{\hyperlink{my___r_f_m9x_8c_ab5dc23476160340984a003c7a7ab9ef6}{RSSI\+\_\+\+OFFSET\+\_\+\+HF}}~-\/157
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a6bb158ae216d4a685695ce5db5f2205f}{SX1276\+Write\+Fifo}} (uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Writes the buffer contents to the SX1276 FIFO. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a4aea9f6f1070dfd4e4b73bb5ddc1fe38}{SX1276\+Set\+Tx}} (uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the SX1276 in transmission mode for the given time. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a72e6a30988e816e052a5cb0066dbec83}{Rx\+Chain\+Calibration}} (void)
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_aaaac2e0d7b5bd63fabf38a235d27a452}{SX1276\+Set\+Op\+Mode}} (uint8\+\_\+t op\+Mode)
+\begin{DoxyCompactList}\small\item\em Sets the SX1276 operating mode. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_ae983c62e6624adb372f6fb1b0774598b}{Get\+Fsk\+Bandwidth\+Reg\+Value}} (uint32\+\_\+t bandwidth)
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_acfe80207c3f95a992780646bcdbc4112}{SX1276\+Init}} (\mbox{\hyperlink{struct_radio_events__t}{Radio\+Events\+\_\+t}} $\ast$events)
+\begin{DoxyCompactList}\small\item\em Initializes the radio. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}{Radio\+State\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_ad70a0b1db3593630b1124653b6374944}{SX1276\+Get\+Status}} (void)
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a8325968bbefefab02537762dd274aa8b}{SX1276\+Set\+Modem}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem)
+\begin{DoxyCompactList}\small\item\em Configures the radio with the given modem. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a00768e908043081bc32cb83913192f7f}{SX1276\+Set\+Channel}} (uint32\+\_\+t freq)
+\begin{DoxyCompactList}\small\item\em Sets the channel configuration. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{my___r_f_m9x_8c_a29f26f7258f8fcd5c27800295639d7c7}{SX1276\+Is\+Channel\+Free}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t freq, int16\+\_\+t rssi\+Thresh, uint32\+\_\+t max\+Carrier\+Sense\+Time)
+\begin{DoxyCompactList}\small\item\em Checks if the channel is free for the given time. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_a58f433742b6ea4110884c03fd8dfa39f}{SX1276\+Random8\+Bit}} (void)
+\begin{DoxyCompactList}\small\item\em Generates a 8 bits random value based on the RSSI readings. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_a9ba39c96b8e339b06dd24543920fd2f7}{SX1276\+Random}} (void)
+\begin{DoxyCompactList}\small\item\em Generates a 32 bits random value based on the RSSI readings. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a6a66ceb9e18a33aaff10d384fa493cf8}{SX1276\+Set\+Rx\+Config}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint32\+\_\+t bandwidth\+Afc, uint16\+\_\+t preamble\+Len, uint16\+\_\+t symb\+Timeout, bool fix\+Len, uint8\+\_\+t payload\+Len, bool crc\+On, bool freq\+Hop\+On, uint8\+\_\+t hop\+Period, bool iq\+Inverted, bool rx\+Continuous)
+\begin{DoxyCompactList}\small\item\em Sets the reception parameters. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a805df2c0c4aa1630eeeb17177a600269}{SX1276\+Set\+Tx\+Config}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, int8\+\_\+t power, uint32\+\_\+t fdev, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint16\+\_\+t preamble\+Len, bool fix\+Len, bool crc\+On, bool freq\+Hop\+On, uint8\+\_\+t hop\+Period, bool iq\+Inverted, uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the transmission parameters. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_ae64045ad967801530faf9254ee9cfaec}{SX1276\+Get\+Time\+On\+Air}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint32\+\_\+t bandwidth, uint32\+\_\+t datarate, uint8\+\_\+t coderate, uint16\+\_\+t preamble\+Len, bool fix\+Len, uint8\+\_\+t payload\+Len, bool crc\+On)
+\begin{DoxyCompactList}\small\item\em Computes the packet time on air in ms for the given payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a901a3dcdbf26005e0f3f2def3e3d83b3}{SX1276\+Send}} (uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Sends the buffer of size. Prepares the packet to be sent and sets the radio in transmission. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_a5741300714435f1dd69084a30031f6e3}{SX1276\+Read\+Rssi}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem)
+\begin{DoxyCompactList}\small\item\em Sets the radio in continuous wave transmission mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a32a7b8c477b2f400f96a3255e1ab7620}{SX1276\+Set\+Sleep}} (void)
+\begin{DoxyCompactList}\small\item\em Sets the radio in sleep mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_aaef7a98104b400b235ef76de0cfb17df}{SX1276\+Set\+Stby}} (void)
+\begin{DoxyCompactList}\small\item\em Sets the radio in standby mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_acb9479ed4e6f071c82908a6d53c3b08e}{SX1276\+Read\+Fifo}} (uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reads the contents of the SX1276 FIFO. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_aba51c12ba7f6d704cdeed69201507983}{SX1276\+Write\+Buffer}} (uint16\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Writes multiple radio registers starting at address. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a8c2df9351fbde83379717dc6f76e5c11}{SX1276\+Set\+Rx}} (uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the radio in reception mode for the given time. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a9958c574c62b2235c4f3d4d6571854db}{SX1276\+Start\+Cad}} (void)
+\begin{DoxyCompactList}\small\item\em Start a Channel Activity Detection. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a9b3df4400813ac6aed7b77f400436ad0}{SX1276\+Read\+Buffer}} (uint16\+\_\+t addr, uint8\+\_\+t $\ast$buffer, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reads multiple radio registers starting at address. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_aac0bb6d289a1afe69f550cb148f3bac8}{SX1276\+Set\+Max\+Payload\+Length}} (\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}} modem, uint8\+\_\+t max)
+\begin{DoxyCompactList}\small\item\em Sets the maximum payload length. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_ae648d0a114431e4a5c0effae494ad41d}{SX1276\+Set\+Public\+Network}} (bool enable, uint16\+\_\+t syncword)
+\begin{DoxyCompactList}\small\item\em Sets the network to public or private. Updates the sync byte. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_ac98689d5a06e8faf1053df297ece47f6}{SX1276\+Get\+Pa\+Select}} (int8\+\_\+t power)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_ab153589dd08582a94b22263f7a655a46}{SX1276\+Get\+Wakeup\+Time}} (void)
+\begin{DoxyCompactList}\small\item\em Gets the time required for the board plus radio to get out of sleep.\mbox{[}ms\mbox{]}. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_a8212a562105ea4dddc480227eaa975a2}{SX1276\+Get\+Packet\+RSSI}} (void)
+\begin{DoxyCompactList}\small\item\em get the RSSI value of the latest received packet \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_ac6db0525960fb57a12e0fab0073e4425}{SX1276\+Get\+Packet\+SNR}} (void)
+\begin{DoxyCompactList}\small\item\em get the SNR value of the latest received packet \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{my___r_f_m9x_8c_a257c2b9772e113aa9657fa1d9a263c51}{SX1276\+Get\+Packet\+Size}} (void)
+\begin{DoxyCompactList}\small\item\em returns last received packets size \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a663edf39f9d1c91b9f3b6b39564acb79}{SX1276\+On\+Dio0\+Irq}} ()
+\begin{DoxyCompactList}\small\item\em DIO0 Callback function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a839de8808657298edf062b49d980ca8b}{SX1276\+On\+Dio1\+Irq}} ()
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_ad776b302c71e4c63273d37b79d924ee5}{SX1276\+On\+Dio2\+Irq}} ()
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a56659a337067f332c7857723fff0d91d}{SX1276\+On\+Dio3\+Irq}} ()
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_aa0335b54e87aae502984e33ebac924be}{SX1276\+On\+Dio4\+Irq}} ()
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a22cc22ad70bf6226d4c5a2e0abf22869}{SX1276\+On\+Dio5\+Irq}} ()
+\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a4ed75475d4e369976deac179a1030c16}{SX1276\+On\+Timeout\+Irq}} ()
+\begin{DoxyCompactList}\small\item\em Tx \& Rx timeout timer callback. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{my___r_f_m9x_8c_a180fdc2ba674ccf87463df22bf92cc5d}{SX1276clear\+IRQFlags}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const \mbox{\hyperlink{struct_fsk_bandwidth__t}{Fsk\+Bandwidth\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_a94bd7c9b8d0c4dcb1fc8e9ea69f339fd}{Fsk\+Bandwidths}} \mbox{[}$\,$\mbox{]}
+\item 
+\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_a7dfcad4f3c97547289d6550410bf81f4}{Tx\+Timeout\+Timer}}
+\item 
+\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_aee89c92e5cb79fd352b43dc60505abcd}{Rx\+Timeout\+Timer}}
+\item 
+\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_ae87c84654f83ec000c8f6d373982ab97}{Rx\+Timeout\+Sync\+Word}}
+\item 
+\mbox{\hyperlink{my___r_f_m9x_8h_acf7f83d7d25c85897b88fcdc94345e56}{SX1276\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_a91a81a798b3d849e2cc114c18bf9c5cc}{SX1276}}
+\item 
+const \mbox{\hyperlink{struct_radio_registers__t}{Radio\+Registers\+\_\+t}} \mbox{\hyperlink{my___r_f_m9x_8c_a85205d43e6b6ad129adfd3f7bb098717}{Radio\+Regs\+Init}} \mbox{[}$\,$\mbox{]} = \mbox{\hyperlink{sx1276-board_8h_abef7202d2ca987f0fe762a046d5cec52}{RADIO\+\_\+\+INIT\+\_\+\+REGISTERS\+\_\+\+VALUE}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my___r_f_m9x_8c_ab5dc23476160340984a003c7a7ab9ef6}\label{my___r_f_m9x_8c_ab5dc23476160340984a003c7a7ab9ef6}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!RSSI\_OFFSET\_HF@{RSSI\_OFFSET\_HF}}
+\index{RSSI\_OFFSET\_HF@{RSSI\_OFFSET\_HF}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{RSSI\_OFFSET\_HF}{RSSI\_OFFSET\_HF}}
+{\footnotesize\ttfamily \#define RSSI\+\_\+\+OFFSET\+\_\+\+HF~-\/157}
+
+
+
+Definition at line 71 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ab77d55822a59f8bf947a409624084335}\label{my___r_f_m9x_8c_ab77d55822a59f8bf947a409624084335}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!RSSI\_OFFSET\_LF@{RSSI\_OFFSET\_LF}}
+\index{RSSI\_OFFSET\_LF@{RSSI\_OFFSET\_LF}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{RSSI\_OFFSET\_LF}{RSSI\_OFFSET\_LF}}
+{\footnotesize\ttfamily \#define RSSI\+\_\+\+OFFSET\+\_\+\+LF~-\/164}
+
+Constant values need to compute the RSSI value 
+
+Definition at line 70 of file my\+\_\+\+RFM9x.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my___r_f_m9x_8c_ae983c62e6624adb372f6fb1b0774598b}\label{my___r_f_m9x_8c_ae983c62e6624adb372f6fb1b0774598b}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!GetFskBandwidthRegValue@{GetFskBandwidthRegValue}}
+\index{GetFskBandwidthRegValue@{GetFskBandwidthRegValue}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{GetFskBandwidthRegValue()}{GetFskBandwidthRegValue()}}
+{\footnotesize\ttfamily uint8\+\_\+t Get\+Fsk\+Bandwidth\+Reg\+Value (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{bandwidth }\end{DoxyParamCaption})}
+
+Returns the known FSK bandwidth registers value
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Bandwidth value in Hz \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em reg\+Value} & Bandwidth register value. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 164 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a72e6a30988e816e052a5cb0066dbec83}\label{my___r_f_m9x_8c_a72e6a30988e816e052a5cb0066dbec83}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!RxChainCalibration@{RxChainCalibration}}
+\index{RxChainCalibration@{RxChainCalibration}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{RxChainCalibration()}{RxChainCalibration()}}
+{\footnotesize\ttfamily void Rx\+Chain\+Calibration (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Performs the Rx chain calibration for LF and HF bands \begin{DoxyRemark}{Remarks}
+Must be called just after the reset so all registers are at their default values 
+\end{DoxyRemark}
+
+
+Definition at line 874 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a180fdc2ba674ccf87463df22bf92cc5d}\label{my___r_f_m9x_8c_a180fdc2ba674ccf87463df22bf92cc5d}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276clearIRQFlags@{SX1276clearIRQFlags}}
+\index{SX1276clearIRQFlags@{SX1276clearIRQFlags}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276clearIRQFlags()}{SX1276clearIRQFlags()}}
+{\footnotesize\ttfamily void SX1276clear\+IRQFlags (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1810 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a8212a562105ea4dddc480227eaa975a2}\label{my___r_f_m9x_8c_a8212a562105ea4dddc480227eaa975a2}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetPacketRSSI@{SX1276GetPacketRSSI}}
+\index{SX1276GetPacketRSSI@{SX1276GetPacketRSSI}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetPacketRSSI()}{SX1276GetPacketRSSI()}}
+{\footnotesize\ttfamily int16\+\_\+t SX1276\+Get\+Packet\+RSSI (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+get the RSSI value of the latest received packet 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em RSSI} & value of packet \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 1302 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a257c2b9772e113aa9657fa1d9a263c51}\label{my___r_f_m9x_8c_a257c2b9772e113aa9657fa1d9a263c51}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetPacketSize@{SX1276GetPacketSize}}
+\index{SX1276GetPacketSize@{SX1276GetPacketSize}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetPacketSize()}{SX1276GetPacketSize()}}
+{\footnotesize\ttfamily uint8\+\_\+t SX1276\+Get\+Packet\+Size (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+returns last received packets size 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 1325 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ac6db0525960fb57a12e0fab0073e4425}\label{my___r_f_m9x_8c_ac6db0525960fb57a12e0fab0073e4425}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetPacketSNR@{SX1276GetPacketSNR}}
+\index{SX1276GetPacketSNR@{SX1276GetPacketSNR}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetPacketSNR()}{SX1276GetPacketSNR()}}
+{\footnotesize\ttfamily int16\+\_\+t SX1276\+Get\+Packet\+SNR (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+get the SNR value of the latest received packet 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em SNR} & (dB) value of packet \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 1316 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ac98689d5a06e8faf1053df297ece47f6}\label{my___r_f_m9x_8c_ac98689d5a06e8faf1053df297ece47f6}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetPaSelect@{SX1276GetPaSelect}}
+\index{SX1276GetPaSelect@{SX1276GetPaSelect}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetPaSelect()}{SX1276GetPaSelect()}}
+{\footnotesize\ttfamily uint8\+\_\+t SX1276\+Get\+Pa\+Select (\begin{DoxyParamCaption}\item[{int8\+\_\+t}]{power }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1290 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ad70a0b1db3593630b1124653b6374944}\label{my___r_f_m9x_8c_ad70a0b1db3593630b1124653b6374944}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetStatus@{SX1276GetStatus}}
+\index{SX1276GetStatus@{SX1276GetStatus}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetStatus()}{SX1276GetStatus()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{radio_8h_a2f3fa4ad0237c4ace94aa99086aac9f5}{Radio\+State\+\_\+t}} SX1276\+Get\+Status (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Return current radio status
+
+
+\begin{DoxyParams}{Parameters}
+{\em status} & Radio status.\mbox{[}RF\+\_\+\+IDLE, RF\+\_\+\+RX\+\_\+\+RUNNING, RF\+\_\+\+TX\+\_\+\+RUNNING\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 268 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ae64045ad967801530faf9254ee9cfaec}\label{my___r_f_m9x_8c_ae64045ad967801530faf9254ee9cfaec}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetTimeOnAir@{SX1276GetTimeOnAir}}
+\index{SX1276GetTimeOnAir@{SX1276GetTimeOnAir}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetTimeOnAir()}{SX1276GetTimeOnAir()}}
+{\footnotesize\ttfamily uint32\+\_\+t SX1276\+Get\+Time\+On\+Air (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem,  }\item[{uint32\+\_\+t}]{bandwidth,  }\item[{uint32\+\_\+t}]{datarate,  }\item[{uint8\+\_\+t}]{coderate,  }\item[{uint16\+\_\+t}]{preamble\+Len,  }\item[{bool}]{fix\+Len,  }\item[{uint8\+\_\+t}]{payload\+Len,  }\item[{bool}]{crc\+On }\end{DoxyParamCaption})}
+
+
+
+Computes the packet time on air in ms for the given payload. 
+
+\textbackslash{}\+Remark Can only be called once Set\+Rx\+Config or Set\+Tx\+Config have been called
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Sets the bandwidth FSK \+: $>$= 2600 and $<$= 250000 Hz Lo\+Ra\+: \mbox{[}0\+: 125 k\+Hz, 1\+: 250 k\+Hz, 2\+: 500 k\+Hz, 3\+: Reserved\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & datarate Sets the Datarate FSK \+: 600..300000 bits/s Lo\+Ra\+: \mbox{[}6\+: 64, 7\+: 128, 8\+: 256, 9\+: 512, 10\+: 1024, 11\+: 2048, 12\+: 4096 chips\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & coderate Sets the coding rate (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}1\+: 4/5, 2\+: 4/6, 3\+: 4/7, 4\+: 4/8\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & preamble\+Len Sets the Preamble length FSK \+: Number of bytes Lo\+Ra\+: Length in symbols (the hardware adds 4 more symbols) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fix\+Len Fixed length packets \mbox{[}0\+: variable, 1\+: fixed\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & payload\+Len Sets payload length when fixed length is used \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & crc\+On Enables/\+Disables the CRC \mbox{[}0\+: OFF, 1\+: ON\mbox{]}\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em air\+Time} & Computed air\+Time (ms) for the given packet payload length \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 708 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ab153589dd08582a94b22263f7a655a46}\label{my___r_f_m9x_8c_ab153589dd08582a94b22263f7a655a46}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276GetWakeupTime@{SX1276GetWakeupTime}}
+\index{SX1276GetWakeupTime@{SX1276GetWakeupTime}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276GetWakeupTime()}{SX1276GetWakeupTime()}}
+{\footnotesize\ttfamily uint32\+\_\+t SX1276\+Get\+Wakeup\+Time (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Gets the time required for the board plus radio to get out of sleep.\mbox{[}ms\mbox{]}. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em time} & Radio plus board wakeup time in ms. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 1298 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_acfe80207c3f95a992780646bcdbc4112}\label{my___r_f_m9x_8c_acfe80207c3f95a992780646bcdbc4112}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276Init@{SX1276Init}}
+\index{SX1276Init@{SX1276Init}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276Init()}{SX1276Init()}}
+{\footnotesize\ttfamily void SX1276\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_radio_events__t}{Radio\+Events\+\_\+t}} $\ast$}]{events }\end{DoxyParamCaption})}
+
+
+
+Initializes the radio. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & events Structure containing the driver callback functions \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 176 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a29f26f7258f8fcd5c27800295639d7c7}\label{my___r_f_m9x_8c_a29f26f7258f8fcd5c27800295639d7c7}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276IsChannelFree@{SX1276IsChannelFree}}
+\index{SX1276IsChannelFree@{SX1276IsChannelFree}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276IsChannelFree()}{SX1276IsChannelFree()}}
+{\footnotesize\ttfamily bool SX1276\+Is\+Channel\+Free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem,  }\item[{uint32\+\_\+t}]{freq,  }\item[{int16\+\_\+t}]{rssi\+Thresh,  }\item[{uint32\+\_\+t}]{max\+Carrier\+Sense\+Time }\end{DoxyParamCaption})}
+
+
+
+Checks if the channel is free for the given time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & freq Channel RF frequency \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & rssi\+Thresh RSSI threshold \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & max\+Carrier\+Sense\+Time Max time while the RSSI is measured\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em is\+Free} & \mbox{[}true\+: Channel is free, false\+: Channel is not free\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 323 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a663edf39f9d1c91b9f3b6b39564acb79}\label{my___r_f_m9x_8c_a663edf39f9d1c91b9f3b6b39564acb79}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnDio0Irq@{SX1276OnDio0Irq}}
+\index{SX1276OnDio0Irq@{SX1276OnDio0Irq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnDio0Irq()}{SX1276OnDio0Irq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Dio0\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+DIO0 Callback function. 
+
+
+
+Definition at line 1329 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a839de8808657298edf062b49d980ca8b}\label{my___r_f_m9x_8c_a839de8808657298edf062b49d980ca8b}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnDio1Irq@{SX1276OnDio1Irq}}
+\index{SX1276OnDio1Irq@{SX1276OnDio1Irq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnDio1Irq()}{SX1276OnDio1Irq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Dio1\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1513 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ad776b302c71e4c63273d37b79d924ee5}\label{my___r_f_m9x_8c_ad776b302c71e4c63273d37b79d924ee5}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnDio2Irq@{SX1276OnDio2Irq}}
+\index{SX1276OnDio2Irq@{SX1276OnDio2Irq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnDio2Irq()}{SX1276OnDio2Irq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Dio2\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1609 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a56659a337067f332c7857723fff0d91d}\label{my___r_f_m9x_8c_a56659a337067f332c7857723fff0d91d}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnDio3Irq@{SX1276OnDio3Irq}}
+\index{SX1276OnDio3Irq@{SX1276OnDio3Irq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnDio3Irq()}{SX1276OnDio3Irq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Dio3\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1684 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_aa0335b54e87aae502984e33ebac924be}\label{my___r_f_m9x_8c_aa0335b54e87aae502984e33ebac924be}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnDio4Irq@{SX1276OnDio4Irq}}
+\index{SX1276OnDio4Irq@{SX1276OnDio4Irq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnDio4Irq()}{SX1276OnDio4Irq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Dio4\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1712 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a22cc22ad70bf6226d4c5a2e0abf22869}\label{my___r_f_m9x_8c_a22cc22ad70bf6226d4c5a2e0abf22869}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnDio5Irq@{SX1276OnDio5Irq}}
+\index{SX1276OnDio5Irq@{SX1276OnDio5Irq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnDio5Irq()}{SX1276OnDio5Irq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Dio5\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1728 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a4ed75475d4e369976deac179a1030c16}\label{my___r_f_m9x_8c_a4ed75475d4e369976deac179a1030c16}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276OnTimeoutIrq@{SX1276OnTimeoutIrq}}
+\index{SX1276OnTimeoutIrq@{SX1276OnTimeoutIrq}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276OnTimeoutIrq()}{SX1276OnTimeoutIrq()}}
+{\footnotesize\ttfamily void SX1276\+On\+Timeout\+Irq (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Tx \& Rx timeout timer callback. 
+
+
+
+Definition at line 1740 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a9ba39c96b8e339b06dd24543920fd2f7}\label{my___r_f_m9x_8c_a9ba39c96b8e339b06dd24543920fd2f7}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276Random@{SX1276Random}}
+\index{SX1276Random@{SX1276Random}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276Random()}{SX1276Random()}}
+{\footnotesize\ttfamily uint32\+\_\+t SX1276\+Random (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Generates a 32 bits random value based on the RSSI readings. 
+
+\begin{DoxyRemark}{Remarks}
+This function sets the radio in Lo\+Ra modem mode and disables all interrupts. After calling this function either SX1276\+Set\+Rx\+Config or SX1276\+Set\+Tx\+Config functions must be called.
+\end{DoxyRemark}
+
+\begin{DoxyRetVals}{Return values}
+{\em random\+Value} & 32 bits random value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 387 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a58f433742b6ea4110884c03fd8dfa39f}\label{my___r_f_m9x_8c_a58f433742b6ea4110884c03fd8dfa39f}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276Random8Bit@{SX1276Random8Bit}}
+\index{SX1276Random8Bit@{SX1276Random8Bit}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276Random8Bit()}{SX1276Random8Bit()}}
+{\footnotesize\ttfamily uint32\+\_\+t SX1276\+Random8\+Bit (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Generates a 8 bits random value based on the RSSI readings. 
+
+\begin{DoxyRemark}{Remarks}
+This function sets the radio in Lo\+Ra modem mode and disables all interrupts. After calling this function either SX1276\+Set\+Rx\+Config or SX1276\+Set\+Tx\+Config functions must be called.
+\end{DoxyRemark}
+
+\begin{DoxyRetVals}{Return values}
+{\em random\+Value} & 8 bits random value \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 353 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a9b3df4400813ac6aed7b77f400436ad0}\label{my___r_f_m9x_8c_a9b3df4400813ac6aed7b77f400436ad0}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276ReadBuffer@{SX1276ReadBuffer}}
+\index{SX1276ReadBuffer@{SX1276ReadBuffer}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276ReadBuffer()}{SX1276ReadBuffer()}}
+{\footnotesize\ttfamily void SX1276\+Read\+Buffer (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{addr,  }\item[{uint8\+\_\+t $\ast$}]{buffer,  }\item[{uint8\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Reads multiple radio registers starting at address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & addr First Radio register address \\
+\hline
+{\em \mbox{[}\+OUT\mbox{]}} & buffer Buffer where to copy the registers data \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of registers to be read \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1177 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_acb9479ed4e6f071c82908a6d53c3b08e}\label{my___r_f_m9x_8c_acb9479ed4e6f071c82908a6d53c3b08e}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276ReadFifo@{SX1276ReadFifo}}
+\index{SX1276ReadFifo@{SX1276ReadFifo}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276ReadFifo()}{SX1276ReadFifo()}}
+{\footnotesize\ttfamily void SX1276\+Read\+Fifo (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{buffer,  }\item[{uint8\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Reads the contents of the SX1276 FIFO. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+OUT\mbox{]}} & buffer Buffer where to copy the FIFO read data. \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of bytes to be read from the FIFO \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 917 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a5741300714435f1dd69084a30031f6e3}\label{my___r_f_m9x_8c_a5741300714435f1dd69084a30031f6e3}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276ReadRssi@{SX1276ReadRssi}}
+\index{SX1276ReadRssi@{SX1276ReadRssi}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276ReadRssi()}{SX1276ReadRssi()}}
+{\footnotesize\ttfamily int16\+\_\+t SX1276\+Read\+Rssi (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem }\end{DoxyParamCaption})}
+
+
+
+Sets the radio in continuous wave transmission mode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & freq Channel RF frequency \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & power Sets the output power \mbox{[}d\+Bm\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & time Transmission mode timeout \mbox{[}s\mbox{]}\\
+\hline
+\end{DoxyParams}
+Reads the current RSSI value
+
+
+\begin{DoxyRetVals}{Return values}
+{\em rssi\+Value} & Current RSSI value in \mbox{[}d\+Bm\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 829 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a901a3dcdbf26005e0f3f2def3e3d83b3}\label{my___r_f_m9x_8c_a901a3dcdbf26005e0f3f2def3e3d83b3}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276Send@{SX1276Send}}
+\index{SX1276Send@{SX1276Send}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276Send()}{SX1276Send()}}
+{\footnotesize\ttfamily void SX1276\+Send (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{buffer,  }\item[{uint8\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Sends the buffer of size. Prepares the packet to be sent and sets the radio in transmission. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & buffer Buffer pointer \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Buffer size \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 752 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a00768e908043081bc32cb83913192f7f}\label{my___r_f_m9x_8c_a00768e908043081bc32cb83913192f7f}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetChannel@{SX1276SetChannel}}
+\index{SX1276SetChannel@{SX1276SetChannel}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetChannel()}{SX1276SetChannel()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Channel (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{freq }\end{DoxyParamCaption})}
+
+
+
+Sets the channel configuration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & freq Channel RF frequency \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 309 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_aac0bb6d289a1afe69f550cb148f3bac8}\label{my___r_f_m9x_8c_aac0bb6d289a1afe69f550cb148f3bac8}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetMaxPayloadLength@{SX1276SetMaxPayloadLength}}
+\index{SX1276SetMaxPayloadLength@{SX1276SetMaxPayloadLength}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetMaxPayloadLength()}{SX1276SetMaxPayloadLength()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Max\+Payload\+Length (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem,  }\item[{uint8\+\_\+t}]{max }\end{DoxyParamCaption})}
+
+
+
+Sets the maximum payload length. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & max Maximum payload length in bytes \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1193 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a8325968bbefefab02537762dd274aa8b}\label{my___r_f_m9x_8c_a8325968bbefefab02537762dd274aa8b}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetModem@{SX1276SetModem}}
+\index{SX1276SetModem@{SX1276SetModem}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetModem()}{SX1276SetModem()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Modem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem }\end{DoxyParamCaption})}
+
+
+
+Configures the radio with the given modem. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 272 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_aaaac2e0d7b5bd63fabf38a235d27a452}\label{my___r_f_m9x_8c_aaaac2e0d7b5bd63fabf38a235d27a452}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetOpMode@{SX1276SetOpMode}}
+\index{SX1276SetOpMode@{SX1276SetOpMode}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetOpMode()}{SX1276SetOpMode()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Op\+Mode (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{op\+Mode }\end{DoxyParamCaption})}
+
+
+
+Sets the SX1276 operating mode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & op\+Mode New operating mode \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 824 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ae648d0a114431e4a5c0effae494ad41d}\label{my___r_f_m9x_8c_ae648d0a114431e4a5c0effae494ad41d}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetPublicNetwork@{SX1276SetPublicNetwork}}
+\index{SX1276SetPublicNetwork@{SX1276SetPublicNetwork}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetPublicNetwork()}{SX1276SetPublicNetwork()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Public\+Network (\begin{DoxyParamCaption}\item[{bool}]{enable,  }\item[{uint16\+\_\+t}]{syncword }\end{DoxyParamCaption})}
+
+
+
+Sets the network to public or private. Updates the sync byte. 
+
+\begin{DoxyRemark}{Remarks}
+Applies to Lo\+Ra modem only
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & enable if true, it enables a public network \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1208 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a8c2df9351fbde83379717dc6f76e5c11}\label{my___r_f_m9x_8c_a8c2df9351fbde83379717dc6f76e5c11}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetRx@{SX1276SetRx}}
+\index{SX1276SetRx@{SX1276SetRx}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetRx()}{SX1276SetRx()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Rx (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Sets the radio in reception mode for the given time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & timeout Reception timeout \mbox{[}ms\mbox{]} \mbox{[}0\+: continuous, others timeout\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 936 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a6a66ceb9e18a33aaff10d384fa493cf8}\label{my___r_f_m9x_8c_a6a66ceb9e18a33aaff10d384fa493cf8}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetRxConfig@{SX1276SetRxConfig}}
+\index{SX1276SetRxConfig@{SX1276SetRxConfig}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetRxConfig()}{SX1276SetRxConfig()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Rx\+Config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem,  }\item[{uint32\+\_\+t}]{bandwidth,  }\item[{uint32\+\_\+t}]{datarate,  }\item[{uint8\+\_\+t}]{coderate,  }\item[{uint32\+\_\+t}]{bandwidth\+Afc,  }\item[{uint16\+\_\+t}]{preamble\+Len,  }\item[{uint16\+\_\+t}]{symb\+Timeout,  }\item[{bool}]{fix\+Len,  }\item[{uint8\+\_\+t}]{payload\+Len,  }\item[{bool}]{crc\+On,  }\item[{bool}]{freq\+Hop\+On,  }\item[{uint8\+\_\+t}]{hop\+Period,  }\item[{bool}]{iq\+Inverted,  }\item[{bool}]{rx\+Continuous }\end{DoxyParamCaption})}
+
+
+
+Sets the reception parameters. 
+
+\begin{DoxyRemark}{Remarks}
+When using Lo\+Ra modem only bandwidths 125, 250 and 500 k\+Hz are supported
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Sets the bandwidth FSK \+: $>$= 2600 and $<$= 250000 Hz Lo\+Ra\+: \mbox{[} 0\+: 7.\+8 k\+Hz, 1\+: 10.\+4 k\+Hz, 2\+: 15.\+6 k\+Hz, 3\+: 20.\+8 k\+Hz, 4\+: 31.\+25 k\+Hz, 5\+: 41.\+7 k\+Hz, 6\+: 62.\+5 k\+Hz, 7\+: 125 k\+Hz, 8\+: 250 k\+Hz, 9\+: 500 k\+Hz\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & datarate Sets the Datarate FSK \+: 600..300000 bits/s Lo\+Ra\+: \mbox{[}6\+: 64, 7\+: 128, 8\+: 256, 9\+: 512, 10\+: 1024, 11\+: 2048, 12\+: 4096 chips\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & coderate Sets the coding rate (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}1\+: 4/5, 2\+: 4/6, 3\+: 4/7, 4\+: 4/8\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth\+Afc Sets the AFC Bandwidth (FSK only) FSK \+: $>$= 2600 and $<$= 250000 Hz Lo\+Ra\+: N/A ( set to 0 ) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & preamble\+Len Sets the Preamble length FSK \+: Number of bytes Lo\+Ra\+: Length in symbols (the hardware adds 4 more symbols) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & symb\+Timeout Sets the Rx\+Single timeout value FSK \+: timeout number of bytes Lo\+Ra\+: timeout in symbols \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fix\+Len Fixed length packets \mbox{[}0\+: variable, 1\+: fixed\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & payload\+Len Sets payload length when fixed length is used \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & crc\+On Enables/\+Disables the CRC \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & freq\+Hop\+On Enables disables the intra-\/packet frequency hopping FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & hop\+Period Number of symbols between each hop FSK \+: N/A ( set to 0 ) Lo\+Ra\+: Number of symbols \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & iq\+Inverted Inverts IQ signals (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: not inverted, 1\+: inverted\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & rx\+Continuous Sets the reception in continuous mode \mbox{[}false\+: single mode, true\+: continuous mode\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 421 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a32a7b8c477b2f400f96a3255e1ab7620}\label{my___r_f_m9x_8c_a32a7b8c477b2f400f96a3255e1ab7620}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetSleep@{SX1276SetSleep}}
+\index{SX1276SetSleep@{SX1276SetSleep}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetSleep()}{SX1276SetSleep()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Sleep (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Sets the radio in sleep mode. 
+
+
+
+Definition at line 853 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_aaef7a98104b400b235ef76de0cfb17df}\label{my___r_f_m9x_8c_aaef7a98104b400b235ef76de0cfb17df}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetStby@{SX1276SetStby}}
+\index{SX1276SetStby@{SX1276SetStby}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetStby()}{SX1276SetStby()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Stby (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Sets the radio in standby mode. 
+
+
+
+Definition at line 865 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a4aea9f6f1070dfd4e4b73bb5ddc1fe38}\label{my___r_f_m9x_8c_a4aea9f6f1070dfd4e4b73bb5ddc1fe38}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetTx@{SX1276SetTx}}
+\index{SX1276SetTx@{SX1276SetTx}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetTx()}{SX1276SetTx()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Tx (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Sets the SX1276 in transmission mode for the given time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & timeout Transmission timeout \mbox{[}ms\mbox{]} \mbox{[}0\+: continuous, others timeout\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1220 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a805df2c0c4aa1630eeeb17177a600269}\label{my___r_f_m9x_8c_a805df2c0c4aa1630eeeb17177a600269}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276SetTxConfig@{SX1276SetTxConfig}}
+\index{SX1276SetTxConfig@{SX1276SetTxConfig}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276SetTxConfig()}{SX1276SetTxConfig()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Tx\+Config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057}{Radio\+Modems\+\_\+t}}}]{modem,  }\item[{int8\+\_\+t}]{power,  }\item[{uint32\+\_\+t}]{fdev,  }\item[{uint32\+\_\+t}]{bandwidth,  }\item[{uint32\+\_\+t}]{datarate,  }\item[{uint8\+\_\+t}]{coderate,  }\item[{uint16\+\_\+t}]{preamble\+Len,  }\item[{bool}]{fix\+Len,  }\item[{bool}]{crc\+On,  }\item[{bool}]{freq\+Hop\+On,  }\item[{uint8\+\_\+t}]{hop\+Period,  }\item[{bool}]{iq\+Inverted,  }\item[{uint32\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Sets the transmission parameters. 
+
+\begin{DoxyRemark}{Remarks}
+When using Lo\+Ra modem only bandwidths 125, 250 and 500 k\+Hz are supported
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & modem Radio modem to be used \mbox{[}0\+: FSK, 1\+: Lo\+Ra\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & power Sets the output power \mbox{[}d\+Bm\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fdev Sets the frequency deviation (FSK only) FSK \+: \mbox{[}Hz\mbox{]} Lo\+Ra\+: 0 \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & bandwidth Sets the bandwidth (Lo\+Ra only) FSK \+: 0 Lo\+Ra\+: \mbox{[} 0\+: 7.\+8 k\+Hz, 1\+: 10.\+4 k\+Hz, 2\+: 15.\+6 k\+Hz, 3\+: 20.\+8 k\+Hz, 4\+: 31.\+25 k\+Hz, 5\+: 41.\+7 k\+Hz, 6\+: 62.\+5 k\+Hz, 7\+: 125 k\+Hz, 8\+: 250 k\+Hz, 9\+: 500 k\+Hz\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & datarate Sets the Datarate FSK \+: 600..300000 bits/s Lo\+Ra\+: \mbox{[}6\+: 64, 7\+: 128, 8\+: 256, 9\+: 512, 10\+: 1024, 11\+: 2048, 12\+: 4096 chips\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & coderate Sets the coding rate (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}1\+: 4/5, 2\+: 4/6, 3\+: 4/7, 4\+: 4/8\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & preamble\+Len Sets the preamble length FSK \+: Number of bytes Lo\+Ra\+: Length in symbols (the hardware adds 4 more symbols) \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & fix\+Len Fixed length packets \mbox{[}0\+: variable, 1\+: fixed\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & crc\+On Enables disables the CRC \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & freq\+Hop\+On Enables disables the intra-\/packet frequency hopping FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: OFF, 1\+: ON\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & hop\+Period Number of symbols between each hop FSK \+: N/A ( set to 0 ) Lo\+Ra\+: Number of symbols \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & iq\+Inverted Inverts IQ signals (Lo\+Ra only) FSK \+: N/A ( set to 0 ) Lo\+Ra\+: \mbox{[}0\+: not inverted, 1\+: inverted\mbox{]} \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & timeout Transmission timeout \mbox{[}ms\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 582 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a9958c574c62b2235c4f3d4d6571854db}\label{my___r_f_m9x_8c_a9958c574c62b2235c4f3d4d6571854db}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276StartCad@{SX1276StartCad}}
+\index{SX1276StartCad@{SX1276StartCad}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276StartCad()}{SX1276StartCad()}}
+{\footnotesize\ttfamily void SX1276\+Start\+Cad (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Start a Channel Activity Detection. 
+
+
+
+Definition at line 1107 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_aba51c12ba7f6d704cdeed69201507983}\label{my___r_f_m9x_8c_aba51c12ba7f6d704cdeed69201507983}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276WriteBuffer@{SX1276WriteBuffer}}
+\index{SX1276WriteBuffer@{SX1276WriteBuffer}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276WriteBuffer()}{SX1276WriteBuffer()}}
+{\footnotesize\ttfamily void SX1276\+Write\+Buffer (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{addr,  }\item[{uint8\+\_\+t $\ast$}]{buffer,  }\item[{uint8\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Writes multiple radio registers starting at address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & addr First Radio register address \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & buffer Buffer containing the new register\textquotesingle{}s values \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of registers to be written \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 921 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a6bb158ae216d4a685695ce5db5f2205f}\label{my___r_f_m9x_8c_a6bb158ae216d4a685695ce5db5f2205f}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276WriteFifo@{SX1276WriteFifo}}
+\index{SX1276WriteFifo@{SX1276WriteFifo}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276WriteFifo()}{SX1276WriteFifo()}}
+{\footnotesize\ttfamily void SX1276\+Write\+Fifo (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{buffer,  }\item[{uint8\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Writes the buffer contents to the SX1276 FIFO. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & buffer Buffer containing data to be put on the FIFO. \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & size Number of bytes to be written to the FIFO \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 913 of file my\+\_\+\+RFM9x.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my___r_f_m9x_8c_a94bd7c9b8d0c4dcb1fc8e9ea69f339fd}\label{my___r_f_m9x_8c_a94bd7c9b8d0c4dcb1fc8e9ea69f339fd}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!FskBandwidths@{FskBandwidths}}
+\index{FskBandwidths@{FskBandwidths}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{FskBandwidths}{FskBandwidths}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_fsk_bandwidth__t}{Fsk\+Bandwidth\+\_\+t}} Fsk\+Bandwidths\mbox{[}$\,$\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ \{ 2600, 0x17 \}, \{ 3100, 0x0F \}, \{ 3900,}
+\DoxyCodeLine{        0x07 \}, \{ 5200, 0x16 \}, \{ 6300, 0x0E \}, \{ 7800, 0x06 \}, \{ 10400, 0x15 \},}
+\DoxyCodeLine{        \{ 12500, 0x0D \}, \{ 15600, 0x05 \}, \{ 20800, 0x14 \}, \{ 25000, 0x0C \}, \{}
+\DoxyCodeLine{                31300, 0x04 \}, \{ 41700, 0x13 \}, \{ 50000, 0x0B \},}
+\DoxyCodeLine{        \{ 62500, 0x03 \}, \{ 83333, 0x12 \}, \{ 100000, 0x0A \}, \{ 125000, 0x02 \}, \{}
+\DoxyCodeLine{                166700, 0x11 \}, \{ 200000, 0x09 \}, \{ 250000, 0x01 \}, \{ 300000,}
+\DoxyCodeLine{                0x00 \}, }
+\DoxyCodeLine{        \}}
+
+\end{DoxyCode}
+Precomputed FSK bandwidth registers values 
+
+Definition at line 76 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a85205d43e6b6ad129adfd3f7bb098717}\label{my___r_f_m9x_8c_a85205d43e6b6ad129adfd3f7bb098717}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!RadioRegsInit@{RadioRegsInit}}
+\index{RadioRegsInit@{RadioRegsInit}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{RadioRegsInit}{RadioRegsInit}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_radio_registers__t}{Radio\+Registers\+\_\+t}} Radio\+Regs\+Init\mbox{[}$\,$\mbox{]} = \mbox{\hyperlink{sx1276-board_8h_abef7202d2ca987f0fe762a046d5cec52}{RADIO\+\_\+\+INIT\+\_\+\+REGISTERS\+\_\+\+VALUE}}}
+
+Radio hardware registers initialization
+
+\begin{DoxyRemark}{Remarks}
+RADIO\+\_\+\+INIT\+\_\+\+REGISTERS\+\_\+\+VALUE is defined in \mbox{\hyperlink{my___r_f_m9x_8h}{my\+\_\+\+RFM9x.\+h}} file 
+\end{DoxyRemark}
+
+
+Definition at line 162 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_ae87c84654f83ec000c8f6d373982ab97}\label{my___r_f_m9x_8c_ae87c84654f83ec000c8f6d373982ab97}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!RxTimeoutSyncWord@{RxTimeoutSyncWord}}
+\index{RxTimeoutSyncWord@{RxTimeoutSyncWord}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{RxTimeoutSyncWord}{RxTimeoutSyncWord}}
+{\footnotesize\ttfamily \mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} Rx\+Timeout\+Sync\+Word}
+
+
+
+Definition at line 150 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_aee89c92e5cb79fd352b43dc60505abcd}\label{my___r_f_m9x_8c_aee89c92e5cb79fd352b43dc60505abcd}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!RxTimeoutTimer@{RxTimeoutTimer}}
+\index{RxTimeoutTimer@{RxTimeoutTimer}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{RxTimeoutTimer}{RxTimeoutTimer}}
+{\footnotesize\ttfamily \mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} Rx\+Timeout\+Timer}
+
+
+
+Definition at line 149 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a91a81a798b3d849e2cc114c18bf9c5cc}\label{my___r_f_m9x_8c_a91a81a798b3d849e2cc114c18bf9c5cc}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!SX1276@{SX1276}}
+\index{SX1276@{SX1276}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{SX1276}{SX1276}}
+{\footnotesize\ttfamily \mbox{\hyperlink{my___r_f_m9x_8h_acf7f83d7d25c85897b88fcdc94345e56}{SX1276\+\_\+t}} SX1276}
+
+Radio hardware and global parameters 
+
+Definition at line 155 of file my\+\_\+\+RFM9x.\+c.
+
+\mbox{\Hypertarget{my___r_f_m9x_8c_a7dfcad4f3c97547289d6550410bf81f4}\label{my___r_f_m9x_8c_a7dfcad4f3c97547289d6550410bf81f4}} 
+\index{my\_RFM9x.c@{my\_RFM9x.c}!TxTimeoutTimer@{TxTimeoutTimer}}
+\index{TxTimeoutTimer@{TxTimeoutTimer}!my\_RFM9x.c@{my\_RFM9x.c}}
+\doxysubsubsection{\texorpdfstring{TxTimeoutTimer}{TxTimeoutTimer}}
+{\footnotesize\ttfamily \mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} Tx\+Timeout\+Timer}
+
+Tx and Rx timers 
+
+Definition at line 148 of file my\+\_\+\+RFM9x.\+c.
+

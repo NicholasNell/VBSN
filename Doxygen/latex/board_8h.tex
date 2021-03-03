@@ -1,0 +1,412 @@
+\hypertarget{board_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/board.h File Reference}
+\label{board_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/board.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/board.h}}
+
+
+Target board general functions implementation.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{board_8h_a962af9cfdd715a24de7ff3829883d505}{REFO\+\_\+\+FREQ}}~CS\+\_\+\+REFO\+\_\+128\+KHZ
+\item 
+\#define \mbox{\hyperlink{board_8h_ae3776ee1c7f7b2a6c8acb6e61ae339cd}{LFXT\+\_\+\+FREQ}}~32000
+\item 
+\#define \mbox{\hyperlink{board_8h_a6ec694f8e9117eb6fbe2f752d83172b7}{HFXT\+\_\+\+FREQ}}~48000000
+\item 
+\#define \mbox{\hyperlink{board_8h_a7ebef8396ddf4a55ce5a263c4b3cc187}{ACLK\+\_\+\+SOURCE}}~CS\+\_\+\+REFOCLK\+\_\+\+SELECT
+\item 
+\#define \mbox{\hyperlink{board_8h_a7d0b57189096aa3f0c8f39e183f2f945}{ACLK\+\_\+\+DIV}}~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+1
+\item 
+\#define \mbox{\hyperlink{board_8h_aa4dd563409ebeaf09e047d3fe3ad6ea3}{MCLK\+\_\+\+SOURCE}}~CS\+\_\+\+DCOCLK\+\_\+\+SELECT
+\item 
+\#define \mbox{\hyperlink{board_8h_a1c311a2e410dec36ff4e12311dfac36b}{MCLK\+\_\+\+DIV}}~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+1
+\item 
+\#define \mbox{\hyperlink{board_8h_a7c4282f18250522fec3ecec9fa9a0764}{HSMCLK\+\_\+\+SOURCE}}~CS\+\_\+\+MODOSC\+\_\+\+SELECT
+\item 
+\#define \mbox{\hyperlink{board_8h_ae619ac5d5263bf6603e784648e1d133d}{HSMCLK\+\_\+\+DIV}}~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+1
+\item 
+\#define \mbox{\hyperlink{board_8h_a80319b583554dcde27ddce93cd6fc861}{SMCLK\+\_\+\+SOURCE}}~CS\+\_\+\+MODOSC\+\_\+\+SELECT
+\item 
+\#define \mbox{\hyperlink{board_8h_ad438077559b3efa64cf4805c76901f87}{SMCLK\+\_\+\+DIV}}~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+16
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99}{Board\+Power\+Sources}} \{ \mbox{\hyperlink{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99a5a940d92669e7dfb925f5425e604fbf0}{USB\+\_\+\+POWER}} = 0
+, \mbox{\hyperlink{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99a0eabee1f8bda79cfd02770bf2d9b8e64}{BATTERY\+\_\+\+POWER}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{board_8h_a347d5531f83b4fc18dea083e1bccbc39}{Board\+Init\+Mcu}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the mcu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8h_af3e241f8ae6def66e75dbac21ba74f94}{Board\+Reset\+Mcu}} (void)
+\begin{DoxyCompactList}\small\item\em Resets the mcu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8h_afb893aef7e39934775213ce840e47c52}{Board\+Init\+Periph}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the boards peripherals. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8h_ac4a541fdc4e9de7386eec3ca50eb5641}{Board\+De\+Init\+Mcu}} (void)
+\begin{DoxyCompactList}\small\item\em De-\/initializes the target board peripherals to decrease power consumption. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{board_8h_a3ef73c64e5aa0c58c5c1694ad4772c7f}{Board\+Get\+Poti\+Level}} (void)
+\begin{DoxyCompactList}\small\item\em Gets the current potentiometer level value. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{board_8h_ac395dc5aa426e14bb6b7194371108f31}{Board\+Get\+Battery\+Voltage}} (void)
+\begin{DoxyCompactList}\small\item\em Measure the Battery voltage. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{board_8h_af76c87dec5209225d7e36c1af950c57d}{Board\+Get\+Battery\+Level}} (void)
+\begin{DoxyCompactList}\small\item\em Get the current battery level. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{board_8h_a9095c4392ffacd8b8e58e085edda7513}{Board\+Get\+Random\+Seed}} (void)
+\item 
+void \mbox{\hyperlink{board_8h_a54a40b5afeedebdf522c93f3b3be43f5}{Board\+Get\+Unique\+Id}} (uint8\+\_\+t $\ast$id)
+\begin{DoxyCompactList}\small\item\em Gets the board 64 bits unique ID. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8h_a4a945980ef6ceeb0b9aacdbeed67a11b}{Board\+Low\+Power\+Handler}} (void)
+\begin{DoxyCompactList}\small\item\em Manages the entry into ARM cortex deep-\/sleep mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8h_afc0a73b7b1fc79d929d1cb8bb43e73d1}{System\+Clock\+Config}} (void)
+\begin{DoxyCompactList}\small\item\em configures the system clock \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{board_8h_ae5d5a76d9302de65c632a10c6ddd51c9}{Get\+Board\+Power\+Source}} (void)
+\begin{DoxyCompactList}\small\item\em Get the board power source. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Target board general functions implementation. 
+
+\begin{DoxyCopyright}{Copyright}
+Revised BSD License, see section LICENSE.
+\end{DoxyCopyright}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \_\_\_\_\_\_                              \_}
+\DoxyCodeLine{ / \_\_\_\_\_)             \_              | |}
+\DoxyCodeLine{( (\_\_\_\_  \_\_\_\_\_ \_\_\_\_ \_| |\_ \_\_\_\_\_  \_\_\_\_| |\_\_}
+\DoxyCodeLine{ \(\backslash\)\_\_\_\_ \(\backslash\)| \_\_\_ |    (\_   \_) \_\_\_ |/ \_\_\_)  \_ \(\backslash\)}
+\DoxyCodeLine{ \_\_\_\_\_) ) \_\_\_\_| | | || |\_| \_\_\_\_( (\_\_\_| | | |}
+\DoxyCodeLine{(\_\_\_\_\_\_/|\_\_\_\_\_)\_|\_|\_| \(\backslash\)\_\_)\_\_\_\_\_)\(\backslash\)\_\_\_\_)\_| |\_|}
+\DoxyCodeLine{(C)2013-\/2017 Semtech}
+
+\end{DoxyCode}
+
+
+\begin{DoxyAuthor}{Author}
+Miguel Luis ( Semtech )
+
+Gregory Cristian ( Semtech ) 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{board_8h_a7d0b57189096aa3f0c8f39e183f2f945}\label{board_8h_a7d0b57189096aa3f0c8f39e183f2f945}} 
+\index{board.h@{board.h}!ACLK\_DIV@{ACLK\_DIV}}
+\index{ACLK\_DIV@{ACLK\_DIV}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{ACLK\_DIV}{ACLK\_DIV}}
+{\footnotesize\ttfamily \#define ACLK\+\_\+\+DIV~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+1}
+
+
+
+Definition at line 48 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_a7ebef8396ddf4a55ce5a263c4b3cc187}\label{board_8h_a7ebef8396ddf4a55ce5a263c4b3cc187}} 
+\index{board.h@{board.h}!ACLK\_SOURCE@{ACLK\_SOURCE}}
+\index{ACLK\_SOURCE@{ACLK\_SOURCE}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{ACLK\_SOURCE}{ACLK\_SOURCE}}
+{\footnotesize\ttfamily \#define ACLK\+\_\+\+SOURCE~CS\+\_\+\+REFOCLK\+\_\+\+SELECT}
+
+
+
+Definition at line 47 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_a6ec694f8e9117eb6fbe2f752d83172b7}\label{board_8h_a6ec694f8e9117eb6fbe2f752d83172b7}} 
+\index{board.h@{board.h}!HFXT\_FREQ@{HFXT\_FREQ}}
+\index{HFXT\_FREQ@{HFXT\_FREQ}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{HFXT\_FREQ}{HFXT\_FREQ}}
+{\footnotesize\ttfamily \#define HFXT\+\_\+\+FREQ~48000000}
+
+
+
+Definition at line 44 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_ae619ac5d5263bf6603e784648e1d133d}\label{board_8h_ae619ac5d5263bf6603e784648e1d133d}} 
+\index{board.h@{board.h}!HSMCLK\_DIV@{HSMCLK\_DIV}}
+\index{HSMCLK\_DIV@{HSMCLK\_DIV}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{HSMCLK\_DIV}{HSMCLK\_DIV}}
+{\footnotesize\ttfamily \#define HSMCLK\+\_\+\+DIV~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+1}
+
+
+
+Definition at line 56 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_a7c4282f18250522fec3ecec9fa9a0764}\label{board_8h_a7c4282f18250522fec3ecec9fa9a0764}} 
+\index{board.h@{board.h}!HSMCLK\_SOURCE@{HSMCLK\_SOURCE}}
+\index{HSMCLK\_SOURCE@{HSMCLK\_SOURCE}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{HSMCLK\_SOURCE}{HSMCLK\_SOURCE}}
+{\footnotesize\ttfamily \#define HSMCLK\+\_\+\+SOURCE~CS\+\_\+\+MODOSC\+\_\+\+SELECT}
+
+
+
+Definition at line 55 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_ae3776ee1c7f7b2a6c8acb6e61ae339cd}\label{board_8h_ae3776ee1c7f7b2a6c8acb6e61ae339cd}} 
+\index{board.h@{board.h}!LFXT\_FREQ@{LFXT\_FREQ}}
+\index{LFXT\_FREQ@{LFXT\_FREQ}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{LFXT\_FREQ}{LFXT\_FREQ}}
+{\footnotesize\ttfamily \#define LFXT\+\_\+\+FREQ~32000}
+
+
+
+Definition at line 43 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_a1c311a2e410dec36ff4e12311dfac36b}\label{board_8h_a1c311a2e410dec36ff4e12311dfac36b}} 
+\index{board.h@{board.h}!MCLK\_DIV@{MCLK\_DIV}}
+\index{MCLK\_DIV@{MCLK\_DIV}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{MCLK\_DIV}{MCLK\_DIV}}
+{\footnotesize\ttfamily \#define MCLK\+\_\+\+DIV~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+1}
+
+
+
+Definition at line 52 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_aa4dd563409ebeaf09e047d3fe3ad6ea3}\label{board_8h_aa4dd563409ebeaf09e047d3fe3ad6ea3}} 
+\index{board.h@{board.h}!MCLK\_SOURCE@{MCLK\_SOURCE}}
+\index{MCLK\_SOURCE@{MCLK\_SOURCE}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{MCLK\_SOURCE}{MCLK\_SOURCE}}
+{\footnotesize\ttfamily \#define MCLK\+\_\+\+SOURCE~CS\+\_\+\+DCOCLK\+\_\+\+SELECT}
+
+
+
+Definition at line 51 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_a962af9cfdd715a24de7ff3829883d505}\label{board_8h_a962af9cfdd715a24de7ff3829883d505}} 
+\index{board.h@{board.h}!REFO\_FREQ@{REFO\_FREQ}}
+\index{REFO\_FREQ@{REFO\_FREQ}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{REFO\_FREQ}{REFO\_FREQ}}
+{\footnotesize\ttfamily \#define REFO\+\_\+\+FREQ~CS\+\_\+\+REFO\+\_\+128\+KHZ}
+
+
+
+Definition at line 42 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_ad438077559b3efa64cf4805c76901f87}\label{board_8h_ad438077559b3efa64cf4805c76901f87}} 
+\index{board.h@{board.h}!SMCLK\_DIV@{SMCLK\_DIV}}
+\index{SMCLK\_DIV@{SMCLK\_DIV}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{SMCLK\_DIV}{SMCLK\_DIV}}
+{\footnotesize\ttfamily \#define SMCLK\+\_\+\+DIV~CS\+\_\+\+CLOCK\+\_\+\+DIVIDER\+\_\+16}
+
+
+
+Definition at line 60 of file board.\+h.
+
+\mbox{\Hypertarget{board_8h_a80319b583554dcde27ddce93cd6fc861}\label{board_8h_a80319b583554dcde27ddce93cd6fc861}} 
+\index{board.h@{board.h}!SMCLK\_SOURCE@{SMCLK\_SOURCE}}
+\index{SMCLK\_SOURCE@{SMCLK\_SOURCE}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{SMCLK\_SOURCE}{SMCLK\_SOURCE}}
+{\footnotesize\ttfamily \#define SMCLK\+\_\+\+SOURCE~CS\+\_\+\+MODOSC\+\_\+\+SELECT}
+
+
+
+Definition at line 59 of file board.\+h.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99}\label{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99}} 
+\index{board.h@{board.h}!BoardPowerSources@{BoardPowerSources}}
+\index{BoardPowerSources@{BoardPowerSources}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardPowerSources}{BoardPowerSources}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99}{Board\+Power\+Sources}}}
+
+Possible power sources \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{USB\_POWER@{USB\_POWER}!board.h@{board.h}}\index{board.h@{board.h}!USB\_POWER@{USB\_POWER}}}\mbox{\Hypertarget{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99a5a940d92669e7dfb925f5425e604fbf0}\label{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99a5a940d92669e7dfb925f5425e604fbf0}} 
+USB\+\_\+\+POWER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BATTERY\_POWER@{BATTERY\_POWER}!board.h@{board.h}}\index{board.h@{board.h}!BATTERY\_POWER@{BATTERY\_POWER}}}\mbox{\Hypertarget{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99a0eabee1f8bda79cfd02770bf2d9b8e64}\label{board_8h_a2bb2ec84c0c5a07c6dfe5df0cfcf6f99a0eabee1f8bda79cfd02770bf2d9b8e64}} 
+BATTERY\+\_\+\+POWER&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 35 of file board.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{board_8h_ac4a541fdc4e9de7386eec3ca50eb5641}\label{board_8h_ac4a541fdc4e9de7386eec3ca50eb5641}} 
+\index{board.h@{board.h}!BoardDeInitMcu@{BoardDeInitMcu}}
+\index{BoardDeInitMcu@{BoardDeInitMcu}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardDeInitMcu()}{BoardDeInitMcu()}}
+{\footnotesize\ttfamily void Board\+De\+Init\+Mcu (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+De-\/initializes the target board peripherals to decrease power consumption. 
+
+
+
+Definition at line 100 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_af76c87dec5209225d7e36c1af950c57d}\label{board_8h_af76c87dec5209225d7e36c1af950c57d}} 
+\index{board.h@{board.h}!BoardGetBatteryLevel@{BoardGetBatteryLevel}}
+\index{BoardGetBatteryLevel@{BoardGetBatteryLevel}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardGetBatteryLevel()}{BoardGetBatteryLevel()}}
+{\footnotesize\ttfamily uint8\+\_\+t Board\+Get\+Battery\+Level (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the current battery level. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & battery level \mbox{[} 0\+: USB, 1\+: Min level, x\+: level 254\+: fully charged, 255\+: Error\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 113 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_ac395dc5aa426e14bb6b7194371108f31}\label{board_8h_ac395dc5aa426e14bb6b7194371108f31}} 
+\index{board.h@{board.h}!BoardGetBatteryVoltage@{BoardGetBatteryVoltage}}
+\index{BoardGetBatteryVoltage@{BoardGetBatteryVoltage}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardGetBatteryVoltage()}{BoardGetBatteryVoltage()}}
+{\footnotesize\ttfamily uint32\+\_\+t Board\+Get\+Battery\+Voltage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Measure the Battery voltage. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & battery voltage in volts \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 109 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_a3ef73c64e5aa0c58c5c1694ad4772c7f}\label{board_8h_a3ef73c64e5aa0c58c5c1694ad4772c7f}} 
+\index{board.h@{board.h}!BoardGetPotiLevel@{BoardGetPotiLevel}}
+\index{BoardGetPotiLevel@{BoardGetPotiLevel}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardGetPotiLevel()}{BoardGetPotiLevel()}}
+{\footnotesize\ttfamily uint8\+\_\+t Board\+Get\+Poti\+Level (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Gets the current potentiometer level value. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & Potentiometer level ( value in percent ) \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{board_8h_a9095c4392ffacd8b8e58e085edda7513}\label{board_8h_a9095c4392ffacd8b8e58e085edda7513}} 
+\index{board.h@{board.h}!BoardGetRandomSeed@{BoardGetRandomSeed}}
+\index{BoardGetRandomSeed@{BoardGetRandomSeed}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardGetRandomSeed()}{BoardGetRandomSeed()}}
+{\footnotesize\ttfamily uint32\+\_\+t Board\+Get\+Random\+Seed (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Returns a pseudo random seed generated using the MCU Unique ID
+
+
+\begin{DoxyRetVals}{Return values}
+{\em seed} & Generated pseudo random seed \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{board_8h_a54a40b5afeedebdf522c93f3b3be43f5}\label{board_8h_a54a40b5afeedebdf522c93f3b3be43f5}} 
+\index{board.h@{board.h}!BoardGetUniqueId@{BoardGetUniqueId}}
+\index{BoardGetUniqueId@{BoardGetUniqueId}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardGetUniqueId()}{BoardGetUniqueId()}}
+{\footnotesize\ttfamily void Board\+Get\+Unique\+Id (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{id }\end{DoxyParamCaption})}
+
+
+
+Gets the board 64 bits unique ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & id Pointer to an array that will contain the Unique ID \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{board_8h_a347d5531f83b4fc18dea083e1bccbc39}\label{board_8h_a347d5531f83b4fc18dea083e1bccbc39}} 
+\index{board.h@{board.h}!BoardInitMcu@{BoardInitMcu}}
+\index{BoardInitMcu@{BoardInitMcu}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardInitMcu()}{BoardInitMcu()}}
+{\footnotesize\ttfamily void Board\+Init\+Mcu (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the mcu. 
+
+
+
+Definition at line 63 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_afb893aef7e39934775213ce840e47c52}\label{board_8h_afb893aef7e39934775213ce840e47c52}} 
+\index{board.h@{board.h}!BoardInitPeriph@{BoardInitPeriph}}
+\index{BoardInitPeriph@{BoardInitPeriph}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardInitPeriph()}{BoardInitPeriph()}}
+{\footnotesize\ttfamily void Board\+Init\+Periph (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the boards peripherals. 
+
+
+
+Definition at line 59 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_a4a945980ef6ceeb0b9aacdbeed67a11b}\label{board_8h_a4a945980ef6ceeb0b9aacdbeed67a11b}} 
+\index{board.h@{board.h}!BoardLowPowerHandler@{BoardLowPowerHandler}}
+\index{BoardLowPowerHandler@{BoardLowPowerHandler}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardLowPowerHandler()}{BoardLowPowerHandler()}}
+{\footnotesize\ttfamily void Board\+Low\+Power\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Manages the entry into ARM cortex deep-\/sleep mode. 
+
+\mbox{\Hypertarget{board_8h_af3e241f8ae6def66e75dbac21ba74f94}\label{board_8h_af3e241f8ae6def66e75dbac21ba74f94}} 
+\index{board.h@{board.h}!BoardResetMcu@{BoardResetMcu}}
+\index{BoardResetMcu@{BoardResetMcu}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{BoardResetMcu()}{BoardResetMcu()}}
+{\footnotesize\ttfamily void Board\+Reset\+Mcu (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Resets the mcu. 
+
+
+
+Definition at line 92 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_ae5d5a76d9302de65c632a10c6ddd51c9}\label{board_8h_ae5d5a76d9302de65c632a10c6ddd51c9}} 
+\index{board.h@{board.h}!GetBoardPowerSource@{GetBoardPowerSource}}
+\index{GetBoardPowerSource@{GetBoardPowerSource}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{GetBoardPowerSource()}{GetBoardPowerSource()}}
+{\footnotesize\ttfamily uint8\+\_\+t Get\+Board\+Power\+Source (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the board power source. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & power source \mbox{[}0\+: USB\+\_\+\+POWER, 1\+: BATTERY\+\_\+\+POWER\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 157 of file board.\+c.
+
+\mbox{\Hypertarget{board_8h_afc0a73b7b1fc79d929d1cb8bb43e73d1}\label{board_8h_afc0a73b7b1fc79d929d1cb8bb43e73d1}} 
+\index{board.h@{board.h}!SystemClockConfig@{SystemClockConfig}}
+\index{SystemClockConfig@{SystemClockConfig}!board.h@{board.h}}
+\doxysubsubsection{\texorpdfstring{SystemClockConfig()}{SystemClockConfig()}}
+{\footnotesize\ttfamily void System\+Clock\+Config (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+configures the system clock 
+
+
+
+Definition at line 166 of file board.\+c.
+

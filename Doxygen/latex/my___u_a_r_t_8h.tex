@@ -1,0 +1,184 @@
+\hypertarget{my___u_a_r_t_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+\+UART.h File Reference}
+\label{my___u_a_r_t_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_UART.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_UART.h}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8h_ad0f92ea6ac2b7528f42f5519a0bce667}{UART\+\_\+\+PC\+\_\+\+PORT}}~GPIO\+\_\+\+PORT\+\_\+\+P1
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8h_ae5aa131e8e352293c7cb5a1f63fb2660}{UART\+\_\+\+PC\+\_\+\+PINS}}~GPIO\+\_\+\+PIN2 $\vert$ GPIO\+\_\+\+PIN3
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8h_a577fb0b8bf2167a56e12e33993d4c066}{UART\+\_\+\+PC\+\_\+\+MODULE}}~EUSCI\+\_\+\+A0\+\_\+\+BASE
+\item 
+\#define \mbox{\hyperlink{my___u_a_r_t_8h_a7fefb05b6038af851dd62d7464216a28}{UART\+\_\+\+PC\+\_\+\+INT}}~INT\+\_\+\+EUSCIA0
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_ae8a57d8cb4b5a1c716c68baac528cf07}{UARTinit\+GPS}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_a0af0e4f657b3716bc7fb3ebab4361703}{UARTinit\+PC}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_a3f30a224acac42c8c643958287babb00}{send\+UARTpc}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_af12f88bcc0b1f6a7ad586f7b657035f6}{send\+UARTgps}} (char $\ast$buffer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_a87f79fc10c3a98ed5620475dd9f85ce4}{send\+\_\+uart\+\_\+integer}} (uint32\+\_\+t integer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_aa5c5d424b1d744da2b0f38bf3f74653e}{send\+\_\+uart\+\_\+integer\+\_\+next\+Line}} (uint32\+\_\+t integer)
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_abe2142d544fa837716555ecb235195d4}{reset\+UARTArray}} ()
+\item 
+bool \mbox{\hyperlink{my___u_a_r_t_8h_a03f9e9098eebf6e00708bf1b2af0f984}{return\+Uart\+Activity}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_ad22139b1833df60ee4089aa84836d03f}{Uart\+PCCommand\+Handler}} ()
+\item 
+void \mbox{\hyperlink{my___u_a_r_t_8h_a47e4609c118fa7fd029fd8837b0a0cf2}{check\+Uart\+Activity}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{my___u_a_r_t_8h_a7fefb05b6038af851dd62d7464216a28}\label{my___u_a_r_t_8h_a7fefb05b6038af851dd62d7464216a28}} 
+\index{my\_UART.h@{my\_UART.h}!UART\_PC\_INT@{UART\_PC\_INT}}
+\index{UART\_PC\_INT@{UART\_PC\_INT}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UART\_PC\_INT}{UART\_PC\_INT}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+PC\+\_\+\+INT~INT\+\_\+\+EUSCIA0}
+
+
+
+Definition at line 17 of file my\+\_\+\+UART.\+h.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_a577fb0b8bf2167a56e12e33993d4c066}\label{my___u_a_r_t_8h_a577fb0b8bf2167a56e12e33993d4c066}} 
+\index{my\_UART.h@{my\_UART.h}!UART\_PC\_MODULE@{UART\_PC\_MODULE}}
+\index{UART\_PC\_MODULE@{UART\_PC\_MODULE}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UART\_PC\_MODULE}{UART\_PC\_MODULE}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+PC\+\_\+\+MODULE~EUSCI\+\_\+\+A0\+\_\+\+BASE}
+
+
+
+Definition at line 16 of file my\+\_\+\+UART.\+h.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_ae5aa131e8e352293c7cb5a1f63fb2660}\label{my___u_a_r_t_8h_ae5aa131e8e352293c7cb5a1f63fb2660}} 
+\index{my\_UART.h@{my\_UART.h}!UART\_PC\_PINS@{UART\_PC\_PINS}}
+\index{UART\_PC\_PINS@{UART\_PC\_PINS}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UART\_PC\_PINS}{UART\_PC\_PINS}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+PC\+\_\+\+PINS~GPIO\+\_\+\+PIN2 $\vert$ GPIO\+\_\+\+PIN3}
+
+
+
+Definition at line 15 of file my\+\_\+\+UART.\+h.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_ad0f92ea6ac2b7528f42f5519a0bce667}\label{my___u_a_r_t_8h_ad0f92ea6ac2b7528f42f5519a0bce667}} 
+\index{my\_UART.h@{my\_UART.h}!UART\_PC\_PORT@{UART\_PC\_PORT}}
+\index{UART\_PC\_PORT@{UART\_PC\_PORT}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UART\_PC\_PORT}{UART\_PC\_PORT}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+PC\+\_\+\+PORT~GPIO\+\_\+\+PORT\+\_\+\+P1}
+
+
+
+Definition at line 14 of file my\+\_\+\+UART.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my___u_a_r_t_8h_a47e4609c118fa7fd029fd8837b0a0cf2}\label{my___u_a_r_t_8h_a47e4609c118fa7fd029fd8837b0a0cf2}} 
+\index{my\_UART.h@{my\_UART.h}!checkUartActivity@{checkUartActivity}}
+\index{checkUartActivity@{checkUartActivity}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{checkUartActivity()}{checkUartActivity()}}
+{\footnotesize\ttfamily void check\+Uart\+Activity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 145 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_abe2142d544fa837716555ecb235195d4}\label{my___u_a_r_t_8h_abe2142d544fa837716555ecb235195d4}} 
+\index{my\_UART.h@{my\_UART.h}!resetUARTArray@{resetUARTArray}}
+\index{resetUARTArray@{resetUARTArray}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{resetUARTArray()}{resetUARTArray()}}
+{\footnotesize\ttfamily void reset\+UARTArray (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 252 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_a03f9e9098eebf6e00708bf1b2af0f984}\label{my___u_a_r_t_8h_a03f9e9098eebf6e00708bf1b2af0f984}} 
+\index{my\_UART.h@{my\_UART.h}!returnUartActivity@{returnUartActivity}}
+\index{returnUartActivity@{returnUartActivity}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{returnUartActivity()}{returnUartActivity()}}
+{\footnotesize\ttfamily bool return\+Uart\+Activity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 257 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_a87f79fc10c3a98ed5620475dd9f85ce4}\label{my___u_a_r_t_8h_a87f79fc10c3a98ed5620475dd9f85ce4}} 
+\index{my\_UART.h@{my\_UART.h}!send\_uart\_integer@{send\_uart\_integer}}
+\index{send\_uart\_integer@{send\_uart\_integer}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{send\_uart\_integer()}{send\_uart\_integer()}}
+{\footnotesize\ttfamily void send\+\_\+uart\+\_\+integer (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{integer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 139 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_aa5c5d424b1d744da2b0f38bf3f74653e}\label{my___u_a_r_t_8h_aa5c5d424b1d744da2b0f38bf3f74653e}} 
+\index{my\_UART.h@{my\_UART.h}!send\_uart\_integer\_nextLine@{send\_uart\_integer\_nextLine}}
+\index{send\_uart\_integer\_nextLine@{send\_uart\_integer\_nextLine}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{send\_uart\_integer\_nextLine()}{send\_uart\_integer\_nextLine()}}
+{\footnotesize\ttfamily void send\+\_\+uart\+\_\+integer\+\_\+next\+Line (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{integer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 245 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_af12f88bcc0b1f6a7ad586f7b657035f6}\label{my___u_a_r_t_8h_af12f88bcc0b1f6a7ad586f7b657035f6}} 
+\index{my\_UART.h@{my\_UART.h}!sendUARTgps@{sendUARTgps}}
+\index{sendUARTgps@{sendUARTgps}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{sendUARTgps()}{sendUARTgps()}}
+{\footnotesize\ttfamily void send\+UARTgps (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 130 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_a3f30a224acac42c8c643958287babb00}\label{my___u_a_r_t_8h_a3f30a224acac42c8c643958287babb00}} 
+\index{my\_UART.h@{my\_UART.h}!sendUARTpc@{sendUARTpc}}
+\index{sendUARTpc@{sendUARTpc}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{sendUARTpc()}{sendUARTpc()}}
+{\footnotesize\ttfamily void send\+UARTpc (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 121 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_ae8a57d8cb4b5a1c716c68baac528cf07}\label{my___u_a_r_t_8h_ae8a57d8cb4b5a1c716c68baac528cf07}} 
+\index{my\_UART.h@{my\_UART.h}!UARTinitGPS@{UARTinitGPS}}
+\index{UARTinitGPS@{UARTinitGPS}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UARTinitGPS()}{UARTinitGPS()}}
+{\footnotesize\ttfamily void UARTinit\+GPS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 71 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_a0af0e4f657b3716bc7fb3ebab4361703}\label{my___u_a_r_t_8h_a0af0e4f657b3716bc7fb3ebab4361703}} 
+\index{my\_UART.h@{my\_UART.h}!UARTinitPC@{UARTinitPC}}
+\index{UARTinitPC@{UARTinitPC}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UARTinitPC()}{UARTinitPC()}}
+{\footnotesize\ttfamily void UARTinit\+PC (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 108 of file my\+\_\+\+UART.\+c.
+
+\mbox{\Hypertarget{my___u_a_r_t_8h_ad22139b1833df60ee4089aa84836d03f}\label{my___u_a_r_t_8h_ad22139b1833df60ee4089aa84836d03f}} 
+\index{my\_UART.h@{my\_UART.h}!UartPCCommandHandler@{UartPCCommandHandler}}
+\index{UartPCCommandHandler@{UartPCCommandHandler}!my\_UART.h@{my\_UART.h}}
+\doxysubsubsection{\texorpdfstring{UartPCCommandHandler()}{UartPCCommandHandler()}}
+{\footnotesize\ttfamily void Uart\+PCCommand\+Handler (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 151 of file my\+\_\+\+UART.\+c.
+

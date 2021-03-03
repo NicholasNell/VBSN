@@ -1,0 +1,89 @@
+\hypertarget{helper_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/helper.c File Reference}
+\label{helper_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/helper.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/helper.c}}
+
+
+Created on\+: 23 Sep 2020 Author\+: njnel.  
+
+
+{\ttfamily \#include $<$bme280.\+h$>$}\newline
+{\ttfamily \#include $<$bme280\+\_\+defs.\+h$>$}\newline
+{\ttfamily \#include $<$helper.\+h$>$}\newline
+{\ttfamily \#include $<$MAX44009.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rtc\+\_\+c.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{helper_8c_a3f8426f0351ddf7015f6b1f6688ffdcd}{helper\+\_\+collect\+Sensor\+Data}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+RTC\+\_\+\+C\+\_\+\+Calendar \mbox{\hyperlink{helper_8c_a881e90555b2ba139c3f783f6be0f070e}{time\+Stamp}}
+\item 
+struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} \mbox{\hyperlink{helper_8c_acf49615fa6291ac4def5fe342a492cec}{bme280\+Dev}}
+\item 
+struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} \mbox{\hyperlink{helper_8c_a29c054e412a9172bada57bc985137d01}{bme280\+Data}}
+\item 
+float \mbox{\hyperlink{helper_8c_a444f52c004d592107e54669a8c3b4d41}{soil\+Moisture}} = 100
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 23 Sep 2020 Author\+: njnel. 
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{helper_8c_a3f8426f0351ddf7015f6b1f6688ffdcd}\label{helper_8c_a3f8426f0351ddf7015f6b1f6688ffdcd}} 
+\index{helper.c@{helper.c}!helper\_collectSensorData@{helper\_collectSensorData}}
+\index{helper\_collectSensorData@{helper\_collectSensorData}!helper.c@{helper.c}}
+\doxysubsubsection{\texorpdfstring{helper\_collectSensorData()}{helper\_collectSensorData()}}
+{\footnotesize\ttfamily void helper\+\_\+collect\+Sensor\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 21 of file helper.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{helper_8c_a29c054e412a9172bada57bc985137d01}\label{helper_8c_a29c054e412a9172bada57bc985137d01}} 
+\index{helper.c@{helper.c}!bme280Data@{bme280Data}}
+\index{bme280Data@{bme280Data}!helper.c@{helper.c}}
+\doxysubsubsection{\texorpdfstring{bme280Data}{bme280Data}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__data}{bme280\+\_\+data}} bme280\+Data\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{helper_8c_acf49615fa6291ac4def5fe342a492cec}\label{helper_8c_acf49615fa6291ac4def5fe342a492cec}} 
+\index{helper.c@{helper.c}!bme280Dev@{bme280Dev}}
+\index{bme280Dev@{bme280Dev}!helper.c@{helper.c}}
+\doxysubsubsection{\texorpdfstring{bme280Dev}{bme280Dev}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structbme280__dev}{bme280\+\_\+dev}} bme280\+Dev\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 76 of file main.\+c.
+
+\mbox{\Hypertarget{helper_8c_a444f52c004d592107e54669a8c3b4d41}\label{helper_8c_a444f52c004d592107e54669a8c3b4d41}} 
+\index{helper.c@{helper.c}!soilMoisture@{soilMoisture}}
+\index{soilMoisture@{soilMoisture}!helper.c@{helper.c}}
+\doxysubsubsection{\texorpdfstring{soilMoisture}{soilMoisture}}
+{\footnotesize\ttfamily float soil\+Moisture = 100}
+
+
+
+Definition at line 19 of file helper.\+c.
+
+\mbox{\Hypertarget{helper_8c_a881e90555b2ba139c3f783f6be0f070e}\label{helper_8c_a881e90555b2ba139c3f783f6be0f070e}} 
+\index{helper.c@{helper.c}!timeStamp@{timeStamp}}
+\index{timeStamp@{timeStamp}!helper.c@{helper.c}}
+\doxysubsubsection{\texorpdfstring{timeStamp}{timeStamp}}
+{\footnotesize\ttfamily RTC\+\_\+\+C\+\_\+\+Calendar time\+Stamp\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 101 of file my\+\_\+\+MAC.\+c.
+

@@ -1,0 +1,332 @@
+\hypertarget{timer_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/timer.h File Reference}
+\label{timer_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/timer.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/timer.h}}
+
+
+Timer objects and scheduling management implementation.  
+
+
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_timer_event__s}{Timer\+Event\+\_\+s}}
+\begin{DoxyCompactList}\small\item\em Timer object description. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{timer_8h_ab3d35444c17153c1fe859d620fec73b9}{TIMERTIME\+\_\+\+T\+\_\+\+MAX}}~( ( uint32\+\_\+t )$\sim$0 )
+\item 
+\#define \mbox{\hyperlink{timer_8h_a681b16a48c6acd214061ae0c3a8b56c4}{TIMERTIME\+\_\+\+T\+\_\+\+MIN}}~1
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{struct_timer_event__s}{Timer\+Event\+\_\+s}} \mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Timer object description. \end{DoxyCompactList}\item 
+typedef uint32\+\_\+t \mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Timer time variable definition. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{timer_8h_ad51d36937028aa2be4aaa3e7d5393d0c}{Timer\+Init}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj, void($\ast$callback)(void $\ast$context))
+\begin{DoxyCompactList}\small\item\em Initializes the timer object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{timer_8h_ac6831ff352f842c5c936f8f9b0420b2d}{Timer\+Set\+Context}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj, void $\ast$context)
+\begin{DoxyCompactList}\small\item\em Sets a user defined object pointer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{timer_8h_a742ab8d86db201a8b5d900ce8e27cf90}{Timer\+Irq\+Handler}} (void)
+\item 
+void \mbox{\hyperlink{timer_8h_acd2c1f05aa1976f3bbedd389c8710a78}{Timer\+Start}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Starts and adds the timer object to the list of timer events. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{timer_8h_a50bbaf9ced323a434fc9d3978bc4072c}{Timer\+Is\+Started}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Checks if the provided timer is running. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{timer_8h_a8ae899c4e8a9abf49d825d6959aa6bcb}{Timer\+Stop}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Stops and removes the timer object from the list of timer events. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{timer_8h_a7fbd64c53ec871110fabc5b14f212904}{Timer\+Reset}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Resets the timer object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{timer_8h_ad56c30124de6deefb3e32bbee2a4ba46}{Timer\+Set\+Value}} (\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$obj, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Set timer new timeout value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}} \mbox{\hyperlink{timer_8h_a2b801c1a13b71247424701f9a034f7ca}{Timer\+Get\+Current\+Time}} (void)
+\begin{DoxyCompactList}\small\item\em Read the current time. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}} \mbox{\hyperlink{timer_8h_a9ca7e27f3d6474daff63f2e093a2e91e}{Timer\+Get\+Elapsed\+Time}} (\mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}} past)
+\begin{DoxyCompactList}\small\item\em Return the Time elapsed since a fix moment in Time. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Timer objects and scheduling management implementation. 
+
+\begin{DoxyCopyright}{Copyright}
+Revised BSD License, see section LICENSE.
+\end{DoxyCopyright}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \_\_\_\_\_\_                              \_}
+\DoxyCodeLine{ / \_\_\_\_\_)             \_              | |}
+\DoxyCodeLine{( (\_\_\_\_  \_\_\_\_\_ \_\_\_\_ \_| |\_ \_\_\_\_\_  \_\_\_\_| |\_\_}
+\DoxyCodeLine{ \(\backslash\)\_\_\_\_ \(\backslash\)| \_\_\_ |    (\_   \_) \_\_\_ |/ \_\_\_)  \_ \(\backslash\)}
+\DoxyCodeLine{ \_\_\_\_\_) ) \_\_\_\_| | | || |\_| \_\_\_\_( (\_\_\_| | | |}
+\DoxyCodeLine{(\_\_\_\_\_\_/|\_\_\_\_\_)\_|\_|\_| \(\backslash\)\_\_)\_\_\_\_\_)\(\backslash\)\_\_\_\_)\_| |\_|}
+\DoxyCodeLine{(C)2013-\/2017 Semtech}
+
+\end{DoxyCode}
+
+
+\begin{DoxyAuthor}{Author}
+Miguel Luis ( Semtech )
+
+Gregory Cristian ( Semtech ) 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{timer_8h_ab3d35444c17153c1fe859d620fec73b9}\label{timer_8h_ab3d35444c17153c1fe859d620fec73b9}} 
+\index{timer.h@{timer.h}!TIMERTIME\_T\_MAX@{TIMERTIME\_T\_MAX}}
+\index{TIMERTIME\_T\_MAX@{TIMERTIME\_T\_MAX}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TIMERTIME\_T\_MAX}{TIMERTIME\_T\_MAX}}
+{\footnotesize\ttfamily \#define TIMERTIME\+\_\+\+T\+\_\+\+MAX~( ( uint32\+\_\+t )$\sim$0 )}
+
+
+
+Definition at line 52 of file timer.\+h.
+
+\mbox{\Hypertarget{timer_8h_a681b16a48c6acd214061ae0c3a8b56c4}\label{timer_8h_a681b16a48c6acd214061ae0c3a8b56c4}} 
+\index{timer.h@{timer.h}!TIMERTIME\_T\_MIN@{TIMERTIME\_T\_MIN}}
+\index{TIMERTIME\_T\_MIN@{TIMERTIME\_T\_MIN}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TIMERTIME\_T\_MIN}{TIMERTIME\_T\_MIN}}
+{\footnotesize\ttfamily \#define TIMERTIME\+\_\+\+T\+\_\+\+MIN~1}
+
+
+
+Definition at line 55 of file timer.\+h.
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{timer_8h_a885fbcaee987d8332d6b62add3d547ac}\label{timer_8h_a885fbcaee987d8332d6b62add3d547ac}} 
+\index{timer.h@{timer.h}!TimerEvent\_t@{TimerEvent\_t}}
+\index{TimerEvent\_t@{TimerEvent\_t}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerEvent\_t}{TimerEvent\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_timer_event__s}{Timer\+Event\+\_\+s}} \mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}}}
+
+
+
+Timer object description. 
+
+\mbox{\Hypertarget{timer_8h_a4215ca43d3e953099ea758ce428599d0}\label{timer_8h_a4215ca43d3e953099ea758ce428599d0}} 
+\index{timer.h@{timer.h}!TimerTime\_t@{TimerTime\_t}}
+\index{TimerTime\_t@{TimerTime\_t}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerTime\_t}{TimerTime\_t}}
+{\footnotesize\ttfamily typedef uint32\+\_\+t \mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}}}
+
+
+
+Timer time variable definition. 
+
+
+
+Definition at line 51 of file timer.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{timer_8h_a2b801c1a13b71247424701f9a034f7ca}\label{timer_8h_a2b801c1a13b71247424701f9a034f7ca}} 
+\index{timer.h@{timer.h}!TimerGetCurrentTime@{TimerGetCurrentTime}}
+\index{TimerGetCurrentTime@{TimerGetCurrentTime}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerGetCurrentTime()}{TimerGetCurrentTime()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}} Timer\+Get\+Current\+Time (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Read the current time. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em time} & returns current time \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 302 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_a9ca7e27f3d6474daff63f2e093a2e91e}\label{timer_8h_a9ca7e27f3d6474daff63f2e093a2e91e}} 
+\index{timer.h@{timer.h}!TimerGetElapsedTime@{TimerGetElapsedTime}}
+\index{TimerGetElapsedTime@{TimerGetElapsedTime}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerGetElapsedTime()}{TimerGetElapsedTime()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}} Timer\+Get\+Elapsed\+Time (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a4215ca43d3e953099ea758ce428599d0}{Timer\+Time\+\_\+t}}}]{past }\end{DoxyParamCaption})}
+
+
+
+Return the Time elapsed since a fix moment in Time. 
+
+\begin{DoxyRemark}{Remarks}
+Timer\+Get\+Elapsed\+Time will return 0 for argument 0.
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & past fix moment in Time \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em time} & returns elapsed time \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 307 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_ad51d36937028aa2be4aaa3e7d5393d0c}\label{timer_8h_ad51d36937028aa2be4aaa3e7d5393d0c}} 
+\index{timer.h@{timer.h}!TimerInit@{TimerInit}}
+\index{TimerInit@{TimerInit}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerInit()}{TimerInit()}}
+{\footnotesize\ttfamily void Timer\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj,  }\item[{void($\ast$)(void $\ast$context)}]{callback }\end{DoxyParamCaption})}
+
+
+
+Initializes the timer object. 
+
+\begin{DoxyRemark}{Remarks}
+Timer\+Set\+Value function must be called before starting the timer. this function initializes timestamp and reload value at 0.
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Structure containing the timer object parameters \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & callback Function callback called at the end of the timeout \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_a742ab8d86db201a8b5d900ce8e27cf90}\label{timer_8h_a742ab8d86db201a8b5d900ce8e27cf90}} 
+\index{timer.h@{timer.h}!TimerIrqHandler@{TimerIrqHandler}}
+\index{TimerIrqHandler@{TimerIrqHandler}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerIrqHandler()}{TimerIrqHandler()}}
+{\footnotesize\ttfamily void Timer\+Irq\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Timer IRQ event handler 
+
+Definition at line 166 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_a50bbaf9ced323a434fc9d3978bc4072c}\label{timer_8h_a50bbaf9ced323a434fc9d3978bc4072c}} 
+\index{timer.h@{timer.h}!TimerIsStarted@{TimerIsStarted}}
+\index{TimerIsStarted@{TimerIsStarted}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerIsStarted()}{TimerIsStarted()}}
+{\footnotesize\ttfamily bool Timer\+Is\+Started (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Checks if the provided timer is running. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Structure containing the timer object parameters\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em status} & returns the timer activity status \mbox{[}true\+: Started, false\+: Stopped\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 162 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_a7fbd64c53ec871110fabc5b14f212904}\label{timer_8h_a7fbd64c53ec871110fabc5b14f212904}} 
+\index{timer.h@{timer.h}!TimerReset@{TimerReset}}
+\index{TimerReset@{TimerReset}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerReset()}{TimerReset()}}
+{\footnotesize\ttfamily void Timer\+Reset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Resets the timer object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Structure containing the timer object parameters \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 281 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_ac6831ff352f842c5c936f8f9b0420b2d}\label{timer_8h_ac6831ff352f842c5c936f8f9b0420b2d}} 
+\index{timer.h@{timer.h}!TimerSetContext@{TimerSetContext}}
+\index{TimerSetContext@{TimerSetContext}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerSetContext()}{TimerSetContext()}}
+{\footnotesize\ttfamily void Timer\+Set\+Context (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj,  }\item[{void $\ast$}]{context }\end{DoxyParamCaption})}
+
+
+
+Sets a user defined object pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & context User defined data object pointer to pass back on IRQ handler callback \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_ad56c30124de6deefb3e32bbee2a4ba46}\label{timer_8h_ad56c30124de6deefb3e32bbee2a4ba46}} 
+\index{timer.h@{timer.h}!TimerSetValue@{TimerSetValue}}
+\index{TimerSetValue@{TimerSetValue}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerSetValue()}{TimerSetValue()}}
+{\footnotesize\ttfamily void Timer\+Set\+Value (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj,  }\item[{uint32\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+Set timer new timeout value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Structure containing the timer object parameters \\
+\hline
+{\em \mbox{[}\+IN\mbox{]}} & value New timer timeout value \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 286 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_acd2c1f05aa1976f3bbedd389c8710a78}\label{timer_8h_acd2c1f05aa1976f3bbedd389c8710a78}} 
+\index{timer.h@{timer.h}!TimerStart@{TimerStart}}
+\index{TimerStart@{TimerStart}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerStart()}{TimerStart()}}
+{\footnotesize\ttfamily void Timer\+Start (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Starts and adds the timer object to the list of timer events. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Structure containing the timer object parameters \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 101 of file timer.\+c.
+
+\mbox{\Hypertarget{timer_8h_a8ae899c4e8a9abf49d825d6959aa6bcb}\label{timer_8h_a8ae899c4e8a9abf49d825d6959aa6bcb}} 
+\index{timer.h@{timer.h}!TimerStop@{TimerStop}}
+\index{TimerStop@{TimerStop}!timer.h@{timer.h}}
+\doxysubsubsection{\texorpdfstring{TimerStop()}{TimerStop()}}
+{\footnotesize\ttfamily void Timer\+Stop (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{timer_8h_a885fbcaee987d8332d6b62add3d547ac}{Timer\+Event\+\_\+t}} $\ast$}]{obj }\end{DoxyParamCaption})}
+
+
+
+Stops and removes the timer object from the list of timer events. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & obj Structure containing the timer object parameters \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 213 of file timer.\+c.
+

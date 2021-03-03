@@ -1,0 +1,414 @@
+\hypertarget{sx1276-board_8h}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/sx1276-\/board.h File Reference}
+\label{sx1276-board_8h}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/sx1276-\/board.h@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/sx1276-\/board.h}}
+
+
+Target board SX1276 driver implementation.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+\+RFM9x.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{sx1276-board_8h_abef7202d2ca987f0fe762a046d5cec52}{RADIO\+\_\+\+INIT\+\_\+\+REGISTERS\+\_\+\+VALUE}}
+\begin{DoxyCompactList}\small\item\em Radio hardware registers initialization definition. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{sx1276-board_8h_a51ad727a195c907dda006b5a40467136}{RF\+\_\+\+MID\+\_\+\+BAND\+\_\+\+THRESH}}~525000000
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{sx1276-board_8h_aec7b264fbf1e700d90003a683624ca36}{SX1276\+Io\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the radio I/\+Os pins interface. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_ad720b6a7df7e6a330aa6e6c22265ed5d}{SX1276\+Io\+Irq\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes DIO IRQ handlers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a70543ce2709079b385832bbe62ef0bb4}{SX1276\+Io\+De\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em De-\/initializes the radio I/\+Os pins interface. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a6af609de293071d7573fa2bf4510d117}{SX1276\+Io\+Tcxo\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the TCXO power pin. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a0a7e312e64207b6e33b9543105f52a51}{SX1276\+Io\+Dbg\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the radio debug pins. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a593daed5ce70e7cb25545345e547816b}{SX1276\+Reset}} (void)
+\begin{DoxyCompactList}\small\item\em Resets the radio. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a804e0c422d6664928fa10d4a337f1b46}{SX1276\+Set\+Rf\+Tx\+Power}} (int8\+\_\+t power)
+\begin{DoxyCompactList}\small\item\em Sets the radio output power. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_aec1dbab579cde3c9d6ac35055c4610e6}{SX1276\+Set\+Ant\+Sw\+Low\+Power}} (bool status)
+\begin{DoxyCompactList}\small\item\em Set the RF Switch I/\+Os pins in low power mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a9b921e085358727c4a74cc739dfb7661}{SX1276\+Ant\+Sw\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the RF Switch I/\+Os pins interface. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_ad8842da2e25071e0f380ea060e4e5fa0}{SX1276\+Ant\+Sw\+De\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em De-\/initializes the RF Switch I/\+Os pins interface. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a7b46026926451bf44c048b40a74ff7e5}{SX1276\+Set\+Ant\+Sw}} (uint8\+\_\+t op\+Mode)
+\begin{DoxyCompactList}\small\item\em Controls the antenna switch if necessary. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{sx1276-board_8h_a123588d3d6564909f2dc8ecf40a71214}{SX1276\+Check\+Rf\+Frequency}} (uint32\+\_\+t frequency)
+\begin{DoxyCompactList}\small\item\em Checks if the given RF frequency is supported by the hardware. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_aa575d3c232ab5259532fcf03b6b5bc06}{SX1276\+Set\+Board\+Tcxo}} (uint8\+\_\+t state)
+\begin{DoxyCompactList}\small\item\em Enables/disables the TCXO if available on board design. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{sx1276-board_8h_a9a00d4c89d66a4868be1aac821106407}{SX1276\+Get\+Board\+Tcxo\+Wakeup\+Time}} (void)
+\begin{DoxyCompactList}\small\item\em Gets the Defines the time required for the TCXO to wakeup \mbox{[}ms\mbox{]}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_af670c1389876206d5f570bb10227dac9}{SX1276\+Dbg\+Pin\+Tx\+Write}} (uint8\+\_\+t state)
+\begin{DoxyCompactList}\small\item\em Writes new Tx debug pin state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sx1276-board_8h_a3414557f2c4fa5756a26453b0f04d5ef}{SX1276\+Dbg\+Pin\+Rx\+Write}} (uint8\+\_\+t state)
+\begin{DoxyCompactList}\small\item\em Writes new Rx debug pin state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{my___r_f_m9x_8h_acf7f83d7d25c85897b88fcdc94345e56}{SX1276\+\_\+t}} \mbox{\hyperlink{sx1276-board_8h_a91a81a798b3d849e2cc114c18bf9c5cc}{SX1276}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Target board SX1276 driver implementation. 
+
+\begin{DoxyCopyright}{Copyright}
+Revised BSD License, see section LICENSE.
+\end{DoxyCopyright}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \_\_\_\_\_\_                              \_}
+\DoxyCodeLine{ / \_\_\_\_\_)             \_              | |}
+\DoxyCodeLine{( (\_\_\_\_  \_\_\_\_\_ \_\_\_\_ \_| |\_ \_\_\_\_\_  \_\_\_\_| |\_\_}
+\DoxyCodeLine{ \(\backslash\)\_\_\_\_ \(\backslash\)| \_\_\_ |    (\_   \_) \_\_\_ |/ \_\_\_)  \_ \(\backslash\)}
+\DoxyCodeLine{ \_\_\_\_\_) ) \_\_\_\_| | | || |\_| \_\_\_\_( (\_\_\_| | | |}
+\DoxyCodeLine{(\_\_\_\_\_\_/|\_\_\_\_\_)\_|\_|\_| \(\backslash\)\_\_)\_\_\_\_\_)\(\backslash\)\_\_\_\_)\_| |\_|}
+\DoxyCodeLine{(C)2013-\/2017 Semtech}
+
+\end{DoxyCode}
+
+
+\begin{DoxyAuthor}{Author}
+Miguel Luis ( Semtech )
+
+Gregory Cristian ( Semtech ) 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{sx1276-board_8h_abef7202d2ca987f0fe762a046d5cec52}\label{sx1276-board_8h_abef7202d2ca987f0fe762a046d5cec52}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!RADIO\_INIT\_REGISTERS\_VALUE@{RADIO\_INIT\_REGISTERS\_VALUE}}
+\index{RADIO\_INIT\_REGISTERS\_VALUE@{RADIO\_INIT\_REGISTERS\_VALUE}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_INIT\_REGISTERS\_VALUE}{RADIO\_INIT\_REGISTERS\_VALUE}}
+{\footnotesize\ttfamily \#define RADIO\+\_\+\+INIT\+\_\+\+REGISTERS\+\_\+\+VALUE}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{                                                 \(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_ab08aa4c56ad75b3e715a1115330109ca}{REG\_LNA}}                , 0x23 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a6bba52e363d49d2783439eb8062d90c8}{REG\_RXCONFIG}}           , 0x1E \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a9ba1a67481c3ba0a454cb4873e4db10b}{REG\_RSSICONFIG}}         , 0xD2 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a04f60f1d03035cf80cebff9648a894c0}{REG\_AFCFEI}}             , 0x01 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a8acf717d67c4e7f4b92a25653ddb495c}{REG\_PREAMBLEDETECT}}     , 0xAA \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a1edb093ed684495473ecd2e97e3a49c2}{REG\_OSC}}                , 0x07 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_ae80bd3142a5c405bf7063ac7b0e8e101}{REG\_SYNCCONFIG}}         , 0x12 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a4d0160e654656b6cd6426c295c8e131b}{REG\_SYNCVALUE1}}         , 0xC1 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a840d780f6d455dc828e2ec8217e9043a}{REG\_SYNCVALUE2}}         , 0x94 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_af89062529e96d32eecd0f89963d52adf}{REG\_SYNCVALUE3}}         , 0xC1 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a035c91c3eea7209c78ac5bda775940cc}{REG\_PACKETCONFIG1}}      , 0xD8 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_a18b41b1ddfbe6eb514f74431b5d76792}{REG\_FIFOTHRESH}}         , 0x8F \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_aeb557bae3e3e5ffb390a6f6a61ac686d}{REG\_IMAGECAL}}           , 0x02 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_ac16d5678e98fa6ab73655240a11f9b69}{REG\_DIOMAPPING1}}        , 0x00 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057af43891b8bf8129d6ee0bfe83217822a5}{MODEM\_FSK}} , \mbox{\hyperlink{sx1276_regs-_fsk_8h_aec8b1ddf72925f502675593fabcc469f}{REG\_DIOMAPPING2}}        , 0x30 \},\(\backslash\)}
+\DoxyCodeLine{    \{ \mbox{\hyperlink{radio_8h_a992ef7a5b7f52975ba7bd8dd97740057abeb331e097974ea65b07d74df9e85a8e}{MODEM\_LORA}}, \mbox{\hyperlink{sx1276_regs-_lo_ra_8h_ae71e7acfa7c8c737e55349e72c71349f}{REG\_LR\_PAYLOADMAXLENGTH}}, 0x40 \},\(\backslash\)}
+\DoxyCodeLine{\}                                                 \(\backslash\)}
+
+\end{DoxyCode}
+
+
+Radio hardware registers initialization definition. 
+
+\begin{DoxyRemark}{Remarks}
+Can be automatically generated by the SX1276 GUI (not yet implemented) 
+\end{DoxyRemark}
+
+
+Definition at line 40 of file sx1276-\/board.\+h.
+
+\mbox{\Hypertarget{sx1276-board_8h_a51ad727a195c907dda006b5a40467136}\label{sx1276-board_8h_a51ad727a195c907dda006b5a40467136}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!RF\_MID\_BAND\_THRESH@{RF\_MID\_BAND\_THRESH}}
+\index{RF\_MID\_BAND\_THRESH@{RF\_MID\_BAND\_THRESH}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{RF\_MID\_BAND\_THRESH}{RF\_MID\_BAND\_THRESH}}
+{\footnotesize\ttfamily \#define RF\+\_\+\+MID\+\_\+\+BAND\+\_\+\+THRESH~525000000}
+
+
+
+Definition at line 60 of file sx1276-\/board.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{sx1276-board_8h_ad8842da2e25071e0f380ea060e4e5fa0}\label{sx1276-board_8h_ad8842da2e25071e0f380ea060e4e5fa0}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276AntSwDeInit@{SX1276AntSwDeInit}}
+\index{SX1276AntSwDeInit@{SX1276AntSwDeInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276AntSwDeInit()}{SX1276AntSwDeInit()}}
+{\footnotesize\ttfamily void SX1276\+Ant\+Sw\+De\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+De-\/initializes the RF Switch I/\+Os pins interface. 
+
+\begin{DoxyRemark}{Remarks}
+Needed to decrease the power consumption in MCU low power modes 
+\end{DoxyRemark}
+\mbox{\Hypertarget{sx1276-board_8h_a9b921e085358727c4a74cc739dfb7661}\label{sx1276-board_8h_a9b921e085358727c4a74cc739dfb7661}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276AntSwInit@{SX1276AntSwInit}}
+\index{SX1276AntSwInit@{SX1276AntSwInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276AntSwInit()}{SX1276AntSwInit()}}
+{\footnotesize\ttfamily void SX1276\+Ant\+Sw\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the RF Switch I/\+Os pins interface. 
+
+\mbox{\Hypertarget{sx1276-board_8h_a123588d3d6564909f2dc8ecf40a71214}\label{sx1276-board_8h_a123588d3d6564909f2dc8ecf40a71214}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276CheckRfFrequency@{SX1276CheckRfFrequency}}
+\index{SX1276CheckRfFrequency@{SX1276CheckRfFrequency}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276CheckRfFrequency()}{SX1276CheckRfFrequency()}}
+{\footnotesize\ttfamily bool SX1276\+Check\+Rf\+Frequency (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{frequency }\end{DoxyParamCaption})}
+
+
+
+Checks if the given RF frequency is supported by the hardware. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & frequency RF frequency to be checked \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em is\+Supported} & \mbox{[}true\+: supported, false\+: unsupported\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 306 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a3414557f2c4fa5756a26453b0f04d5ef}\label{sx1276-board_8h_a3414557f2c4fa5756a26453b0f04d5ef}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276DbgPinRxWrite@{SX1276DbgPinRxWrite}}
+\index{SX1276DbgPinRxWrite@{SX1276DbgPinRxWrite}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276DbgPinRxWrite()}{SX1276DbgPinRxWrite()}}
+{\footnotesize\ttfamily void SX1276\+Dbg\+Pin\+Rx\+Write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state }\end{DoxyParamCaption})}
+
+
+
+Writes new Rx debug pin state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & state Debug pin state \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sx1276-board_8h_af670c1389876206d5f570bb10227dac9}\label{sx1276-board_8h_af670c1389876206d5f570bb10227dac9}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276DbgPinTxWrite@{SX1276DbgPinTxWrite}}
+\index{SX1276DbgPinTxWrite@{SX1276DbgPinTxWrite}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276DbgPinTxWrite()}{SX1276DbgPinTxWrite()}}
+{\footnotesize\ttfamily void SX1276\+Dbg\+Pin\+Tx\+Write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state }\end{DoxyParamCaption})}
+
+
+
+Writes new Tx debug pin state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & state Debug pin state \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sx1276-board_8h_a9a00d4c89d66a4868be1aac821106407}\label{sx1276-board_8h_a9a00d4c89d66a4868be1aac821106407}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276GetBoardTcxoWakeupTime@{SX1276GetBoardTcxoWakeupTime}}
+\index{SX1276GetBoardTcxoWakeupTime@{SX1276GetBoardTcxoWakeupTime}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276GetBoardTcxoWakeupTime()}{SX1276GetBoardTcxoWakeupTime()}}
+{\footnotesize\ttfamily uint32\+\_\+t SX1276\+Get\+Board\+Tcxo\+Wakeup\+Time (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Gets the Defines the time required for the TCXO to wakeup \mbox{[}ms\mbox{]}. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em time} & Board TCXO wakeup time in ms. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 226 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a0a7e312e64207b6e33b9543105f52a51}\label{sx1276-board_8h_a0a7e312e64207b6e33b9543105f52a51}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276IoDbgInit@{SX1276IoDbgInit}}
+\index{SX1276IoDbgInit@{SX1276IoDbgInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276IoDbgInit()}{SX1276IoDbgInit()}}
+{\footnotesize\ttfamily void SX1276\+Io\+Dbg\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the radio debug pins. 
+
+
+
+Definition at line 215 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a70543ce2709079b385832bbe62ef0bb4}\label{sx1276-board_8h_a70543ce2709079b385832bbe62ef0bb4}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276IoDeInit@{SX1276IoDeInit}}
+\index{SX1276IoDeInit@{SX1276IoDeInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276IoDeInit()}{SX1276IoDeInit()}}
+{\footnotesize\ttfamily void SX1276\+Io\+De\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+De-\/initializes the radio I/\+Os pins interface. 
+
+\begin{DoxyRemark}{Remarks}
+Useful when going in MCU low power modes 
+\end{DoxyRemark}
+
+
+Definition at line 177 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_aec7b264fbf1e700d90003a683624ca36}\label{sx1276-board_8h_aec7b264fbf1e700d90003a683624ca36}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276IoInit@{SX1276IoInit}}
+\index{SX1276IoInit@{SX1276IoInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276IoInit()}{SX1276IoInit()}}
+{\footnotesize\ttfamily void SX1276\+Io\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the radio I/\+Os pins interface. 
+
+
+
+Definition at line 56 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_ad720b6a7df7e6a330aa6e6c22265ed5d}\label{sx1276-board_8h_ad720b6a7df7e6a330aa6e6c22265ed5d}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276IoIrqInit@{SX1276IoIrqInit}}
+\index{SX1276IoIrqInit@{SX1276IoIrqInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276IoIrqInit()}{SX1276IoIrqInit()}}
+{\footnotesize\ttfamily void SX1276\+Io\+Irq\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes DIO IRQ handlers. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & irq\+Handlers Array containing the IRQ callback functions \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 168 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a6af609de293071d7573fa2bf4510d117}\label{sx1276-board_8h_a6af609de293071d7573fa2bf4510d117}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276IoTcxoInit@{SX1276IoTcxoInit}}
+\index{SX1276IoTcxoInit@{SX1276IoTcxoInit}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276IoTcxoInit()}{SX1276IoTcxoInit()}}
+{\footnotesize\ttfamily void SX1276\+Io\+Tcxo\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the TCXO power pin. 
+
+
+
+Definition at line 219 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a593daed5ce70e7cb25545345e547816b}\label{sx1276-board_8h_a593daed5ce70e7cb25545345e547816b}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276Reset@{SX1276Reset}}
+\index{SX1276Reset@{SX1276Reset}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276Reset()}{SX1276Reset()}}
+{\footnotesize\ttfamily void SX1276\+Reset (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Resets the radio. 
+
+
+
+Definition at line 230 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a7b46026926451bf44c048b40a74ff7e5}\label{sx1276-board_8h_a7b46026926451bf44c048b40a74ff7e5}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276SetAntSw@{SX1276SetAntSw}}
+\index{SX1276SetAntSw@{SX1276SetAntSw}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276SetAntSw()}{SX1276SetAntSw()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Ant\+Sw (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{op\+Mode }\end{DoxyParamCaption})}
+
+
+
+Controls the antenna switch if necessary. 
+
+\begin{DoxyRemark}{Remarks}
+see errata note
+\end{DoxyRemark}
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & op\+Mode Current radio operating mode \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 302 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_aec1dbab579cde3c9d6ac35055c4610e6}\label{sx1276-board_8h_aec1dbab579cde3c9d6ac35055c4610e6}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276SetAntSwLowPower@{SX1276SetAntSwLowPower}}
+\index{SX1276SetAntSwLowPower@{SX1276SetAntSwLowPower}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276SetAntSwLowPower()}{SX1276SetAntSwLowPower()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Ant\+Sw\+Low\+Power (\begin{DoxyParamCaption}\item[{bool}]{status }\end{DoxyParamCaption})}
+
+
+
+Set the RF Switch I/\+Os pins in low power mode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & status enable or disable \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sx1276-board_8h_aa575d3c232ab5259532fcf03b6b5bc06}\label{sx1276-board_8h_aa575d3c232ab5259532fcf03b6b5bc06}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276SetBoardTcxo@{SX1276SetBoardTcxo}}
+\index{SX1276SetBoardTcxo@{SX1276SetBoardTcxo}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276SetBoardTcxo()}{SX1276SetBoardTcxo()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Board\+Tcxo (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state }\end{DoxyParamCaption})}
+
+
+
+Enables/disables the TCXO if available on board design. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & state TCXO enabled when true and disabled when false. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 223 of file sx1276-\/board.\+c.
+
+\mbox{\Hypertarget{sx1276-board_8h_a804e0c422d6664928fa10d4a337f1b46}\label{sx1276-board_8h_a804e0c422d6664928fa10d4a337f1b46}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276SetRfTxPower@{SX1276SetRfTxPower}}
+\index{SX1276SetRfTxPower@{SX1276SetRfTxPower}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276SetRfTxPower()}{SX1276SetRfTxPower()}}
+{\footnotesize\ttfamily void SX1276\+Set\+Rf\+Tx\+Power (\begin{DoxyParamCaption}\item[{int8\+\_\+t}]{power }\end{DoxyParamCaption})}
+
+
+
+Sets the radio output power. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & power Sets the RF output power \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 239 of file sx1276-\/board.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{sx1276-board_8h_a91a81a798b3d849e2cc114c18bf9c5cc}\label{sx1276-board_8h_a91a81a798b3d849e2cc114c18bf9c5cc}} 
+\index{sx1276-\/board.h@{sx1276-\/board.h}!SX1276@{SX1276}}
+\index{SX1276@{SX1276}!sx1276-\/board.h@{sx1276-\/board.h}}
+\doxysubsubsection{\texorpdfstring{SX1276}{SX1276}}
+{\footnotesize\ttfamily \mbox{\hyperlink{my___r_f_m9x_8h_acf7f83d7d25c85897b88fcdc94345e56}{SX1276\+\_\+t}} SX1276\hspace{0.3cm}{\ttfamily [extern]}}
+
+Radio hardware and global parameters 
+
+Definition at line 155 of file my\+\_\+\+RFM9x.\+c.
+

@@ -84,7 +84,7 @@ static void TimerSetTimeout(TimerEvent_t *obj);
  */
 static bool TimerExists(TimerEvent_t *obj);
 
-void TimerInit(TimerEvent_t *obj, void (*callback)(void *context)) {
+void timer_init(TimerEvent_t *obj, void (*callback)(void *context)) {
 	obj->Timestamp = 0;
 	obj->ReloadValue = 0;
 	obj->IsStarted = false;
@@ -94,11 +94,11 @@ void TimerInit(TimerEvent_t *obj, void (*callback)(void *context)) {
 	obj->Next = NULL;
 }
 
-void TimerSetContext(TimerEvent_t *obj, void *context) {
+void timer_set_context(TimerEvent_t *obj, void *context) {
 	obj->Context = context;
 }
 
-void TimerStart(TimerEvent_t *obj) {
+void timer_start(TimerEvent_t *obj) {
 	uint32_t elapsedTime = 0;
 
 	CRITICAL_SECTION_BEGIN();
@@ -113,11 +113,11 @@ void TimerStart(TimerEvent_t *obj) {
 	obj->IsNext2Expire = false;
 
 	if (TimerListHead == NULL) {
-		SetTimerContext();
+		set_timer_context();
 		// Inserts a timer at time now + obj->Timestamp
 		TimerInsertNewHeadTimer(obj);
 	} else {
-		elapsedTime = GetTimerElapsedTime();
+		elapsedTime = get_timer_elapsed_time();
 		obj->Timestamp += elapsedTime;
 
 		if (obj->Timestamp < TimerListHead->Timestamp) {
@@ -159,16 +159,16 @@ static void TimerInsertNewHeadTimer(TimerEvent_t *obj) {
 	TimerSetTimeout(TimerListHead);
 }
 
-bool TimerIsStarted(TimerEvent_t *obj) {
+bool timer_is_started(TimerEvent_t *obj) {
 	return obj->IsStarted;
 }
 
-void TimerIrqHandler(void) {
+void timer_irq_handler(void) {
 	TimerEvent_t *cur;
 	TimerEvent_t *next;
 
-	uint32_t old = GetTimerContext();
-	uint32_t now = SetTimerContext();
+	uint32_t old = get_timer_context();
+	uint32_t now = set_timer_context();
 	uint32_t deltaContext = now - old; // intentional wrap around
 
 	// Update timeStamp based upon new Time Reference
@@ -194,7 +194,7 @@ void TimerIrqHandler(void) {
 
 	// Remove all the expired object from the list
 	while ((TimerListHead != NULL)
-			&& (TimerListHead->Timestamp < GetTimerElapsedTime())) {
+			&& (TimerListHead->Timestamp < get_timer_elapsed_time())) {
 		cur = TimerListHead;
 		TimerListHead = TimerListHead->Next;
 		cur->IsStarted = false;
@@ -205,12 +205,12 @@ void TimerIrqHandler(void) {
 	if ((TimerListHead != NULL) && (TimerListHead->IsNext2Expire == false)) {
 		TimerSetTimeout(TimerListHead);
 	}
-	stopLoRaTimer();
+	stop_lora_timer();
 	SX1276OnTimeoutIrq();
 
 }
 
-void TimerStop(TimerEvent_t *obj) {
+void timer_stop(TimerEvent_t *obj) {
 //	CRITICAL_SECTION_BEGIN( )
 //	;
 
@@ -234,7 +234,7 @@ void TimerStop(TimerEvent_t *obj) {
 				TimerListHead = TimerListHead->Next;
 				TimerSetTimeout(TimerListHead);
 			} else {
-				StopAlarm();
+				stop_alarm();
 				TimerListHead = NULL;
 			}
 		} else // Stop the head before it is started
@@ -278,16 +278,16 @@ static bool TimerExists(TimerEvent_t *obj) {
 	return false;
 }
 
-void TimerReset(TimerEvent_t *obj) {
-	TimerStop(obj);
-	TimerStart(obj);
+void timer_reset(TimerEvent_t *obj) {
+	timer_stop(obj);
+	timer_start(obj);
 }
 
-void TimerSetValue(TimerEvent_t *obj, uint32_t value) {
+void timer_set_value(TimerEvent_t *obj, uint32_t value) {
 	uint32_t minValue = 0;
-	uint32_t ticks = LoRaTimerMs2Tick(value);
+	uint32_t ticks = lora_timer_ms_to_tick(value);
 
-	TimerStop(obj);
+	timer_stop(obj);
 
 	minValue = TIMERTIME_T_MIN;
 
@@ -299,30 +299,30 @@ void TimerSetValue(TimerEvent_t *obj, uint32_t value) {
 	obj->ReloadValue = ticks;
 }
 
-TimerTime_t TimerGetCurrentTime(void) {
-	uint32_t now = GetTimerValue();
-	return LoRaTick2Ms(now);
+TimerTime_t timer_get_current_time(void) {
+	uint32_t now = get_timer_value();
+	return lora_tick_to_ms(now);
 }
 
-TimerTime_t TimerGetElapsedTime(TimerTime_t past) {
+TimerTime_t timer_get_elapsed_time(TimerTime_t past) {
 	if (past == 0) {
 		return 0;
 	}
-	uint32_t nowInTicks = GetTimerValue();
-	uint32_t pastInTicks = LoRaTimerMs2Tick(past);
+	uint32_t nowInTicks = get_timer_value();
+	uint32_t pastInTicks = lora_timer_ms_to_tick(past);
 
 	// Intentional wrap around. Works Ok if tick duration below 1ms
-	return LoRaTick2Ms(nowInTicks - pastInTicks);
+	return lora_tick_to_ms(nowInTicks - pastInTicks);
 }
 
 static void TimerSetTimeout(TimerEvent_t *obj) {
-	int32_t minTicks = GetMinimumTimeout();
+	int32_t minTicks = get_minimum_timeout();
 	obj->IsNext2Expire = true;
 
 	// In case deadline too soon
-	if (obj->Timestamp < (GetTimerElapsedTime() + minTicks)) {
-		obj->Timestamp = GetTimerElapsedTime() + minTicks;
+	if (obj->Timestamp < (get_timer_elapsed_time() + minTicks)) {
+		obj->Timestamp = get_timer_elapsed_time() + minTicks;
 	}
-	SetAlarm(obj->Timestamp);
+	set_alarm(obj->Timestamp);
 }
 

@@ -10,7 +10,7 @@
 #include "board-config.h"
 #include "gpio-board.h"
 
-void GpioMcuInit(Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config,
+void gpio_mcu_init(Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config,
 		PinTypes type, uint32_t value) {
 	/*
 	 * #define GPIO_PORT_P1                                                          1
@@ -103,15 +103,15 @@ void GpioMcuInit(Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config,
 	} // Set as input if defined as input pin
 	else {
 		MAP_GPIO_setAsOutputPin(obj->portIndex, obj->pinIndex);
-		GpioMcuWrite(obj, value);
+		gpio_mcu_write(obj, value);
 	} // set as output and low else
 }
 
-void GpioMcuSetContext(Gpio_t *obj, void *context) {
+void gpio_mcu_set_context(Gpio_t *obj, void *context) {
 	obj->Context = context;
 }
 
-void GpioMcuSetInterrupt(Gpio_t *obj, IrqModes irqMode,
+void gpio_mcu_set_interrupt(Gpio_t *obj, IrqModes irqMode,
 		IrqPriorities irqPriority) {
 	/*
 	 #define INT_PORT1                                       (51)  PORT1 IRQ
@@ -168,11 +168,11 @@ void GpioMcuSetInterrupt(Gpio_t *obj, IrqModes irqMode,
 	}
 }
 
-void GpioMcuRemoveInterrupt(Gpio_t *obj) {
+void gpio_mcu_remove_interrupt(Gpio_t *obj) {
 	GPIO_disableInterrupt(obj->portIndex, obj->pinIndex);
 }
 
-void GpioMcuWrite(Gpio_t *obj, uint32_t value) {
+void gpio_mcu_write(Gpio_t *obj, uint32_t value) {
 	if (obj == NULL) {
 		while (1)
 			;
@@ -190,7 +190,7 @@ void GpioMcuWrite(Gpio_t *obj, uint32_t value) {
 	} // if value = 0 set low else set high.
 }
 
-void GpioMcuToggle(Gpio_t *obj) {
+void gpio_mcu_toggle(Gpio_t *obj) {
 	if (obj == NULL) {
 		while (1)
 			;
@@ -203,7 +203,7 @@ void GpioMcuToggle(Gpio_t *obj) {
 	GPIO_toggleOutputOnPin(obj->portIndex, obj->pinIndex);
 }
 
-uint32_t GpioMcuRead(Gpio_t *obj) {
+uint32_t gpio_mcu_read(Gpio_t *obj) {
 	if (obj == NULL) {
 		while (1)
 			;

@@ -1,0 +1,265 @@
+\hypertarget{board_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/board.c File Reference}
+\label{board_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/board.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/board.c}}
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/driverlib.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}utilities.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+gpio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+spi.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+timer.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}board-\/config.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}sx1276-\/board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+rtc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}my\+\_\+i2c.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{board_8c_a0f9e7aec44080ee7c4a4730f72d56d3f}{Board\+Critical\+Section\+Begin}} (uint32\+\_\+t $\ast$mask)
+\item 
+void \mbox{\hyperlink{board_8c_a7e1be95c29253206322b8f8e6a8369f8}{Board\+Critical\+Section\+End}} (uint32\+\_\+t $\ast$mask)
+\item 
+void \mbox{\hyperlink{board_8c_afb893aef7e39934775213ce840e47c52}{Board\+Init\+Periph}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the boards peripherals. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8c_a347d5531f83b4fc18dea083e1bccbc39}{Board\+Init\+Mcu}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes the mcu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8c_af3e241f8ae6def66e75dbac21ba74f94}{Board\+Reset\+Mcu}} (void)
+\begin{DoxyCompactList}\small\item\em Resets the mcu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8c_ac4a541fdc4e9de7386eec3ca50eb5641}{Board\+De\+Init\+Mcu}} (void)
+\begin{DoxyCompactList}\small\item\em De-\/initializes the target board peripherals to decrease power consumption. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{board_8c_a2eff9d2a07304c83f37c4b09dacf8b99}{Board\+Battery\+Measure\+Volage}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{board_8c_ac395dc5aa426e14bb6b7194371108f31}{Board\+Get\+Battery\+Voltage}} (void)
+\begin{DoxyCompactList}\small\item\em Measure the Battery voltage. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{board_8c_af76c87dec5209225d7e36c1af950c57d}{Board\+Get\+Battery\+Level}} (void)
+\begin{DoxyCompactList}\small\item\em Get the current battery level. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{board_8c_ae5d5a76d9302de65c632a10c6ddd51c9}{Get\+Board\+Power\+Source}} (void)
+\begin{DoxyCompactList}\small\item\em Get the board power source. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8c_afc0a73b7b1fc79d929d1cb8bb43e73d1}{System\+Clock\+Config}} (void)
+\begin{DoxyCompactList}\small\item\em configures the system clock \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{board_8c_a307e69f6614a8688ec7b144a09c5ec9f}{Led\+\_\+rgb\+\_\+red}}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{board_8c_a06a0b640a37d5a1058d63e1262832a18}{Led\+\_\+rgb\+\_\+green}}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{board_8c_aca235357ad14d7d18604e74d61b78ecb}{Led\+\_\+rgb\+\_\+blue}}
+\item 
+\mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} \mbox{\hyperlink{board_8c_ab73e2a92d033258457f7dbf0fd2f66d6}{Led\+\_\+user\+\_\+red}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{board_8c_a2eff9d2a07304c83f37c4b09dacf8b99}\label{board_8c_a2eff9d2a07304c83f37c4b09dacf8b99}} 
+\index{board.c@{board.c}!BoardBatteryMeasureVolage@{BoardBatteryMeasureVolage}}
+\index{BoardBatteryMeasureVolage@{BoardBatteryMeasureVolage}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardBatteryMeasureVolage()}{BoardBatteryMeasureVolage()}}
+{\footnotesize\ttfamily uint16\+\_\+t Board\+Battery\+Measure\+Volage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 105 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_a0f9e7aec44080ee7c4a4730f72d56d3f}\label{board_8c_a0f9e7aec44080ee7c4a4730f72d56d3f}} 
+\index{board.c@{board.c}!BoardCriticalSectionBegin@{BoardCriticalSectionBegin}}
+\index{BoardCriticalSectionBegin@{BoardCriticalSectionBegin}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardCriticalSectionBegin()}{BoardCriticalSectionBegin()}}
+{\footnotesize\ttfamily void Board\+Critical\+Section\+Begin (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{mask }\end{DoxyParamCaption})}
+
+Disable interrupts, begins critical section
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & mask Pointer to a variable where to store the CPU IRQ mask \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_a7e1be95c29253206322b8f8e6a8369f8}\label{board_8c_a7e1be95c29253206322b8f8e6a8369f8}} 
+\index{board.c@{board.c}!BoardCriticalSectionEnd@{BoardCriticalSectionEnd}}
+\index{BoardCriticalSectionEnd@{BoardCriticalSectionEnd}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardCriticalSectionEnd()}{BoardCriticalSectionEnd()}}
+{\footnotesize\ttfamily void Board\+Critical\+Section\+End (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{mask }\end{DoxyParamCaption})}
+
+Ends critical section
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+IN\mbox{]}} & mask Pointer to a variable where the CPU IRQ mask was stored \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 55 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_ac4a541fdc4e9de7386eec3ca50eb5641}\label{board_8c_ac4a541fdc4e9de7386eec3ca50eb5641}} 
+\index{board.c@{board.c}!BoardDeInitMcu@{BoardDeInitMcu}}
+\index{BoardDeInitMcu@{BoardDeInitMcu}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardDeInitMcu()}{BoardDeInitMcu()}}
+{\footnotesize\ttfamily void Board\+De\+Init\+Mcu (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+De-\/initializes the target board peripherals to decrease power consumption. 
+
+
+
+Definition at line 100 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_af76c87dec5209225d7e36c1af950c57d}\label{board_8c_af76c87dec5209225d7e36c1af950c57d}} 
+\index{board.c@{board.c}!BoardGetBatteryLevel@{BoardGetBatteryLevel}}
+\index{BoardGetBatteryLevel@{BoardGetBatteryLevel}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardGetBatteryLevel()}{BoardGetBatteryLevel()}}
+{\footnotesize\ttfamily uint8\+\_\+t Board\+Get\+Battery\+Level (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the current battery level. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & battery level \mbox{[} 0\+: USB, 1\+: Min level, x\+: level 254\+: fully charged, 255\+: Error\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 113 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_ac395dc5aa426e14bb6b7194371108f31}\label{board_8c_ac395dc5aa426e14bb6b7194371108f31}} 
+\index{board.c@{board.c}!BoardGetBatteryVoltage@{BoardGetBatteryVoltage}}
+\index{BoardGetBatteryVoltage@{BoardGetBatteryVoltage}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardGetBatteryVoltage()}{BoardGetBatteryVoltage()}}
+{\footnotesize\ttfamily uint32\+\_\+t Board\+Get\+Battery\+Voltage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Measure the Battery voltage. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & battery voltage in volts \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 109 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_a347d5531f83b4fc18dea083e1bccbc39}\label{board_8c_a347d5531f83b4fc18dea083e1bccbc39}} 
+\index{board.c@{board.c}!BoardInitMcu@{BoardInitMcu}}
+\index{BoardInitMcu@{BoardInitMcu}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardInitMcu()}{BoardInitMcu()}}
+{\footnotesize\ttfamily void Board\+Init\+Mcu (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the mcu. 
+
+
+
+Definition at line 63 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_afb893aef7e39934775213ce840e47c52}\label{board_8c_afb893aef7e39934775213ce840e47c52}} 
+\index{board.c@{board.c}!BoardInitPeriph@{BoardInitPeriph}}
+\index{BoardInitPeriph@{BoardInitPeriph}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardInitPeriph()}{BoardInitPeriph()}}
+{\footnotesize\ttfamily void Board\+Init\+Periph (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the boards peripherals. 
+
+
+
+Definition at line 59 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_af3e241f8ae6def66e75dbac21ba74f94}\label{board_8c_af3e241f8ae6def66e75dbac21ba74f94}} 
+\index{board.c@{board.c}!BoardResetMcu@{BoardResetMcu}}
+\index{BoardResetMcu@{BoardResetMcu}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{BoardResetMcu()}{BoardResetMcu()}}
+{\footnotesize\ttfamily void Board\+Reset\+Mcu (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Resets the mcu. 
+
+
+
+Definition at line 92 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_ae5d5a76d9302de65c632a10c6ddd51c9}\label{board_8c_ae5d5a76d9302de65c632a10c6ddd51c9}} 
+\index{board.c@{board.c}!GetBoardPowerSource@{GetBoardPowerSource}}
+\index{GetBoardPowerSource@{GetBoardPowerSource}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{GetBoardPowerSource()}{GetBoardPowerSource()}}
+{\footnotesize\ttfamily uint8\+\_\+t Get\+Board\+Power\+Source (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the board power source. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em value} & power source \mbox{[}0\+: USB\+\_\+\+POWER, 1\+: BATTERY\+\_\+\+POWER\mbox{]} \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 157 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_afc0a73b7b1fc79d929d1cb8bb43e73d1}\label{board_8c_afc0a73b7b1fc79d929d1cb8bb43e73d1}} 
+\index{board.c@{board.c}!SystemClockConfig@{SystemClockConfig}}
+\index{SystemClockConfig@{SystemClockConfig}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{SystemClockConfig()}{SystemClockConfig()}}
+{\footnotesize\ttfamily void System\+Clock\+Config (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+configures the system clock 
+
+
+
+Definition at line 166 of file board.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{board_8c_aca235357ad14d7d18604e74d61b78ecb}\label{board_8c_aca235357ad14d7d18604e74d61b78ecb}} 
+\index{board.c@{board.c}!Led\_rgb\_blue@{Led\_rgb\_blue}}
+\index{Led\_rgb\_blue@{Led\_rgb\_blue}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Led\_rgb\_blue}{Led\_rgb\_blue}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+rgb\+\_\+blue}
+
+
+
+Definition at line 24 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_a06a0b640a37d5a1058d63e1262832a18}\label{board_8c_a06a0b640a37d5a1058d63e1262832a18}} 
+\index{board.c@{board.c}!Led\_rgb\_green@{Led\_rgb\_green}}
+\index{Led\_rgb\_green@{Led\_rgb\_green}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Led\_rgb\_green}{Led\_rgb\_green}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+rgb\+\_\+green}
+
+
+
+Definition at line 23 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_a307e69f6614a8688ec7b144a09c5ec9f}\label{board_8c_a307e69f6614a8688ec7b144a09c5ec9f}} 
+\index{board.c@{board.c}!Led\_rgb\_red@{Led\_rgb\_red}}
+\index{Led\_rgb\_red@{Led\_rgb\_red}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Led\_rgb\_red}{Led\_rgb\_red}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+rgb\+\_\+red}
+
+LED GPIO pins objects 
+
+Definition at line 22 of file board.\+c.
+
+\mbox{\Hypertarget{board_8c_ab73e2a92d033258457f7dbf0fd2f66d6}\label{board_8c_ab73e2a92d033258457f7dbf0fd2f66d6}} 
+\index{board.c@{board.c}!Led\_user\_red@{Led\_user\_red}}
+\index{Led\_user\_red@{Led\_user\_red}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Led\_user\_red}{Led\_user\_red}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_gpio__t}{Gpio\+\_\+t}} Led\+\_\+user\+\_\+red}
+
+
+
+Definition at line 25 of file board.\+c.
+

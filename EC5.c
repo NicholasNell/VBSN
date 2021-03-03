@@ -25,7 +25,9 @@ volatile bool convertingFlag = false;
 volatile int currentSample = ADC_SAMPLE_COUNT;
 uint16_t valueArray[ADC_SAMPLE_COUNT + 1];
 
-void initADC( void ) {
+static float vwc;
+
+void init_adc( void ) {
 
 	// init power pin
 	GPIO_setAsOutputPin(EC5_POWER_PORT, EC5_POWER_PIN);
@@ -59,7 +61,7 @@ void initADC( void ) {
 	MAP_Interrupt_enableMaster();
 }
 
-float getVWC( ) {
+float get_vwc( ) {
 
 	GPIO_setOutputHighOnPin(EC5_POWER_PORT, EC5_POWER_PIN);
 
@@ -98,7 +100,12 @@ float getVWC( ) {
 
 	GPIO_setOutputLowOnPin(EC5_POWER_PORT, EC5_POWER_PIN);
 
-	return vwcValue * 100;
+	vwc = vwcValue * 100;
+	return vwc;
+}
+
+float get_latest_value( void ) {
+	return vwc;
 }
 
 void ADC14_IRQHandler( void ) {
@@ -115,3 +122,4 @@ void ADC14_IRQHandler( void ) {
 	}
 
 }
+

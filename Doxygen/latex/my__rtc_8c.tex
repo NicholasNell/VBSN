@@ -1,0 +1,123 @@
+\hypertarget{my__rtc_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/my\+\_\+rtc.c File Reference}
+\label{my__rtc_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_rtc.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/my\_rtc.c}}
+{\ttfamily \#include $<$my\+\_\+scheduler.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/gpio.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/interrupt.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rom\+\_\+map.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/rtc\+\_\+c.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{my__rtc_8c_a055d67a7f39b9ba5e3fa9644c5001c8e}{Rtc\+Init}} ()
+\item 
+void \mbox{\hyperlink{my__rtc_8c_a5091b35e99bbe8999e4b634d5adc0f8b}{RTC\+\_\+\+C\+\_\+\+IRQHandler}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{my__rtc_8c_a4545c2e8c4a99258e032bcfdfb97726a}{set\+Time\+Flag}}
+\item 
+bool \mbox{\hyperlink{my__rtc_8c_acd432575911f1df6cd5094a882f20e95}{mac\+Flag}} = false
+\item 
+bool \mbox{\hyperlink{my__rtc_8c_a1903a4fa60ef039c429c376a623419c1}{sched\+Flag}} = false
+\item 
+bool \mbox{\hyperlink{my__rtc_8c_a6aed47e45faef43e24ae4169a14bcee8}{rtc\+Init\+Flag}} = false
+\item 
+bool \mbox{\hyperlink{my__rtc_8c_af4a1086c40862e0744efc488a9549fa6}{gps\+Wake\+Flag}}
+\item 
+RTC\+\_\+\+C\+\_\+\+Calendar \mbox{\hyperlink{my__rtc_8c_a7603e92cd5154e676532cd41ec1802be}{current\+Time}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Simple RTC Config\mbox{]} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{my__rtc_8c_a5091b35e99bbe8999e4b634d5adc0f8b}\label{my__rtc_8c_a5091b35e99bbe8999e4b634d5adc0f8b}} 
+\index{my\_rtc.c@{my\_rtc.c}!RTC\_C\_IRQHandler@{RTC\_C\_IRQHandler}}
+\index{RTC\_C\_IRQHandler@{RTC\_C\_IRQHandler}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{RTC\_C\_IRQHandler()}{RTC\_C\_IRQHandler()}}
+{\footnotesize\ttfamily void RTC\+\_\+\+C\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 59 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{my__rtc_8c_a055d67a7f39b9ba5e3fa9644c5001c8e}\label{my__rtc_8c_a055d67a7f39b9ba5e3fa9644c5001c8e}} 
+\index{my\_rtc.c@{my\_rtc.c}!RtcInit@{RtcInit}}
+\index{RtcInit@{RtcInit}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{RtcInit()}{RtcInit()}}
+{\footnotesize\ttfamily void Rtc\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{[}Simple RTC Example\mbox{]}
+
+\mbox{[}Simple RTC Example\mbox{]}
+
+Definition at line 28 of file my\+\_\+rtc.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{my__rtc_8c_a7603e92cd5154e676532cd41ec1802be}\label{my__rtc_8c_a7603e92cd5154e676532cd41ec1802be}} 
+\index{my\_rtc.c@{my\_rtc.c}!currentTime@{currentTime}}
+\index{currentTime@{currentTime}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{currentTime}{currentTime}}
+{\footnotesize\ttfamily RTC\+\_\+\+C\+\_\+\+Calendar current\+Time}
+
+
+
+\mbox{[}Simple RTC Config\mbox{]} 
+
+
+
+Definition at line 26 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{my__rtc_8c_af4a1086c40862e0744efc488a9549fa6}\label{my__rtc_8c_af4a1086c40862e0744efc488a9549fa6}} 
+\index{my\_rtc.c@{my\_rtc.c}!gpsWakeFlag@{gpsWakeFlag}}
+\index{gpsWakeFlag@{gpsWakeFlag}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{gpsWakeFlag}{gpsWakeFlag}}
+{\footnotesize\ttfamily bool gps\+Wake\+Flag\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 96 of file main.\+c.
+
+\mbox{\Hypertarget{my__rtc_8c_acd432575911f1df6cd5094a882f20e95}\label{my__rtc_8c_acd432575911f1df6cd5094a882f20e95}} 
+\index{my\_rtc.c@{my\_rtc.c}!macFlag@{macFlag}}
+\index{macFlag@{macFlag}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{macFlag}{macFlag}}
+{\footnotesize\ttfamily bool mac\+Flag = false}
+
+
+
+Definition at line 19 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{my__rtc_8c_a6aed47e45faef43e24ae4169a14bcee8}\label{my__rtc_8c_a6aed47e45faef43e24ae4169a14bcee8}} 
+\index{my\_rtc.c@{my\_rtc.c}!rtcInitFlag@{rtcInitFlag}}
+\index{rtcInitFlag@{rtcInitFlag}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{rtcInitFlag}{rtcInitFlag}}
+{\footnotesize\ttfamily bool rtc\+Init\+Flag = false}
+
+
+
+Definition at line 21 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{my__rtc_8c_a1903a4fa60ef039c429c376a623419c1}\label{my__rtc_8c_a1903a4fa60ef039c429c376a623419c1}} 
+\index{my\_rtc.c@{my\_rtc.c}!schedFlag@{schedFlag}}
+\index{schedFlag@{schedFlag}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{schedFlag}{schedFlag}}
+{\footnotesize\ttfamily bool sched\+Flag = false}
+
+
+
+Definition at line 20 of file my\+\_\+rtc.\+c.
+
+\mbox{\Hypertarget{my__rtc_8c_a4545c2e8c4a99258e032bcfdfb97726a}\label{my__rtc_8c_a4545c2e8c4a99258e032bcfdfb97726a}} 
+\index{my\_rtc.c@{my\_rtc.c}!setTimeFlag@{setTimeFlag}}
+\index{setTimeFlag@{setTimeFlag}!my\_rtc.c@{my\_rtc.c}}
+\doxysubsubsection{\texorpdfstring{setTimeFlag}{setTimeFlag}}
+{\footnotesize\ttfamily bool set\+Time\+Flag}
+
+
+
+Definition at line 18 of file my\+\_\+rtc.\+c.
+

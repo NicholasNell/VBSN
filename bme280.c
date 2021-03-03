@@ -1521,7 +1521,7 @@ static int8_t null_ptr_check(const struct bme280_dev *dev) {
 	return rslt;
 }
 
-int8_t bme280UserInit(struct bme280_dev *dev, struct bme280_data *comp_data) {
+int8_t bme280_user_init(struct bme280_dev *dev, struct bme280_data *comp_data) {
 	BME280_ON
 
 	BME280_CS_HIGH;
@@ -1561,7 +1561,7 @@ int8_t bme280UserInit(struct bme280_dev *dev, struct bme280_data *comp_data) {
 	return rslt;
 }
 
-void bme280GetData(struct bme280_dev *dev, struct bme280_data *comp_data) {
+void bme280_get_data(struct bme280_dev *dev, struct bme280_data *comp_data) {
 	BME280_ON
 	uint32_t req_delay;
 	req_delay = bme280_cal_meas_delay(&dev->settings);

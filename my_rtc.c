@@ -25,7 +25,7 @@ extern bool gpsWakeFlag;
 //Time is Saturday, November 12th 1955 10:03:00 PM
 RTC_C_Calendar currentTime;
 
-void RtcInit( ) {
+void rtc_init( ) {
 
 	//![Simple RTC Example]
 	/* Initializing RTC with current time as described in time in
@@ -64,10 +64,10 @@ void RTC_C_IRQHandler( void ) {
 
 	if (rtcInitFlag) {
 		schedFlag = true;
-		incrementSlotCount();
+		increment_slot_count();
 
-		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
-			setSlotCount(0);
+		if (get_slot_count() == MAX_SLOT_COUNT + 1) {
+			set_slot_count(0);
 		}
 
 	}
@@ -82,7 +82,7 @@ void RTC_C_IRQHandler( void ) {
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 //		gpsWakeFlag = true;
-		setSlotCount(0);
+		set_slot_count(0);
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {

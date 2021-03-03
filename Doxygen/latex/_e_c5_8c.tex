@@ -1,0 +1,119 @@
+\hypertarget{_e_c5_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/\+EC5.c File Reference}
+\label{_e_c5_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/EC5.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/EC5.c}}
+
+
+Created on\+: 04 Feb 2021 Author\+: njnel.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/driverlib/driverlib.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}EC5.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$my\+\_\+gpio.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}{ADC\+\_\+\+SAMPLE\+\_\+\+COUNT}}~10
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_e_c5_8c_ab2c32ec4ad7ae2f2a46c86a5283b0885}{init\+ADC}} (void)
+\item 
+float \mbox{\hyperlink{_e_c5_8c_a783373057cfa8d056b9150f3b8905838}{get\+VWC}} ()
+\item 
+void \mbox{\hyperlink{_e_c5_8c_a9fa2875556d48df2ba3c9c148667b8f5}{ADC14\+\_\+\+IRQHandler}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+volatile bool \mbox{\hyperlink{_e_c5_8c_a0f97834efaa4442269b359220d3a0cb8}{converting\+Flag}} = false
+\item 
+volatile int \mbox{\hyperlink{_e_c5_8c_a3b42b7039795822ee5ad65cbecface61}{current\+Sample}} = \mbox{\hyperlink{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}{ADC\+\_\+\+SAMPLE\+\_\+\+COUNT}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{_e_c5_8c_acd848f37149f5cb77abdc30e8bd7a821}{value\+Array}} \mbox{[}\mbox{\hyperlink{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}{ADC\+\_\+\+SAMPLE\+\_\+\+COUNT}}+1\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Created on\+: 04 Feb 2021 Author\+: njnel. 
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}\label{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}} 
+\index{EC5.c@{EC5.c}!ADC\_SAMPLE\_COUNT@{ADC\_SAMPLE\_COUNT}}
+\index{ADC\_SAMPLE\_COUNT@{ADC\_SAMPLE\_COUNT}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{ADC\_SAMPLE\_COUNT}{ADC\_SAMPLE\_COUNT}}
+{\footnotesize\ttfamily \#define ADC\+\_\+\+SAMPLE\+\_\+\+COUNT~10}
+
+
+
+Definition at line 17 of file EC5.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_e_c5_8c_a9fa2875556d48df2ba3c9c148667b8f5}\label{_e_c5_8c_a9fa2875556d48df2ba3c9c148667b8f5}} 
+\index{EC5.c@{EC5.c}!ADC14\_IRQHandler@{ADC14\_IRQHandler}}
+\index{ADC14\_IRQHandler@{ADC14\_IRQHandler}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{ADC14\_IRQHandler()}{ADC14\_IRQHandler()}}
+{\footnotesize\ttfamily void ADC14\+\_\+\+IRQHandler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 104 of file EC5.\+c.
+
+\mbox{\Hypertarget{_e_c5_8c_a783373057cfa8d056b9150f3b8905838}\label{_e_c5_8c_a783373057cfa8d056b9150f3b8905838}} 
+\index{EC5.c@{EC5.c}!getVWC@{getVWC}}
+\index{getVWC@{getVWC}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{getVWC()}{getVWC()}}
+{\footnotesize\ttfamily float get\+VWC (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 62 of file EC5.\+c.
+
+\mbox{\Hypertarget{_e_c5_8c_ab2c32ec4ad7ae2f2a46c86a5283b0885}\label{_e_c5_8c_ab2c32ec4ad7ae2f2a46c86a5283b0885}} 
+\index{EC5.c@{EC5.c}!initADC@{initADC}}
+\index{initADC@{initADC}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{initADC()}{initADC()}}
+{\footnotesize\ttfamily void init\+ADC (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file EC5.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{_e_c5_8c_a0f97834efaa4442269b359220d3a0cb8}\label{_e_c5_8c_a0f97834efaa4442269b359220d3a0cb8}} 
+\index{EC5.c@{EC5.c}!convertingFlag@{convertingFlag}}
+\index{convertingFlag@{convertingFlag}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{convertingFlag}{convertingFlag}}
+{\footnotesize\ttfamily volatile bool converting\+Flag = false}
+
+
+
+Definition at line 23 of file EC5.\+c.
+
+\mbox{\Hypertarget{_e_c5_8c_a3b42b7039795822ee5ad65cbecface61}\label{_e_c5_8c_a3b42b7039795822ee5ad65cbecface61}} 
+\index{EC5.c@{EC5.c}!currentSample@{currentSample}}
+\index{currentSample@{currentSample}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{currentSample}{currentSample}}
+{\footnotesize\ttfamily volatile int current\+Sample = \mbox{\hyperlink{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}{ADC\+\_\+\+SAMPLE\+\_\+\+COUNT}}}
+
+
+
+Definition at line 25 of file EC5.\+c.
+
+\mbox{\Hypertarget{_e_c5_8c_acd848f37149f5cb77abdc30e8bd7a821}\label{_e_c5_8c_acd848f37149f5cb77abdc30e8bd7a821}} 
+\index{EC5.c@{EC5.c}!valueArray@{valueArray}}
+\index{valueArray@{valueArray}!EC5.c@{EC5.c}}
+\doxysubsubsection{\texorpdfstring{valueArray}{valueArray}}
+{\footnotesize\ttfamily uint16\+\_\+t value\+Array\mbox{[}\mbox{\hyperlink{_e_c5_8c_ae7a0ec92cb106e4b14bdfaa49e37cf47}{ADC\+\_\+\+SAMPLE\+\_\+\+COUNT}}+1\mbox{]}}
+
+
+
+Definition at line 26 of file EC5.\+c.
+

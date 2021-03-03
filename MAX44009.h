@@ -1,4 +1,4 @@
-/*
+/*!
  * MAX44009.h
  *
  *  Created on: 08 Sep 2020
@@ -32,8 +32,10 @@
 #define MAX44009_ON {MAX44009_POWER_PORT->DIR |= MAX44009_POWER_PIN;	MAX44009_POWER_PORT->OUT |= MAX44009_POWER_PIN;}
 #define MAX44009_OFF {MAX44009_POWER_PORT->OUT &= ~MAX44009_POWER_PIN;}
 
-bool initMAX( );
-void getLight( );
-float getLux( );
+//!
+//! @return bool, true if max is succesfully found
+bool init_max( );
+void get_light( );
+float get_lux( );
 
 #endif /* MAX44009_H_ */

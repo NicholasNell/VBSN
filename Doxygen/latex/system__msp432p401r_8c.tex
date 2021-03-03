@@ -1,0 +1,179 @@
+\hypertarget{system__msp432p401r_8c}{}\doxysection{C\+:/\+Users/njnel/\+One\+Drive -\/ Stellenbosch University/\+Vineyard Based Sensor Networks/\+Meesters/system\+\_\+msp432p401r.c File Reference}
+\label{system__msp432p401r_8c}\index{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/system\_msp432p401r.c@{C:/Users/njnel/OneDrive -\/ Stellenbosch University/Vineyard Based Sensor Networks/Meesters/system\_msp432p401r.c}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$ti/devices/msp432p4xx/inc/msp.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_a953f92082c4bed296ec8768e3bbb73c0}{\+\_\+\+\_\+\+HALT\+\_\+\+WDT}}~1
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_a16323f44d2b5b11ef3972f71339cbd39}{\+\_\+\+\_\+\+SYSTEM\+\_\+\+CLOCK}}~1500000
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_a4cd753020e62987e5c632d82a6b949dd}{\+\_\+\+\_\+\+REGULATOR}}~0
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_a8a57714938e1d686dd8f3004316102a6}{\+\_\+\+\_\+\+VLOCLK}}~9400
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_a088db3267bd1420ed4bc86937fafffa3}{\+\_\+\+\_\+\+MODCLK}}~24000000
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_acad078c200183a4ae03e352ba567ebd3}{\+\_\+\+\_\+\+LFXT}}~32768
+\item 
+\#define \mbox{\hyperlink{system__msp432p401r_8c_a5647632cf1807bb955db0cebfdedb5bf}{\+\_\+\+\_\+\+HFXT}}~48000000
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{system__msp432p401r_8c_ae0c36a9591fe6e9c45ecb21a794f0f0f}{System\+Core\+Clock\+Update}} (void)
+\begin{DoxyCompactList}\small\item\em Updates the System\+Core\+Clock with current core Clock retrieved from cpu registers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{system__msp432p401r_8c_a93f514700ccf00d08dbdcff7f1224eb2}{System\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Setup the microcontroller system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{system__msp432p401r_8c_aa3cd3e43291e81e795d642b79b6088e6}{System\+Core\+Clock}} = \mbox{\hyperlink{system__msp432p401r_8c_a16323f44d2b5b11ef3972f71339cbd39}{\+\_\+\+\_\+\+SYSTEM\+\_\+\+CLOCK}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{system__msp432p401r_8c_a953f92082c4bed296ec8768e3bbb73c0}\label{system__msp432p401r_8c_a953f92082c4bed296ec8768e3bbb73c0}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_HALT\_WDT@{\_\_HALT\_WDT}}
+\index{\_\_HALT\_WDT@{\_\_HALT\_WDT}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_HALT\_WDT}{\_\_HALT\_WDT}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+HALT\+\_\+\+WDT~1}
+
+
+
+Definition at line 62 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_a5647632cf1807bb955db0cebfdedb5bf}\label{system__msp432p401r_8c_a5647632cf1807bb955db0cebfdedb5bf}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_HFXT@{\_\_HFXT}}
+\index{\_\_HFXT@{\_\_HFXT}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_HFXT}{\_\_HFXT}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+HFXT~48000000}
+
+
+
+Definition at line 85 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_acad078c200183a4ae03e352ba567ebd3}\label{system__msp432p401r_8c_acad078c200183a4ae03e352ba567ebd3}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_LFXT@{\_\_LFXT}}
+\index{\_\_LFXT@{\_\_LFXT}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_LFXT}{\_\_LFXT}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+LFXT~32768}
+
+
+
+Definition at line 84 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_a088db3267bd1420ed4bc86937fafffa3}\label{system__msp432p401r_8c_a088db3267bd1420ed4bc86937fafffa3}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_MODCLK@{\_\_MODCLK}}
+\index{\_\_MODCLK@{\_\_MODCLK}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_MODCLK}{\_\_MODCLK}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+MODCLK~24000000}
+
+
+
+Definition at line 83 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_a4cd753020e62987e5c632d82a6b949dd}\label{system__msp432p401r_8c_a4cd753020e62987e5c632d82a6b949dd}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_REGULATOR@{\_\_REGULATOR}}
+\index{\_\_REGULATOR@{\_\_REGULATOR}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_REGULATOR}{\_\_REGULATOR}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+REGULATOR~0}
+
+
+
+Definition at line 77 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_a16323f44d2b5b11ef3972f71339cbd39}\label{system__msp432p401r_8c_a16323f44d2b5b11ef3972f71339cbd39}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_SYSTEM\_CLOCK@{\_\_SYSTEM\_CLOCK}}
+\index{\_\_SYSTEM\_CLOCK@{\_\_SYSTEM\_CLOCK}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_SYSTEM\_CLOCK}{\_\_SYSTEM\_CLOCK}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+SYSTEM\+\_\+\+CLOCK~1500000}
+
+
+
+Definition at line 71 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_a8a57714938e1d686dd8f3004316102a6}\label{system__msp432p401r_8c_a8a57714938e1d686dd8f3004316102a6}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!\_\_VLOCLK@{\_\_VLOCLK}}
+\index{\_\_VLOCLK@{\_\_VLOCLK}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{\_\_VLOCLK}{\_\_VLOCLK}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+VLOCLK~9400}
+
+
+
+Definition at line 82 of file system\+\_\+msp432p401r.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{system__msp432p401r_8c_ae0c36a9591fe6e9c45ecb21a794f0f0f}\label{system__msp432p401r_8c_ae0c36a9591fe6e9c45ecb21a794f0f0f}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!SystemCoreClockUpdate@{SystemCoreClockUpdate}}
+\index{SystemCoreClockUpdate@{SystemCoreClockUpdate}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{SystemCoreClockUpdate()}{SystemCoreClockUpdate()}}
+{\footnotesize\ttfamily void System\+Core\+Clock\+Update (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Updates the System\+Core\+Clock with current core Clock retrieved from cpu registers. 
+
+Update System\+Core\+Clock variable
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+
+Definition at line 101 of file system\+\_\+msp432p401r.\+c.
+
+\mbox{\Hypertarget{system__msp432p401r_8c_a93f514700ccf00d08dbdcff7f1224eb2}\label{system__msp432p401r_8c_a93f514700ccf00d08dbdcff7f1224eb2}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!SystemInit@{SystemInit}}
+\index{SystemInit@{SystemInit}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{SystemInit()}{SystemInit()}}
+{\footnotesize\ttfamily void System\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Setup the microcontroller system. 
+
+Initialize the system
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none
+\end{DoxyReturn}
+Performs the following initialization steps\+:
+\begin{DoxyEnumerate}
+\item Enables the FPU
+\item Halts the WDT if requested
+\item Enables all SRAM banks
+\item Sets up power regulator and VCORE
+\item Enable Flash wait states if needed
+\item Change MCLK to desired frequency
+\item Enable Flash read buffering 
+\end{DoxyEnumerate}
+
+Definition at line 262 of file system\+\_\+msp432p401r.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{system__msp432p401r_8c_aa3cd3e43291e81e795d642b79b6088e6}\label{system__msp432p401r_8c_aa3cd3e43291e81e795d642b79b6088e6}} 
+\index{system\_msp432p401r.c@{system\_msp432p401r.c}!SystemCoreClock@{SystemCoreClock}}
+\index{SystemCoreClock@{SystemCoreClock}!system\_msp432p401r.c@{system\_msp432p401r.c}}
+\doxysubsubsection{\texorpdfstring{SystemCoreClock}{SystemCoreClock}}
+{\footnotesize\ttfamily uint32\+\_\+t System\+Core\+Clock = \mbox{\hyperlink{system__msp432p401r_8c_a16323f44d2b5b11ef3972f71339cbd39}{\+\_\+\+\_\+\+SYSTEM\+\_\+\+CLOCK}}}
+
+System Clock Frequency (Core Clock) 
+
+Definition at line 90 of file system\+\_\+msp432p401r.\+c.
+
