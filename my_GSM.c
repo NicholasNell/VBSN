@@ -1,4 +1,5 @@
 #include <bme280_defs.h>
+#include <datagram.h>
 #include <EC5.h>
 #include <helper.h>
 #include <my_GSM.h>
@@ -97,9 +98,11 @@ bool init_gsm( void ) {
 //		modem_start();
 		send_msg(DISABLE_FLOW_CONTROL);	// disable flow control
 		wait_check_for_reply(RESPONSE_OK, 1);
+		delay_ms(500);
 		send_msg(DEFINE_PDP_CONTEXT);	// Define PDP context
 		wait_check_for_reply(RESPONSE_OK, 1);
-		send_msg(HTTP_CONFIG_THINGSPEAK);
+		delay_ms(500);
+		send_msg(HTTP_CONFIG_THINGSBOARD);
 		wait_check_for_reply(RESPONSE_OK, 1);
 		return true;
 	}
@@ -494,6 +497,8 @@ void http_send_data( void ) {
 //	gsmPowerSaveON();
 }
 
+extern nodeAddress _nodeID;
+extern LocationData gpsData;
 void gsm_upload_my_data( ) {
 	/*
 	 * field1 = temp
@@ -510,28 +515,45 @@ void gsm_upload_my_data( ) {
 	double localLight = get_lux();
 	char *api_key = TEST_API_KEY;
 	char postBody[SIZE_BUFFER];
+//	int lenWritten =
+//			sprintf(
+//					postBody,
+//					"api_key=%s&field1=%.1f&field2=%.1f&field3=%.1f&field4=%.1f&field5=%.1f\r\n",
+//					api_key,
+//					localTemperature,
+//					localHumidity,
+//					localPressure,
+//					localLight,
+//					localVWC);
+
 	int lenWritten =
 			sprintf(
 					postBody,
-					"api_key=%s&field1=%.1f&field2=%.1f&field3=%.1f&field4=%.1f&field5=%.1f\r\n",
-					api_key,
+					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f}\r\n",
+					_nodeID,
 					localTemperature,
 					localHumidity,
 					localPressure,
+					localVWC,
 					localLight,
-					localVWC);
+					gpsData.lat,
+					gpsData.lon);
 	char postCommand[SIZE_BUFFER];
 	sprintf(
 			postCommand,
-			"AT#HTTPSND=1,0,\"https://api.thingspeak.com/update\",%d\r\n",
+			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
+			ACCESS_TOKEN,
 			lenWritten);
-
+	delay_ms(500);
 	send_msg(CONTEXT_ACTIVATION);
 	wait_check_for_reply("OK", 2);
+	delay_ms(500);
 	send_msg(postCommand);
 	wait_check_for_reply(">>>", 5);
+	delay_ms(500);
 	send_msg(postBody);
 	wait_check_for_reply("OK", 5);
+	delay_ms(500);
 	send_msg(CONTEXT_DEACTIVATION);
 	wait_check_for_reply("OK", 1);
 

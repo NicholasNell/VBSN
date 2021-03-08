@@ -21,12 +21,14 @@
 #define ERROR   2          // 3 <-- Required
 
 #define TEST_API_KEY "8DXP0M9I0CD8Y8PK"
+#define ACCESS_TOKEN "TXtBD0VH60mdBvvtMJHk"
 
 // GSM Module Common Messages
 #define AT "AT\n"
 #define CONTEXT_ACTIVATION "AT#SGACT=1,1\r\n"
 #define CONTEXT_DEACTIVATION "AT#SGACT=1,0\r\n"
 #define HTTP_CONFIG_THINGSPEAK "AT#HTTPCFG=1,\"api.thingspeak.com\",80,0,,,0,120,1\r\n"
+#define HTTP_CONFIG_THINGSBOARD "AT#HTTPCFG=1,\"meesters.ddns.net\",8008,0,,,0,120,1\r\n"
 #define DEFINE_PDP_CONTEXT "AT+CGDCONT=1,\"IP\",\"internet\",\"0.0.0.0\",0,0\r\n"
 #define RESPONSE_OK "OK"
 #define DISABLE_FLOW_CONTROL "AT&K=0\r\n"

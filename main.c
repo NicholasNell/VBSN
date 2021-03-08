@@ -268,6 +268,7 @@ int main( void ) {
 
 	// Volumetric Water Content Sensor
 	get_vwc();
+	delay_ms(2000);
 
 	init_scheduler();
 
@@ -283,7 +284,6 @@ int main( void ) {
 	MAP_WDT_A_startTimer();
 
 	while (1) {
-		MAP_WDT_A_clearTimer();
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();

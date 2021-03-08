@@ -33,7 +33,7 @@ void rtc_init( ) {
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 
 	/* Specify an interrupt to assert every minute */
-	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
+	RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
 
 	RTC_C_setCalendarAlarm(RTC_C_ALARMCONDITION_OFF, 0x12,
 	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
@@ -82,7 +82,7 @@ void RTC_C_IRQHandler( void ) {
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 //		gpsWakeFlag = true;
-		set_slot_count(0);
+//		set_slot_count(0);
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
