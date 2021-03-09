@@ -56,10 +56,22 @@ static void UartGPSCommands( );
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 
 //UART configured for 9600 Baud
-const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
+const eUSCI_UART_ConfigV1 uartConfigGps = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
 		9,                                     // BRDIV = 9
 		12,                                       // UCxBRF = 12
 		34,                                       // UCxBRS = 34
+		EUSCI_A_UART_NO_PARITY,                  // No Parity
+		EUSCI_A_UART_LSB_FIRST,                  // LSB First
+		EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
+		EUSCI_A_UART_MODE,                       // UART mode
+		EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION,  // Oversampling
+		EUSCI_A_UART_8_BIT_LEN                  // 8 bit data length
+		};
+
+const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
+		1,                                     // BRDIV = 9
+		10,                                       // UCxBRF = 12
+		0,                                       // UCxBRS = 34
 		EUSCI_A_UART_NO_PARITY,                  // No Parity
 		EUSCI_A_UART_LSB_FIRST,                  // LSB First
 		EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
@@ -77,7 +89,7 @@ void uart_init_gps( ) {
 	UART_GPS_PORT,
 	UART_GPS_PINS,
 	GPIO_PRIMARY_MODULE_FUNCTION);
-	MAP_UART_initModule(UART_GPS_MODULE, &uartConfig);
+	MAP_UART_initModule(UART_GPS_MODULE, &uartConfigGps);
 	MAP_UART_enableModule(UART_GPS_MODULE);
 
 	// PPS signal

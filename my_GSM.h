@@ -13,7 +13,7 @@
 #include <stdint.h>
 /* DriverLib Includes */
 //#include "driverlib.h"
-#define SIZE_BUFFER 255
+#define SIZE_BUFFER 254
 #define SIZE_COMMAND    10   // Sets the Max command Length including '\0'
 #define TOTAL_STRINGS    7   // Total number of Searchable strings
 #define OK       0          // 1 <-- Required

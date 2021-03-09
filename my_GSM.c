@@ -46,17 +46,26 @@ void GSM_disable( void );
  }
  }*/
 
+//const eUSCI_UART_ConfigV1 uartConfigGSM = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
+//		78,                                     // BRDIV = 78
+//		2,                                       // UCxBRF = 2
+//		0,                                       // UCxBRS = 0
+//		EUSCI_A_UART_NO_PARITY,                  // No Parity
+//		EUSCI_A_UART_LSB_FIRST,                  // LSB First
+//		EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
+//		EUSCI_A_UART_MODE,                       // UART mode
+//		EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
+//		};
 const eUSCI_UART_ConfigV1 uartConfigGSM = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
-		78,                                     // BRDIV = 78
-		2,                                       // UCxBRF = 2
+		1,                                     // BRDIV = 78
+		10,                                       // UCxBRF = 2
 		0,                                       // UCxBRS = 0
 		EUSCI_A_UART_NO_PARITY,                  // No Parity
 		EUSCI_A_UART_LSB_FIRST,                  // LSB First
 		EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
-		EUSCI_A_UART_MODE,                       // UART mode
-		EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
+		EUSCI_A_UART_MODE,             // UART mode
+		EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION // Oversampling
 		};
-
 void GSM_disable( void ) {
 	GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3);
 	GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3);
@@ -96,6 +105,10 @@ bool init_gsm( void ) {
 
 	if (retval) {
 //		modem_start();
+//		send_msg("AT&F0\r\n");
+//		wait_check_for_reply(RESPONSE_OK, 1);
+		send_msg("ATZ0\r\n");
+		wait_check_for_reply(RESPONSE_OK, 1);
 		send_msg(DISABLE_FLOW_CONTROL);	// disable flow control
 		wait_check_for_reply(RESPONSE_OK, 1);
 		delay_ms(500);
@@ -104,6 +117,7 @@ bool init_gsm( void ) {
 		delay_ms(500);
 		send_msg(HTTP_CONFIG_THINGSBOARD);
 		wait_check_for_reply(RESPONSE_OK, 1);
+
 		return true;
 	}
 	else {
@@ -132,12 +146,12 @@ void EUSCIA2_IRQHandler( void ) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
 		UartGSMRX[counter_read_gsm] = MAP_UART_receiveData(EUSCI_A2_BASE);
-//		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
+		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
 		counter_read_gsm++;
 	}
 	//if(counter_read_gsm == 80)
 	// 	counter_read_gsm=0;
-	if (counter_read_gsm == 80) {
+	if (counter_read_gsm == SIZE_BUFFER) {
 		counter_read_gsm = 0;
 	}
 }
@@ -328,7 +342,7 @@ bool wait_check_for_reply( char *reply, uint8_t delay_s ) {
 			stop_systick();
 			return true;
 		}
-//		Delayms(50);
+		delay_ms(10);
 	} while (!systimer_ready_check());
 	return false;
 }
@@ -499,7 +513,12 @@ void http_send_data( void ) {
 
 extern nodeAddress _nodeID;
 extern LocationData gpsData;
+static float loc = 0;
 void gsm_upload_my_data( ) {
+
+	if (loc > 90) {
+		loc = 0;
+	}
 	/*
 	 * field1 = temp
 	 * field2 = humidity
@@ -513,8 +532,9 @@ void gsm_upload_my_data( ) {
 	double localPressure = bme280Data.pressure;
 	double localVWC = get_latest_value();
 	double localLight = get_lux();
-	char *api_key = TEST_API_KEY;
-	char postBody[SIZE_BUFFER];
+//	char *api_key = TEST_API_KEY;
+	char postBody[255];
+	memset(postBody, 0, 255);
 //	int lenWritten =
 //			sprintf(
 //					postBody,
@@ -536,25 +556,41 @@ void gsm_upload_my_data( ) {
 					localPressure,
 					localVWC,
 					localLight,
-					gpsData.lat,
-					gpsData.lon);
-	char postCommand[SIZE_BUFFER];
+					loc++,
+					loc);
+//	int lenWritten = sprintf(
+//			postBody,
+//			"{\"nodeID\": %d,\"Temperature\":%.1f}\r\n",
+//			_nodeID,
+//			localTemperature);
+	char postCommand[255];
+	memset(postCommand, 0, 255);
 	sprintf(
 			postCommand,
 			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
 			ACCESS_TOKEN,
 			lenWritten);
-	delay_ms(500);
+
 	send_msg(CONTEXT_ACTIVATION);
-	wait_check_for_reply("OK", 2);
-	delay_ms(500);
+//	if (!wait_check_for_reply("OK", 1)) {
+//
+//	}
+	delay_ms(1000);
 	send_msg(postCommand);
-	wait_check_for_reply(">>>", 5);
-	delay_ms(500);
+//	if (!wait_check_for_reply(">>>", 5)) {
+//
+//	}
+//	delay_ms(2000);
+	delay_ms(5000);
 	send_msg(postBody);
-	wait_check_for_reply("OK", 5);
-	delay_ms(500);
+//	if (!wait_check_for_reply("OK", 5)) {
+////		return;
+//	}
+//	delay_ms(2000);
+	delay_ms(5000);
 	send_msg(CONTEXT_DEACTIVATION);
-	wait_check_for_reply("OK", 1);
+//	if (!wait_check_for_reply("OK", 1)) {
+////		return;
+//	}
 
 }

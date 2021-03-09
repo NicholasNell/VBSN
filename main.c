@@ -198,6 +198,7 @@ void radio_init( ) {
 }
 
 extern volatile MACappState_t MACState;
+extern bool uploadOwnData;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -234,6 +235,7 @@ int main( void ) {
 
 	if (hasGSM) {
 		isRoot = true;
+		gpio_toggle(&Led_rgb_green);
 	}
 	else {
 		isRoot = false;
@@ -288,6 +290,11 @@ int main( void ) {
 			schedFlag = false;
 			scheduler();
 			MAP_WDT_A_clearTimer();
+		}
+
+		if (uploadOwnData) {
+			gsm_upload_my_data();
+			uploadOwnData = false;
 		}
 
 		if (gpsWakeFlag) {
