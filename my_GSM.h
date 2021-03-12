@@ -13,7 +13,7 @@
 #include <stdint.h>
 /* DriverLib Includes */
 //#include "driverlib.h"
-#define SIZE_BUFFER 254
+#define SIZE_BUFFER 500
 #define SIZE_COMMAND    10   // Sets the Max command Length including '\0'
 #define TOTAL_STRINGS    7   // Total number of Searchable strings
 #define OK       0          // 1 <-- Required
@@ -98,5 +98,9 @@ void disable_command_echo( void );
 //!
 //! Uploads the data collected by this node only.
 void gsm_upload_my_data( );
+
+//!
+//! Uploads all stored datagrams to the database
+void gsm_upload_stored_datagrams( void );
 
 #endif /* MY_GSMMODEM_H_ */

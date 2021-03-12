@@ -113,17 +113,17 @@ extern bool netOp;
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
  */
-static bool processRXBuffer( );
+static bool process_rx_buffer( );
 
-static bool MACSend( msgType_t msgType, nodeAddress dest );
+static bool mac_send( msgType_t msgType, nodeAddress dest );
 
-static bool MACRx( uint32_t timeout );
+static bool mac_rx( uint32_t timeout );
 
-static void genID( bool genNew );
+static void gen_id( bool genNew );
 
-static bool MAChopMessage( nodeAddress dest );
+static bool mac_hop_message( nodeAddress dest );
 
-static void genID( bool genNew ) {
+static void gen_id( bool genNew ) {
 	nodeAddress tempID = 0x0;
 
 	if (genNew) {
@@ -161,7 +161,7 @@ void mac_init( ) {
 		_nodeID = GATEWAY_ADDRESS;
 	}
 	else {
-		genID(false);
+		gen_id(false);
 	}
 
 	do {
@@ -184,8 +184,8 @@ bool mac_state_machine( ) {
 	while (true) {
 		switch (MACState) {
 			case MAC_SYNC_BROADCAST:
-				if (!MACRx(carrierSenseTimes[carrierSenseSlot++])) {
-					if (MACSend(MSG_SYNC, BROADCAST_ADDRESS)) {
+				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
+					if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
 						schedChange = false;
 						MACState = MAC_SLEEP;
 //					return true;
@@ -198,7 +198,7 @@ bool mac_state_machine( ) {
 				MACState = MAC_SLEEP;
 				break;
 			case MAC_LISTEN:
-				if (!MACRx(SLOT_LENGTH_MS)) {
+				if (!mac_rx(SLOT_LENGTH_MS)) {
 					MACState = MAC_SLEEP;
 //				return false;
 				}
@@ -217,9 +217,9 @@ bool mac_state_machine( ) {
 					if (SX1276IsChannelFree(MODEM_LORA,
 					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
 
-						if (MACSend(MSG_RTS, route->next_hop)) { // Send RTS
+						if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
 
-							if (!MACRx(SLOT_LENGTH_MS)) {
+							if (!mac_rx(SLOT_LENGTH_MS)) {
 								MACState = MAC_SLEEP;
 //						return false;
 							}
@@ -271,7 +271,7 @@ bool mac_state_machine( ) {
 					case NET_UNICAST_RREP:
 						break;
 					case NET_WAIT:
-						if (!MACRx(SLOT_LENGTH_MS)) {
+						if (!mac_rx(SLOT_LENGTH_MS)) {
 							MACState = MAC_SLEEP;
 						}
 						break;
@@ -287,9 +287,9 @@ bool mac_state_machine( ) {
 					if (SX1276IsChannelFree(MODEM_LORA,
 					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
 
-						if (MAChopMessage(route->next_hop)) { // Send RTS
+						if (mac_hop_message(route->next_hop)) { // Send RTS
 
-							if (!MACRx(SLOT_LENGTH_MS)) {
+							if (!mac_rx(SLOT_LENGTH_MS)) {
 								MACState = MAC_SLEEP;
 								//						return false;
 							}
@@ -313,7 +313,7 @@ bool mac_state_machine( ) {
 	}
 }
 
-bool MACSend( msgType_t msgType, nodeAddress dest ) {
+bool mac_send( msgType_t msgType, nodeAddress dest ) {
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -358,7 +358,7 @@ bool MACSend( msgType_t msgType, nodeAddress dest ) {
 	return retVal;
 }
 
-bool MACRx( uint32_t timeout ) {
+bool mac_rx( uint32_t timeout ) {
 	Radio.Rx(0);
 	RadioState = RX;
 	start_lora_timer(timeout);
@@ -373,7 +373,7 @@ bool MACRx( uint32_t timeout ) {
 			break;
 		}
 		else if (RadioState == RXDONE) {
-			if (processRXBuffer()) {
+			if (process_rx_buffer()) {
 				retVal = true;
 				break;
 			}
@@ -387,7 +387,7 @@ bool MACRx( uint32_t timeout ) {
 	return retVal;
 }
 
-static bool processRXBuffer( ) {
+static bool process_rx_buffer( ) {
 	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
 
 	if (receivedMsgIndex == MAX_STORED_MSG) {
@@ -401,12 +401,12 @@ static bool processRXBuffer( ) {
 
 		switch (rxDatagram.msgHeader.flags) {
 			case MSG_RTS: 	// RTS
-				MACSend(MSG_CTS, rxDatagram.msgHeader.localSource); // send CTS to requesting node
+				mac_send(MSG_CTS, rxDatagram.msgHeader.localSource); // send CTS to requesting node
 				MACState = MAC_LISTEN;
 				break;
 			case MSG_CTS: 	// CTS
 				if (hasData) {
-					MACSend(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
+					mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
 					MACState = MAC_LISTEN;
 				}
 				else {
@@ -420,9 +420,10 @@ static bool processRXBuffer( ) {
 				else {
 					hopMessageFlag = false;
 					// now either store the data for further later sending or get ready to upload data to cloud
+					receivedDatagrams[receivedMsgIndex++] = rxDatagram;
 				}
 
-				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
+				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				if (!hopMessageFlag) {
 					MACState = MAC_SLEEP;
 				}
@@ -436,7 +437,7 @@ static bool processRXBuffer( ) {
 				MACState = MAC_SLEEP;
 				break;
 			case MSG_RREP: 	// RREP
-				MACSend(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
+				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				nextNetOp = process_rrep();
 				MACState = MAC_NET_OP;
 				netOp = true;
@@ -452,7 +453,7 @@ static bool processRXBuffer( ) {
 				MACState = MAC_SLEEP;
 
 				if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
-					genID(true);
+					gen_id(true);
 					schedChange = true;
 				}
 				add_route_to_neighbour(rxDatagram.msgHeader.localSource);
@@ -591,7 +592,7 @@ bool mac_send_tx_datagram( ) {
 	return retVal;
 }
 
-static bool MAChopMessage( nodeAddress dest ) {
+static bool mac_hop_message( nodeAddress dest ) {
 
 	memcpy(&txDatagram, &rxDatagram, loraRxBufferSize);
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -625,4 +626,8 @@ Neighbour_t* get_neighbour_table( ) {
 
 Datagram_t* get_received_messages( ) {
 	return receivedDatagrams;
+}
+
+uint8_t get_received_messages_index( void ) {
+	return receivedMsgIndex;
 }

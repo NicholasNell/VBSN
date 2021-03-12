@@ -100,6 +100,10 @@ void uart_init_gps( ) {
 	MAP_GPIO_enableInterrupt(GPS_PPS_PORT, GPS_PPS_PIN);
 	MAP_Interrupt_enableInterrupt(GPS_PPS_INT_PORT);
 
+	//wake pin
+	MAP_GPIO_setAsOutputPin(GPS_WAKE_PORT, GPS_WAKE_PIN);
+	MAP_GPIO_setOutputHighOnPin(GPS_WAKE_PORT, GPS_WAKE_PIN);
+
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	delay_ms(100);
 //	sendUARTgps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
@@ -111,6 +115,9 @@ void uart_init_gps( ) {
 	send_uart_gps(PMTK_API_SET_FIX_CTL_1HZ);
 	delay_ms(100);
 	send_uart_gps(PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ);
+
+	delay_ms(100);
+	gps_set_low_power();
 
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(UART_GPS_MODULE, EUSCI_A_UART_RECEIVE_INTERRUPT);

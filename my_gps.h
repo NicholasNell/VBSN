@@ -9,13 +9,15 @@
 #ifndef MY_GPS_H_
 #define MY_GPS_H_
 
-#define GPS_PPS_PORT GPIO_PORT_P3
-#define GPS_PPS_PIN GPIO_PIN0
-#define UART_GPS_PORT GPIO_PORT_P9
-#define UART_GPS_PINS GPIO_PIN6 | GPIO_PIN7
+#define GPS_PPS_PORT 	GPIO_PORT_P3
+#define GPS_PPS_PIN 	GPIO_PIN0
+#define UART_GPS_PORT 	GPIO_PORT_P9
+#define UART_GPS_PINS 	GPIO_PIN6 | GPIO_PIN7
 #define UART_GPS_MODULE EUSCI_A3_BASE
-#define UART_GPS_INT INT_EUSCIA3
+#define UART_GPS_INT 	INT_EUSCIA3
 #define GPS_PPS_INT_PORT INT_PORT3
+#define GPS_WAKE_PORT 	GPIO_PORT_P6
+#define GPS_WAKE_PIN	GPIO_PIN0
 
 // NMEA Command Sentences
 #define PMTK_FULL_POWER_MODE					"$PMTK225,0*2B\r\n"	////< Full power mode
@@ -55,5 +57,13 @@ typedef struct {
 		float lat;
 		float lon;
 } LocationData;
+
+//!
+//! Sets the Gps module in low power mode
+void gps_set_low_power( void );
+
+//!
+//! disables the low power mode of the gps
+void gps_disable_low_power( void );
 
 #endif /* MY_GPS_H_ */

@@ -91,4 +91,7 @@ Neighbour_t* get_neighbour_table( );
  */
 Datagram_t* get_received_messages( );
 
+//! @return the number of messages stored in the received messages index
+uint8_t get_received_messages_index( void );
+
 #endif /* MY_MAC_H_ */

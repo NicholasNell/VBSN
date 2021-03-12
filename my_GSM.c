@@ -100,15 +100,19 @@ bool init_gsm( void ) {
 	int retval;
 
 	gsm_startup();
+//	gsm_power_save_off();
+	delay_ms(100);
 
 	retval = check_com();
 
 	if (retval) {
 //		modem_start();
-//		send_msg("AT&F0\r\n");
+		send_msg("AT\r\n");
 //		wait_check_for_reply(RESPONSE_OK, 1);
-		send_msg("ATZ0\r\n");
-		wait_check_for_reply(RESPONSE_OK, 1);
+
+//		send_msg("ATZ0\r\n");
+//		wait_check_for_reply(RESPONSE_OK, 1);
+//		check_gprs_attached();
 		send_msg(DISABLE_FLOW_CONTROL);	// disable flow control
 		wait_check_for_reply(RESPONSE_OK, 1);
 		delay_ms(500);
@@ -117,6 +121,22 @@ bool init_gsm( void ) {
 		delay_ms(500);
 		send_msg(HTTP_CONFIG_THINGSBOARD);
 		wait_check_for_reply(RESPONSE_OK, 1);
+		counter_read_gsm = 0;
+		delay_ms(500);
+		send_msg(CONTEXT_DEACTIVATION);
+		delay_ms(500);
+		send_msg(CONTEXT_ACTIVATION);
+
+		while (wait_check_for_reply("ERROR", 2)) {
+
+			send_msg(CONTEXT_DEACTIVATION);
+			delay_ms(1000);
+			send_msg(CONTEXT_ACTIVATION);
+			delay_ms(5000);
+		}
+
+//		delay_ms(1000);
+//		gsm_power_save_on();
 
 		return true;
 	}
@@ -241,7 +261,7 @@ int modem_start( void ) {
 //						Set the GSM modem to POWER SAVING mode
 void gsm_power_save_on( ) {
 	counter_read_gsm = 0;                     // Reset buffer counter
-	send_gsm_uart("AT+CFUN=5\r");              // Send Attention Command
+	send_gsm_uart("AT+CFUN=0\r");              // Send Attention Command
 //	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
 	delay_ms(500);
 	counter_read_gsm = 0;                     // Reset buffer counter
@@ -322,7 +342,7 @@ void check_gprs_attached( void ) {
 	delay_ms(500);
 	send_msg("AT#SCFG?\r\n");
 	delay_ms(500);
-	send_msg("AT+CGDCONT=1,\"IP\",\"VodaCom-SA\"\r\n");
+	send_msg("AT+CGDCONT=1,\"IP\",\"internet\"\r\n");
 	delay_ms(500);
 	send_msg("AT+CREG=1\r\n");
 	delay_ms(500);
@@ -519,20 +539,15 @@ void gsm_upload_my_data( ) {
 	if (loc > 90) {
 		loc = 0;
 	}
-	/*
-	 * field1 = temp
-	 * field2 = humidity
-	 * field3 = pressure
-	 * field4 = Light
-	 * field5 = VWC
-	 * Not adding time yet
-	 */
+
 	double localTemperature = bme280Data.temperature;
 	double localHumidity = bme280Data.humidity;
 	double localPressure = bme280Data.pressure;
 	double localVWC = get_latest_value();
 	double localLight = get_lux();
-//	char *api_key = TEST_API_KEY;
+	double localLat = gpsData.lat;
+	double localLon = gpsData.lon;
+	nodeAddress localAddress = _nodeID;
 	char postBody[255];
 	memset(postBody, 0, 255);
 //	int lenWritten =
@@ -550,14 +565,14 @@ void gsm_upload_my_data( ) {
 			sprintf(
 					postBody,
 					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f}\r\n",
-					_nodeID,
+					localAddress,
 					localTemperature,
 					localHumidity,
 					localPressure,
 					localVWC,
 					localLight,
-					loc++,
-					loc);
+					localLat,
+					localLon);
 //	int lenWritten = sprintf(
 //			postBody,
 //			"{\"nodeID\": %d,\"Temperature\":%.1f}\r\n",
@@ -571,26 +586,125 @@ void gsm_upload_my_data( ) {
 			ACCESS_TOKEN,
 			lenWritten);
 
-	send_msg(CONTEXT_ACTIVATION);
+//	gsm_power_save_off();
+//	send_gsm_uart("AT+CFUN=1\r");
+//	delay_ms(1000);
+
 //	if (!wait_check_for_reply("OK", 1)) {
 //
 //	}
-	delay_ms(1000);
+//	delay_ms(2000);
+	counter_read_gsm = 0;
 	send_msg(postCommand);
 //	if (!wait_check_for_reply(">>>", 5)) {
 //
 //	}
 //	delay_ms(2000);
 	delay_ms(5000);
+	counter_read_gsm = 0;
 	send_msg(postBody);
 //	if (!wait_check_for_reply("OK", 5)) {
 ////		return;
 //	}
 //	delay_ms(2000);
-	delay_ms(5000);
-	send_msg(CONTEXT_DEACTIVATION);
+	delay_ms(3000);
+	counter_read_gsm = 0;
+//	send_msg(CONTEXT_DEACTIVATION);
 //	if (!wait_check_for_reply("OK", 1)) {
 ////		return;
 //	}
+//	delay_ms(1000);
+	counter_read_gsm = 0;
+//	send_gsm_uart("AT+CFUN=0\r");
+
+}
+
+void gsm_upload_stored_datagrams( ) {
+
+	int i = 0;
+
+//	uint8_t numToSend = get_received_messages_index();
+//	Datagram_t *pointerToData = get_received_messages();
+	uint8_t numToSend = 3;
+	Datagram_t pointerToData[3];
+	int lenWritten = 0;
+
+	for (i = 0; i < 3; i++) {
+		pointerToData[i].msgHeader.netSource = i;
+		pointerToData[i].data.sensData.temp = 30;
+		pointerToData[i].data.sensData.hum = 40;
+		pointerToData[i].data.sensData.lux = 200;
+		pointerToData[i].data.sensData.press = 100000;
+		pointerToData[i].data.sensData.soilMoisture = 30;
+		pointerToData[i].data.sensData.gpsData.lat = -34;
+		pointerToData[i].data.sensData.gpsData.lon = 18;
+	}
+
+	double localTemperature;
+	double localHumidity;
+	double localPressure;
+	double localVWC;
+	double localLight;
+	double localLat;
+	double localLon;
+	nodeAddress localAddress;
+
+	char postCommand[SIZE_BUFFER];
+	memset(postCommand, 0, SIZE_BUFFER);
+	char postBody[SIZE_BUFFER];
+	memset(postBody, 0, SIZE_BUFFER);
+
+//	gsm_power_save_off();
+//	delay_ms(1000);
+	counter_read_gsm = 0;
+	send_msg(CONTEXT_ACTIVATION);
+//	if (!wait_check_for_reply("OK", 1)) {
+//
+//	}
+	delay_ms(2000);
+	counter_read_gsm = 0;
+
+	for (i = 0; i < numToSend; i++) {
+
+		localTemperature = pointerToData[i].data.sensData.temp;
+		localHumidity = pointerToData[i].data.sensData.hum;
+		localPressure = pointerToData[i].data.sensData.press;
+		localVWC = pointerToData[i].data.sensData.soilMoisture;
+		localLight = pointerToData[i].data.sensData.lux;
+		localLat = pointerToData[i].data.sensData.gpsData.lat;
+		localLon = pointerToData[i].data.sensData.gpsData.lon;
+		localAddress = pointerToData[i].msgHeader.netSource;
+
+		lenWritten =
+				sprintf(
+						postBody,
+						"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f}\r\n",
+						localAddress,
+						localTemperature,
+						localHumidity,
+						localPressure,
+						localVWC,
+						localLight,
+						localLat,
+						localLon);
+
+		sprintf(
+				postCommand,
+				"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
+				ACCESS_TOKEN,
+				lenWritten);
+		send_msg(postCommand);
+		delay_ms(3000);
+		counter_read_gsm = 0;
+		send_msg(postBody);
+		delay_ms(3000);
+
+	}
+
+	counter_read_gsm = 0;
+//	send_msg(CONTEXT_DEACTIVATION);
+//	delay_ms(1000);
+	counter_read_gsm = 0;
+//	gsm_power_save_on();
 
 }

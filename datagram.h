@@ -48,6 +48,11 @@ typedef struct {
 } Header_t;
 
 typedef struct {
+		int16_t rssi;
+		int8_t snr;
+} RadioData_t;
+
+typedef struct {
 		LocationData gpsData;
 		float temp;
 		float hum;
@@ -76,7 +81,7 @@ typedef struct {
 
 typedef struct {
 		Header_t msgHeader;
-
+		RadioData_t radioData;
 		union Data {
 				RReq_t Rreq;
 				RRep_t Rrep;

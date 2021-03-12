@@ -59,6 +59,7 @@
 #include <string.h>
 #include <EC5.h>
 #include <helper.h>
+#include <my_gps.h>
 #include <sx1276Regs-Fsk.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
@@ -235,7 +236,7 @@ int main( void ) {
 
 	if (hasGSM) {
 		isRoot = true;
-		gpio_toggle(&Led_rgb_green);
+//		gpio_toggle(&Led_rgb_green);
 	}
 	else {
 		isRoot = false;
@@ -277,6 +278,7 @@ int main( void ) {
 	helper_collect_sensor_data();
 
 	gsm_upload_my_data();
+//	gsm_upload_stored_datagrams();
 
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
@@ -286,6 +288,7 @@ int main( void ) {
 	MAP_WDT_A_startTimer();
 
 	while (1) {
+
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
@@ -301,6 +304,7 @@ int main( void ) {
 			send_uart_gps("H\r\n");
 			gpsWakeFlag = false;
 		}
+//		PCM_gotoLPM3InterruptSafe();
 	}
 }
 
