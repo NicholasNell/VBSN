@@ -278,6 +278,7 @@ bool return_uart_activity( ) {
 }
 
 void UartGPSCommands( ) {
+
 	if (UartActivityGps) {
 
 //		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);	// Debugging, send uart data OTA to pc

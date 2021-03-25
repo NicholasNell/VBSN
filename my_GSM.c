@@ -93,6 +93,8 @@ void gsm_startup( void ) {
 	MAP_UART_enableInterrupt(EUSCI_A2_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA2);
 
+	GPIO_setAsInputPin(GPIO_PORT_P7, GPIO_PIN1);
+
 }
 
 bool init_gsm( void ) {
@@ -100,7 +102,7 @@ bool init_gsm( void ) {
 	int retval;
 
 	gsm_startup();
-//	gsm_power_save_off();
+	gsm_power_save_off();
 	delay_ms(100);
 
 	retval = check_com();
@@ -135,8 +137,8 @@ bool init_gsm( void ) {
 			delay_ms(5000);
 		}
 
-//		delay_ms(1000);
-//		gsm_power_save_on();
+		delay_ms(1000);
+		gsm_power_save_on();
 
 		return true;
 	}
@@ -261,18 +263,23 @@ int modem_start( void ) {
 //						Set the GSM modem to POWER SAVING mode
 void gsm_power_save_on( ) {
 	counter_read_gsm = 0;                     // Reset buffer counter
-	send_gsm_uart("AT+CFUN=0\r");              // Send Attention Command
+	send_gsm_uart("AT+CFUN=7\r");              // Send Attention Command
 //	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
 	delay_ms(500);
 	counter_read_gsm = 0;                     // Reset buffer counter
 }
 //						Set the GSM modem to NORMAL mode
 void gsm_power_save_off( ) {
-	counter_read_gsm = 0;                     // Reset buffer counter
-	send_gsm_uart("AT+CFUN=1\r");                     // Send Attention Command
-//	delay_gsm_respond(5000);                     // Delay a maximum of X seconds
-	delay_ms(500);
-	counter_read_gsm = 0;                     // Reset buffer counter
+	while (true) {
+		while (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
+			counter_read_gsm = 0;                     // Reset buffer counter
+			send_gsm_uart("AT+CFUN=1\r");              // Send Attention Command
+			counter_read_gsm = 0;                     // Reset buffer counter
+			if (wait_check_for_reply("OK", 1)) {
+				return;
+			}
+		}
+	}
 }
 
 void disable_command_echo( ) {
@@ -535,7 +542,7 @@ extern nodeAddress _nodeID;
 extern LocationData gpsData;
 static float loc = 0;
 void gsm_upload_my_data( ) {
-
+	gsm_power_save_off();
 	if (loc > 90) {
 		loc = 0;
 	}
@@ -616,7 +623,7 @@ void gsm_upload_my_data( ) {
 //	delay_ms(1000);
 	counter_read_gsm = 0;
 //	send_gsm_uart("AT+CFUN=0\r");
-
+	gsm_power_save_on();
 }
 
 void gsm_upload_stored_datagrams( ) {

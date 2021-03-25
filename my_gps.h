@@ -66,4 +66,6 @@ void gps_set_low_power( void );
 //! disables the low power mode of the gps
 void gps_disable_low_power( void );
 
+//! @return returns current gps data
+LocationData get_gps_data( void );
 #endif /* MY_GPS_H_ */

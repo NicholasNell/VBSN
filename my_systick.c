@@ -28,14 +28,14 @@ void SysTick_Handler( void ) //INTERRUPT ROUTINE
 void setupSysTick_ms( void ) {
 	//Sets the sysTick to 1 millisecond
 	MAP_SysTick_disableModule();
-	MAP_SysTick_setPeriod(1500 / 2);
+	MAP_SysTick_setPeriod(1500);
 	MAP_SysTick_enableModule();
 }
 void setupSysTick_second( void ) {
 	//Sets the sysTick to 1 second
 
 	MAP_SysTick_disableModule();
-	MAP_SysTick_setPeriod(1500000 / 2);
+	MAP_SysTick_setPeriod(1500000);
 	MAP_SysTick_enableModule();
 }
 

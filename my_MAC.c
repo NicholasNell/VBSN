@@ -115,6 +115,9 @@ extern bool netOp;
  */
 static bool process_rx_buffer( );
 
+//! @param msgType Type of message to send: 	MSG_NONE = 0,	MSG_RTS,	MSG_CTS,	MSG_DATA,	MSG_ACK,	MSG_SYNC,	MSG_RREQ,	MSG_RREP
+//! @param dest: local destination to send message to
+//! @return Return true if send succesful else, false
 static bool mac_send( msgType_t msgType, nodeAddress dest );
 
 static bool mac_rx( uint32_t timeout );
@@ -214,8 +217,11 @@ bool mac_state_machine( ) {
 				// Send RTS
 
 				if (has_route_to_node(GATEWAY_ADDRESS, route)) {
-					if (SX1276IsChannelFree(MODEM_LORA,
-					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+					if (SX1276IsChannelFree(
+							MODEM_LORA,
+							RF_FREQUENCY,
+							LORA_RSSI_THRESHOLD,
+							carrierSenseTimes[carrierSenseSlot++])) {
 
 						if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
 

@@ -91,7 +91,7 @@ NextNetOp_t process_rreq( );
 void add_route_to_neighbour( nodeAddress dest );
 
 /*!
- * \brief looks for a route in the routing table and returns a copy of the entry if one is found, otherwise returns NULL
+ * \brief looks for a route in the routing table and save a copy of the entry if one is found, otherwise saves NULL
  * @param dest
  * @return return true if it has a route to the node
  */

@@ -236,7 +236,7 @@ int main( void ) {
 
 	if (hasGSM) {
 		isRoot = true;
-//		gpio_toggle(&Led_rgb_green);
+		gpio_toggle(&Led_rgb_green);
 	}
 	else {
 		isRoot = false;
@@ -255,12 +255,26 @@ int main( void ) {
 		get_light();
 	}
 
-	// Have to awit for GPS to get a lock before operation can continue
-
+//	// Have to awit for GPS to get a lock before operation can continue
+//	run_systick_function_ms(1000);
 //	while (!gpsWorking) {
-//
+//		if (systimer_ready_check()) {
+//			gpio_flash_lED(&Led_user_red, 50);
+//			run_systick_function_ms(1000);
+//		}
 //	}
+//
+//	gps_set_low_power();
 
+//	gpio_write(&Led_user_red, 0);
+//	char b[255];
+//	LocationData gpsData = get_gps_data();
+//	int len = sprintf(
+//			b,
+//			"gpsWorking. Lon: %f\tLat: %f\n",
+//			gpsData.lon,
+//			gpsData.lat);
+//	SX1276Send((uint8_t*) b, len);
 //	flash_fill_struct_for_write();
 
 //	 Initialise the Network and  MAC protocol
@@ -271,14 +285,8 @@ int main( void ) {
 
 	// Volumetric Water Content Sensor
 	get_vwc();
-	delay_ms(2000);
 
 	init_scheduler();
-
-	helper_collect_sensor_data();
-
-	gsm_upload_my_data();
-//	gsm_upload_stored_datagrams();
 
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);

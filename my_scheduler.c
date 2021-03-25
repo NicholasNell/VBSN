@@ -58,7 +58,7 @@ int scheduler( ) {
 		macStateMachineEnable = true;
 	}
 
-	if ((slotCount == _txSlot) && (hasData)) { // if it is the nodes tx slot and it has data to send and it is in its correct bracket
+	if ((slotCount == _txSlot) && (hasData)) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 		if (!isRoot) {
 			MACState = MAC_RTS;
 			macStateMachineEnable = true;
@@ -87,13 +87,13 @@ int scheduler( ) {
 		hasData = false;
 	}
 
-	if ((slotCount % GLOBAL_RX == 0) && netOp) {
+	if ((slotCount % GLOBAL_RX == 0) && netOp) {// Perform a network layer operation in the global RX window
 		netOp = false;
 		macStateMachineEnable = true;
 		MACState = MAC_NET_OP;
 	}
 
-	if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) {
+	if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) {// hop the received message in the global RX window
 		hopMessageFlag = false;
 		MACState = MAC_HOP_MESSAGE;
 		macStateMachineEnable = true;
