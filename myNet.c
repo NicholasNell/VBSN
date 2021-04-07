@@ -10,9 +10,10 @@
 #include <my_timer.h>
 #include <myNet.h>
 #include <string.h>
+#include <my_flash.h>
 // Routing Table
 RouteEntry_t routingtable[MAX_ROUTES];
-uint16_t _numRoutes;
+uint8_t _numRoutes;
 uint8_t _nodeSequenceNumber;
 uint8_t _broadcastID;
 uint8_t _destSequenceNumber;
@@ -29,13 +30,28 @@ extern Datagram_t rxDatagram;
 extern Datagram_t txDatagram;
 extern nodeAddress _nodeID;
 extern uint16_t _txSlot;
+// extern is flash ok flag
+extern bool flashOK;
 
 void net_init( ) {
-	_numRoutes = 0;
-	_nodeSequenceNumber = 0;
-	_destSequenceNumber = 0xFF;
-	_broadcastID = 0;
-	memset(routingtable, NULL, MAX_ROUTES);
+	if (flashOK) {
+		FlashData_t *pFlashData = get_flash_data_struct();
+		_numRoutes = pFlashData->_numRoutes;
+		_nodeSequenceNumber = pFlashData->_nodeSequenceNumber;
+		_broadcastID = pFlashData->_broadcastID;
+		_destSequenceNumber = pFlashData->_destSequenceNumber;
+		memcpy(
+				routingtable,
+				pFlashData->routingtable,
+				sizeof(pFlashData->routingtable));
+	}
+	else {
+		_numRoutes = 0;
+		_nodeSequenceNumber = 0;
+		_destSequenceNumber = 0xFF;
+		_broadcastID = 0;
+		memset(routingtable, NULL, MAX_ROUTES);
+	}
 }
 
 void add_route( RouteEntry_t routeToNode ) {
@@ -123,7 +139,7 @@ NextNetOp_t process_rreq( ) {
 		REVERSE_PATH_EXP_TIME * 1000, &notHasReversePathInfo);	//
 	}
 
-	// check if message has been received from known neighbour; if not, add to neighbour list and add a new entry to the routing table.
+// check if message has been received from known neighbour; if not, add to neighbour list and add a new entry to the routing table.
 	bool isNeighbourFlag = is_neighbour(rxDatagram.msgHeader.localSource);
 
 	if (!isNeighbourFlag) {
@@ -173,7 +189,7 @@ NextNetOp_t process_rreq( ) {
 
 bool net_re_rreq( ) {
 	bool retVal = false;
-	// copy the contents of the rxdatagram into the txdatagram to send it.
+// copy the contents of the rxdatagram into the txdatagram to send it.
 	memcpy(
 			&txDatagram,
 			&rxDatagram,
@@ -239,7 +255,7 @@ NextNetOp_t process_rrep( ) {
 bool add_reverse_path_to_table( ) {
 
 	bool retVal = false;
-	// first check if an entry exists, then check its sequence number
+// first check if an entry exists, then check its sequence number
 	RouteEntry_t *routeToNode = NULL;
 	bool hasRoute = has_route_to_node(
 			reversePathInfo.destinationAddress,

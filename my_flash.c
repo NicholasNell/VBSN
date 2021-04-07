@@ -8,17 +8,20 @@
 
 #include <my_MAC.h>
 #include "my_flash.h"
+#include <myNet.h>
+
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 /* Standard Includes */
-#include <stdint.h>
-
-#include <stdbool.h>
+//#include <stdint.h>
+//#include <stdbool.h>
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
 #define MY_FLASH_DATA_LEN 4096
+
+bool flashOK = false;
 
 static FlashData_t myFlashDataStruct;
 
@@ -26,6 +29,12 @@ static uint8_t myFlashData[MY_FLASH_DATA_LEN];
 uint32_t lastWrite = MYDATA_MEM_START;
 
 extern uint8_t _nodeID;
+extern uint8_t _numRoutes;
+extern uint8_t _nodeSequenceNumber;
+extern uint8_t _numNeighbours;
+extern uint8_t _destSequenceNumber;
+extern uint8_t _broadcastID;
+extern uint16_t _txSlot;
 
 // array of known neighbours
 extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
@@ -115,6 +124,12 @@ int flash_fill_struct_for_write( ) {
 	myFlashDataStruct.lenOfBuffer = 2 + 4 + sizeof(RTC_C_Calendar)
 			+ sizeof(nodeAddress) + sizeof(*ptr) * MAX_NEIGHBOURS
 			+ sizeof(*ptr1) * MAX_ROUTES + sizeof(*ptr2) * MAX_STORED_MSG;
+	myFlashDataStruct._numRoutes = _numRoutes;
+	myFlashDataStruct._nodeSequenceNumber = _nodeSequenceNumber;
+	myFlashDataStruct._numNeighbours = _numNeighbours;
+	myFlashDataStruct._destSequenceNumber = _destSequenceNumber;
+	myFlashDataStruct._broadcastID = _broadcastID;
+	myFlashDataStruct._txSlot = _txSlot;
 	return 1;
 }
 
@@ -127,4 +142,21 @@ int flash_write_struct_to_flash( ) {
 int flash_read_from_flash( void ) {
 	memcpy(&myFlashDataStruct, (uint8_t*) MYDATA_MEM_START, 1);
 	return 1;
+}
+
+bool flash_check_for_data( void ) {
+	flash_read_from_flash();
+	if (myFlashDataStruct.flashValidIdentifier == FLASH_OK_IDENTIFIER) {
+		flashOK = true;
+		return true;
+	}
+	else {
+		flashOK = false;
+		return false;
+	}
+
+}
+
+FlashData_t* get_flash_data_struct( void ) {
+	return &myFlashDataStruct;
 }

@@ -109,6 +109,7 @@ static NextNetOp_t nextNetOp = NET_NONE;
 bool hopMessageFlag = false;
 
 extern bool netOp;
+extern bool flashOK;
 
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -160,26 +161,45 @@ void mac_init( ) {
 		}
 	}
 
-	if (hasGSM) {
-		_nodeID = GATEWAY_ADDRESS;
+	if (flashOK) {
+		FlashData_t *pFlashData = get_flash_data_struct();
+		if (hasGSM) {
+			_nodeID = GATEWAY_ADDRESS;
+		}
+		else {
+			_nodeID = pFlashData->thisNodeId;
+		}
+
+		_txSlot = pFlashData->_txSlot;
+		_numNeighbours = pFlashData->_numNeighbours;
+		memcpy(
+				neighbourTable,
+				pFlashData->neighbourTable,
+				sizeof(pFlashData->neighbourTable));
 	}
 	else {
-		gen_id(false);
+		if (hasGSM) {
+			_nodeID = GATEWAY_ADDRESS;
+		}
+		else {
+			gen_id(false);
+		}
+
+		do {
+			double temp = (double) rand();
+			temp /= RAND_MAX;
+			temp *= MAX_SLOT_COUNT;
+			_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
+			_txSlot *= POSSIBLE_TX_SLOT;
+		} while (_txSlot % GLOBAL_RX == 0);
+
+		schedChange = true;
+		_dataLen = 0;
+		_numNeighbours = 0;
+		_numMsgSent = 0;
+		memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 	}
 
-	do {
-		double temp = (double) rand();
-		temp /= RAND_MAX;
-		temp *= MAX_SLOT_COUNT;
-		_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
-		_txSlot *= POSSIBLE_TX_SLOT;
-	} while (_txSlot % GLOBAL_RX == 0);
-
-	schedChange = true;
-	_dataLen = 0;
-	_numNeighbours = 0;
-	_numMsgSent = 0;
-	memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 }
 
 bool mac_state_machine( ) {

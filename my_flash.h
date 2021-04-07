@@ -29,6 +29,12 @@ typedef struct {
 		Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 		RouteEntry_t routingtable[MAX_ROUTES];
 		Datagram_t receivedMessages[MAX_STORED_MSG];
+		uint8_t _numRoutes;
+		uint8_t _nodeSequenceNumber;
+		uint8_t _numNeighbours;
+		uint8_t _broadcastID;
+		uint8_t _destSequenceNumber;
+		uint16_t _txSlot;
 } FlashData_t;
 
 #define MYDATA_MEM_START 0x0003F000
@@ -68,5 +74,12 @@ int flash_write_struct_to_flash( );
 //!
 //! @return None
 int flash_read_from_flash( void );
+
+//! @return return true if flash data has been written else false
+//! \brief checks the flash buffer for valid data and the loads it into sram
+bool flash_check_for_data( void );
+
+//! @return returns local flash data buffer
+FlashData_t* get_flash_data_struct( void );
 
 #endif /* MY_FLASH_H_ */
