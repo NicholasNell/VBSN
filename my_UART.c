@@ -106,8 +106,8 @@ void uart_init_gps( ) {
 
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	delay_ms(100);
-//	sendUARTgps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
-	send_uart_gps(PMTK_SET_NMEA_OUTPUT_OFF);
+	send_uart_gps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
+//	send_uart_gps(PMTK_SET_NMEA_OUTPUT_OFF);
 //	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	delay_ms(100);
 	send_uart_gps(PMTK_FULL_POWER_MODE);
@@ -117,7 +117,7 @@ void uart_init_gps( ) {
 	send_uart_gps(PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ);
 
 	delay_ms(100);
-	gps_set_low_power();
+//	gps_set_low_power();
 
 	/* Enabling interrupts */
 	MAP_UART_enableInterrupt(UART_GPS_MODULE, EUSCI_A_UART_RECEIVE_INTERRUPT);
@@ -297,7 +297,7 @@ void UartGPSCommands( ) {
 		if (!memcmp(CMD, "$GNRMC", 6)) {
 //			$--GLL,ddmm.mm,a,dddmm.mm,a,hhmmss.ss,A,x*hh<CR><LF>
 			if (strpbrk(CMD, "A")) {
-				gpsWorking = true;
+
 				float deg = 0.0;
 				float min = 0.0;
 				CMD = strtok(UartRxGPS, c);
@@ -428,6 +428,7 @@ void UartGPSCommands( ) {
 
 				if (sec != 0x59) {
 					setRTCFlag = true;
+					gpsWorking = true;
 				}
 
 				CMD = strtok(NULL, c);

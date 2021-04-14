@@ -107,6 +107,7 @@ extern uint8_t _destSequenceNumber;
 static NextNetOp_t nextNetOp = NET_NONE;
 
 bool hopMessageFlag = false;
+bool readyToUploadFlag = false;
 
 extern bool netOp;
 extern bool flashOK;
@@ -260,6 +261,9 @@ bool mac_state_machine( ) {
 //				return false;
 					}
 				}
+				else {
+					return 0;
+				}
 				break;
 			case MAC_NET_OP:
 				switch (nextNetOp) {
@@ -343,6 +347,9 @@ bool mac_send( msgType_t msgType, nodeAddress dest ) {
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
+	txDatagram.msgHeader.netSource = _nodeID;
+	txDatagram.msgHeader.netDest = dest;
+	txDatagram.msgHeader.ttl = 5;
 	txDatagram.msgHeader.flags = msgType;
 	_numMsgSent++;
 	txDatagram.msgHeader.txSlot = _txSlot;
@@ -447,6 +454,7 @@ static bool process_rx_buffer( ) {
 					hopMessageFlag = false;
 					// now either store the data for further later sending or get ready to upload data to cloud
 					receivedDatagrams[receivedMsgIndex++] = rxDatagram;
+					readyToUploadFlag = true;
 				}
 
 				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
@@ -509,8 +517,10 @@ void add_neighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	neighbourTable[_numNeighbours++] = receivedNeighbour;
 }
 
-bool mac_start_transaction( nodeAddress destination, msgType_t msgType,
-bool isSource ) {
+bool mac_start_transaction(
+		nodeAddress destination,
+		msgType_t msgType,
+		bool isSource ) {
 	/*
 	 *	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
 	 * 	nodeAddress localSource; // Where the message came from, not original source
@@ -656,4 +666,8 @@ Datagram_t* get_received_messages( ) {
 
 uint8_t get_received_messages_index( void ) {
 	return receivedMsgIndex;
+}
+
+void reset_received_msg_index( void ) {
+	receivedMsgIndex = 0;
 }

@@ -3,6 +3,7 @@
 #include <EC5.h>
 #include <helper.h>
 #include <my_GSM.h>
+#include <my_MAC.h>
 #include <my_systick.h>
 #include <my_timer.h>
 #include <MAX44009.h>
@@ -270,16 +271,20 @@ void gsm_power_save_on( ) {
 }
 //						Set the GSM modem to NORMAL mode
 void gsm_power_save_off( ) {
-	while (true) {
-		while (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
+	bool flag = false;
+	start_timer_a_counter(5000, &flag);
+	while (!flag) {
+
+		if (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
 			counter_read_gsm = 0;                     // Reset buffer counter
 			send_gsm_uart("AT+CFUN=1\r");              // Send Attention Command
 			counter_read_gsm = 0;                     // Reset buffer counter
-			if (wait_check_for_reply("OK", 1)) {
+			if (string_search(OK)) {
 				return;
 			}
 		}
 	}
+	stop_timer_a_counter();
 }
 
 void disable_command_echo( ) {
@@ -630,13 +635,13 @@ void gsm_upload_stored_datagrams( ) {
 
 	int i = 0;
 
-//	uint8_t numToSend = get_received_messages_index();
-//	Datagram_t *pointerToData = get_received_messages();
-	uint8_t numToSend = 3;
-	Datagram_t pointerToData[3];
+	uint8_t numToSend = get_received_messages_index();
+	Datagram_t *pointerToData = get_received_messages();
+//	uint8_t numToSend = 3;
+//	Datagram_t pointerToData[3];
 	int lenWritten = 0;
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < numToSend; i++) {
 		pointerToData[i].msgHeader.netSource = i;
 		pointerToData[i].data.sensData.temp = 30;
 		pointerToData[i].data.sensData.hum = 40;
@@ -713,5 +718,6 @@ void gsm_upload_stored_datagrams( ) {
 //	delay_ms(1000);
 	counter_read_gsm = 0;
 //	gsm_power_save_on();
+	reset_received_msg_index();
 
 }

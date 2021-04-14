@@ -7,6 +7,7 @@
 
  */
 
+#include <my_gpio.h>
 #include <my_scheduler.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -20,6 +21,8 @@ bool macFlag = false;
 bool schedFlag = false;
 bool rtcInitFlag = false;
 extern bool gpsWakeFlag;
+
+extern Gpio_t Led_user_red;
 
 //![Simple RTC Config]
 //Time is Saturday, November 12th 1955 10:03:00 PM
@@ -61,6 +64,7 @@ void RTC_C_IRQHandler( void ) {
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
+	gpio_toggle(&Led_user_red);
 
 	if (rtcInitFlag) {
 		schedFlag = true;
@@ -82,7 +86,7 @@ void RTC_C_IRQHandler( void ) {
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 //		gpsWakeFlag = true;
-//		set_slot_count(0);
+		set_slot_count(0);
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {

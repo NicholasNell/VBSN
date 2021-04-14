@@ -199,6 +199,8 @@ void radio_init( ) {
 		LORA_SPREADING_FACTOR, LORA_CODINGRATE, LORA_PREAMBLE_LENGTH,
 		LORA_FIX_LENGTH_PAYLOAD_ON, i + 1, LORA_CRC_ON) + 10;
 	}
+
+	SX1276Send((uint8_t*) "Radio Working!", 13);
 }
 
 extern volatile MACappState_t MACState;
@@ -206,17 +208,17 @@ extern bool uploadOwnData;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
-	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
-	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_128M);	// aprox 16 seconds
-
-	MAP_WDT_A_startTimer();
+//	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+//	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
+//	WDT_A_CLOCKITERATIONS_8192K);	// aprox 256
+//
+//	MAP_WDT_A_startTimer();
 
 	isRoot = false;	// Assume not a root node at first
 
 	// Initialise all ports and communication protocols
 	board_init_mcu();
-	rtc_init();
+//	rtc_init();
 
 	// Button 1 interrupt
 	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
@@ -262,7 +264,7 @@ int main( void ) {
 	run_systick_function_ms(1000);
 	while (!gpsWorking) {
 		if (systimer_ready_check()) {
-			gpio_flash_lED(&Led_user_red, 50);
+			gpio_flash_lED(&Led_rgb_green, 50);
 			run_systick_function_ms(1000);
 		}
 	}
@@ -280,7 +282,7 @@ int main( void ) {
 //	SX1276Send((uint8_t*) b, len);
 //	flash_fill_struct_for_write();
 
-	flash_check_for_data();
+//	flash_check_for_data();
 
 //	 Initialise the Network and  MAC protocol
 	net_init();
@@ -293,12 +295,12 @@ int main( void ) {
 
 	init_scheduler();
 
-	MAP_WDT_A_holdTimer();
-	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
-	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_BCLK,
-	WDT_A_CLOCKITERATIONS_512K);	// aprox 16 seconds
-
-	MAP_WDT_A_startTimer();
+//	MAP_WDT_A_holdTimer();
+//	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+//	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_BCLK,
+//	WDT_A_CLOCKITERATIONS_8192K);	// 256 sec
+//
+//	MAP_WDT_A_startTimer();
 
 	while (1) {
 
@@ -348,8 +350,8 @@ void PORT3_IRQHandler( void ) {
 		if (setRTCFlag) {
 			MAP_RTC_C_holdClock();
 			rtc_init();
-			send_uart_gps(PMTK_STANDBY);
 			setRTCFlag = false;
+			gps_set_low_power();
 		}
 //		schedFlag = true;
 //		incrementSlotCount();

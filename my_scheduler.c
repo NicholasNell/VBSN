@@ -27,6 +27,7 @@ extern volatile MACappState_t MACState;
 extern bool hasData;
 
 extern bool hopMessageFlag;
+extern bool readyToUploadFlag;
 
 extern bool isRoot;
 
@@ -35,7 +36,14 @@ bool netOp = false;
 
 void init_scheduler( ) {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
-	collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
+	int temp = _txSlot - COLLECT_DATA_SLOT_REL;
+	if (temp < 0) {
+		collectDataSlot = MAX_SLOT_COUNT + temp;
+	}
+	else {
+		collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
+	}
+
 	slotCount = 1;
 }
 
@@ -69,14 +77,14 @@ int scheduler( ) {
 		}
 	}
 
-	if (!isRoot) {
-		if ((schedChange && (slotCount % GLOBAL_RX == 0))
-				|| ((rand() * 100 < SYNC_PROB * RAND_MAX)
-						&& (slotCount % GLOBAL_RX == 0))) { // if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
-			MACState = MAC_SYNC_BROADCAST;
-			macStateMachineEnable = true;
-		}
+//	if (!isRoot) {
+	if ((schedChange && (slotCount % GLOBAL_RX == 0))
+			|| ((rand() * 100 < SYNC_PROB * RAND_MAX)
+					&& (slotCount % GLOBAL_RX == 0))) { // if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
+		MACState = MAC_SYNC_BROADCAST;
+		macStateMachineEnable = true;
 	}
+//	}
 
 	if (slotCount == collectDataSlot) {	// if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 		helper_collect_sensor_data();
@@ -97,6 +105,11 @@ int scheduler( ) {
 		hopMessageFlag = false;
 		MACState = MAC_HOP_MESSAGE;
 		macStateMachineEnable = true;
+	}
+
+	if (readyToUploadFlag) {
+		readyToUploadFlag = false;
+		gsm_upload_stored_datagrams();
 	}
 
 	if (macStateMachineEnable) {
