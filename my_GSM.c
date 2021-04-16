@@ -434,7 +434,7 @@ void cmd_load( int index ) {
 	}
 }
 int string_search( int index )         // index' is Strings[index][SIZE_COMMAND]
-{                                    // See defines in .h
+		{                                    // See defines in .h
 	cmd_load(index);             // Loads into temp array the string to be found
 	if (strstr(UartGSMRX, Command) != NULL) // Find String or Command in main Buffer
 		return (1);                        // Return 1 if found
@@ -641,16 +641,16 @@ void gsm_upload_stored_datagrams( ) {
 //	Datagram_t pointerToData[3];
 	int lenWritten = 0;
 
-	for (i = 0; i < numToSend; i++) {
-		pointerToData[i].msgHeader.netSource = i;
-		pointerToData[i].data.sensData.temp = 30;
-		pointerToData[i].data.sensData.hum = 40;
-		pointerToData[i].data.sensData.lux = 200;
-		pointerToData[i].data.sensData.press = 100000;
-		pointerToData[i].data.sensData.soilMoisture = 30;
-		pointerToData[i].data.sensData.gpsData.lat = -34;
-		pointerToData[i].data.sensData.gpsData.lon = 18;
-	}
+//	for (i = 0; i < numToSend; i++) {
+//		pointerToData[i].msgHeader.netSource = i;
+//		pointerToData[i].data.sensData.temp = 30;
+//		pointerToData[i].data.sensData.hum = 40;
+//		pointerToData[i].data.sensData.lux = 200;
+//		pointerToData[i].data.sensData.press = 100000;
+//		pointerToData[i].data.sensData.soilMoisture = 30;
+//		pointerToData[i].data.sensData.gpsData.lat = -34;
+//		pointerToData[i].data.sensData.gpsData.lon = 18;
+//	}
 
 	double localTemperature;
 	double localHumidity;

@@ -33,6 +33,15 @@ extern bool isRoot;
 
 bool schedChange = false;
 bool netOp = false;
+volatile uint8_t syncProbability = SYNC_PROB; // the probability of sending out a node discovery message in a global rx slot (as a percentage)
+
+//!
+//! \brief calculates a new sync probability based on the number of known neighbours.
+void calculate_new_sync_prob( void );
+
+void calculate_new_sync_prob( void ) {
+	syncProbability = (5 - _numNeighbours) * 10 + (40 / (_numNeighbours + 1));
+}
 
 void init_scheduler( ) {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
@@ -45,6 +54,8 @@ void init_scheduler( ) {
 	}
 
 	slotCount = 1;
+
+	calculate_new_sync_prob();
 }
 
 bool uploadOwnData = false;
@@ -78,8 +89,9 @@ int scheduler( ) {
 	}
 
 //	if (!isRoot) {
+	calculate_new_sync_prob();
 	if ((schedChange && (slotCount % GLOBAL_RX == 0))
-			|| ((rand() * 100 < SYNC_PROB * RAND_MAX)
+			|| ((rand() * 100 < syncProbability * RAND_MAX)
 					&& (slotCount % GLOBAL_RX == 0))) { // if the schedule has changed or node has no known neighbours and its a global rx slot then send Sync message
 		MACState = MAC_SYNC_BROADCAST;
 		macStateMachineEnable = true;

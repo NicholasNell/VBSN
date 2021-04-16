@@ -426,7 +426,7 @@ static bool process_rx_buffer( ) {
 	if (receivedMsgIndex == MAX_STORED_MSG) {
 		receivedMsgIndex = 0;
 	}
-	receivedDatagrams[receivedMsgIndex] = rxDatagram;
+//	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
 	// check if message was meant for this node:
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
