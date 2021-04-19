@@ -421,6 +421,7 @@ bool mac_rx( uint32_t timeout ) {
 }
 
 static bool process_rx_buffer( ) {
+	gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
 	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
 
 	if (receivedMsgIndex == MAX_STORED_MSG) {
@@ -431,9 +432,9 @@ static bool process_rx_buffer( ) {
 	// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
 	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
 		set_slot_count(rxDatagram.msgHeader.curSlot);
+
 	}
 	else {
-		gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
 
 	}
 

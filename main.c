@@ -295,12 +295,12 @@ int main( void ) {
 
 	init_scheduler();
 
-//	MAP_WDT_A_holdTimer();
-//	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
-//	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_BCLK,
-//	WDT_A_CLOCKITERATIONS_8192K);	// 256 sec
-//
-//	MAP_WDT_A_startTimer();
+	MAP_WDT_A_holdTimer();
+	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_BCLK,
+	WDT_A_CLOCKITERATIONS_512K);	// 16 sec
+
+	MAP_WDT_A_startTimer();
 
 	while (1) {
 
@@ -348,7 +348,7 @@ void PORT3_IRQHandler( void ) {
 
 			if (setRTCFlag) {
 				rtc_init();
-				rtc_start_clock();
+				rtc_set_calendar_time();
 				setRTCFlag = false;
 				gps_set_low_power();
 				gpsWorking = true;

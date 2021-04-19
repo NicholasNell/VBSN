@@ -16,6 +16,7 @@
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 #include <my_rtc.h>
+#include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
 bool setTimeFlag;
 bool macFlag = false;
@@ -70,9 +71,7 @@ void rtc_stop_clock( void ) {
 void rtc_set_calendar_time( void ) {
 	rtc_stop_clock();
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
-	set_slot_count(
-			(currentTime.hours * 60 * 60 + currentTime.minutes * 60
-					+ currentTime.seconds) % ((int) MAX_SLOT_COUNT)); // sets the current slot to some number less than the maximum slot count
+//	set_slot_count((currentTime.seconds) % (0x05)); // sets the current slot to some number less than the maximum slot count
 	rtc_start_clock();
 }
 

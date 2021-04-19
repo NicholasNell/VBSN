@@ -13,6 +13,7 @@
 #include <my_scheduler.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
 static uint16_t slotCount;
 
@@ -44,7 +45,7 @@ void calculate_new_sync_prob( void );
 
 void calculate_new_sync_prob( void ) {
 
-	syncProbability = 50 / (1 + _numNeighbours);
+	syncProbability = SYNC_PROB / (1 + _numNeighbours);
 	/*
 	 30.0
 	 22.5
@@ -75,6 +76,7 @@ bool collectDataFlag = false;
 
 int scheduler( ) {
 	gpio_toggle(&Led_user_red);
+	WDT_A_clearTimer();
 	bool macStateMachineEnable = false;
 
 	int var = 0;

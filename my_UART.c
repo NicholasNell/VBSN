@@ -13,6 +13,7 @@
 #include <my_gps.h>
 #include <my_rtc.h>
 #include <my_RFM9x.h>
+#include <my_scheduler.h>
 #include <my_timer.h>
 #include <MAX44009.h>
 #include <stdio.h>
@@ -295,7 +296,6 @@ void UartGPSCommands( ) {
 		UartActivityGps = false;
 
 		if (!memcmp(CMD, "$GNRMC", 6)) {
-//			$--GLL,ddmm.mm,a,dddmm.mm,a,hhmmss.ss,A,x*hh<CR><LF>
 			if (strpbrk(CMD, "A")) {
 
 				float deg = 0.0;
@@ -321,6 +321,7 @@ void UartGPSCommands( ) {
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[4], CMD[5]);
 				sec = strtol(s, NULL, 16);
+				set_slot_count((uint16_t) ((60 - strtol(s, NULL, 10)) % 10)); // sets the slot count to some modulous of 10
 //				uint16_t delayLeft = 0;
 //				memset(s, 0, 5);
 //				sprintf(s, "%c%c%c", CMD[7], CMD[8], CMD[9]);
