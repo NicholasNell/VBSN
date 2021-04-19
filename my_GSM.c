@@ -545,12 +545,10 @@ void http_send_data( void ) {
 
 extern nodeAddress _nodeID;
 extern LocationData gpsData;
-static float loc = 0;
+
 void gsm_upload_my_data( ) {
+
 	gsm_power_save_off();
-	if (loc > 90) {
-		loc = 0;
-	}
 
 	double localTemperature = bme280Data.temperature;
 	double localHumidity = bme280Data.humidity;

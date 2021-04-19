@@ -21,7 +21,7 @@
  */
 Gpio_t Led_rgb_red;
 Gpio_t Led_rgb_green;
-Gpio_t Led_rgb_blue;
+//Gpio_t Led_rgb_blue;
 Gpio_t Led_user_red;
 
 /*!

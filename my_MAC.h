@@ -17,7 +17,7 @@
 #define MAX_MESSAGE_LEN 255
 #define DEFAULT_RX_TIME 1000
 #define SLEEP_TIME 60 * 2 * 1000
-#define MAX_NEIGHBOURS 255
+#define MAX_NEIGHBOURS 10
 #define MAX_STORED_MSG 10
 
 typedef enum {
@@ -53,11 +53,6 @@ void mac_init( );
  * @return returns true if succesful
  */
 bool mac_state_machine( );
-
-bool mac_start_transaction(
-		nodeAddress destination,
-		uint8_t msgType,
-		bool isSource );
 
 /*!
  *

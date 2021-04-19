@@ -18,7 +18,6 @@
 
 /* Statics */
 static volatile uint16_t curADCResult;
-static volatile float normalizedADCRes;
 
 volatile bool convertingFlag = false;
 
@@ -64,6 +63,8 @@ void init_adc( void ) {
 float get_vwc( ) {
 
 	GPIO_setOutputHighOnPin(EC5_POWER_PORT, EC5_POWER_PIN);
+
+	static volatile float normalizedADCRes;
 
 	/* Enabling/Toggling Conversion */
 	MAP_ADC14_enableConversion();

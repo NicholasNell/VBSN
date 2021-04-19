@@ -106,7 +106,7 @@ void uart_init_gps( ) {
 
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
 	delay_ms(100);
-	send_uart_gps(PMTK_SET_NMEA_OUTPUT_GLLONLY); // only enable GLL
+	send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY); // only enable GLL
 //	send_uart_gps(PMTK_SET_NMEA_OUTPUT_OFF);
 //	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	delay_ms(100);
@@ -428,7 +428,6 @@ void UartGPSCommands( ) {
 
 				if (sec != 0x59) {
 					setRTCFlag = true;
-					gpsWorking = true;
 				}
 
 				CMD = strtok(NULL, c);

@@ -44,6 +44,7 @@ typedef struct {
 		nodeAddress netDest;		// final destination, probably gateway
 		uint8_t ttl;				// maximum number of hops
 		uint16_t txSlot; 			// txSlot
+		uint16_t curSlot;			// This nodes current slotCount
 		msgType_t flags;	 		// see flags
 } Header_t;
 

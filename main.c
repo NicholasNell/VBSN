@@ -103,10 +103,8 @@ bool gpsWakeFlag = false;
 // extern is flash ok flag
 extern bool flashOK;
 
-/*!
- * Radio events function pointer
- */
-static RadioEvents_t RadioEvents;
+extern bool collectDataFlag;
+extern bool hasData;
 
 // MSP432 Developments board LED's
 extern Gpio_t Led_rgb_red;	//RED
@@ -147,6 +145,10 @@ void on_rx_timeout( void );
 void on_rx_error( void );
 
 void radio_init( ) {
+	/*!
+	 * Radio events function pointer
+	 */
+	static RadioEvents_t RadioEvents;
 	// Radio initialization
 	RadioEvents.TxDone = on_tx_done;
 	RadioEvents.RxDone = on_rx_done;
@@ -200,7 +202,7 @@ void radio_init( ) {
 		LORA_FIX_LENGTH_PAYLOAD_ON, i + 1, LORA_CRC_ON) + 10;
 	}
 
-	SX1276Send((uint8_t*) "Radio Working!", 13);
+//	SX1276Send((uint8_t*) "Radio Working!", 13);
 }
 
 extern volatile MACappState_t MACState;
@@ -218,15 +220,11 @@ int main( void ) {
 
 	// Initialise all ports and communication protocols
 	board_init_mcu();
-//	rtc_init();
+	flash_erase_all();
+	rtc_init();
 
-	// Button 1 interrupt
-	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_Interrupt_enableInterrupt(INT_PORT1);
-
-	srand(SX1276Random());	// Seeding Random Number generator
+	unsigned seed = SX1276Random();
+	srand(seed);	// Seeding Random Number generator
 
 	// Initialise UART to PC
 	uart_init_pc();
@@ -248,7 +246,6 @@ int main( void ) {
 	}
 
 	if (bme280_user_init(&bme280Dev, &bme280Data) >= 0) {
-		bme280_get_data(&bme280Dev, &bme280Data);
 		bme280Working = true;
 	}
 	else {
@@ -256,16 +253,19 @@ int main( void ) {
 	}
 
 	lightSensorWorking = init_max();
-	if (lightSensorWorking) {
-		get_light();
-	}
 
 	// Have to wait for GPS to get a lock before operation can continue
 	run_systick_function_ms(1000);
+	uint8_t timeout = 0;
 	while (!gpsWorking) {
 		if (systimer_ready_check()) {
+			timeout++;
 			gpio_flash_lED(&Led_rgb_green, 50);
 			run_systick_function_ms(1000);
+			if (timeout > 60) {
+				uart_init_gps();
+				timeout = 0;
+			}
 		}
 	}
 
@@ -307,52 +307,53 @@ int main( void ) {
 		if (schedFlag) {
 			schedFlag = false;
 			scheduler();
-			MAP_WDT_A_clearTimer();
+//			MAP_WDT_A_clearTimer();
 		}
 
-		if (uploadOwnData) {
-			gsm_upload_my_data();
-			uploadOwnData = false;
+		if (collectDataFlag) {
+			helper_collect_sensor_data();
+			hasData = true;
+			collectDataFlag = false;
 		}
+//		PCM_setPowerState(PCM_LPM3);
 
-		if (gpsWakeFlag) {
-			send_uart_gps("H\r\n");
-			gpsWakeFlag = false;
-		}
+//		if (uploadOwnData) {
+//			gsm_upload_my_data();
+//			uploadOwnData = false;
+//		}
+//
+//		if (gpsWakeFlag) {
+//			send_uart_gps("H\r\n");
+//			gpsWakeFlag = false;
+//		}
 //		PCM_gotoLPM3InterruptSafe();
 	}
 }
 
-extern bool schedChange;
-
-void PORT1_IRQHandler( void ) {
-	uint32_t status;
-
-	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
-	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
-
-	if (status & GPIO_PIN1) {
-
-	}
-}
-
 extern bool setRTCFlag;
+uint8_t ppsCounter = 0;
 void PORT3_IRQHandler( void ) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 	if (status & GPS_PPS_PIN) {
+		ppsCounter++;
 
-		if (!gpsWorking) {
-			send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
-		}
+		if (ppsCounter > 10) {
+			ppsCounter = 0;
 
-		if (setRTCFlag) {
-			MAP_RTC_C_holdClock();
-			rtc_init();
-			setRTCFlag = false;
-			gps_set_low_power();
-		}
+//			if (!gpsWorking) {
+//				send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+//			}
+
+			if (setRTCFlag) {
+				rtc_init();
+				rtc_start_clock();
+				setRTCFlag = false;
+				gps_set_low_power();
+				gpsWorking = true;
+			}
+
 //		schedFlag = true;
 //		incrementSlotCount();
 //
@@ -361,6 +362,7 @@ void PORT3_IRQHandler( void ) {
 //		}
 //
 //		RtcInit(currentTime);
+		}
 	}
 }
 

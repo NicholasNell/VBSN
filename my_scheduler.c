@@ -7,6 +7,7 @@
  */
 
 #include <helper.h>
+#include <my_gpio.h>
 #include <my_GSM.h>
 #include <my_MAC.h>
 #include <my_scheduler.h>
@@ -31,6 +32,8 @@ extern bool readyToUploadFlag;
 
 extern bool isRoot;
 
+extern Gpio_t Led_user_red;
+
 bool schedChange = false;
 bool netOp = false;
 volatile uint8_t syncProbability = SYNC_PROB; // the probability of sending out a node discovery message in a global rx slot (as a percentage)
@@ -40,7 +43,15 @@ volatile uint8_t syncProbability = SYNC_PROB; // the probability of sending out 
 void calculate_new_sync_prob( void );
 
 void calculate_new_sync_prob( void ) {
-	syncProbability = (5 - _numNeighbours) * 10 + (40 / (_numNeighbours + 1));
+
+	syncProbability = 50 / (1 + _numNeighbours);
+	/*
+	 30.0
+	 22.5
+	 16.666666666666668
+	 11.25
+	 6.0
+	 */
 }
 
 void init_scheduler( ) {
@@ -60,7 +71,10 @@ void init_scheduler( ) {
 
 bool uploadOwnData = false;
 
+bool collectDataFlag = false;
+
 int scheduler( ) {
+	gpio_toggle(&Led_user_red);
 	bool macStateMachineEnable = false;
 
 	int var = 0;
@@ -99,8 +113,7 @@ int scheduler( ) {
 //	}
 
 	if (slotCount == collectDataSlot) {	// if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
-		helper_collect_sensor_data();
-		hasData = true;
+		collectDataFlag = true;
 	}
 
 	if (slotCount == (_txSlot + 2) && (hasData == true)) {
@@ -119,10 +132,10 @@ int scheduler( ) {
 		macStateMachineEnable = true;
 	}
 
-	if (readyToUploadFlag) {
-		readyToUploadFlag = false;
-		gsm_upload_stored_datagrams();
-	}
+//	if (readyToUploadFlag) {
+//		readyToUploadFlag = false;
+//		gsm_upload_stored_datagrams();
+//	}
 
 	if (macStateMachineEnable) {
 		mac_state_machine();

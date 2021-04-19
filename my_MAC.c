@@ -24,7 +24,6 @@
 
 // Array of carrier sense times
 static uint32_t carrierSenseTimes[0xff];
-static uint8_t carrierSenseSlot = 0;
 
 // Datagram containing the data to be sent over the medium
 Datagram_t txDatagram;
@@ -49,7 +48,7 @@ extern SX1276_t SX1276;
 
 // LED gpio objects
 extern Gpio_t Led_rgb_green;
-extern Gpio_t Led_rgb_blue;
+//extern Gpio_t Led_rgb_blue;
 extern Gpio_t Led_rgb_red;
 
 // Size of recieved LoRa buffer
@@ -186,13 +185,13 @@ void mac_init( ) {
 			gen_id(false);
 		}
 
-		do {
-			double temp = (double) rand();
-			temp /= RAND_MAX;
-			temp *= MAX_SLOT_COUNT;
-			_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
-			_txSlot *= POSSIBLE_TX_SLOT;
-		} while (_txSlot % GLOBAL_RX == 0);
+//		do {
+		double temp = (double) rand();
+		temp /= RAND_MAX;
+		temp *= MAX_SLOT_COUNT;
+		_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
+		_txSlot *= POSSIBLE_TX_SLOT;
+//		} while (_txSlot % GLOBAL_RX == 0);
 
 		schedChange = true;
 		_dataLen = 0;
@@ -204,6 +203,7 @@ void mac_init( ) {
 }
 
 bool mac_state_machine( ) {
+	static uint8_t carrierSenseSlot;
 	RouteEntry_t *route = NULL;
 	while (true) {
 		switch (MACState) {
@@ -219,7 +219,6 @@ bool mac_state_machine( ) {
 //					return false;
 					}
 				}
-				MACState = MAC_SLEEP;
 				break;
 			case MAC_LISTEN:
 				if (!mac_rx(SLOT_LENGTH_MS)) {
@@ -353,6 +352,7 @@ bool mac_send( msgType_t msgType, nodeAddress dest ) {
 	txDatagram.msgHeader.flags = msgType;
 	_numMsgSent++;
 	txDatagram.msgHeader.txSlot = _txSlot;
+	txDatagram.msgHeader.curSlot = get_slot_count();
 
 	if (msgType == MSG_DATA) {
 		txDatagram.data.sensData.hum = bme280Data.humidity;
@@ -427,6 +427,15 @@ static bool process_rx_buffer( ) {
 		receivedMsgIndex = 0;
 	}
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
+
+	// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
+	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
+		set_slot_count(rxDatagram.msgHeader.curSlot);
+	}
+	else {
+		gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
+
+	}
 
 	// check if message was meant for this node:
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
@@ -515,84 +524,6 @@ void add_neighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	receivedNeighbour.neighbourID = neighbour;
 	receivedNeighbour.neighbourTxSlot = txSlot;
 	neighbourTable[_numNeighbours++] = receivedNeighbour;
-}
-
-bool mac_start_transaction(
-		nodeAddress destination,
-		msgType_t msgType,
-		bool isSource ) {
-	/*
-	 *	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
-	 * 	nodeAddress localSource; // Where the message came from, not original source
-	 * 	nodeAddress netSource;	// original message source
-	 * 	nodeAddress netDest;	// final destination, probably gateway
-	 * 	uint8_t hops;			// number of message hops from source to here
-	 * 	uint8_t ttl;			// maximum number of hops
-	 * 	uint16_t txSlot; // txSlot
-	 * 	uint8_t flags;	 // see flags
-	 */
-	rxDatagram.msgHeader.nextHop = destination;
-	rxDatagram.msgHeader.localSource = _nodeID;
-	if (isSource) {
-		rxDatagram.msgHeader.netSource = _nodeID;
-	}
-	else {
-
-	}
-//	rxdatagram.msgHeader.netDest =
-	rxDatagram.msgHeader.ttl = MAX_HOPS;
-
-	rxDatagram.msgHeader.txSlot = _txSlot;
-	rxDatagram.msgHeader.flags = msgType;
-
-	switch (msgType) {
-		case MSG_SYNC:
-			rxDatagram.msgHeader.ttl = 1;
-			rxDatagram.msgHeader.netDest = BROADCAST_ADDRESS;
-			rxDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
-			break;
-		case MSG_DATA:
-			rxDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
-			rxDatagram.msgHeader.nextHop = get_dest(GATEWAY_ADDRESS);
-
-			txDatagram.data.sensData.hum = bme280Data.humidity;
-			txDatagram.data.sensData.press = bme280Data.pressure;
-			txDatagram.data.sensData.temp = bme280Data.temperature;
-			txDatagram.data.sensData.lux = get_lux();
-			txDatagram.data.sensData.gpsData = gpsData;
-			txDatagram.data.sensData.soilMoisture = soilMoisture;
-			txDatagram.data.sensData.tim = timeStamp;
-			break;
-		case MSG_RREQ:
-			/*
-			 nodeAddress source_addr;
-			 uint8_t source_sequence_num;
-			 uint8_t broadcast_id;
-			 nodeAddress dest_addr;	// destination address: will probably be a gateway
-			 uint8_t dest_sequence_num;	// destination sequence number
-			 uint8_t hop_cnt;	// number of hops the message has gone through
-			 */
-			txDatagram.data.Rreq.source_addr = _nodeID;
-			txDatagram.data.Rreq.source_sequence_num = _nodeSequenceNumber;
-			txDatagram.data.Rreq.broadcast_id = _broadcastID;
-			txDatagram.data.Rreq.dest_addr = GATEWAY_ADDRESS;
-			txDatagram.data.Rreq.dest_sequence_num = _destSequenceNumber;
-			txDatagram.data.Rreq.hop_cnt = 0;
-			break;
-		case MSG_RREP:
-			/*
-			 nodeAddress source_addr;	// source address, will be a sensor node
-			 nodeAddress dest_addr;	// destination address: will probably be the gateway
-			 uint8_t dest_sequence_num;	// destination sequence number
-			 uint8_t hop_cnt;	// number of hops until now
-			 uint8_t lifetime;	// TTL?
-			 */
-			txDatagram.data.Rrep.source_addr = _nodeID;
-			break;
-		default:
-			break;
-	}
-	return 0;
 }
 
 bool is_neighbour( nodeAddress node ) {
