@@ -106,6 +106,8 @@ extern bool flashOK;
 extern bool collectDataFlag;
 extern bool hasData;
 
+extern bool readyToUploadFlag;
+
 // MSP432 Developments board LED's
 extern Gpio_t Led_rgb_red;	//RED
 extern Gpio_t Led_rgb_green;	//GREEN
@@ -210,17 +212,17 @@ extern bool uploadOwnData;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
-//	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
-//	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-//	WDT_A_CLOCKITERATIONS_8192K);	// aprox 256
+	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
+	WDT_A_CLOCKITERATIONS_128M);	// aprox 256
 //
-//	MAP_WDT_A_startTimer();
+	MAP_WDT_A_startTimer();
 
 	isRoot = false;	// Assume not a root node at first
 
 	// Initialise all ports and communication protocols
 	board_init_mcu();
-	flash_erase_all();
+//	flash_check_for_data();
 	rtc_init();
 
 	unsigned seed = SX1276Random();
@@ -271,6 +273,7 @@ int main( void ) {
 
 	gps_set_low_power();
 
+	MAP_WDT_A_clearTimer();
 //	gpio_write(&Led_user_red, 0);
 //	char b[255];
 //	LocationData gpsData = get_gps_data();
@@ -317,10 +320,15 @@ int main( void ) {
 		}
 //		PCM_setPowerState(PCM_LPM3);
 
-//		if (uploadOwnData) {
-//			gsm_upload_my_data();
-//			uploadOwnData = false;
-//		}
+		if (uploadOwnData) {
+			gsm_upload_my_data();
+			uploadOwnData = false;
+		}
+
+		if (readyToUploadFlag) {
+			readyToUploadFlag = false;
+			upload_current_datagram();
+		}
 //
 //		if (gpsWakeFlag) {
 //			send_uart_gps("H\r\n");
@@ -350,7 +358,7 @@ void PORT3_IRQHandler( void ) {
 			rtc_init();
 			rtc_set_calendar_time();
 			setRTCFlag = false;
-//			gps_set_low_power();
+			gps_set_low_power();
 			gpsWorking = true;
 //			}
 

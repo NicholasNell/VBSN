@@ -477,8 +477,12 @@ static bool process_rx_buffer( ) {
 
 				break;
 			case MSG_ACK: 	// ACK
-				hasData = false;	// data has succesfully been sent
+//				hasData = false;	// data has succesfully been sent
 				MACState = MAC_SLEEP;
+				add_neighbour(
+						rxDatagram.msgHeader.localSource,
+						rxDatagram.msgHeader.txSlot);
+				add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 				break;
 			case MSG_RREP: 	// RREP
 				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
@@ -490,6 +494,7 @@ static bool process_rx_buffer( ) {
 				/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
 			case MSG_SYNC: 	// SYNC
 			{
+				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
 				add_neighbour(
 						rxDatagram.msgHeader.localSource,
 						rxDatagram.msgHeader.txSlot);
@@ -522,6 +527,9 @@ static bool process_rx_buffer( ) {
 
 void add_neighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	Neighbour_t receivedNeighbour;
+	if (is_neighbour(neighbour)) {
+		return;
+	}
 	receivedNeighbour.neighbourID = neighbour;
 	receivedNeighbour.neighbourTxSlot = txSlot;
 	neighbourTable[_numNeighbours++] = receivedNeighbour;

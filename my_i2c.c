@@ -51,8 +51,8 @@ uint8_t i2c_send( uint8_t addr, uint8_t *buffer, uint8_t bufLen ) {
 	uint8_t retval;
 	I2C_setSlaveAddress(EUSCI_B1_BASE, addr); // Make sure correct i2c slave selected
 	I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE); // set to transmit mode for configuration
-	while (MAP_I2C_masterIsStopSent(EUSCI_B1_BASE))
-		;
+//	while (I2C_masterIsStopSent(EUSCI_B1_BASE))
+//		;
 
 	int index = 0;
 	retval = I2C_masterSendMultiByteStartWithTimeout(

@@ -59,14 +59,19 @@ void add_route( RouteEntry_t routeToNode ) {
 }
 
 void add_route_to_neighbour( nodeAddress dest ) {
-	RouteEntry_t newRoute;
-	newRoute.dest = dest;
-	newRoute.dest_seq_num = 0;
-	newRoute.expiration_time = NULL;
-	newRoute.next_hop = newRoute.dest;
-	newRoute.num_hops = 1;
+	RouteEntry_t *newRoute = NULL;
+	if (has_route_to_node(dest, newRoute)) {
+		return;
+	}
+	else {
+		newRoute->dest = dest;
+		newRoute->dest_seq_num = 0;
+		newRoute->expiration_time = NULL;
+		newRoute->next_hop = newRoute->dest;
+		newRoute->num_hops = 1;
 
-	routingtable[_numRoutes++] = newRoute;
+		routingtable[_numRoutes++] = *newRoute;
+	}
 }
 
 nodeAddress get_dest( nodeAddress dest ) {

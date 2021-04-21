@@ -83,7 +83,7 @@ const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCL
 		};
 
 void uart_init_gps( ) {
-	GPS_ON
+
 	gpsData.lat = 0.0;
 	gpsData.lon = 0.0;
 	/* Selecting P9.6 and P9.7 in UART mode */
@@ -107,6 +107,7 @@ void uart_init_gps( ) {
 	MAP_GPIO_setOutputHighOnPin(GPS_WAKE_PORT, GPS_WAKE_PIN);
 
 //	sendUARTgps("$PCAS10,3*1F\r\n"); // reset GPS module
+	gps_disable_low_power();
 	delay_ms(100);
 	send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY); // only enable GLL
 //	send_uart_gps(PMTK_SET_NMEA_OUTPUT_OFF);

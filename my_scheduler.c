@@ -7,6 +7,7 @@
  */
 
 #include <helper.h>
+#include <my_flash.h>
 #include <my_gpio.h>
 #include <my_GSM.h>
 #include <my_MAC.h>
@@ -19,8 +20,6 @@
 #include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
 static uint16_t slotCount;
-
-static uint16_t collectDataSlot;
 
 extern Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
@@ -60,13 +59,13 @@ void calculate_new_sync_prob( void ) {
 
 void init_scheduler( ) {
 	// Set up interrupt to increment slots (Using GPS PPS signal[Maybe])
-	int temp = _txSlot - COLLECT_DATA_SLOT_REL;
-	if (temp < 0) {
-		collectDataSlot = MAX_SLOT_COUNT + temp;
-	}
-	else {
-		collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
-	}
+//	int temp = _txSlot - COLLECT_DATA_SLOT_REL;
+//	if (temp < 0) {
+//		collectDataSlot = MAX_SLOT_COUNT + temp;
+//	}
+//	else {
+//		collectDataSlot = _txSlot - COLLECT_DATA_SLOT_REL;
+//	}
 
 	slotCount = 1;
 
@@ -81,21 +80,24 @@ extern RTC_C_Calendar currentTime;
 int scheduler( ) {
 //	gpio_toggle(&Led_user_red);
 	WDT_A_clearTimer();
+	MACState = MAC_LISTEN;	// by default, listen
 	bool macStateMachineEnable = true;
 
-	if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
+//	if ((slotCount + UPLOAD_DATAGRAM_OFFSET) % UPLOAD_DATAGRAMS_TIME == 0
+//			&& isRoot) {
+//		gsm_upload_stored_datagrams();
+//	}
+//	if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
 //		char s[5];
 //		memset(s, 0, 5);
 //		sprintf(s, "%d", convert_hex_to_dec_by_byte(currentTime.seconds));
 //		SX1276Send((uint8_t*) s, 5);
 //		gpio_toggle(&Led_user_red);
-	}
-
-	MACState = MAC_LISTEN;	// by default, listen
+//	}
 
 	int var = 0;
 	for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
-		if (slotCount == neighbourTable[var].neighbourTxSlot) {
+		if (slotCount % neighbourTable[var].neighbourTxSlot == 0) {
 			MACState = MAC_LISTEN;
 			macStateMachineEnable = true;
 			break;
@@ -107,15 +109,15 @@ int scheduler( ) {
 		macStateMachineEnable = true;
 	}
 
-	if ((slotCount % _txSlot == 0) && (hasData)) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
+	if (((slotCount + _txSlot) % TIME_TO_SEND_SEC == 0)) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 		if (!isRoot) {
 			MACState = MAC_RTS;
 			macStateMachineEnable = true;
 		}
-//		else {
-//			MACState = MAC_SLEEP;
-//			uploadOwnData = true;
-//		}
+		else {
+			MACState = MAC_SLEEP;
+			uploadOwnData = true;
+		}
 	}
 
 //	if (!isRoot) {
@@ -128,12 +130,13 @@ int scheduler( ) {
 	}
 //	}
 
-	if (slotCount % TIME_TO_COLLECT_DATA_SEC == 0) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
+	if ((slotCount + TIME_TO_COLLECT_DATA_OFFSET) % TIME_TO_COLLECT_DATA_SEC
+			== 0) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 		collectDataFlag = true;
 	}
 
-	if (slotCount == (_txSlot + 2) && (hasData == true)) {
-		hasData = false;
+	if (slotCount % (_txSlot) && (hasData == true)) {
+//		hasData = false;
 	}
 
 	if ((slotCount % GLOBAL_RX == 0) && netOp) { // Perform a network layer operation in the global RX window
@@ -152,10 +155,14 @@ int scheduler( ) {
 //		readyToUploadFlag = false;
 //		gsm_upload_stored_datagrams();
 //	}
-
-//	if (macStateMachineEnable) {
-//		mac_state_machine();
+//	if ((slotCount + WRITE_FLASH_DATA_OFFSET) % WRITE_FLASH_DATA_TIME == 0) {
+//		flash_fill_struct_for_write();
+//		flash_write_struct_to_flash();
 //	}
+
+	if (macStateMachineEnable) {
+		mac_state_machine();
+	}
 
 	return true;
 }

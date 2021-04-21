@@ -9,6 +9,7 @@
 
 #include <helper.h>
 #include <my_gpio.h>
+#include <my_gps.h>
 #include <my_scheduler.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -86,14 +87,14 @@ void RTC_C_IRQHandler( void ) {
 	if (rtcInitFlag) {
 		currentTime = RTC_C_getCalendarTime();
 		schedFlag = true;
-//		int temp = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
-//				+ convert_hex_to_dec_by_byte(currentTime.seconds);
-//		set_slot_count(temp);
-		increment_slot_count();
+		int temp = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
+				+ convert_hex_to_dec_by_byte(currentTime.seconds);
+		set_slot_count(temp);
+//		increment_slot_count();
 
-		if (get_slot_count() == MAX_SLOT_COUNT + 1) {
-			set_slot_count(0);
-		}
+//		if (get_slot_count() == MAX_SLOT_COUNT + 1) {
+//			set_slot_count(0);
+//		}
 
 	}
 //	if (time.minutes % 0x5 == 0) {
@@ -108,10 +109,11 @@ void RTC_C_IRQHandler( void ) {
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 //		gpsWakeFlag = true;
 //		set_slot_count(0);
+		gps_disable_low_power();
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
-		gpsWakeFlag = true;
+//		gpsWakeFlag = true;
 //			setSlotCount(0);
 	}
 

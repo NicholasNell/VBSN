@@ -12,6 +12,7 @@
 #include "EC5.h"
 #include <string.h>
 #include <my_gpio.h>
+#include <my_timer.h>
 
 // defines
 #define ADC_SAMPLE_COUNT 10
@@ -77,8 +78,7 @@ float get_vwc( ) {
 		MAP_ADC14_toggleConversionTrigger();
 		convertingFlag = true;
 
-		while (convertingFlag)
-			;;
+		delay_ms(10);
 
 	}
 

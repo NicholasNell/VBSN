@@ -103,4 +103,8 @@ void gsm_upload_my_data( );
 //! Uploads all stored datagrams to the database
 void gsm_upload_stored_datagrams( void );
 
+//!
+//! @brief Uploads the datagram it just received
+void upload_current_datagram( void );
+
 #endif /* MY_GSMMODEM_H_ */

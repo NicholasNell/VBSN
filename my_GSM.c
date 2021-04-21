@@ -2,6 +2,7 @@
 #include <datagram.h>
 #include <EC5.h>
 #include <helper.h>
+#include <my_gpio.h>
 #include <my_GSM.h>
 #include <my_MAC.h>
 #include <my_systick.h>
@@ -499,6 +500,7 @@ int string_search( int index )         // index' is Strings[index][SIZE_COMMAND]
  */
 extern struct bme280_dev bme280Dev;
 extern struct bme280_data bme280Data;
+extern Gpio_t Led_rgb_red;
 void http_send_data( void ) {
 
 	helper_collect_sensor_data();
@@ -545,8 +547,10 @@ void http_send_data( void ) {
 
 extern nodeAddress _nodeID;
 extern LocationData gpsData;
+extern RTC_C_Calendar currentTime;
 
 void gsm_upload_my_data( ) {
+//	gpio_flash_lED(&Led_rgb_red, 10);
 
 	gsm_power_save_off();
 
@@ -574,7 +578,7 @@ void gsm_upload_my_data( ) {
 	int lenWritten =
 			sprintf(
 					postBody,
-					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f}\r\n",
+					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
 					localAddress,
 					localTemperature,
 					localHumidity,
@@ -582,7 +586,10 @@ void gsm_upload_my_data( ) {
 					localVWC,
 					localLight,
 					localLat,
-					localLon);
+					localLon,
+					convert_hex_to_dec_by_byte(currentTime.hours),
+					convert_hex_to_dec_by_byte(currentTime.minutes),
+					convert_hex_to_dec_by_byte(currentTime.seconds));
 //	int lenWritten = sprintf(
 //			postBody,
 //			"{\"nodeID\": %d,\"Temperature\":%.1f}\r\n",
@@ -604,21 +611,30 @@ void gsm_upload_my_data( ) {
 //
 //	}
 //	delay_ms(2000);
+	gpio_flash_lED(&Led_rgb_red, 10);
+	WDT_A_clearTimer();
 	counter_read_gsm = 0;
 	send_msg(postCommand);
 //	if (!wait_check_for_reply(">>>", 5)) {
 //
 //	}
 //	delay_ms(2000);
+	gpio_flash_lED(&Led_rgb_red, 10);
 	delay_ms(5000);
+	gpio_flash_lED(&Led_rgb_red, 10);
 	counter_read_gsm = 0;
+	WDT_A_clearTimer();
 	send_msg(postBody);
 //	if (!wait_check_for_reply("OK", 5)) {
 ////		return;
 //	}
 //	delay_ms(2000);
+	gpio_flash_lED(&Led_rgb_red, 10);
 	delay_ms(3000);
+	gpio_flash_lED(&Led_rgb_red, 10);
 	counter_read_gsm = 0;
+	WDT_A_clearTimer();
+	gpio_flash_lED(&Led_rgb_red, 10);
 //	send_msg(CONTEXT_DEACTIVATION);
 //	if (!wait_check_for_reply("OK", 1)) {
 ////		return;
@@ -627,11 +643,15 @@ void gsm_upload_my_data( ) {
 	counter_read_gsm = 0;
 //	send_gsm_uart("AT+CFUN=0\r");
 	gsm_power_save_on();
+	gpio_flash_lED(&Led_rgb_red, 10);
+	WDT_A_clearTimer();
 }
 
 void gsm_upload_stored_datagrams( ) {
 
 	int i = 0;
+	gpio_flash_lED(&Led_rgb_red, 10);
+	gsm_power_save_off();
 
 	uint8_t numToSend = get_received_messages_index();
 	Datagram_t *pointerToData = get_received_messages();
@@ -650,72 +670,225 @@ void gsm_upload_stored_datagrams( ) {
 //		pointerToData[i].data.sensData.gpsData.lon = 18;
 //	}
 
-	double localTemperature;
-	double localHumidity;
-	double localPressure;
-	double localVWC;
-	double localLight;
-	double localLat;
-	double localLon;
-	nodeAddress localAddress;
-
 	char postCommand[SIZE_BUFFER];
 	memset(postCommand, 0, SIZE_BUFFER);
 	char postBody[SIZE_BUFFER];
 	memset(postBody, 0, SIZE_BUFFER);
 
+	double localTemperature = bme280Data.temperature;
+	double localHumidity = bme280Data.humidity;
+	double localPressure = bme280Data.pressure;
+	double localVWC = get_latest_value();
+	double localLight = get_lux();
+	double localLat = gpsData.lat;
+	double localLon = gpsData.lon;
+	int localHr = convert_hex_to_dec_by_byte(currentTime.hours);
+	int localMin = convert_hex_to_dec_by_byte(currentTime.minutes);
+	int LocalSec = convert_hex_to_dec_by_byte(currentTime.seconds);
+
+	nodeAddress localAddress = _nodeID;
+
 //	gsm_power_save_off();
 //	delay_ms(1000);
 	counter_read_gsm = 0;
-	send_msg(CONTEXT_ACTIVATION);
-//	if (!wait_check_for_reply("OK", 1)) {
-//
-//	}
-	delay_ms(2000);
+//	send_msg(CONTEXT_ACTIVATION);
+////	if (!wait_check_for_reply("OK", 1)) {
+////
+////	}
+//	gpio_flash_lED(&Led_rgb_red, 10);
+//	delay_ms(2000);
+	gpio_flash_lED(&Led_rgb_red, 10);
+	WDT_A_clearTimer();
 	counter_read_gsm = 0;
 
-	for (i = 0; i < numToSend; i++) {
+	lenWritten =
+			sprintf(
+					postBody,
+					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
+					localAddress,
+					localTemperature,
+					localHumidity,
+					localPressure,
+					localVWC,
+					localLight,
+					localLat,
+					localLon,
+					localHr,
+					localMin,
+					LocalSec);
 
-		localTemperature = pointerToData[i].data.sensData.temp;
-		localHumidity = pointerToData[i].data.sensData.hum;
-		localPressure = pointerToData[i].data.sensData.press;
-		localVWC = pointerToData[i].data.sensData.soilMoisture;
-		localLight = pointerToData[i].data.sensData.lux;
-		localLat = pointerToData[i].data.sensData.gpsData.lat;
-		localLon = pointerToData[i].data.sensData.gpsData.lon;
-		localAddress = pointerToData[i].msgHeader.netSource;
+	sprintf(
+			postCommand,
+			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
+			ACCESS_TOKEN,
+			lenWritten);
 
-		lenWritten =
-				sprintf(
-						postBody,
-						"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f}\r\n",
-						localAddress,
-						localTemperature,
-						localHumidity,
-						localPressure,
-						localVWC,
-						localLight,
-						localLat,
-						localLon);
+	send_msg(postCommand);
 
-		sprintf(
-				postCommand,
-				"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
-				ACCESS_TOKEN,
-				lenWritten);
-		send_msg(postCommand);
-		delay_ms(3000);
-		counter_read_gsm = 0;
-		send_msg(postBody);
-		delay_ms(3000);
+	gpio_flash_lED(&Led_rgb_red, 10);
+	delay_ms(3000);
+	gpio_flash_lED(&Led_rgb_red, 10);
+	WDT_A_clearTimer();
+	gpio_flash_lED(&Led_rgb_red, 10);
+	counter_read_gsm = 0;
 
+	send_msg(postBody);
+
+	gpio_flash_lED(&Led_rgb_red, 10);
+	delay_ms(3000);
+	gpio_flash_lED(&Led_rgb_red, 10);
+	WDT_A_clearTimer();
+
+	if (numToSend > 0) {
+		for (i = 0; i < numToSend; i++) {
+
+			localTemperature = pointerToData[i].data.sensData.temp;
+			localHumidity = pointerToData[i].data.sensData.hum;
+			localPressure = pointerToData[i].data.sensData.press;
+			localVWC = pointerToData[i].data.sensData.soilMoisture;
+			localLight = pointerToData[i].data.sensData.lux;
+			localLat = pointerToData[i].data.sensData.gpsData.lat;
+			localLon = pointerToData[i].data.sensData.gpsData.lon;
+			localAddress = pointerToData[i].msgHeader.netSource;
+			localHr = convert_hex_to_dec_by_byte(
+					pointerToData[i].data.sensData.tim.hours);
+			localMin = convert_hex_to_dec_by_byte(
+					pointerToData[i].data.sensData.tim.minutes);
+			LocalSec = convert_hex_to_dec_by_byte(
+					pointerToData[i].data.sensData.tim.seconds);
+
+			lenWritten =
+					sprintf(
+							postBody,
+							"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
+							localAddress,
+							localTemperature,
+							localHumidity,
+							localPressure,
+							localVWC,
+							localLight,
+							localLat,
+							localLon,
+							localHr,
+							localMin,
+							LocalSec);
+
+			sprintf(
+					postCommand,
+					"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
+					ACCESS_TOKEN,
+					lenWritten);
+
+			send_msg(postCommand);
+
+			gpio_flash_lED(&Led_rgb_red, 10);
+			delay_ms(3000);
+			gpio_flash_lED(&Led_rgb_red, 10);
+			WDT_A_clearTimer();
+			gpio_flash_lED(&Led_rgb_red, 10);
+			counter_read_gsm = 0;
+
+			send_msg(postBody);
+
+			gpio_flash_lED(&Led_rgb_red, 10);
+			delay_ms(3000);
+			gpio_flash_lED(&Led_rgb_red, 10);
+			WDT_A_clearTimer();
+
+		}
 	}
 
 	counter_read_gsm = 0;
 //	send_msg(CONTEXT_DEACTIVATION);
 //	delay_ms(1000);
 	counter_read_gsm = 0;
-//	gsm_power_save_on();
+	gsm_power_save_on();
 	reset_received_msg_index();
+	WDT_A_clearTimer();
+//	gsm_upload_my_data();
 
+}
+
+void upload_current_datagram( void ) {
+	//	gpio_flash_lED(&Led_rgb_red, 10);
+
+	gsm_power_save_off();
+
+	Datagram_t *pointerToData = get_received_messages();
+
+	int lenWritten = 0;
+
+	double localTemperature = pointerToData[0].data.sensData.temp;
+	double localHumidity = pointerToData[0].data.sensData.hum;
+	double localPressure = pointerToData[0].data.sensData.press;
+	double localVWC = pointerToData[0].data.sensData.soilMoisture;
+	double localLight = pointerToData[0].data.sensData.lux;
+	double localLat = pointerToData[0].data.sensData.gpsData.lat;
+	double localLon = pointerToData[0].data.sensData.gpsData.lon;
+	nodeAddress localAddress = pointerToData[0].msgHeader.netSource;
+	int localHr = convert_hex_to_dec_by_byte(
+			pointerToData[0].data.sensData.tim.hours);
+	int localMin = convert_hex_to_dec_by_byte(
+			pointerToData[0].data.sensData.tim.minutes);
+	int LocalSec = convert_hex_to_dec_by_byte(
+			pointerToData[0].data.sensData.tim.seconds);
+
+	char postCommand[SIZE_BUFFER];
+	memset(postCommand, 0, SIZE_BUFFER);
+	char postBody[SIZE_BUFFER];
+	memset(postBody, 0, SIZE_BUFFER);
+
+	lenWritten =
+			sprintf(
+					postBody,
+					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
+					localAddress,
+					localTemperature,
+					localHumidity,
+					localPressure,
+					localVWC,
+					localLight,
+					localLat,
+					localLon,
+					localHr,
+					localMin,
+					LocalSec);
+
+	sprintf(
+			postCommand,
+			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
+			ACCESS_TOKEN,
+			lenWritten);
+
+	send_msg(postCommand);
+
+	gpio_flash_lED(&Led_rgb_red, 10);
+//	delay_ms(3000);
+	if (wait_check_for_reply(">>>", 5)) {
+
+	}
+	else {
+		return;
+	}
+	gpio_flash_lED(&Led_rgb_red, 10);
+	WDT_A_clearTimer();
+	gpio_flash_lED(&Led_rgb_red, 10);
+	counter_read_gsm = 0;
+
+	send_msg(postBody);
+
+	gpio_flash_lED(&Led_rgb_red, 10);
+//	delay_ms(3000);
+	if (wait_check_for_reply(RESPONSE_OK, 5)) {
+
+	}
+	else {
+		return;
+	}
+	counter_read_gsm = 0;
+	gpio_flash_lED(&Led_rgb_red, 10);
+	gsm_power_save_on();
+	gpio_flash_lED(&Led_rgb_red, 10);
+	reset_received_msg_index();
+	WDT_A_clearTimer();
 }
