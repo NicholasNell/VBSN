@@ -188,7 +188,7 @@ void mac_init( ) {
 //		do {
 		double temp = (double) rand();
 		temp /= RAND_MAX;
-		temp *= MAX_SLOT_COUNT;
+		temp *= TIME_TO_SEND_SEC;
 		_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
 		_txSlot *= POSSIBLE_TX_SLOT;
 //		} while (_txSlot % GLOBAL_RX == 0);
@@ -221,6 +221,7 @@ bool mac_state_machine( ) {
 				}
 				break;
 			case MAC_LISTEN:
+//				gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
 				if (!mac_rx(SLOT_LENGTH_MS)) {
 					MACState = MAC_SLEEP;
 //				return false;
@@ -421,7 +422,7 @@ bool mac_rx( uint32_t timeout ) {
 }
 
 static bool process_rx_buffer( ) {
-	gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
+
 	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
 
 	if (receivedMsgIndex == MAX_STORED_MSG) {
@@ -432,11 +433,10 @@ static bool process_rx_buffer( ) {
 	// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
 	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
 		set_slot_count(rxDatagram.msgHeader.curSlot);
-
 	}
-	else {
-
-	}
+//	else {
+//
+//	}
 
 	// check if message was meant for this node:
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)

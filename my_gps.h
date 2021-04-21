@@ -24,11 +24,14 @@
 #define PMTK_BACKUP_MODE	 					"$PMTK225,4*2F\r\n"	////< Lowest power mode, must be woken by pulling wake pin high
 #define PMTK_STANDBY  							"$PMTK161,0*28\r\n" ///< standby command & boot successful message
 #define PMTK_AWAKE 								"$PMTK010,002*2D\r\n"             ///< Wake up
+#define PMTK_ALWAYS_LOCATE_9					"$PMTK225,9*22\r\n" ///always locate mode
+#define PMTK_ALWAYS_LOCATE_8					"$PMTK225,8*23\r\n" ///always locate mode
 
 #define PMTK_SET_NMEA_UPDATE_1HZ 				"$PMTK220,1000*1F\r\n" ///<  1 Hz
 #define PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ		"$PMTK220,5000*1B\r\n" ///< Once every 5 seconds, 200 millihertz.
 
 #define PMTK_API_SET_FIX_CTL_1HZ 				"$PMTK300,1000,0,0,0,0*1C\r\n" ///< 1 Hz
+#define PMTK_API_SET_FIX_CTL_2HZ 				"$PMTK300,500,0,0,0,0*1C\r\n" ///< 2 Hz
 
 #define PMTK_SET_NMEA_OUTPUT_GLLONLY 			"$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" ///< turn on only the GPGLL sentence
 #define PMTK_SET_NMEA_OUTPUT_RMCONLY 			"$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" ///< turn on only the GPRMC sentence

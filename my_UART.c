@@ -69,6 +69,7 @@ const eUSCI_UART_ConfigV1 uartConfigGps = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // S
 		EUSCI_A_UART_8_BIT_LEN                  // 8 bit data length
 		};
 
+//57600
 const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
 		1,                                     // BRDIV = 9
 		10,                                       // UCxBRF = 12
@@ -321,7 +322,13 @@ void UartGPSCommands( ) {
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[4], CMD[5]);
 				sec = strtol(s, NULL, 16);
-				set_slot_count((uint16_t) ((60 - strtol(s, NULL, 10)) % 10)); // sets the slot count to some modulous of 10
+//				if (!(sec == 0x10 || sec == 0x20 || sec == 0x30 || sec == 0x40
+//						|| sec == 0x50)) {
+//					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+//					counter_read_gps = 0;
+//					return;
+//				}
+//				set_slot_count((uint16_t) ((60 - strtol(s, NULL, 10)) % 10)); // sets the slot count to some modulous of 10
 //				uint16_t delayLeft = 0;
 //				memset(s, 0, 5);
 //				sprintf(s, "%c%c%c", CMD[7], CMD[8], CMD[9]);
@@ -430,13 +437,16 @@ void UartGPSCommands( ) {
 				if (sec != 0x59) {
 					setRTCFlag = true;
 				}
+				int slot = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
+						+ convert_hex_to_dec_by_byte(currentTime.seconds);
+				set_slot_count(slot);
 
-				CMD = strtok(NULL, c);
-				// Magnetic Variation
-				CMD = strtok(NULL, c);
-				//Mode A
-				CMD = strtok(NULL, c);
-				// checksum
+//				CMD = strtok(NULL, c);
+//				// Magnetic Variation
+//				CMD = strtok(NULL, c);
+//				//Mode A
+//				CMD = strtok(NULL, c);
+//				// checksum
 
 			}
 

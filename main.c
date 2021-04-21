@@ -346,13 +346,13 @@ void PORT3_IRQHandler( void ) {
 //				send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
 //			}
 
-			if (setRTCFlag) {
-				rtc_init();
-				rtc_set_calendar_time();
-				setRTCFlag = false;
-				gps_set_low_power();
-				gpsWorking = true;
-			}
+//			if (setRTCFlag) {
+			rtc_init();
+			rtc_set_calendar_time();
+			setRTCFlag = false;
+//			gps_set_low_power();
+			gpsWorking = true;
+//			}
 
 //		schedFlag = true;
 //		incrementSlotCount();

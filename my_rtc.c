@@ -7,6 +7,7 @@
 
  */
 
+#include <helper.h>
 #include <my_gpio.h>
 #include <my_scheduler.h>
 #include <stdbool.h>
@@ -38,10 +39,10 @@ void rtc_init( ) {
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 
 	/* Specify an interrupt to assert every minute */
-	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_MINUTECHANGE);
+	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_HOURCHANGE);
 
-	MAP_RTC_C_setCalendarAlarm(RTC_C_ALARMCONDITION_OFF, 0x12,
-	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
+//	MAP_RTC_C_setCalendarAlarm(0x30, RTC_C_ALARMCONDITION_OFF,
+//	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
 
 	/* Enable interrupt for RTC Ready Status, which asserts when the RTC
 	 * Calendar registers are ready to read.
@@ -83,7 +84,11 @@ void RTC_C_IRQHandler( void ) {
 //	gpio_flash_lED(&Led_user_red, 5);
 
 	if (rtcInitFlag) {
+		currentTime = RTC_C_getCalendarTime();
 		schedFlag = true;
+//		int temp = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
+//				+ convert_hex_to_dec_by_byte(currentTime.seconds);
+//		set_slot_count(temp);
 		increment_slot_count();
 
 		if (get_slot_count() == MAX_SLOT_COUNT + 1) {

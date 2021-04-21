@@ -25,3 +25,10 @@ void helper_collect_sensor_data( ) {
 	get_vwc();
 	timeStamp = RTC_C_getCalendarTime();
 }
+
+int convert_hex_to_dec_by_byte( uint_fast8_t hex ) {
+	int tens = (hex & 0xF0) >> 4;
+	int ones = (hex & 0x0F);
+
+	return tens * 10 + ones;
+}

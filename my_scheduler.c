@@ -10,9 +10,12 @@
 #include <my_gpio.h>
 #include <my_GSM.h>
 #include <my_MAC.h>
+#include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
 static uint16_t slotCount;
@@ -74,10 +77,21 @@ bool uploadOwnData = false;
 
 bool collectDataFlag = false;
 
+extern RTC_C_Calendar currentTime;
 int scheduler( ) {
-	gpio_toggle(&Led_user_red);
+//	gpio_toggle(&Led_user_red);
 	WDT_A_clearTimer();
-	bool macStateMachineEnable = false;
+	bool macStateMachineEnable = true;
+
+	if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
+//		char s[5];
+//		memset(s, 0, 5);
+//		sprintf(s, "%d", convert_hex_to_dec_by_byte(currentTime.seconds));
+//		SX1276Send((uint8_t*) s, 5);
+//		gpio_toggle(&Led_user_red);
+	}
+
+	MACState = MAC_LISTEN;	// by default, listen
 
 	int var = 0;
 	for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
@@ -93,15 +107,15 @@ int scheduler( ) {
 		macStateMachineEnable = true;
 	}
 
-	if ((slotCount == _txSlot) && (hasData)) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
+	if ((slotCount % _txSlot == 0) && (hasData)) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 		if (!isRoot) {
 			MACState = MAC_RTS;
 			macStateMachineEnable = true;
 		}
-		else {
-			MACState = MAC_SLEEP;
-			uploadOwnData = true;
-		}
+//		else {
+//			MACState = MAC_SLEEP;
+//			uploadOwnData = true;
+//		}
 	}
 
 //	if (!isRoot) {
@@ -114,7 +128,7 @@ int scheduler( ) {
 	}
 //	}
 
-	if (slotCount == collectDataSlot) {	// if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
+	if (slotCount % TIME_TO_COLLECT_DATA_SEC == 0) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 		collectDataFlag = true;
 	}
 
@@ -122,13 +136,13 @@ int scheduler( ) {
 		hasData = false;
 	}
 
-	if ((slotCount % GLOBAL_RX == 0) && netOp) {// Perform a network layer operation in the global RX window
+	if ((slotCount % GLOBAL_RX == 0) && netOp) { // Perform a network layer operation in the global RX window
 		netOp = false;
 		macStateMachineEnable = true;
 		MACState = MAC_NET_OP;
 	}
 
-	if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) {// hop the received message in the global RX window
+	if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) { // hop the received message in the global RX window
 		hopMessageFlag = false;
 		MACState = MAC_HOP_MESSAGE;
 		macStateMachineEnable = true;
@@ -139,9 +153,9 @@ int scheduler( ) {
 //		gsm_upload_stored_datagrams();
 //	}
 
-	if (macStateMachineEnable) {
-		mac_state_machine();
-	}
+//	if (macStateMachineEnable) {
+//		mac_state_machine();
+//	}
 
 	return true;
 }
