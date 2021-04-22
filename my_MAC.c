@@ -206,6 +206,7 @@ bool mac_state_machine( ) {
 	static uint8_t carrierSenseSlot;
 	RouteEntry_t *route = NULL;
 	while (true) {
+		WDT_A_clearTimer();
 		switch (MACState) {
 			case MAC_SYNC_BROADCAST:
 				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {

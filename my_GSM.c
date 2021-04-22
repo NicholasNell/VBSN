@@ -101,14 +101,25 @@ void gsm_startup( void ) {
 
 bool init_gsm( void ) {
 
-	int retval;
+	int retval = false;
 
 	gsm_startup();
 	gsm_power_save_off();
 	delay_ms(100);
 
-	retval = check_com();
+	run_systick_function_ms(3000);
+	while (!retval) {
+		WDT_A_clearTimer();
+		retval = check_com();
+		if (systimer_ready_check()) {
+			break;
+		}
 
+		if (retval) {
+			break;
+		}
+		delay_ms(100);
+	}
 	if (retval) {
 //		modem_start();
 		send_msg("AT\r\n");
@@ -132,14 +143,19 @@ bool init_gsm( void ) {
 		send_msg(CONTEXT_ACTIVATION);
 
 		while (wait_check_for_reply("ERROR", 2)) {
-
+			WDT_A_clearTimer();
 			send_msg(CONTEXT_DEACTIVATION);
+			WDT_A_clearTimer();
 			delay_ms(1000);
+			WDT_A_clearTimer();
 			send_msg(CONTEXT_ACTIVATION);
+			WDT_A_clearTimer();
 			delay_ms(5000);
+			WDT_A_clearTimer();
 		}
 
 		delay_ms(1000);
+		WDT_A_clearTimer();
 		gsm_power_save_on();
 
 		return true;
@@ -170,7 +186,7 @@ void EUSCIA2_IRQHandler( void ) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
 		UartGSMRX[counter_read_gsm] = MAP_UART_receiveData(EUSCI_A2_BASE);
-		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
+//		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
 		counter_read_gsm++;
 	}
 	//if(counter_read_gsm == 80)
@@ -370,6 +386,7 @@ void check_gprs_attached( void ) {
 bool wait_check_for_reply( char *reply, uint8_t delay_s ) {
 	run_systick_function_second(delay_s);
 	do {
+		WDT_A_clearTimer();
 		uint8_t index = check_for_string_position(reply);
 		if (index != 0) {
 			stop_systick();
@@ -550,7 +567,6 @@ extern LocationData gpsData;
 extern RTC_C_Calendar currentTime;
 
 void gsm_upload_my_data( ) {
-//	gpio_flash_lED(&Led_rgb_red, 10);
 
 	gsm_power_save_off();
 
@@ -611,7 +627,7 @@ void gsm_upload_my_data( ) {
 //
 //	}
 //	delay_ms(2000);
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	WDT_A_clearTimer();
 	counter_read_gsm = 0;
 	send_msg(postCommand);
@@ -619,9 +635,11 @@ void gsm_upload_my_data( ) {
 //
 //	}
 //	delay_ms(2000);
-	gpio_flash_lED(&Led_rgb_red, 10);
-	delay_ms(5000);
-	gpio_flash_lED(&Led_rgb_red, 10);
+	if (!wait_check_for_reply(">>>", 5)) {
+		delay_ms(10);
+		WDT_A_clearTimer();
+	}
+
 	counter_read_gsm = 0;
 	WDT_A_clearTimer();
 	send_msg(postBody);
@@ -629,12 +647,15 @@ void gsm_upload_my_data( ) {
 ////		return;
 //	}
 //	delay_ms(2000);
-	gpio_flash_lED(&Led_rgb_red, 10);
-	delay_ms(3000);
-	gpio_flash_lED(&Led_rgb_red, 10);
+
+	if (!wait_check_for_reply(RESPONSE_OK, 5)) {
+		delay_ms(10);
+		WDT_A_clearTimer();
+	}
+
 	counter_read_gsm = 0;
 	WDT_A_clearTimer();
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 //	send_msg(CONTEXT_DEACTIVATION);
 //	if (!wait_check_for_reply("OK", 1)) {
 ////		return;
@@ -643,14 +664,14 @@ void gsm_upload_my_data( ) {
 	counter_read_gsm = 0;
 //	send_gsm_uart("AT+CFUN=0\r");
 	gsm_power_save_on();
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	WDT_A_clearTimer();
 }
 
 void gsm_upload_stored_datagrams( ) {
 
 	int i = 0;
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	gsm_power_save_off();
 
 	uint8_t numToSend = get_received_messages_index();
@@ -695,9 +716,9 @@ void gsm_upload_stored_datagrams( ) {
 ////	if (!wait_check_for_reply("OK", 1)) {
 ////
 ////	}
-//	gpio_flash_lED(&Led_rgb_red, 10);
+//
 //	delay_ms(2000);
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	WDT_A_clearTimer();
 	counter_read_gsm = 0;
 
@@ -725,18 +746,16 @@ void gsm_upload_stored_datagrams( ) {
 
 	send_msg(postCommand);
 
-	gpio_flash_lED(&Led_rgb_red, 10);
 	delay_ms(3000);
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	WDT_A_clearTimer();
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	counter_read_gsm = 0;
 
 	send_msg(postBody);
 
-	gpio_flash_lED(&Led_rgb_red, 10);
 	delay_ms(3000);
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	WDT_A_clearTimer();
 
 	if (numToSend > 0) {
@@ -781,18 +800,16 @@ void gsm_upload_stored_datagrams( ) {
 
 			send_msg(postCommand);
 
-			gpio_flash_lED(&Led_rgb_red, 10);
 			delay_ms(3000);
-			gpio_flash_lED(&Led_rgb_red, 10);
+
 			WDT_A_clearTimer();
-			gpio_flash_lED(&Led_rgb_red, 10);
+
 			counter_read_gsm = 0;
 
 			send_msg(postBody);
 
-			gpio_flash_lED(&Led_rgb_red, 10);
 			delay_ms(3000);
-			gpio_flash_lED(&Led_rgb_red, 10);
+
 			WDT_A_clearTimer();
 
 		}
@@ -810,7 +827,7 @@ void gsm_upload_stored_datagrams( ) {
 }
 
 void upload_current_datagram( void ) {
-	//	gpio_flash_lED(&Led_rgb_red, 10);
+	//
 
 	gsm_power_save_off();
 
@@ -862,33 +879,27 @@ void upload_current_datagram( void ) {
 
 	send_msg(postCommand);
 
-	gpio_flash_lED(&Led_rgb_red, 10);
 //	delay_ms(3000);
-	if (wait_check_for_reply(">>>", 5)) {
+	if (!wait_check_for_reply(">>>", 5)) {
+		delay_ms(10);
+		WDT_A_clearTimer();
+	}
 
-	}
-	else {
-		return;
-	}
-	gpio_flash_lED(&Led_rgb_red, 10);
 	WDT_A_clearTimer();
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	counter_read_gsm = 0;
 
 	send_msg(postBody);
 
-	gpio_flash_lED(&Led_rgb_red, 10);
 //	delay_ms(3000);
-	if (wait_check_for_reply(RESPONSE_OK, 5)) {
-
-	}
-	else {
-		return;
+	if (!wait_check_for_reply(RESPONSE_OK, 5)) {
+		delay_ms(10);
+		WDT_A_clearTimer();
 	}
 	counter_read_gsm = 0;
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	gsm_power_save_on();
-	gpio_flash_lED(&Led_rgb_red, 10);
+
 	reset_received_msg_index();
 	WDT_A_clearTimer();
 }

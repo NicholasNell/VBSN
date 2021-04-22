@@ -212,7 +212,7 @@ extern bool uploadOwnData;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
-	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
 	WDT_A_CLOCKITERATIONS_128M);	// aprox 256
 //
@@ -222,23 +222,25 @@ int main( void ) {
 
 	// Initialise all ports and communication protocols
 	board_init_mcu();
+	MAP_WDT_A_clearTimer();
 //	flash_check_for_data();
 	rtc_init();
+	MAP_WDT_A_clearTimer();
 
 	unsigned seed = SX1276Random();
 	srand(seed);	// Seeding Random Number generator
-
+	MAP_WDT_A_clearTimer();
 	// Initialise UART to PC
 	uart_init_pc();
-
+	MAP_WDT_A_clearTimer();
 	//Initialise UART to GPS;
 	uart_init_gps();
-
+	MAP_WDT_A_clearTimer();
 //	 Initialise the RFM95 Radio Module
 	radio_init();
-
+	MAP_WDT_A_clearTimer();
 	hasGSM = init_gsm();	//Check if has GSm module
-
+	MAP_WDT_A_clearTimer();
 	if (hasGSM) {
 		isRoot = true;
 //		gpio_toggle(&Led_rgb_green);
@@ -253,9 +255,9 @@ int main( void ) {
 	else {
 		bme280Working = false;
 	}
-
+	MAP_WDT_A_clearTimer();
 	lightSensorWorking = init_max();
-
+	MAP_WDT_A_clearTimer();
 	// Have to wait for GPS to get a lock before operation can continue
 	run_systick_function_ms(1000);
 	uint8_t timeout = 0;
@@ -271,6 +273,7 @@ int main( void ) {
 		}
 	}
 
+	MAP_WDT_A_clearTimer();
 	gps_set_low_power();
 
 	MAP_WDT_A_clearTimer();
@@ -295,13 +298,13 @@ int main( void ) {
 
 	// Volumetric Water Content Sensor
 	get_vwc();
-
+	MAP_WDT_A_clearTimer();
 	init_scheduler();
 
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
-	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_BCLK,
-	WDT_A_CLOCKITERATIONS_512K);	// 16 sec
+	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
+	WDT_A_CLOCKITERATIONS_8192K);	// 16 sec
 
 	MAP_WDT_A_startTimer();
 
