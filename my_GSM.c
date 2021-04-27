@@ -186,7 +186,7 @@ void EUSCIA2_IRQHandler( void ) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
 		UartGSMRX[counter_read_gsm] = MAP_UART_receiveData(EUSCI_A2_BASE);
-//		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
+		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
 		counter_read_gsm++;
 	}
 	//if(counter_read_gsm == 80)
@@ -635,9 +635,15 @@ void gsm_upload_my_data( ) {
 //
 //	}
 //	delay_ms(2000);
-	if (!wait_check_for_reply(">>>", 5)) {
+	run_systick_function_ms(5000);
+	while (!wait_check_for_reply(">>>", 2.5)) {
+
+		send_msg(postCommand);
 		delay_ms(10);
 		WDT_A_clearTimer();
+		if (systimer_ready_check()) {
+			return;
+		}
 	}
 
 	counter_read_gsm = 0;
@@ -647,10 +653,15 @@ void gsm_upload_my_data( ) {
 ////		return;
 //	}
 //	delay_ms(2000);
+	run_systick_function_ms(5000);
+	while (!wait_check_for_reply(RESPONSE_OK, 2.5)) {
 
-	if (!wait_check_for_reply(RESPONSE_OK, 5)) {
+		send_msg(postBody);
 		delay_ms(10);
 		WDT_A_clearTimer();
+		if (systimer_ready_check()) {
+			return;
+		}
 	}
 
 	counter_read_gsm = 0;

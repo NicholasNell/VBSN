@@ -209,6 +209,7 @@ void radio_init( ) {
 
 extern volatile MACappState_t MACState;
 extern bool uploadOwnData;
+extern bool resetFlag;
 int main( void ) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -217,6 +218,8 @@ int main( void ) {
 	WDT_A_CLOCKITERATIONS_128M);	// aprox 256
 //
 	MAP_WDT_A_startTimer();
+
+	flashOK = flash_check_for_data();
 
 	isRoot = false;	// Assume not a root node at first
 
@@ -331,6 +334,13 @@ int main( void ) {
 		if (readyToUploadFlag) {
 			readyToUploadFlag = false;
 			upload_current_datagram();
+		}
+
+		if (isRoot && resetFlag) {
+			resetFlag = false;
+			flash_fill_struct_for_write();
+			flash_write_struct_to_flash();
+			ResetCtl_initiateHardReset();
 		}
 //
 //		if (gpsWakeFlag) {

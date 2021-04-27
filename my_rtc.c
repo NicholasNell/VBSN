@@ -77,6 +77,7 @@ void rtc_set_calendar_time( void ) {
 	rtc_start_clock();
 }
 
+bool resetFlag = false;
 void RTC_C_IRQHandler( void ) {
 
 	uint32_t status;
@@ -110,6 +111,7 @@ void RTC_C_IRQHandler( void ) {
 //		gpsWakeFlag = true;
 //		set_slot_count(0);
 		gps_disable_low_power();
+		resetFlag = true;
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
