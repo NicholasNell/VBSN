@@ -24,37 +24,39 @@
 #define TIME_TO_SEND_DATA_OFFSET 25	//
 #define TIME_TO_COLLECT_DATA_SEC 30 // time to collect data
 #define TIME_TO_COLLECT_DATA_OFFSET	5	//
-#define UPLOAD_DATAGRAMS_TIME 120	// time to upload datagrams
-#define UPLOAD_DATAGRAM_OFFSET 55	// time offset from slot count
+#define GSM_UPLOAD_DATAGRAMS_TIME 60	// time to upload datagrams
+#define GSM_UPLOAD_DATAGRAM_OFFSET 55	// time offset from slot count
 #define WRITE_FLASH_DATA_TIME 120		// Time between flash data writes
 #define WRITE_FLASH_DATA_OFFSET	20		// write flash data offset
+#define WINDOW_TIME_SEC 1200			//
+#define WINDOW_SCALER (MAX_SLOT_COUNT / WINDOW_TIME_SEC)
 
 /*!
  * \brief	inititial the scheduler, set tx slot and data collection slot
  */
-void init_scheduler( );
+void init_scheduler();
 
 /*!
  *  \brief	decides what happes in this particular slot
  * @return int return value
  */
-int scheduler( );
+int scheduler();
 
 /*!
  * \brief returns the current slot count
  * @return
  */
-uint16_t get_slot_count( );
+uint16_t get_slot_count();
 
 /*!
  * \brief sets the slot counter to the given value
  * @param newSlotCount
  */
-void set_slot_count( uint16_t newSlotCount );
+void set_slot_count(uint16_t newSlotCount);
 
 /*!
  * \brief increments the slot counter by one
  */
-void increment_slot_count( );
+void increment_slot_count();
 
 #endif /* MY_SCHEDULER_H_ */

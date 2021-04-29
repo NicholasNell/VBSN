@@ -119,34 +119,34 @@ extern LoRaRadioState_t RadioState;
 
 extern RTC_C_Calendar currentTime;
 
-void print_lora_registers( void );
+void print_lora_registers(void);
 
 /*!
  * \brief Function to be executed on Radio Tx Done event
  */
-void on_tx_done( void );
+void on_tx_done(void);
 
 /*!
  * \brief Function to be executed on Radio Rx Done event
  */
-void on_rx_done( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
+void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
 
 /*!
  * \brief Function executed on Radio Tx Timeout event
  */
-void on_tx_timeout( void );
+void on_tx_timeout(void);
 
 /*!
  * \brief Function executed on Radio Rx Timeout event
  */
-void on_rx_timeout( void );
+void on_rx_timeout(void);
 
 /*!
  * \brief Function executed on Radio Rx Error event
  */
-void on_rx_error( void );
+void on_rx_error(void);
 
-void radio_init( ) {
+void radio_init() {
 	/*!
 	 * Radio events function pointer
 	 */
@@ -164,8 +164,7 @@ void radio_init( ) {
 		rfm95Working = false;
 		board_reset_mcu();// if no radio is detected reset the MCU and try again; no radio, no work
 		return;
-	}
-	else {
+	} else {
 		rfm95Working = true;
 	}
 
@@ -210,7 +209,7 @@ void radio_init( ) {
 extern volatile MACappState_t MACState;
 extern bool uploadOwnData;
 extern bool resetFlag;
-int main( void ) {
+int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
@@ -247,15 +246,13 @@ int main( void ) {
 	if (hasGSM) {
 		isRoot = true;
 //		gpio_toggle(&Led_rgb_green);
-	}
-	else {
+	} else {
 		isRoot = false;
 	}
 
 	if (bme280_user_init(&bme280Dev, &bme280Data) >= 0) {
 		bme280Working = true;
-	}
-	else {
+	} else {
 		bme280Working = false;
 	}
 	MAP_WDT_A_clearTimer();
@@ -326,15 +323,15 @@ int main( void ) {
 		}
 //		PCM_setPowerState(PCM_LPM3);
 
-		if (uploadOwnData) {
-			gsm_upload_my_data();
-			uploadOwnData = false;
-		}
-
-		if (readyToUploadFlag) {
-			readyToUploadFlag = false;
-			upload_current_datagram();
-		}
+//		if (uploadOwnData) {
+//			gsm_upload_my_data();
+//			uploadOwnData = false;
+//		}
+//
+//		if (readyToUploadFlag) {
+//			readyToUploadFlag = false;
+//			upload_current_datagram();
+//		}
 
 		if (isRoot && resetFlag) {
 			resetFlag = false;
@@ -353,7 +350,7 @@ int main( void ) {
 
 extern bool setRTCFlag;
 uint8_t ppsCounter = 0;
-void PORT3_IRQHandler( void ) {
+void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
@@ -387,7 +384,7 @@ void PORT3_IRQHandler( void ) {
 	}
 }
 
-void PORT2_IRQHandler( void ) {
+void PORT2_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
@@ -397,16 +394,14 @@ void PORT2_IRQHandler( void ) {
 #endif
 	if (status & GPIO_PIN4) {
 		SX1276OnDio0Irq();
-	}
-	else if (status & GPIO_PIN6) {
+	} else if (status & GPIO_PIN6) {
 		SX1276OnDio1Irq();
-	}
-	else if (status & GPIO_PIN7) {
+	} else if (status & GPIO_PIN7) {
 		SX1276OnDio2Irq();
 	}
 }
 
-void on_tx_done( void ) {
+void on_tx_done(void) {
 	SX1276clearIRQFlags();
 	RadioState = TXDONE;
 #ifdef DEBUG
@@ -414,7 +409,7 @@ void on_tx_done( void ) {
 #endif
 }
 
-void on_rx_done( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
+void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);
@@ -427,7 +422,7 @@ void on_rx_done( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
 #endif
 }
 
-void on_tx_timeout( void ) {
+void on_tx_timeout(void) {
 	Radio.Sleep();
 	RadioState = TXTIMEOUT;
 #ifdef DEBUG
@@ -435,7 +430,7 @@ void on_tx_timeout( void ) {
 #endif
 }
 
-void on_rx_timeout( void ) {
+void on_rx_timeout(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXTIMEOUT;
@@ -446,7 +441,7 @@ void on_rx_timeout( void ) {
 #endif
 }
 
-void on_rx_error( void ) {
+void on_rx_error(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXERROR;
@@ -455,13 +450,12 @@ void on_rx_error( void ) {
 #endif
 }
 
-void print_lora_registers( void ) {
+void print_lora_registers(void) {
 
 	uint8_t registers[] = { 0x01, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
-							0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014,
-							0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
-							0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24,
-							0x25, 0x26, 0x27, 0x4b };
+			0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x014, 0x15, 0x16, 0x17,
+			0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22,
+			0x23, 0x24, 0x25, 0x26, 0x27, 0x4b };
 
 	uint8_t i;
 	for (i = 0; i < sizeof(registers); i++) {

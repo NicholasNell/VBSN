@@ -111,23 +111,25 @@ bool readyToUploadFlag = false;
 extern bool netOp;
 extern bool flashOK;
 
+uint16_t txSlots[WINDOW_SCALER];
+
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
  */
-static bool process_rx_buffer( );
+static bool process_rx_buffer();
 
 //! @param msgType Type of message to send: 	MSG_NONE = 0,	MSG_RTS,	MSG_CTS,	MSG_DATA,	MSG_ACK,	MSG_SYNC,	MSG_RREQ,	MSG_RREP
 //! @param dest: local destination to send message to
 //! @return Return true if send succesful else, false
-static bool mac_send( msgType_t msgType, nodeAddress dest );
+static bool mac_send(msgType_t msgType, nodeAddress dest);
 
-static bool mac_rx( uint32_t timeout );
+static bool mac_rx(uint32_t timeout);
 
-static void gen_id( bool genNew );
+static void gen_id(bool genNew);
 
-static bool mac_hop_message( nodeAddress dest );
+static bool mac_hop_message(nodeAddress dest);
 
-static void gen_id( bool genNew ) {
+static void gen_id(bool genNew) {
 	nodeAddress tempID = 0x0;
 
 	if (genNew) {
@@ -136,8 +138,7 @@ static void gen_id( bool genNew ) {
 			tempID = (nodeAddress) rand();
 		}
 		_nodeID = tempID;
-	}
-	else {
+	} else {
 		tempID = flash_read_node_id();
 
 		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
@@ -148,7 +149,7 @@ static void gen_id( bool genNew ) {
 	flash_write_node_id();
 }
 
-void mac_init( ) {
+void mac_init() {
 	memset(&receivedDatagrams, 0x00, sizeof(receivedDatagrams));
 	uint8_t i;
 	for (i = 0; i < 255; ++i) {
@@ -165,33 +166,34 @@ void mac_init( ) {
 		FlashData_t *pFlashData = get_flash_data_struct();
 		if (hasGSM) {
 			_nodeID = GATEWAY_ADDRESS;
-		}
-		else {
+		} else {
 			_nodeID = pFlashData->thisNodeId;
 		}
 
 		_txSlot = pFlashData->_txSlot;
 		_numNeighbours = pFlashData->_numNeighbours;
-		memcpy(
-				neighbourTable,
-				pFlashData->neighbourTable,
+		memcpy(neighbourTable, pFlashData->neighbourTable,
 				sizeof(pFlashData->neighbourTable));
-	}
-	else {
+	} else {
 		if (hasGSM) {
 			_nodeID = GATEWAY_ADDRESS;
-		}
-		else {
+		} else {
 			gen_id(false);
 		}
 
-//		do {
 		double temp = (double) rand();
 		temp /= RAND_MAX;
-		temp *= TIME_TO_SEND_SEC;
-		_txSlot = (uint16_t) temp / POSSIBLE_TX_SLOT;
-		_txSlot *= POSSIBLE_TX_SLOT;
-//		} while (_txSlot % GLOBAL_RX == 0);
+		temp *= (WINDOW_TIME_SEC);
+
+		if (temp < GSM_UPLOAD_DATAGRAMS_TIME) {
+			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME; // this ensures that there is no txSlot in the GSM upload window
+		} else {
+			_txSlot = (uint16_t) temp;
+		}
+		int i = 0;
+		for (i = 0; i < WINDOW_SCALER; i++) {
+			txSlots[i] = i * WINDOW_TIME_SEC + _txSlot;
+		}
 
 		schedChange = true;
 		_dataLen = 0;
@@ -202,149 +204,133 @@ void mac_init( ) {
 
 }
 
-bool mac_state_machine( ) {
+bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
 	RouteEntry_t *route = NULL;
 	while (true) {
 		WDT_A_clearTimer();
 		switch (MACState) {
-			case MAC_SYNC_BROADCAST:
-				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
-					if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
-						schedChange = false;
-						MACState = MAC_SLEEP;
+		case MAC_SYNC_BROADCAST:
+			if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
+				if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
+					schedChange = false;
+					MACState = MAC_SLEEP;
 //					return true;
-					}
-					else {
+				} else {
+					MACState = MAC_SLEEP;
+//					return false;
+				}
+			}
+			break;
+		case MAC_LISTEN:
+//				gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
+			if (!mac_rx(SLOT_LENGTH_MS)) {
+				MACState = MAC_SLEEP;
+//				return false;
+			}
+			break;
+		case MAC_SLEEP:
+			// SLEEP
+			if (RadioState != RADIO_SLEEP) {
+				SX1276SetSleep();
+				RadioState = RADIO_SLEEP;
+			}
+			return false;
+		case MAC_RTS:
+			// Send RTS
+
+			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
+				if (SX1276IsChannelFree(MODEM_LORA,
+				RF_FREQUENCY,
+				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
+
+					if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
+
+						if (!mac_rx(SLOT_LENGTH_MS)) {
+							MACState = MAC_SLEEP;
+//						return false;
+						}
+					} else {
 						MACState = MAC_SLEEP;
 //					return false;
 					}
-				}
-				break;
-			case MAC_LISTEN:
-//				gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
-				if (!mac_rx(SLOT_LENGTH_MS)) {
+				} else {
 					MACState = MAC_SLEEP;
 //				return false;
 				}
+			} else {
+				return 0;
+			}
+			break;
+		case MAC_NET_OP:
+			switch (nextNetOp) {
+			case NET_NONE:
+				MACState = MAC_LISTEN;
 				break;
-			case MAC_SLEEP:
-				// SLEEP
-				if (RadioState != RADIO_SLEEP) {
-					SX1276SetSleep();
-					RadioState = RADIO_SLEEP;
-				}
-				return false;
-			case MAC_RTS:
-				// Send RTS
-
-				if (has_route_to_node(GATEWAY_ADDRESS, route)) {
-					if (SX1276IsChannelFree(
-							MODEM_LORA,
-							RF_FREQUENCY,
-							LORA_RSSI_THRESHOLD,
-							carrierSenseTimes[carrierSenseSlot++])) {
-
-						if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
-
-							if (!mac_rx(SLOT_LENGTH_MS)) {
-								MACState = MAC_SLEEP;
-//						return false;
-							}
-						}
-						else {
-							MACState = MAC_SLEEP;
-//					return false;
-						}
-					}
-					else {
-						MACState = MAC_SLEEP;
-//				return false;
+			case NET_REBROADCAST_RREQ:
+				if (SX1276IsChannelFree(MODEM_LORA,
+				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+					if (net_re_rreq()) {
+						nextNetOp = NET_WAIT;
+					} else {
+						nextNetOp = NET_REBROADCAST_RREQ;
 					}
 				}
-				else {
-					return 0;
+				break;
+			case NET_BROADCAST_RREQ:
+				if (SX1276IsChannelFree(MODEM_LORA,
+				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+					if (send_rreq()) {
+						nextNetOp = NET_WAIT;
+					} else {
+						nextNetOp = NET_BROADCAST_RREQ;
+					}
 				}
 				break;
-			case MAC_NET_OP:
-				switch (nextNetOp) {
-					case NET_NONE:
-						MACState = MAC_LISTEN;
-						break;
-					case NET_REBROADCAST_RREQ:
-						if (SX1276IsChannelFree(
-								MODEM_LORA,
-								RF_FREQUENCY,
-								-60,
-								carrierSenseTimes[carrierSenseSlot++])) {
-							if (net_re_rreq()) {
-								nextNetOp = NET_WAIT;
-							}
-							else {
-								nextNetOp = NET_REBROADCAST_RREQ;
-							}
-						}
-						break;
-					case NET_BROADCAST_RREQ:
-						if (SX1276IsChannelFree(
-								MODEM_LORA,
-								RF_FREQUENCY,
-								-60,
-								carrierSenseTimes[carrierSenseSlot++])) {
-							if (send_rreq()) {
-								nextNetOp = NET_WAIT;
-							}
-							else {
-								nextNetOp = NET_BROADCAST_RREQ;
-							}
-						}
-						break;
-					case NET_UNICAST_RREP:
-						break;
-					case NET_WAIT:
+			case NET_UNICAST_RREP:
+				break;
+			case NET_WAIT:
+				if (!mac_rx(SLOT_LENGTH_MS)) {
+					MACState = MAC_SLEEP;
+				}
+				break;
+			default:
+				break;
+			}
+			break;
+		case MAC_WAIT:
+			break;
+//			return true;
+		case MAC_HOP_MESSAGE:
+			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
+				if (SX1276IsChannelFree(MODEM_LORA,
+				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+
+					if (mac_hop_message(route->next_hop)) { // Send RTS
+
 						if (!mac_rx(SLOT_LENGTH_MS)) {
 							MACState = MAC_SLEEP;
+							//						return false;
 						}
-						break;
-					default:
-						break;
-				}
-				break;
-			case MAC_WAIT:
-				break;
-//			return true;
-			case MAC_HOP_MESSAGE:
-				if (has_route_to_node(GATEWAY_ADDRESS, route)) {
-					if (SX1276IsChannelFree(MODEM_LORA,
-					RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
-
-						if (mac_hop_message(route->next_hop)) { // Send RTS
-
-							if (!mac_rx(SLOT_LENGTH_MS)) {
-								MACState = MAC_SLEEP;
-								//						return false;
-							}
-						}
-						else {
-							MACState = MAC_SLEEP;
-							//					return false;
-						}
-					}
-					else {
+					} else {
 						MACState = MAC_SLEEP;
-						//				return false;
+						//					return false;
 					}
+				} else {
+					MACState = MAC_SLEEP;
+					//				return false;
 				}
-				break;
+			}
+			break;
 
-			default:
-				return false;
+		default:
+			return false;
 		}
 //		return false;
 	}
 }
 
-bool mac_send( msgType_t msgType, nodeAddress dest ) {
+bool mac_send(msgType_t msgType, nodeAddress dest) {
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -369,8 +355,7 @@ bool mac_send( msgType_t msgType, nodeAddress dest ) {
 		memcpy(TXBuffer, &txDatagram, size);
 		start_lora_timer(loraTxtimes[size + 1]);
 		SX1276Send(TXBuffer, size);
-	}
-	else {
+	} else {
 		int size = sizeof(txDatagram.msgHeader);
 		memcpy(TXBuffer, &txDatagram, size);
 		start_lora_timer(loraTxtimes[size + 1]);
@@ -383,8 +368,7 @@ bool mac_send( msgType_t msgType, nodeAddress dest ) {
 		if (RadioState == TXDONE) {
 			retVal = true;
 			break;
-		}
-		else if (RadioState == TXTIMEOUT) {
+		} else if (RadioState == TXTIMEOUT) {
 			retVal = false;
 			break;
 		}
@@ -393,7 +377,7 @@ bool mac_send( msgType_t msgType, nodeAddress dest ) {
 	return retVal;
 }
 
-bool mac_rx( uint32_t timeout ) {
+bool mac_rx(uint32_t timeout) {
 	Radio.Rx(0);
 	RadioState = RX;
 	start_lora_timer(timeout);
@@ -402,17 +386,14 @@ bool mac_rx( uint32_t timeout ) {
 		if (RadioState == RXTIMEOUT) {
 			retVal = false;
 			break;
-		}
-		else if (RadioState == RXERROR) {
+		} else if (RadioState == RXERROR) {
 			retVal = false;
 			break;
-		}
-		else if (RadioState == RXDONE) {
+		} else if (RadioState == RXDONE) {
 			if (process_rx_buffer()) {
 				retVal = true;
 				break;
-			}
-			else {
+			} else {
 				retVal = false;
 				break;
 			}
@@ -422,7 +403,7 @@ bool mac_rx( uint32_t timeout ) {
 	return retVal;
 }
 
-static bool process_rx_buffer( ) {
+static bool process_rx_buffer() {
 
 	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
 
@@ -444,89 +425,83 @@ static bool process_rx_buffer( ) {
 			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) { // if destination is this node or broadcast check message type
 
 		switch (rxDatagram.msgHeader.flags) {
-			case MSG_RTS: 	// RTS
-				mac_send(MSG_CTS, rxDatagram.msgHeader.localSource); // send CTS to requesting node
+		case MSG_RTS: 	// RTS
+			mac_send(MSG_CTS, rxDatagram.msgHeader.localSource); // send CTS to requesting node
+			MACState = MAC_LISTEN;
+			break;
+		case MSG_CTS: 	// CTS
+			if (hasData) {
+				mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
 				MACState = MAC_LISTEN;
-				break;
-			case MSG_CTS: 	// CTS
-				if (hasData) {
-					mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
-					MACState = MAC_LISTEN;
-				}
-				else {
-					MACState = MAC_SLEEP;
-				}
-				break;
-			case MSG_DATA: 	// DATA
-				if (rxDatagram.msgHeader.netDest != _nodeID) {
-					hopMessageFlag = true;
-				}
-				else {
-					hopMessageFlag = false;
-					// now either store the data for further later sending or get ready to upload data to cloud
-					receivedDatagrams[receivedMsgIndex++] = rxDatagram;
-					readyToUploadFlag = true;
-				}
-
-				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
-				if (!hopMessageFlag) {
-					MACState = MAC_SLEEP;
-				}
-				else {
-					MACState = MAC_RTS;
-				}
-
-				break;
-			case MSG_ACK: 	// ACK
-//				hasData = false;	// data has succesfully been sent
+			} else {
 				MACState = MAC_SLEEP;
-				add_neighbour(
-						rxDatagram.msgHeader.localSource,
-						rxDatagram.msgHeader.txSlot);
-				add_route_to_neighbour(rxDatagram.msgHeader.localSource);
-				break;
-			case MSG_RREP: 	// RREP
-				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
-				nextNetOp = process_rrep();
-				MACState = MAC_NET_OP;
-				netOp = true;
-				break;
-
-				/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
-			case MSG_SYNC: 	// SYNC
-			{
-				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
-				add_neighbour(
-						rxDatagram.msgHeader.localSource,
-						rxDatagram.msgHeader.txSlot);
-
-				MACState = MAC_SLEEP;
-
-				if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
-					gen_id(true);
-					schedChange = true;
-				}
-				add_route_to_neighbour(rxDatagram.msgHeader.localSource);
-				break;
 			}
-			case MSG_RREQ: 	// RREQ
-				// when a rreq is received, determine what actions to do next.
-				nextNetOp = process_rreq();
-				MACState = MAC_NET_OP;
-				netOp = true;
-				break;
-			default:
-				return false;
+			break;
+		case MSG_DATA: 	// DATA
+			if (rxDatagram.msgHeader.netDest != _nodeID) {
+				hopMessageFlag = true;
+			} else {
+				hopMessageFlag = false;
+				// now either store the data for further later sending or get ready to upload data to cloud
+				receivedDatagrams[receivedMsgIndex++] = rxDatagram;
+				readyToUploadFlag = true;
+			}
+
+			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
+			if (!hopMessageFlag) {
+				MACState = MAC_SLEEP;
+			} else {
+				MACState = MAC_RTS;
+			}
+
+			break;
+		case MSG_ACK: 	// ACK
+//				hasData = false;	// data has succesfully been sent
+			MACState = MAC_SLEEP;
+			add_neighbour(rxDatagram.msgHeader.localSource,
+					rxDatagram.msgHeader.txSlot);
+			add_route_to_neighbour(rxDatagram.msgHeader.localSource);
+			break;
+		case MSG_RREP: 	// RREP
+			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
+			nextNetOp = process_rrep();
+			MACState = MAC_NET_OP;
+			netOp = true;
+			break;
+
+			/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
+		case MSG_SYNC: 	// SYNC
+		{
+			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
+			add_neighbour(rxDatagram.msgHeader.localSource,
+					rxDatagram.msgHeader.txSlot);
+
+			MACState = MAC_SLEEP;
+
+			if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
+				gen_id(true);
+				schedChange = true;
+			}
+			add_route_to_neighbour(rxDatagram.msgHeader.localSource);
+			break;
+		}
+		case MSG_RREQ: 	// RREQ
+			// when a rreq is received, determine what actions to do next.
+			nextNetOp = process_rreq();
+			MACState = MAC_NET_OP;
+			netOp = true;
+			break;
+		default:
+			return false;
 		}
 		return true;
-	}
-	else {
+	} else {
 		MACState = MAC_SLEEP;
 		return false;
 	}
 }
 
-void add_neighbour( nodeAddress neighbour, uint16_t txSlot ) {
+void add_neighbour(nodeAddress neighbour, uint16_t txSlot) {
 	Neighbour_t receivedNeighbour;
 	if (is_neighbour(neighbour)) {
 		return;
@@ -536,7 +511,7 @@ void add_neighbour( nodeAddress neighbour, uint16_t txSlot ) {
 	neighbourTable[_numNeighbours++] = receivedNeighbour;
 }
 
-bool is_neighbour( nodeAddress node ) {
+bool is_neighbour(nodeAddress node) {
 	bool retVal = false;
 	int i;
 	for (i = 0; i < _numNeighbours; ++i) {
@@ -547,7 +522,7 @@ bool is_neighbour( nodeAddress node ) {
 	return retVal;
 }
 
-bool mac_send_tx_datagram( ) {
+bool mac_send_tx_datagram() {
 	bool retVal = false;
 	int size = sizeof(txDatagram);
 	memcpy(TXBuffer, &txDatagram, size);
@@ -559,8 +534,7 @@ bool mac_send_tx_datagram( ) {
 		if (RadioState == TXDONE) {
 			retVal = true;
 			break;
-		}
-		else if (RadioState == TXTIMEOUT) {
+		} else if (RadioState == TXTIMEOUT) {
 			retVal = false;
 			break;
 		}
@@ -569,7 +543,7 @@ bool mac_send_tx_datagram( ) {
 	return retVal;
 }
 
-static bool mac_hop_message( nodeAddress dest ) {
+static bool mac_hop_message(nodeAddress dest) {
 
 	memcpy(&txDatagram, &rxDatagram, loraRxBufferSize);
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -587,8 +561,7 @@ static bool mac_hop_message( nodeAddress dest ) {
 		if (RadioState == TXDONE) {
 			retVal = true;
 			break;
-		}
-		else if (RadioState == TXTIMEOUT) {
+		} else if (RadioState == TXTIMEOUT) {
 			retVal = false;
 			break;
 		}
@@ -597,18 +570,18 @@ static bool mac_hop_message( nodeAddress dest ) {
 	return retVal;
 }
 
-Neighbour_t* get_neighbour_table( ) {
+Neighbour_t* get_neighbour_table() {
 	return neighbourTable;
 }
 
-Datagram_t* get_received_messages( ) {
+Datagram_t* get_received_messages() {
 	return receivedDatagrams;
 }
 
-uint8_t get_received_messages_index( void ) {
+uint8_t get_received_messages_index(void) {
 	return receivedMsgIndex;
 }
 
-void reset_received_msg_index( void ) {
+void reset_received_msg_index(void) {
 	receivedMsgIndex = 0;
 }

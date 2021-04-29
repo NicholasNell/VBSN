@@ -31,7 +31,7 @@ char Command[SIZE_COMMAND];                              // Temp command buffer
 /*!
  * \brief Uninitialises the UART port for the gsm module.
  */
-void GSM_disable( void );
+void GSM_disable(void);
 
 //RXData = (char*)malloc(SIZE_BUFFER*sizeof(char));
 /* Function which sends strings on UART to the PC*/
@@ -68,7 +68,7 @@ const eUSCI_UART_ConfigV1 uartConfigGSM = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // S
 		EUSCI_A_UART_MODE,             // UART mode
 		EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION // Oversampling
 		};
-void GSM_disable( void ) {
+void GSM_disable(void) {
 	GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3);
 	GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3);
 
@@ -79,7 +79,7 @@ void GSM_disable( void ) {
 }
 
 /*Sets up the pins and interrupts for GSM modem*/
-void gsm_startup( void ) {
+void gsm_startup(void) {
 	/* Configure pins P3.2 and P3.3 in UART mode.
 	 * Doesn't matter if they are set to inputs or outputs
 	 */
@@ -99,7 +99,7 @@ void gsm_startup( void ) {
 
 }
 
-bool init_gsm( void ) {
+bool init_gsm(void) {
 
 	int retval = false;
 
@@ -159,8 +159,7 @@ bool init_gsm( void ) {
 		gsm_power_save_on();
 
 		return true;
-	}
-	else {
+	} else {
 		GSM_disable();
 		return false;
 	}
@@ -168,7 +167,7 @@ bool init_gsm( void ) {
 }
 
 /* Function which sends strings on UART to the GSM modem*/
-void send_gsm_uart( char *buffer ) {
+void send_gsm_uart(char *buffer) {
 	int count = 0;
 	while (strlen(buffer) > count) {
 //		MAP_UART_transmitData(EUSCI_A0_BASE, buffer[count]); //Echo back to the PC for now
@@ -178,7 +177,7 @@ void send_gsm_uart( char *buffer ) {
 }
 
 /* EUSCI A2 UART ISR - Receives from the GSM modem */
-void EUSCIA2_IRQHandler( void ) {
+void EUSCIA2_IRQHandler(void) {
 	uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A2_BASE);
 
 	MAP_UART_clearInterruptFlag(EUSCI_A2_BASE, status);
@@ -197,7 +196,7 @@ void EUSCIA2_IRQHandler( void ) {
 }
 
 //                      CHECKS COMMS WITH MODEM
-int check_com( ) {
+int check_com() {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	send_gsm_uart("AT\r");                     // Send Attention Command
 //	delay_gsm_respond(50);                       // Delay a maximum of X seconds
@@ -208,7 +207,7 @@ int check_com( ) {
 }
 
 /*Sends a msg to the GSM*/
-void send_msg( char *buffer ) {
+void send_msg(char *buffer) {
 //	send_UART(buffer);
 	counter_read_gsm = 0;                     // Reset buffer counter
 	send_gsm_uart(buffer);                     // Send Attention Command
@@ -216,7 +215,7 @@ void send_msg( char *buffer ) {
 }
 
 /*Command to check the signal strength which the modem is receiving*/
-void check_signal( ) {
+void check_signal() {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	send_gsm_uart("AT+CSQ\r");                     // Send Attention Command
 	delay_gsm_respond(5000);                     // Delay a maximum of X seconds
@@ -224,7 +223,7 @@ void check_signal( ) {
 }
 
 /*Check for the position of a certain string in the receive buffer*/
-int check_for_string_position( char *checkFor ) {
+int check_for_string_position(char *checkFor) {
 	char *s;
 	s = strstr(UartGSMRX, checkFor);
 
@@ -236,7 +235,7 @@ int check_for_string_position( char *checkFor ) {
 }
 
 /*Pulls the signal strength from the RX buffer at a certain index*/
-int get_signal_strength( int index ) {
+int get_signal_strength(int index) {
 	int i;
 	char temp[2];
 	for (i = 0; i < 2; i++) {
@@ -248,7 +247,7 @@ int get_signal_strength( int index ) {
 }
 
 /*Checks whether the modem is started by checking that it responds and also the signal strength*/
-int modem_start( void ) {
+int modem_start(void) {
 	int ii;
 	int checked = check_com();
 	for (ii = 0; ii < 5; ii++) {
@@ -259,8 +258,7 @@ int modem_start( void ) {
 	if (checked) {
 //		send_UART("modem alive\r");
 		//set_AmIServer(true); //Sets the IAMModem parameter to true
-	}
-	else {
+	} else {
 //		send_UART("modem DEAD\r");
 		//set_AmIServer(false); //Sets the IAMModem parameter to false
 		return 0;
@@ -279,7 +277,7 @@ int modem_start( void ) {
 }
 
 //						Set the GSM modem to POWER SAVING mode
-void gsm_power_save_on( ) {
+void gsm_power_save_on() {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	send_gsm_uart("AT+CFUN=7\r");              // Send Attention Command
 //	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
@@ -287,7 +285,7 @@ void gsm_power_save_on( ) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 }
 //						Set the GSM modem to NORMAL mode
-void gsm_power_save_off( ) {
+void gsm_power_save_off() {
 	bool flag = false;
 	start_timer_a_counter(5000, &flag);
 	while (!flag) {
@@ -304,12 +302,12 @@ void gsm_power_save_off( ) {
 	stop_timer_a_counter();
 }
 
-void disable_command_echo( ) {
+void disable_command_echo() {
 	send_msg("ATE0\r");
 }
 
 //                         LIMITED DELAY
-int delay_gsm_respond( int Delay_ctr ) {
+int delay_gsm_respond(int Delay_ctr) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	run_systick_function_ms(Delay_ctr);
 	while ((counter_read_gsm == 0) && (!systimer_ready_check())) // stay here until modem responds (X Seconds is arbitrary)
@@ -317,13 +315,14 @@ int delay_gsm_respond( int Delay_ctr ) {
 		delay_ms(2);
 	}
 	delay_ms(20);
-	if ((counter_read_gsm == 0) && (Delay_ctr == 0)) return (1);
+	if ((counter_read_gsm == 0) && (Delay_ctr == 0))
+		return (1);
 	if ((counter_read_gsm == 0) && (Delay_ctr > 0)) {
 		return (0);
 	}
 	return (0);
 }
-int delay_UART_respond( int Delay_ctr ) {
+int delay_UART_respond(int Delay_ctr) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	while ((counter_read_gsm == 0) && (Delay_ctr > 0)) // stay here until modem responds (X Seconds is arbitrary)
 	{
@@ -331,19 +330,20 @@ int delay_UART_respond( int Delay_ctr ) {
 		// SysCtlDelay(20000);
 		Delay_ctr--;
 	}
-	if ((counter_read_gsm == 0) && (Delay_ctr == 0)) return (1);
+	if ((counter_read_gsm == 0) && (Delay_ctr == 0))
+		return (1);
 	if ((counter_read_gsm == 0) && (Delay_ctr > 0)) {
 		return (0);
 	}
 	return (0);
 }
 
-void gsm_setup_modem_ping( void ) {
+void gsm_setup_modem_ping(void) {
 	send_msg("AT#SGACT=1,1\r");
 	//delay_gsm_respond(5000);
 }
 
-void gsm_ping_google( void ) {
+void gsm_ping_google(void) {
 	//gsm_setupModemPing();
 	send_msg("AT#PING=\"www.google.co.za\"\r");
 	//delay_gsm_respond(50);
@@ -351,7 +351,7 @@ void gsm_ping_google( void ) {
 
 }
 
-void check_registration( void ) {
+void check_registration(void) {
 	send_msg("AT+CREG?\r");
 	delay_ms(500);
 	send_msg("AT+COPS?\r");
@@ -360,7 +360,7 @@ void check_registration( void ) {
 	delay_ms(500);
 }
 
-void check_gprs_attached( void ) {
+void check_gprs_attached(void) {
 	send_msg("AT+CGATT?\r\n");
 	delay_ms(500);
 	send_msg("AT+CGREG?\r\n");
@@ -383,7 +383,7 @@ void check_gprs_attached( void ) {
 	//sendmsg("AT+CIPMUX=0\r");
 }
 
-bool wait_check_for_reply( char *reply, uint8_t delay_s ) {
+bool wait_check_for_reply(char *reply, uint8_t delay_s) {
 	run_systick_function_second(delay_s);
 	do {
 		WDT_A_clearTimer();
@@ -397,13 +397,14 @@ bool wait_check_for_reply( char *reply, uint8_t delay_s ) {
 	return false;
 }
 
-void setup_gprs_settings( void ) {
+void setup_gprs_settings(void) {
 	send_msg("AT#GPRS?\r\n");
 	delay_ms(100);
-	if (wait_check_for_reply("#GPRS: 0", 1)) send_msg("AT#GPRS=1\r\n");
+	if (wait_check_for_reply("#GPRS: 0", 1))
+		send_msg("AT#GPRS=1\r\n");
 	__no_operation();
 }
-void http_connect( void ) {
+void http_connect(void) {
 //	sendmsg("AT#SKTD=0,80,\"www.telit.net\"\r");
 	send_msg("AT#SD=1,0,80,\"www.m2msupport.net\"\r");	//working
 //	sendmsg("AT#SD=1,0,80,\"api.thingspeak.com\"\r\n"); //working2
@@ -442,7 +443,7 @@ void http_connect( void ) {
 
 }
 
-void cmd_load( int index ) {
+void cmd_load(int index) {
 	uint16_t var = 0;                                    // temp index for array
 	memset(Command, NULL, SIZE_COMMAND);       // Reset data array index to NULL
 	while ((Strings[index][var] != NULL) && (var < SIZE_COMMAND)) // Copy data from main "Strings" to commparing array.
@@ -451,12 +452,13 @@ void cmd_load( int index ) {
 		var++;                           // Up index
 	}
 }
-int string_search( int index )         // index' is Strings[index][SIZE_COMMAND]
+int string_search(int index)         // index' is Strings[index][SIZE_COMMAND]
 		{                                    // See defines in .h
 	cmd_load(index);             // Loads into temp array the string to be found
 	if (strstr(UartGSMRX, Command) != NULL) // Find String or Command in main Buffer
 		return (1);                        // Return 1 if found
-	else return (0);                        // Return 0 if not found.
+	else
+		return (0);                        // Return 0 if not found.
 }
 //               LOADS TO TEMP ARRAY THE SEARCHABLE STRING
 
@@ -518,7 +520,7 @@ int string_search( int index )         // index' is Strings[index][SIZE_COMMAND]
 extern struct bme280_dev bme280Dev;
 extern struct bme280_data bme280Data;
 extern Gpio_t Led_rgb_red;
-void http_send_data( void ) {
+void http_send_data(void) {
 
 	helper_collect_sensor_data();
 	char buf[4];
@@ -566,10 +568,12 @@ extern nodeAddress _nodeID;
 extern LocationData gpsData;
 extern RTC_C_Calendar currentTime;
 
-void gsm_upload_my_data( ) {
+bool gsm_upload_my_data() {
 
 	gsm_power_save_off();
-
+	WDT_A_clearTimer();
+	delay_ms(3000);
+	WDT_A_clearTimer();
 	double localTemperature = bme280Data.temperature;
 	double localHumidity = bme280Data.humidity;
 	double localPressure = bme280Data.pressure;
@@ -592,17 +596,10 @@ void gsm_upload_my_data( ) {
 //					localVWC);
 
 	int lenWritten =
-			sprintf(
-					postBody,
+			sprintf(postBody,
 					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
-					localAddress,
-					localTemperature,
-					localHumidity,
-					localPressure,
-					localVWC,
-					localLight,
-					localLat,
-					localLon,
+					localAddress, localTemperature, localHumidity,
+					localPressure, localVWC, localLight, localLat, localLon,
 					convert_hex_to_dec_by_byte(currentTime.hours),
 					convert_hex_to_dec_by_byte(currentTime.minutes),
 					convert_hex_to_dec_by_byte(currentTime.seconds));
@@ -613,11 +610,9 @@ void gsm_upload_my_data( ) {
 //			localTemperature);
 	char postCommand[255];
 	memset(postCommand, 0, 255);
-	sprintf(
-			postCommand,
+	sprintf(postCommand,
 			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
-			ACCESS_TOKEN,
-			lenWritten);
+			ACCESS_TOKEN, lenWritten);
 
 //	gsm_power_save_off();
 //	send_gsm_uart("AT+CFUN=1\r");
@@ -636,13 +631,13 @@ void gsm_upload_my_data( ) {
 //	}
 //	delay_ms(2000);
 	run_systick_function_ms(5000);
-	while (!wait_check_for_reply(">>>", 2.5)) {
+	while (!wait_check_for_reply(">>>", 3)) {
 
 		send_msg(postCommand);
 		delay_ms(10);
 		WDT_A_clearTimer();
 		if (systimer_ready_check()) {
-			return;
+			return false;
 		}
 	}
 
@@ -654,13 +649,13 @@ void gsm_upload_my_data( ) {
 //	}
 //	delay_ms(2000);
 	run_systick_function_ms(5000);
-	while (!wait_check_for_reply(RESPONSE_OK, 2.5)) {
+	while (!wait_check_for_reply("#HTTP", 3)) {
 
 		send_msg(postBody);
 		delay_ms(10);
 		WDT_A_clearTimer();
 		if (systimer_ready_check()) {
-			return;
+			return false;
 		}
 	}
 
@@ -677,14 +672,25 @@ void gsm_upload_my_data( ) {
 	gsm_power_save_on();
 
 	WDT_A_clearTimer();
+	return true;
 }
 
-void gsm_upload_stored_datagrams( ) {
+void gsm_upload_stored_datagrams() {
 
 	int i = 0;
 
-	gsm_power_save_off();
+	int attempts = 0;
+	while (!gsm_upload_my_data()) {
+		attempts++;
+		if (attempts > 3) {
+			return;
+		}
+	}
 
+	WDT_A_clearTimer();
+	gsm_power_save_off();
+	delay_ms(3000);
+	WDT_A_clearTimer();
 	uint8_t numToSend = get_received_messages_index();
 	Datagram_t *pointerToData = get_received_messages();
 //	uint8_t numToSend = 3;
@@ -731,43 +737,6 @@ void gsm_upload_stored_datagrams( ) {
 //	delay_ms(2000);
 
 	WDT_A_clearTimer();
-	counter_read_gsm = 0;
-
-	lenWritten =
-			sprintf(
-					postBody,
-					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
-					localAddress,
-					localTemperature,
-					localHumidity,
-					localPressure,
-					localVWC,
-					localLight,
-					localLat,
-					localLon,
-					localHr,
-					localMin,
-					LocalSec);
-
-	sprintf(
-			postCommand,
-			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
-			ACCESS_TOKEN,
-			lenWritten);
-
-	send_msg(postCommand);
-
-	delay_ms(3000);
-
-	WDT_A_clearTimer();
-
-	counter_read_gsm = 0;
-
-	send_msg(postBody);
-
-	delay_ms(3000);
-
-	WDT_A_clearTimer();
 
 	if (numToSend > 0) {
 		for (i = 0; i < numToSend; i++) {
@@ -788,28 +757,31 @@ void gsm_upload_stored_datagrams( ) {
 					pointerToData[i].data.sensData.tim.seconds);
 
 			lenWritten =
-					sprintf(
-							postBody,
+					sprintf(postBody,
 							"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
-							localAddress,
-							localTemperature,
-							localHumidity,
-							localPressure,
-							localVWC,
-							localLight,
-							localLat,
-							localLon,
-							localHr,
-							localMin,
-							LocalSec);
+							localAddress, localTemperature, localHumidity,
+							localPressure, localVWC, localLight, localLat,
+							localLon, localHr, localMin, LocalSec);
 
-			sprintf(
-					postCommand,
+			sprintf(postCommand,
 					"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
-					ACCESS_TOKEN,
-					lenWritten);
+					ACCESS_TOKEN, lenWritten);
 
 			send_msg(postCommand);
+			//	if (!wait_check_for_reply(">>>", 5)) {
+			//
+			//	}
+			//	delay_ms(2000);
+			run_systick_function_ms(5000);
+			while (!wait_check_for_reply(">>>", 2.5)) {
+
+				send_msg(postCommand);
+				delay_ms(10);
+				WDT_A_clearTimer();
+				if (systimer_ready_check()) {
+					return;
+				}
+			}
 
 			delay_ms(3000);
 
@@ -818,6 +790,20 @@ void gsm_upload_stored_datagrams( ) {
 			counter_read_gsm = 0;
 
 			send_msg(postBody);
+			//	if (!wait_check_for_reply("OK", 5)) {
+			////		return;
+			//	}
+			//	delay_ms(2000);
+			run_systick_function_ms(5000);
+			while (!wait_check_for_reply("#HTTP", 2.5)) {
+
+				send_msg(postBody);
+				delay_ms(10);
+				WDT_A_clearTimer();
+				if (systimer_ready_check()) {
+					return;
+				}
+			}
 
 			delay_ms(3000);
 
@@ -837,7 +823,7 @@ void gsm_upload_stored_datagrams( ) {
 
 }
 
-void upload_current_datagram( void ) {
+void upload_current_datagram(void) {
 	//
 
 	gsm_power_save_off();
@@ -867,26 +853,15 @@ void upload_current_datagram( void ) {
 	memset(postBody, 0, SIZE_BUFFER);
 
 	lenWritten =
-			sprintf(
-					postBody,
+			sprintf(postBody,
 					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
-					localAddress,
-					localTemperature,
-					localHumidity,
-					localPressure,
-					localVWC,
-					localLight,
-					localLat,
-					localLon,
-					localHr,
-					localMin,
-					LocalSec);
+					localAddress, localTemperature, localHumidity,
+					localPressure, localVWC, localLight, localLat, localLon,
+					localHr, localMin, LocalSec);
 
-	sprintf(
-			postCommand,
+	sprintf(postCommand,
 			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",
-			ACCESS_TOKEN,
-			lenWritten);
+			ACCESS_TOKEN, lenWritten);
 
 	send_msg(postCommand);
 
