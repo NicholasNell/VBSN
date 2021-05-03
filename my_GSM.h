@@ -107,4 +107,8 @@ void gsm_upload_stored_datagrams(void);
 //! @brief Uploads the datagram it just received
 void upload_current_datagram(void);
 
+//!
+//! @brief Resets the module
+void reset_gsm_module(void);
+
 #endif /* MY_GSMMODEM_H_ */

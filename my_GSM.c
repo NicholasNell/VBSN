@@ -7,6 +7,7 @@
 #include <my_MAC.h>
 #include <my_systick.h>
 #include <my_timer.h>
+#include <my_UART.h>
 #include <MAX44009.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -32,6 +33,8 @@ char Command[SIZE_COMMAND];                              // Temp command buffer
  * \brief Uninitialises the UART port for the gsm module.
  */
 void GSM_disable(void);
+
+static void context_deactivate_activate(void);
 
 //RXData = (char*)malloc(SIZE_BUFFER*sizeof(char));
 /* Function which sends strings on UART to the PC*/
@@ -99,6 +102,37 @@ void gsm_startup(void) {
 
 }
 
+static void context_deactivate_activate(void) {
+	send_uart_pc("Defining PDP Context.\n");
+	send_msg(DEFINE_PDP_CONTEXT);	// Define PDP context
+	wait_check_for_reply(RESPONSE_OK, 1);
+//	delay_ms(500);
+	send_uart_pc("HTTP CONFIG.\n");
+	send_msg(HTTP_CONFIG_THINGSBOARD);
+	wait_check_for_reply(RESPONSE_OK, 1);
+	counter_read_gsm = 0;
+//	delay_ms(500);
+	send_msg(CONTEXT_DEACTIVATION);
+	wait_check_for_reply(RESPONSE_OK, 1);
+//	delay_ms(500);
+	send_msg(CONTEXT_ACTIVATION);
+	send_uart_pc("Activating Context.\n");
+//	wait_check_for_reply("#SGAC", 1);
+
+	while (wait_check_for_reply("ERROR", 2)) {
+		send_uart_pc("Retry Context Activation.\n");
+		WDT_A_clearTimer();
+		send_msg(CONTEXT_DEACTIVATION);
+		WDT_A_clearTimer();
+		wait_check_for_reply(RESPONSE_OK, 1);
+		WDT_A_clearTimer();
+		send_msg(CONTEXT_ACTIVATION);
+		WDT_A_clearTimer();
+		delay_ms(1000);
+		WDT_A_clearTimer();
+	}
+}
+
 bool init_gsm(void) {
 
 	int retval = false;
@@ -138,21 +172,7 @@ bool init_gsm(void) {
 		wait_check_for_reply(RESPONSE_OK, 1);
 		counter_read_gsm = 0;
 		delay_ms(500);
-		send_msg(CONTEXT_DEACTIVATION);
-		delay_ms(500);
-		send_msg(CONTEXT_ACTIVATION);
-
-		while (wait_check_for_reply("ERROR", 2)) {
-			WDT_A_clearTimer();
-			send_msg(CONTEXT_DEACTIVATION);
-			WDT_A_clearTimer();
-			delay_ms(1000);
-			WDT_A_clearTimer();
-			send_msg(CONTEXT_ACTIVATION);
-			WDT_A_clearTimer();
-			delay_ms(5000);
-			WDT_A_clearTimer();
-		}
+		context_deactivate_activate();
 
 		delay_ms(1000);
 		WDT_A_clearTimer();
@@ -185,7 +205,7 @@ void EUSCIA2_IRQHandler(void) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {
 
 		UartGSMRX[counter_read_gsm] = MAP_UART_receiveData(EUSCI_A2_BASE);
-		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
+//		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
 		counter_read_gsm++;
 	}
 	//if(counter_read_gsm == 80)
@@ -283,6 +303,7 @@ void gsm_power_save_on() {
 //	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
 	delay_ms(500);
 	counter_read_gsm = 0;                     // Reset buffer counter
+	send_uart_pc("gsm power save on.\n");
 }
 //						Set the GSM modem to NORMAL mode
 void gsm_power_save_off() {
@@ -291,15 +312,16 @@ void gsm_power_save_off() {
 	while (!flag) {
 
 		if (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
-			counter_read_gsm = 0;                     // Reset buffer counter
-			send_gsm_uart("AT+CFUN=1\r");              // Send Attention Command
-			counter_read_gsm = 0;                     // Reset buffer counter
+			counter_read_gsm = 0;                    // Reset buffer counter
+			send_gsm_uart("AT+CFUN=1\r");          // Send Attention Command
+			counter_read_gsm = 0;                    // Reset buffer counter
 			if (string_search(OK)) {
 				return;
 			}
 		}
 	}
 	stop_timer_a_counter();
+	send_uart_pc("gsm power save off.\n");
 }
 
 void disable_command_echo() {
@@ -444,17 +466,17 @@ void http_connect(void) {
 }
 
 void cmd_load(int index) {
-	uint16_t var = 0;                                    // temp index for array
-	memset(Command, NULL, SIZE_COMMAND);       // Reset data array index to NULL
+	uint16_t var = 0;                                // temp index for array
+	memset(Command, NULL, SIZE_COMMAND);   // Reset data array index to NULL
 	while ((Strings[index][var] != NULL) && (var < SIZE_COMMAND)) // Copy data from main "Strings" to commparing array.
 	{
 		Command[var] = Strings[index][var]; // Copy into temp array the strings from Main Database
 		var++;                           // Up index
 	}
 }
-int string_search(int index)         // index' is Strings[index][SIZE_COMMAND]
+int string_search(int index)       // index' is Strings[index][SIZE_COMMAND]
 		{                                    // See defines in .h
-	cmd_load(index);             // Loads into temp array the string to be found
+	cmd_load(index);         // Loads into temp array the string to be found
 	if (strstr(UartGSMRX, Command) != NULL) // Find String or Command in main Buffer
 		return (1);                        // Return 1 if found
 	else
@@ -572,8 +594,7 @@ bool gsm_upload_my_data() {
 
 	gsm_power_save_off();
 	WDT_A_clearTimer();
-	delay_ms(3000);
-	WDT_A_clearTimer();
+	context_deactivate_activate();
 	double localTemperature = bme280Data.temperature;
 	double localHumidity = bme280Data.humidity;
 	double localPressure = bme280Data.pressure;
@@ -630,17 +651,23 @@ bool gsm_upload_my_data() {
 //
 //	}
 //	delay_ms(2000);
-	run_systick_function_ms(5000);
-	while (!wait_check_for_reply(">>>", 3)) {
-
+//	run_systick_function_ms(5000);
+	int retries = 0;
+	while (!wait_check_for_reply(">>>", 5)) {
+		send_uart_pc("Try PostCommand.\n");
+		retries++;
 		send_msg(postCommand);
-		delay_ms(10);
+
 		WDT_A_clearTimer();
-		if (systimer_ready_check()) {
+		if (retries > 3) {
+
+			send_uart_pc("Own Data failed POSTCOMMAND.\n");
 			return false;
 		}
+
 	}
 
+	retries = 0;
 	counter_read_gsm = 0;
 	WDT_A_clearTimer();
 	send_msg(postBody);
@@ -648,17 +675,20 @@ bool gsm_upload_my_data() {
 ////		return;
 //	}
 //	delay_ms(2000);
-	run_systick_function_ms(5000);
-	while (!wait_check_for_reply("#HTTP", 3)) {
-
+//	run_systick_function_ms(5000);
+	while (!wait_check_for_reply("#HTTP", 5)) {
+		send_uart_pc("Try PostBody.\n");
+		retries++;
 		send_msg(postBody);
-		delay_ms(10);
+
 		WDT_A_clearTimer();
-		if (systimer_ready_check()) {
+		if (retries > 3) {
+			send_uart_pc("Own Data failed POSTBODY.\n");
 			return false;
 		}
-	}
 
+	}
+	retries = 0;
 	counter_read_gsm = 0;
 	WDT_A_clearTimer();
 
@@ -677,19 +707,26 @@ bool gsm_upload_my_data() {
 
 void gsm_upload_stored_datagrams() {
 
+	send_uart_pc("Context Reactivation\n");
+
 	int i = 0;
 
 	int attempts = 0;
+	send_uart_pc("start gateway upload.\n");
 	while (!gsm_upload_my_data()) {
+		WDT_A_clearTimer();
 		attempts++;
+		send_uart_pc("Retrying gsm_upload_my_data\n");
 		if (attempts > 3) {
+			send_uart_pc("failed upload my data.\n");
 			return;
 		}
 	}
+	send_uart_pc("gsm own upload succesful.\n");
 
-	WDT_A_clearTimer();
 	gsm_power_save_off();
-	delay_ms(3000);
+	WDT_A_clearTimer();
+//	context_deactivate_activate();
 	WDT_A_clearTimer();
 	uint8_t numToSend = get_received_messages_index();
 	Datagram_t *pointerToData = get_received_messages();
@@ -739,8 +776,9 @@ void gsm_upload_stored_datagrams() {
 	WDT_A_clearTimer();
 
 	if (numToSend > 0) {
+		send_uart_pc("Starting batch upload.\n");
 		for (i = 0; i < numToSend; i++) {
-
+			send_uart_pc("next datagram.\n");
 			localTemperature = pointerToData[i].data.sensData.temp;
 			localHumidity = pointerToData[i].data.sensData.hum;
 			localPressure = pointerToData[i].data.sensData.press;
@@ -772,43 +810,46 @@ void gsm_upload_stored_datagrams() {
 			//
 			//	}
 			//	delay_ms(2000);
-			run_systick_function_ms(5000);
-			while (!wait_check_for_reply(">>>", 2.5)) {
-
+//			run_systick_function_ms(5000);
+			int retries = 0;
+			while (!wait_check_for_reply(">>>", 5)) {
+				send_uart_pc("Try PostCommand.\n");
+				retries++;
 				send_msg(postCommand);
-				delay_ms(10);
+
 				WDT_A_clearTimer();
-				if (systimer_ready_check()) {
+				if (retries > 3) {
+
+					send_uart_pc("Own Data failed POSTCOMMAND.\n");
 					return;
 				}
+
 			}
-
-			delay_ms(3000);
-
-			WDT_A_clearTimer();
-
+			retries = 0;
 			counter_read_gsm = 0;
-
+			WDT_A_clearTimer();
 			send_msg(postBody);
 			//	if (!wait_check_for_reply("OK", 5)) {
 			////		return;
 			//	}
 			//	delay_ms(2000);
-			run_systick_function_ms(5000);
-			while (!wait_check_for_reply("#HTTP", 2.5)) {
-
+//			run_systick_function_ms(5000);
+			while (!wait_check_for_reply("#HTTP", 5)) {
+				send_uart_pc("Try PostBody.\n");
+				retries++;
 				send_msg(postBody);
-				delay_ms(10);
+
 				WDT_A_clearTimer();
-				if (systimer_ready_check()) {
+				if (retries > 3) {
+					send_uart_pc("Own Data failed POSTBODY.\n");
 					return;
 				}
-			}
 
-			delay_ms(3000);
+			}
+			retries = 0;
 
 			WDT_A_clearTimer();
-
+//			context_deactivate_activate();
 		}
 	}
 
@@ -817,6 +858,7 @@ void gsm_upload_stored_datagrams() {
 //	delay_ms(1000);
 	counter_read_gsm = 0;
 	gsm_power_save_on();
+	send_uart_pc("power save on.\n");
 	reset_received_msg_index();
 	WDT_A_clearTimer();
 //	gsm_upload_my_data();
@@ -888,4 +930,13 @@ void upload_current_datagram(void) {
 
 	reset_received_msg_index();
 	WDT_A_clearTimer();
+}
+
+void reset_gsm_module(void) {
+	counter_read_gsm = 0;                     // Reset buffer counter
+	send_gsm_uart("AT&F\r");              // Send Attention Command
+	//	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
+	delay_ms(500);
+	counter_read_gsm = 0;                     // Reset buffer counter
+	init_gsm();
 }

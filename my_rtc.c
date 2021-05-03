@@ -32,7 +32,7 @@ extern Gpio_t Led_user_red;
 //Time is Saturday, November 12th 1955 10:03:00 PM
 RTC_C_Calendar currentTime = RTC_ZERO_TIME;
 
-void rtc_init( ) {
+void rtc_init() {
 
 	//[Simple RTC Example]
 	/* Initializing RTC with current time as described in time in
@@ -40,10 +40,9 @@ void rtc_init( ) {
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 
 	/* Specify an interrupt to assert every minute */
-	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_HOURCHANGE);
-
-//	MAP_RTC_C_setCalendarAlarm(0x30, RTC_C_ALARMCONDITION_OFF,
-//	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
+//	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_HOURCHANGE);
+	MAP_RTC_C_setCalendarAlarm(0x05, RTC_C_ALARMCONDITION_OFF,
+	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
 
 	/* Enable interrupt for RTC Ready Status, which asserts when the RTC
 	 * Calendar registers are ready to read.
@@ -52,7 +51,8 @@ void rtc_init( ) {
 			RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
 					| RTC_C_CLOCK_ALARM_INTERRUPT);
 	MAP_RTC_C_enableInterrupt(
-	RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT);
+			RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
+					| RTC_C_CLOCK_ALARM_INTERRUPT);
 
 	/* Start RTC Clock */
 
@@ -62,15 +62,15 @@ void rtc_init( ) {
 	rtcInitFlag = true;
 }
 
-void rtc_start_clock( void ) {
+void rtc_start_clock(void) {
 	MAP_RTC_C_startClock();
 }
 
-void rtc_stop_clock( void ) {
+void rtc_stop_clock(void) {
 	MAP_RTC_C_holdClock();
 }
 
-void rtc_set_calendar_time( void ) {
+void rtc_set_calendar_time(void) {
 	rtc_stop_clock();
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 //	set_slot_count((currentTime.seconds) % (0x05)); // sets the current slot to some number less than the maximum slot count
@@ -78,7 +78,7 @@ void rtc_set_calendar_time( void ) {
 }
 
 bool resetFlag = false;
-void RTC_C_IRQHandler( void ) {
+void RTC_C_IRQHandler(void) {
 
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
@@ -110,13 +110,14 @@ void RTC_C_IRQHandler( void ) {
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 //		gpsWakeFlag = true;
 //		set_slot_count(0);
-		gps_disable_low_power();
-		resetFlag = true;
+
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
 //		gpsWakeFlag = true;
 //			setSlotCount(0);
+		gps_disable_low_power();
+		resetFlag = true;
 	}
 
 }

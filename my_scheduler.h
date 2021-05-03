@@ -18,7 +18,7 @@
 #define POSSIBLE_TX_SLOT 1		// possible slot modulus
 #define GLOBAL_RX (10 / SLOT_SCALER)	// possible global rx modulus
 #define COLLECT_DATA_SLOT_REL 10	// slot in which data is collected before a transmission
-#define SYNC_PROB 50					// probability of sending out a sync message in a global rx slot.
+#define SYNC_PROB 400					// probability of sending out a sync message in a global rx slot.
 #define TOTAL_NETWORK_NODES 5		// total nodes in the network. I've only made 5.
 #define TIME_TO_SEND_SEC (60*5)		// the time between data transmissions
 #define TIME_TO_SEND_DATA_OFFSET 25	//
@@ -28,7 +28,7 @@
 #define GSM_UPLOAD_DATAGRAM_OFFSET 55	// time offset from slot count
 #define WRITE_FLASH_DATA_TIME 120		// Time between flash data writes
 #define WRITE_FLASH_DATA_OFFSET	20		// write flash data offset
-#define WINDOW_TIME_SEC 1200			//
+#define WINDOW_TIME_SEC 120			//
 #define WINDOW_SCALER (MAX_SLOT_COUNT / WINDOW_TIME_SEC)
 
 /*!

@@ -186,7 +186,7 @@ void mac_init() {
 		temp *= (WINDOW_TIME_SEC);
 
 		if (temp < GSM_UPLOAD_DATAGRAMS_TIME) {
-			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME; // this ensures that there is no txSlot in the GSM upload window
+			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME + 1; // this ensures that there is no txSlot in the GSM upload window
 		} else {
 			_txSlot = (uint16_t) temp;
 		}
@@ -203,6 +203,8 @@ void mac_init() {
 	}
 
 }
+
+uint8_t numRetries = 0;
 
 bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
@@ -247,18 +249,25 @@ bool mac_state_machine() {
 					if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
+							// no response, send again in next slot
+							numRetries++;
 							MACState = MAC_SLEEP;
 //						return false;
+						} else {
+							numRetries = 0;
 						}
 					} else {
+						numRetries++;
 						MACState = MAC_SLEEP;
 //					return false;
 					}
 				} else {
+					numRetries++;
 					MACState = MAC_SLEEP;
 //				return false;
 				}
 			} else {
+				//! TODO request a route to node: send rreq
 				return 0;
 			}
 			break;
@@ -472,7 +481,7 @@ static bool process_rx_buffer() {
 			/* SYNC and RREQ messages are broadcast, thus no ack, only RRep if route is known */
 		case MSG_SYNC: 	// SYNC
 		{
-			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
+//			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
 			add_neighbour(rxDatagram.msgHeader.localSource,
 					rxDatagram.msgHeader.txSlot);
 

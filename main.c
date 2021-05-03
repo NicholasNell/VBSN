@@ -162,7 +162,7 @@ void radio_init() {
 	if (Radio.Read(REG_VERSION) == 0x00) {
 		send_uart_pc("Radio could not be detected!\n\r");
 		rfm95Working = false;
-		board_reset_mcu();// if no radio is detected reset the MCU and try again; no radio, no work
+		ResetCtl_initiateHardReset();
 		return;
 	} else {
 		rfm95Working = true;
@@ -227,6 +227,7 @@ int main(void) {
 	MAP_WDT_A_clearTimer();
 //	flash_check_for_data();
 	rtc_init();
+	send_uart_pc("rtc Init\n");
 	MAP_WDT_A_clearTimer();
 
 	unsigned seed = SX1276Random();
@@ -275,25 +276,21 @@ int main(void) {
 
 	MAP_WDT_A_clearTimer();
 	gps_set_low_power();
+	send_uart_pc("GPS low power\n");
 
-	MAP_WDT_A_clearTimer();
-//	gpio_write(&Led_user_red, 0);
-//	char b[255];
-//	LocationData gpsData = get_gps_data();
-//	int len = sprintf(
-//			b,
-//			"gpsWorking. Lon: %f\tLat: %f\n",
-//			gpsData.lon,
-//			gpsData.lat);
-//	SX1276Send((uint8_t*) b, len);
+	WDT_A_clearTimer();
+
 //	flash_fill_struct_for_write();
 
 //	flash_check_for_data();
 
 //	 Initialise the Network and  MAC protocol
+	send_uart_pc("Net Init\n");
 	net_init();
+	send_uart_pc("Mac Init\n");
 	mac_init();
 
+	send_uart_pc("ADC Init\n");
 	init_adc();
 
 	// Volumetric Water Content Sensor
@@ -308,6 +305,7 @@ int main(void) {
 
 	MAP_WDT_A_startTimer();
 
+	send_uart_pc("Starting Main Loop\n");
 	while (1) {
 
 		if (schedFlag) {
@@ -317,6 +315,7 @@ int main(void) {
 		}
 
 		if (collectDataFlag) {
+			send_uart_pc("Collecting Sensor Data\n");
 			helper_collect_sensor_data();
 			hasData = true;
 			collectDataFlag = false;
@@ -334,6 +333,7 @@ int main(void) {
 //		}
 
 		if (isRoot && resetFlag) {
+			send_uart_pc("Reseting\n");
 			resetFlag = false;
 			flash_fill_struct_for_write();
 			flash_write_struct_to_flash();
@@ -418,7 +418,7 @@ void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	RadioState = RXDONE;
 #ifdef DEBUG
 	send_uart_pc("RxDone\n");
-	GpioFlashLED(&Led_rgb_green, 10);
+
 #endif
 }
 
@@ -436,8 +436,8 @@ void on_rx_timeout(void) {
 	RadioState = RXTIMEOUT;
 #ifdef DEBUG
 
-	send_uart_pc("RxTimeout\n");
-	GpioFlashLED(&Led_rgb_red, 10);
+//	send_uart_pc("RxTimeout\n");
+
 #endif
 }
 

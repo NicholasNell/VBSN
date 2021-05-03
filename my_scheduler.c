@@ -55,7 +55,7 @@ static bool get_sync(void);
 static bool get_sync(void) {
 
 	bool retval = false;
-	int ran = (float) rand() / RAND_MAX * 200;
+	int ran = (float) rand() / RAND_MAX * SYNC_PROB;
 	if ((slotCount - lastSync) > ran) {
 		lastSync = slotCount;
 		retval = true;
@@ -92,6 +92,8 @@ bool uploadOwnData = false;
 bool collectDataFlag = false;
 
 extern RTC_C_Calendar currentTime;
+
+extern uint8_t numRetries;
 int scheduler() {
 
 	WDT_A_clearTimer();
@@ -107,11 +109,13 @@ int scheduler() {
 		}
 	} else {
 
+		bool neighbourTx = false;
 		int var = 0;
 		for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
 			if (slotCount % neighbourTable[var].neighbourTxSlot == 0) {
 				MACState = MAC_LISTEN;
 				macStateMachineEnable = true;
+				neighbourTx = true;
 				break;
 			}
 		}
@@ -146,6 +150,14 @@ int scheduler() {
 		if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) { // hop the received message in the global RX window
 			hopMessageFlag = false;
 			MACState = MAC_HOP_MESSAGE;
+			macStateMachineEnable = true;
+		}
+
+		if ((numRetries > 0) && !neighbourTx) {
+			if (numRetries == 3) {
+				numRetries = 0;
+			}
+			MACState = MAC_RTS;
 			macStateMachineEnable = true;
 		}
 

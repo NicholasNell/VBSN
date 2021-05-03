@@ -8,6 +8,7 @@
 #include <bme280.h>
 #include <bme280_defs.h>
 #include <helper.h>
+#include <main.h>
 #include <math.h>
 #include <my_gpio.h>
 #include <my_gps.h>
@@ -52,7 +53,7 @@ bool setRTCFlag = false;
 extern RTC_C_Calendar currentTime;
 
 // static functions
-static void UartGPSCommands( );
+static void UartGPSCommands();
 
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 
@@ -82,7 +83,7 @@ const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCL
 		EUSCI_A_UART_8_BIT_LEN                  // 8 bit data length
 		};
 
-void uart_init_gps( ) {
+void uart_init_gps() {
 
 	gpsData.lat = 0.0;
 	gpsData.lon = 0.0;
@@ -127,7 +128,7 @@ void uart_init_gps( ) {
 	MAP_Interrupt_enableInterrupt(UART_GPS_INT);
 }
 
-void uart_init_pc( ) {
+void uart_init_pc() {
 	/* Selecting P1.2 and P1.3 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(UART_PC_PORT, UART_PC_PINS,
 	GPIO_PRIMARY_MODULE_FUNCTION);
@@ -140,16 +141,18 @@ void uart_init_pc( ) {
 	MAP_Interrupt_enableInterrupt(UART_PC_INT);
 }
 
-void send_uart_pc( char *buffer ) {
+void send_uart_pc(char *buffer) {
+#if DEBUG
 	int count = 0;
 	while (strlen(buffer) > count) {
 		MAP_UART_transmitData(UART_PC_MODULE, buffer[count++]);
 	}
 	uint32_t status = GPIO_getEnabledInterruptStatus(UART_PC_PORT);
 	GPIO_clearInterruptFlag(UART_PC_PORT, status);
+#endif
 }
 
-void send_uart_gps( char *buffer ) {
+void send_uart_gps(char *buffer) {
 	int count = 0;
 	while (strlen(buffer) > count) {
 		MAP_UART_transmitData(UART_GPS_MODULE, buffer[count++]);
@@ -158,129 +161,129 @@ void send_uart_gps( char *buffer ) {
 	GPIO_clearInterruptFlag(UART_GPS_PORT, status);
 }
 
-void send_uart_integer( uint32_t integer ) {
+void send_uart_integer(uint32_t integer) {
 	char buffer[10];
 	sprintf(buffer, "_%2X_", integer);
 	send_uart_pc(buffer);
 }
 
-void check_uart_activity( ) {
+void check_uart_activity() {
 	if (return_uart_activity()) {
 		uart_pc_command_handler();
 	}
 }
 
-void uart_pc_command_handler( ) {
+void uart_pc_command_handler() {
 	counter_read_pc = 0;
 	if (UartActivity) {
 		UartActivity = false;
 		switch (UartRX[0]) {
-			case 'N':
-				send_uart_pc("Setting Normal Mode\n");
-				break;
-			case 'D':
-				send_uart_pc("Setting Debug Mode\n");
-				break;
-			case 'S': {
-				const char s[2] = ",";
-				char *token;
-				token = strtok(UartRX, s); // UartRX[0]
-				token = strtok(NULL, s);
-				uint8_t len = atoi(token);
-				token = strtok(NULL, s);
-				SX1276Send((uint8_t*) token, len);
-				send_uart_pc("Sending data on radio: ");
-				send_uart_pc(token);
-			}
-				break;
-			case 'T': {
-				bme280_get_data(&bme280Dev, &bme280Data);
-				char buffer[10];
-				sprintf(buffer, "%.2f", bme280Data.temperature);
-				send_uart_pc("Current temperature: ");
-				send_uart_pc(buffer);
-				send_uart_pc(" °C\n");
-			}
-				break;
-			case 'P': {
-				bme280_get_data(&bme280Dev, &bme280Data);
-				char buffer[10];
-				sprintf(buffer, "%.2f", bme280Data.pressure);
-				send_uart_pc("Current pressure: ");
-				send_uart_pc(buffer);
-				send_uart_pc(" Pa\n");
-			}
-				break;
-			case 'H': {
-				bme280_get_data(&bme280Dev, &bme280Data);
-				char buffer[10];
-				sprintf(buffer, "%.2f", bme280Data.humidity);
-				send_uart_pc("Current relative humidity: ");
-				send_uart_pc(buffer);
-				send_uart_pc(" %\n");
-			}
-				break;
-			case 'L': {
-				get_light();
-				char buffer[10];
-				sprintf(buffer, "%.2f", get_lux());
-				send_uart_pc("Current light intensity: ");
-				send_uart_pc(buffer);
-				send_uart_pc(" lux\n");
-			}
-				break;
-			case 'A': {
-				helper_collect_sensor_data();
-				send_uart_pc("All sensor data: ");
-				char buffer[10];
-				sprintf(buffer, "%.2f", get_lux());
-				send_uart_pc("| L: ");
-				send_uart_pc(buffer);
-				sprintf(buffer, "%.2f", bme280Data.temperature);
-				send_uart_pc("| T: ");
-				send_uart_pc(buffer);
-				sprintf(buffer, "%.2f", bme280Data.humidity);
-				send_uart_pc("| H: ");
-				send_uart_pc(buffer);
-				sprintf(buffer, "%.2f", bme280Data.pressure);
-				send_uart_pc("| P: ");
-				send_uart_pc(buffer);
-				send_uart_pc("|\n");
-			}
-				break;
-			case 'C': { //set clock to zero
-				RTC_C_Calendar zeroTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-											0x2020 };
-				RTC_C_holdClock();
-				rtc_init(zeroTime);
-				send_uart_pc("Time zeroed");
-			}
-				break;
-			default:
-				send_uart_pc("Unknown Command\n");
-				break;
+		case 'N':
+			send_uart_pc("Setting Normal Mode\n");
+			break;
+		case 'D':
+			send_uart_pc("Setting Debug Mode\n");
+			break;
+		case 'S': {
+			const char s[2] = ",";
+			char *token;
+			token = strtok(UartRX, s); // UartRX[0]
+			token = strtok(NULL, s);
+			uint8_t len = atoi(token);
+			token = strtok(NULL, s);
+			SX1276Send((uint8_t*) token, len);
+			send_uart_pc("Sending data on radio: ");
+			send_uart_pc(token);
+		}
+			break;
+		case 'T': {
+			bme280_get_data(&bme280Dev, &bme280Data);
+			char buffer[10];
+			sprintf(buffer, "%.2f", bme280Data.temperature);
+			send_uart_pc("Current temperature: ");
+			send_uart_pc(buffer);
+			send_uart_pc(" °C\n");
+		}
+			break;
+		case 'P': {
+			bme280_get_data(&bme280Dev, &bme280Data);
+			char buffer[10];
+			sprintf(buffer, "%.2f", bme280Data.pressure);
+			send_uart_pc("Current pressure: ");
+			send_uart_pc(buffer);
+			send_uart_pc(" Pa\n");
+		}
+			break;
+		case 'H': {
+			bme280_get_data(&bme280Dev, &bme280Data);
+			char buffer[10];
+			sprintf(buffer, "%.2f", bme280Data.humidity);
+			send_uart_pc("Current relative humidity: ");
+			send_uart_pc(buffer);
+			send_uart_pc(" %\n");
+		}
+			break;
+		case 'L': {
+			get_light();
+			char buffer[10];
+			sprintf(buffer, "%.2f", get_lux());
+			send_uart_pc("Current light intensity: ");
+			send_uart_pc(buffer);
+			send_uart_pc(" lux\n");
+		}
+			break;
+		case 'A': {
+			helper_collect_sensor_data();
+			send_uart_pc("All sensor data: ");
+			char buffer[10];
+			sprintf(buffer, "%.2f", get_lux());
+			send_uart_pc("| L: ");
+			send_uart_pc(buffer);
+			sprintf(buffer, "%.2f", bme280Data.temperature);
+			send_uart_pc("| T: ");
+			send_uart_pc(buffer);
+			sprintf(buffer, "%.2f", bme280Data.humidity);
+			send_uart_pc("| H: ");
+			send_uart_pc(buffer);
+			sprintf(buffer, "%.2f", bme280Data.pressure);
+			send_uart_pc("| P: ");
+			send_uart_pc(buffer);
+			send_uart_pc("|\n");
+		}
+			break;
+		case 'C': { //set clock to zero
+			RTC_C_Calendar zeroTime = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x2020 };
+			RTC_C_holdClock();
+			rtc_init(zeroTime);
+			send_uart_pc("Time zeroed");
+		}
+			break;
+		default:
+			send_uart_pc("Unknown Command\n");
+			break;
 		}
 		reset_uart_array();
 	}
 }
 
-void send_uart_integer_next_line( uint32_t integer ) {
+void send_uart_integer_next_line(uint32_t integer) {
 	char buffer[10];
 	sprintf(buffer, "_%2X_", integer);
 	send_uart_pc(buffer);
 	send_uart_pc("\n");
 }
 
-void reset_uart_array( ) {
+void reset_uart_array() {
 	memset(UartRX, 0x00, SIZE_BUFFER);
 	counter_read_pc = 0;
 }
 
-bool return_uart_activity( ) {
+bool return_uart_activity() {
 	return UartActivity;
 }
 
-void UartGPSCommands( ) {
+void UartGPSCommands() {
 
 	if (UartActivityGps) {
 
@@ -368,8 +371,7 @@ void UartGPSCommands( ) {
 
 				if (strpbrk(CMD, "N")) {
 
-				}
-				else if (strpbrk(CMD, "S")) {
+				} else if (strpbrk(CMD, "S")) {
 					gpsData.lat *= -1;
 				}
 
@@ -392,8 +394,7 @@ void UartGPSCommands( ) {
 
 				if (strpbrk(CMD, "E")) {
 
-				}
-				else if (strpbrk(CMD, "W")) {
+				} else if (strpbrk(CMD, "W")) {
 					gpsData.lon *= -1;
 
 				}
@@ -409,13 +410,7 @@ void UartGPSCommands( ) {
 				// Course over Ground "000.00
 				{
 					memset(s, 0, 5);
-					sprintf(
-							s,
-							"%c%c%c%c%c",
-							CMD[0],
-							CMD[1],
-							CMD[2],
-							CMD[3],
+					sprintf(s, "%c%c%c%c%c", CMD[0], CMD[1], CMD[2], CMD[3],
 							CMD[4]);
 					float cog = strtof(s, NULL);
 				}
@@ -432,7 +427,7 @@ void UartGPSCommands( ) {
 				year = 0x2000 + (uint8_t) strtol(s, NULL, 16);
 
 				RTC_C_Calendar newCal = { (uint8_t) (sec + 0x01), minute, hr, 0,
-											(uint_fast8_t) day, month, year };
+						(uint_fast8_t) day, month, year };
 				currentTime = newCal;
 
 				if (sec != 0x59) {
@@ -457,7 +452,7 @@ void UartGPSCommands( ) {
 	counter_read_gps = 0;
 }
 
-void EUSCIA3_IRQHandler( void ) {
+void EUSCIA3_IRQHandler(void) {
 	uint32_t status = MAP_UART_getEnabledInterruptStatus(UART_GPS_MODULE);
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
@@ -476,7 +471,7 @@ void EUSCIA3_IRQHandler( void ) {
 	}
 }
 
-void EUSCIA0_IRQHandler( void ) {
+void EUSCIA0_IRQHandler(void) {
 	uint32_t status = MAP_UART_getEnabledInterruptStatus(UART_PC_MODULE);
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT) {

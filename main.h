@@ -50,4 +50,6 @@
 #define LORA_IS_PUBLIC_NET false
 #define LORA_RSSI_THRESHOLD -60
 
+#define DEBUG 1
+
 #endif // __MAIN_H__
