@@ -265,7 +265,9 @@ int main(void) {
 	while (!gpsWorking) {
 		if (systimer_ready_check()) {
 			timeout++;
+#if DEBUG
 			gpio_flash_lED(&Led_rgb_green, 50);
+#endif
 			run_systick_function_ms(1000);
 			if (timeout > 60) {
 				uart_init_gps();
@@ -306,6 +308,7 @@ int main(void) {
 	MAP_WDT_A_startTimer();
 
 	send_uart_pc("Starting Main Loop\n");
+	volatile bool stateChanged = false;
 	while (1) {
 
 		if (schedFlag) {
@@ -320,7 +323,7 @@ int main(void) {
 			hasData = true;
 			collectDataFlag = false;
 		}
-//		PCM_setPowerState(PCM_LPM3);
+		stateChanged = PCM_setPowerState(PCM_LPM3);
 
 //		if (uploadOwnData) {
 //			gsm_upload_my_data();

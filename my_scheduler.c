@@ -13,6 +13,7 @@
 #include <my_MAC.h>
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
+#include <my_UART.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +47,9 @@ extern uint16_t txSlots[WINDOW_SCALER];
 
 bool schedChange = false;
 bool netOp = false;
-volatile uint8_t syncProbability = SYNC_PROB; // the probability of sending out a node discovery message in a global rx slot (as a percentage)
+
+extern uint8_t numRetries;
+
 static uint16_t lastSync = 0;
 //!
 //! \brief calculates a new sync probability based on the number of known neighbours.
@@ -83,8 +86,7 @@ void init_scheduler() {
 	}
 
 	slotCount = 1;
-
-	get_sync();
+	lastSync = get_slot_count();
 }
 
 bool uploadOwnData = false;
@@ -93,29 +95,37 @@ bool collectDataFlag = false;
 
 extern RTC_C_Calendar currentTime;
 
-extern uint8_t numRetries;
 int scheduler() {
 
 	WDT_A_clearTimer();
 	MACState = MAC_LISTEN;	// by default, listen
 	bool macStateMachineEnable = true;
 	int i = 0;
+	static bool hasSentGSM = false;
 //	i = WINDOW_SCALER - (MAX_SLOT_COUNT / slotCount);
 	i = slotCount / WINDOW_TIME_SEC;
 
 	if ((slotCount >= gsmStartSlot[i]) && (slotCount <= gsmStopSlot[i])) {
-		if (slotCount == gsmStartSlot[i]) {
-			gsm_upload_stored_datagrams();
+		if (isRoot) {
+			if (!hasSentGSM) {
+				send_uart_pc("Uploading Stored datagrams\n");
+				gsm_upload_stored_datagrams();
+				hasSentGSM = true;
+			}
+		} else {
+			MACState = MAC_SLEEP;
 		}
 	} else {
-
+		hasSentGSM = false;
 		bool neighbourTx = false;
 		int var = 0;
 		for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
 			if (slotCount % neighbourTable[var].neighbourTxSlot == 0) {
 				MACState = MAC_LISTEN;
+				send_uart_pc("Neighbour Tx Slot\n");
 				macStateMachineEnable = true;
 				neighbourTx = true;
+
 				break;
 			}
 		}
@@ -132,12 +142,13 @@ int scheduler() {
 
 		if (slotCount == txSlots[i]) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 			if (!isRoot) {
+
 				MACState = MAC_RTS;
 				macStateMachineEnable = true;
 			}
 		}
 
-		if (slotCount == (txSlots[i] - 5)) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
+		if (slotCount == (gsmStopSlot[i] + 5)) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 			collectDataFlag = true;
 		}
 
@@ -153,11 +164,14 @@ int scheduler() {
 			macStateMachineEnable = true;
 		}
 
-		if ((numRetries > 0) && !neighbourTx) {
-			if (numRetries == 3) {
-				numRetries = 0;
-			}
+		if ((numRetries > 0) && !neighbourTx && (slotCount % 3 == 0)) {
+
 			MACState = MAC_RTS;
+			if (numRetries > 3) {
+				numRetries = 0;
+				MACState = MAC_LISTEN;
+			}
+
 			macStateMachineEnable = true;
 		}
 

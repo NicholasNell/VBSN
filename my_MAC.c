@@ -15,9 +15,11 @@
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_timer.h>
+#include <my_UART.h>
 #include <myNet.h>
 #include <MAX44009.h>
 #include <radio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
@@ -147,6 +149,7 @@ static void gen_id(bool genNew) {
 		_nodeID = tempID;
 	}
 	flash_write_node_id();
+
 }
 
 void mac_init() {
@@ -200,6 +203,13 @@ void mac_init() {
 		_numNeighbours = 0;
 		_numMsgSent = 0;
 		memset(neighbourTable, NULL, MAX_NEIGHBOURS);
+
+#if DEBUG
+		char msg[30];
+		memset(msg, 0, 30);
+		sprintf(msg, "Node ID: %3d| TxSlot: %4d\n", _nodeID, _txSlot);
+		send_uart_pc(msg);
+#endif
 	}
 
 }
@@ -213,6 +223,7 @@ bool mac_state_machine() {
 		WDT_A_clearTimer();
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
+			send_uart_pc("Sending Sync Broadcast\n");
 			if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
 				if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
 					schedChange = false;
@@ -240,8 +251,10 @@ bool mac_state_machine() {
 			return false;
 		case MAC_RTS:
 			// Send RTS
-
+			send_uart_pc("Sending RTS\n");
+//			numRetries++;
 			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
+				send_uart_pc("Node Has a Route to the destination\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY,
 				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
@@ -249,26 +262,34 @@ bool mac_state_machine() {
 					if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
+							send_uart_pc("No CTS msg Received\n");
 							// no response, send again in next slot
-							numRetries++;
+
 							MACState = MAC_SLEEP;
 //						return false;
 						} else {
-							numRetries = 0;
+
+							send_uart_pc("CTS Msg Received\n");
 						}
 					} else {
+						send_uart_pc("Sending RTS Failed\n");
 						numRetries++;
 						MACState = MAC_SLEEP;
 //					return false;
 					}
 				} else {
+					send_uart_pc(
+							"RTS carrier sense detecting activity on channel\n");
 					numRetries++;
 					MACState = MAC_SLEEP;
 //				return false;
 				}
 			} else {
+				send_uart_pc("RTS has no route to destination, sending RReq\n");
 				//! TODO request a route to node: send rreq
-				return 0;
+				nextNetOp = NET_BROADCAST_RREQ;
+				MACState = MAC_NET_OP;
+
 			}
 			break;
 		case MAC_NET_OP:
@@ -277,6 +298,7 @@ bool mac_state_machine() {
 				MACState = MAC_LISTEN;
 				break;
 			case NET_REBROADCAST_RREQ:
+				send_uart_pc("Rebroadcasting Rreq\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
 					if (net_re_rreq()) {
@@ -287,6 +309,7 @@ bool mac_state_machine() {
 				}
 				break;
 			case NET_BROADCAST_RREQ:
+				send_uart_pc("Broadcasting Rreq\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
 					if (send_rreq()) {
@@ -297,6 +320,8 @@ bool mac_state_machine() {
 				}
 				break;
 			case NET_UNICAST_RREP:
+				send_rrep();
+				MACState = MAC_SLEEP;
 				break;
 			case NET_WAIT:
 				if (!mac_rx(SLOT_LENGTH_MS)) {
@@ -311,6 +336,7 @@ bool mac_state_machine() {
 			break;
 //			return true;
 		case MAC_HOP_MESSAGE:
+			send_uart_pc("Mac Hop message\n");
 			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
@@ -472,6 +498,7 @@ static bool process_rx_buffer() {
 			add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 			break;
 		case MSG_RREP: 	// RREP
+			send_uart_pc("Rx RREP\n");
 			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 			nextNetOp = process_rrep();
 			MACState = MAC_NET_OP;
@@ -593,4 +620,8 @@ uint8_t get_received_messages_index(void) {
 
 void reset_received_msg_index(void) {
 	receivedMsgIndex = 0;
+}
+
+void decrease_received_message_index(void) {
+	receivedMsgIndex--;
 }

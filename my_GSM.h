@@ -13,7 +13,7 @@
 #include <stdint.h>
 /* DriverLib Includes */
 //#include "driverlib.h"
-#define SIZE_BUFFER 500
+#define SIZE_BUFFER 250
 #define SIZE_COMMAND    10   // Sets the Max command Length including '\0'
 #define TOTAL_STRINGS    7   // Total number of Searchable strings
 #define OK       0          // 1 <-- Required
@@ -27,6 +27,7 @@
 #define AT "AT\n"
 #define CONTEXT_ACTIVATION "AT#SGACT=1,1\r\n"
 #define CONTEXT_DEACTIVATION "AT#SGACT=1,0\r\n"
+#define GSM_CONTEXT_DEACTIVATION "AT#SGACT=0,0\r\n"
 #define HTTP_CONFIG_THINGSPEAK "AT#HTTPCFG=1,\"api.thingspeak.com\",80,0,,,0,120,1\r\n"
 #define HTTP_CONFIG_THINGSBOARD "AT#HTTPCFG=1,\"meesters.ddns.net\",8008,0,,,0,120,1\r\n"
 #define DEFINE_PDP_CONTEXT "AT+CGDCONT=1,\"IP\",\"internet\",\"0.0.0.0\",0,0\r\n"
@@ -105,7 +106,8 @@ void gsm_upload_stored_datagrams(void);
 
 //!
 //! @brief Uploads the datagram it just received
-void upload_current_datagram(void);
+//! @return succesful or not
+bool upload_current_datagram(int index);
 
 //!
 //! @brief Resets the module

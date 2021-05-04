@@ -10,6 +10,7 @@
 #include <bme280_defs.h>
 #include <EC5.h>
 #include <helper.h>
+#include <my_i2c.h>
 #include <MAX44009.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
@@ -20,6 +21,8 @@ extern struct bme280_data bme280Data;
 float soilMoisture = 100;
 
 void helper_collect_sensor_data() {
+	i2c_init();
+
 	get_light();
 	int i = 0;
 	for (i = 0; i < 2; i++) {
@@ -28,6 +31,7 @@ void helper_collect_sensor_data() {
 
 	get_vwc();
 	timeStamp = RTC_C_getCalendarTime();
+
 }
 
 int convert_hex_to_dec_by_byte(uint_fast8_t hex) {

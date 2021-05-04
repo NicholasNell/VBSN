@@ -39,58 +39,61 @@ typedef enum {
 } MACappState_t;
 
 typedef struct {
-		nodeAddress neighbourID;
-		uint16_t neighbourTxSlot;
+	nodeAddress neighbourID;
+	uint16_t neighbourTxSlot;
 } Neighbour_t;
 
 /*!
  * \brief Initialise the mac protocol and all node parameters
  */
-void mac_init( );
+void mac_init();
 
 /*!
  * \brief the state machine that control the mac protocol
  * @return returns true if succesful
  */
-bool mac_state_machine( );
+bool mac_state_machine();
 
 /*!
  *
  * @param checks if given node address is a neighbour of this node
  * @return return true if node is a neighbour
  */
-bool is_neighbour( nodeAddress node );
+bool is_neighbour(nodeAddress node);
 
 /*!
  * \brief add node to neighbour table
  * @param neighbour
  * @param txSlot
  */
-void add_neighbour( nodeAddress neighbour, uint16_t txSlot );
+void add_neighbour(nodeAddress neighbour, uint16_t txSlot);
 
 /*!
  * \brief copies the contents of the txdatagram into the txBuffer and then transmits it. Only use if txdatagram has already been set up correctly.
  * @return returns true if succesfully sent
  */
-bool mac_send_tx_datagram( );
+bool mac_send_tx_datagram();
 
 /*!
  * \returns a reference to the neighour table
  * @return return a referce to neighbour table
  */
-Neighbour_t* get_neighbour_table( );
+Neighbour_t* get_neighbour_table();
 
 /*!
  *
  * @return ref to received msg buffer
  */
-Datagram_t* get_received_messages( );
+Datagram_t* get_received_messages();
 
 //! @return the number of messages stored in the received messages index
-uint8_t get_received_messages_index( void );
+uint8_t get_received_messages_index(void);
 
 //!
 //! resets to received message buffer to zero
-void reset_received_msg_index( void );
+void reset_received_msg_index(void);
 
+//!
+//! @brief decreases the received message index by one
+void decrease_received_message_index(void);
 #endif /* MY_MAC_H_ */
