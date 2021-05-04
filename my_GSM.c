@@ -138,13 +138,14 @@ static void context_deactivate_activate(void) {
 //	}
 
 	int tries = 0;
-	while (wait_check_for_reply("ERROR", 2)) {
+	while (!wait_check_for_reply("#SGAC", 6)) {
 		WDT_A_clearTimer();
+		tries++;
 		send_uart_pc("Retry Context Activation.\n");
 
-		send_msg(CONTEXT_DEACTIVATION);
-
-		wait_check_for_reply(RESPONSE_OK, 1);
+//		send_msg(CONTEXT_DEACTIVATION);
+//
+//		wait_check_for_reply(RESPONSE_OK, 1);
 
 		send_msg(CONTEXT_ACTIVATION);
 		if (tries > 10) {
@@ -152,6 +153,7 @@ static void context_deactivate_activate(void) {
 		}
 
 	}
+	send_uart_pc("context activation successful\n");
 	WDT_A_clearTimer();
 }
 
@@ -160,7 +162,7 @@ bool init_gsm(void) {
 	int retval = false;
 
 	gsm_startup();
-//	gsm_power_save_off();
+	gsm_power_save_off();
 	delay_ms(100);
 
 	run_systick_function_ms(3000);
@@ -177,13 +179,7 @@ bool init_gsm(void) {
 		delay_ms(100);
 	}
 	if (retval) {
-//		modem_start();
-		send_msg("AT\r\n");
-//		wait_check_for_reply(RESPONSE_OK, 1);
 
-//		send_msg("ATZ0\r\n");
-//		wait_check_for_reply(RESPONSE_OK, 1);
-//		check_gprs_attached();
 		send_msg(DISABLE_FLOW_CONTROL);	// disable flow control
 		wait_check_for_reply(RESPONSE_OK, 1);
 		disable_command_echo();
@@ -221,7 +217,7 @@ void EUSCIA2_IRQHandler(void) {
 
 		UartGSMRX[counter_read_gsm] = MAP_UART_receiveData(EUSCI_A2_BASE);
 #if DEBUG
-//		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
+		MAP_UART_transmitData(EUSCI_A0_BASE, UartGSMRX[counter_read_gsm]); //Echo back to the PC for now
 #endif
 		counter_read_gsm++;
 	}
@@ -315,38 +311,38 @@ int modem_start(void) {
 
 //						Set the GSM modem to POWER SAVING mode
 void gsm_power_save_on() {
-	send_gsm_uart("AT+CFUN=7\r");              // Send Attention Command
-
-	send_uart_pc("gsm power save on.\n");
+//	send_gsm_uart("AT+CFUN=5\r");              // Send Attention Command
+//
+//	send_uart_pc("gsm power save on.\n");
 }
 //						Set the GSM modem to NORMAL mode
 void gsm_power_save_off() {
-	bool flag = false;
-	start_timer_a_counter(5000, &flag);
-	while (!flag) {
-
-		if (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
-
-			send_gsm_uart("AT+CFUN=1\r");          // Send Attention Command
-
-			if (string_search(OK)) {
-				return;
-			}
-		}
-	}
-	stop_timer_a_counter();
-	WDT_A_clearTimer();
-	delay_ms(2000);
-	WDT_A_clearTimer();
-	delay_ms(2000);
+//	bool flag = false;
+//	start_timer_a_counter(5000, &flag);
+//	while (!flag) {
+//
+//		if (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
+//
+//			send_gsm_uart("AT+CFUN=1\r");          // Send Attention Command
+//
+//			if (string_search(OK)) {
+//				break;
+//			}
+//		}
+//	}
+//	stop_timer_a_counter();
 //	WDT_A_clearTimer();
 //	delay_ms(2000);
 //	WDT_A_clearTimer();
 //	delay_ms(2000);
-//	WDT_A_clearTimer();
-//	delay_ms(2000);
-//	WDT_A_clearTimer();
-	send_uart_pc("gsm power save off.\n");
+////	WDT_A_clearTimer();
+////	delay_ms(2000);
+////	WDT_A_clearTimer();
+////	delay_ms(2000);
+////	WDT_A_clearTimer();
+////	delay_ms(2000);
+////	WDT_A_clearTimer();
+//	send_uart_pc("gsm power save off.\n");
 }
 
 void disable_command_echo() {
@@ -424,12 +420,17 @@ extern Gpio_t Led_rgb_red;
 extern nodeAddress _nodeID;
 extern LocationData gpsData;
 extern RTC_C_Calendar currentTime;
+extern bool hasData;
 
 bool gsm_upload_my_data() {
 
 //	gsm_power_save_off();
 //	context_deactivate_activate();
 	WDT_A_clearTimer();
+	if (!hasData) {
+		helper_collect_sensor_data();
+		hasData = true;
+	}
 
 	double localTemperature = bme280Data.temperature;
 	double localHumidity = bme280Data.humidity;
@@ -499,48 +500,22 @@ bool gsm_upload_my_data() {
 	retries = 0;
 
 	WDT_A_clearTimer();
-
-	WDT_A_clearTimer();
 	return true;
 }
 
 void gsm_upload_stored_datagrams() {
 	counter_read_gsm = 0;
 	gsm_power_save_off();
-	context_deactivate_activate();
+//	context_deactivate_activate();
 	int i = 0;
 
 	int attempts = 0;
 
-	send_uart_pc("gsm own upload succesful.\n");
-
-	uint8_t numToSend = get_received_messages_index();
-
-	if (numToSend > 0) {
-		send_uart_pc("Starting batch upload.\n");
-		for (i = numToSend - 1; i >= 0; i--) {
-			send_uart_pc("next datagram.\n");
-			while (!upload_current_datagram(i)) {
-				gsm_power_save_on();
-				gsm_power_save_off();
-				WDT_A_clearTimer();
-				attempts++;
-				send_uart_pc("Retrying gsm_upload_stored_data\n");
-				if (attempts > 1) {
-					attempts = 0;
-					send_uart_pc("failed upload stored data.\n");
-					return;
-				}
-			}
-		}
-	}
-	attempts = 0;
-
 	send_uart_pc("start gateway upload.\n");
 	while (!gsm_upload_my_data()) {
 		WDT_A_clearTimer();
-		gsm_power_save_on();
-		gsm_power_save_off();
+//		gsm_power_save_on();
+//		gsm_power_save_off();
 		attempts++;
 		send_uart_pc("Retrying gsm_upload_my_data\n");
 		if (attempts > 1) {
@@ -549,6 +524,36 @@ void gsm_upload_stored_datagrams() {
 			return;
 		}
 	}
+
+	send_uart_pc("gsm own upload succesful.\n");
+	attempts = 0;
+	delay_ms(2000);
+
+	uint8_t numToSend = get_received_messages_index();
+	bool success = false;
+	if (numToSend > 0) {
+		send_uart_pc("Starting batch upload.\n");
+		for (i = numToSend - 1; i >= 0; i--) {
+
+			send_uart_pc("next datagram.\n");
+			success = upload_current_datagram(i);
+			while (!success) {
+//				gsm_power_save_on();
+//				gsm_power_save_off();
+				WDT_A_clearTimer();
+				success = upload_current_datagram(i);
+				attempts++;
+				send_uart_pc("Retrying gsm_upload_stored_data\n");
+				if (attempts > 1) {
+					attempts = 0;
+					send_uart_pc("failed upload stored data.\n");
+					return;
+				}
+			}
+			delay_ms(2000);
+		}
+	}
+
 	gsm_power_save_on();
 }
 

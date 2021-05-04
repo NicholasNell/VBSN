@@ -25,7 +25,14 @@ void helper_collect_sensor_data() {
 
 	get_light();
 	int i = 0;
-	for (i = 0; i < 2; i++) {
+
+	bme280_get_data(&bme280Dev, &bme280Data);
+
+	if (bme280Data.pressure < 80000) {
+		i2c_init();
+		init_max();
+		bme280_init(&bme280Dev);
+		get_light();
 		bme280_get_data(&bme280Dev, &bme280Data);
 	}
 
