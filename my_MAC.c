@@ -263,13 +263,13 @@ bool mac_state_machine() {
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
 							send_uart_pc("No CTS msg Received\n");
+							numRetries++;
 							// no response, send again in next slot
 
 							MACState = MAC_SLEEP;
 //						return false;
 						} else {
 
-							send_uart_pc("CTS Msg Received\n");
 						}
 					} else {
 						send_uart_pc("Sending RTS Failed\n");
@@ -465,12 +465,10 @@ static bool process_rx_buffer() {
 			MACState = MAC_LISTEN;
 			break;
 		case MSG_CTS: 	// CTS
-			if (hasData) {
-				mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
-				MACState = MAC_LISTEN;
-			} else {
-				MACState = MAC_SLEEP;
-			}
+			send_uart_pc("CTS Msg Received\n");
+			mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
+			MACState = MAC_LISTEN;
+
 			break;
 		case MSG_DATA: 	// DATA
 			if (rxDatagram.msgHeader.netDest != _nodeID) {

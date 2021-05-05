@@ -431,7 +431,7 @@ bool gsm_upload_my_data() {
 		helper_collect_sensor_data();
 		hasData = true;
 	}
-
+	WDT_A_clearTimer();
 	double localTemperature = bme280Data.temperature;
 	double localHumidity = bme280Data.humidity;
 	double localPressure = bme280Data.pressure;
@@ -442,7 +442,7 @@ bool gsm_upload_my_data() {
 	nodeAddress localAddress = _nodeID;
 	char postBody[255];
 	memset(postBody, 0, 255);
-
+	WDT_A_clearTimer();
 	int lenWritten =
 			sprintf(postBody,
 					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
@@ -467,7 +467,7 @@ bool gsm_upload_my_data() {
 	int retries = 0;
 	while (!wait_check_for_reply(">>>", 5)) {
 		send_uart_pc("Try PostCommand.\n");
-
+		WDT_A_clearTimer();
 		retries++;
 		send_msg(postCommand);
 
@@ -486,7 +486,7 @@ bool gsm_upload_my_data() {
 	send_msg(postBody);
 	while (!wait_check_for_reply("#HTTP", 5)) {
 		send_uart_pc("Try PostBody.\n");
-
+		WDT_A_clearTimer();
 		retries++;
 		send_msg(postBody);
 
@@ -512,8 +512,10 @@ void gsm_upload_stored_datagrams() {
 	int attempts = 0;
 
 	send_uart_pc("start gateway upload.\n");
+	WDT_A_clearTimer();
 	while (!gsm_upload_my_data()) {
 		WDT_A_clearTimer();
+		check_com();
 //		gsm_power_save_on();
 //		gsm_power_save_off();
 		attempts++;
@@ -521,23 +523,28 @@ void gsm_upload_stored_datagrams() {
 		if (attempts > 1) {
 			attempts = 0;
 			send_uart_pc("failed upload my data.\n");
+			WDT_A_clearTimer();
 			return;
 		}
 	}
-
+	WDT_A_clearTimer();
 	send_uart_pc("gsm own upload succesful.\n");
 	attempts = 0;
 	delay_ms(2000);
-
+	WDT_A_clearTimer();
+	check_com();
+	WDT_A_clearTimer();
 	uint8_t numToSend = get_received_messages_index();
 	bool success = false;
 	if (numToSend > 0) {
+		WDT_A_clearTimer();
 		send_uart_pc("Starting batch upload.\n");
 		for (i = numToSend - 1; i >= 0; i--) {
-
+			WDT_A_clearTimer();
 			send_uart_pc("next datagram.\n");
 			success = upload_current_datagram(i);
 			while (!success) {
+				check_com();
 //				gsm_power_save_on();
 //				gsm_power_save_off();
 				WDT_A_clearTimer();
@@ -550,11 +557,14 @@ void gsm_upload_stored_datagrams() {
 					return;
 				}
 			}
+			WDT_A_clearTimer();
 			delay_ms(2000);
+			WDT_A_clearTimer();
 		}
 	}
 
 	gsm_power_save_on();
+	WDT_A_clearTimer();
 }
 
 bool upload_current_datagram(int index) {
@@ -585,7 +595,7 @@ bool upload_current_datagram(int index) {
 	memset(postCommand, 0, SIZE_BUFFER);
 	char postBody[SIZE_BUFFER];
 	memset(postBody, 0, SIZE_BUFFER);
-
+	WDT_A_clearTimer();
 	lenWritten =
 			sprintf(postBody,
 					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
@@ -602,7 +612,7 @@ bool upload_current_datagram(int index) {
 
 	WDT_A_clearTimer();
 	send_msg(postCommand);
-
+	WDT_A_clearTimer();
 	int retries = 0;
 	while (!wait_check_for_reply(">>>", 5)) {
 		send_uart_pc("Try PostCommand.\n");
@@ -611,7 +621,7 @@ bool upload_current_datagram(int index) {
 
 		WDT_A_clearTimer();
 		if (retries > 1) {
-
+			WDT_A_clearTimer();
 			send_uart_pc("Uploadstored data failed POSTCOMMAND.\n");
 			return false;
 		}
@@ -626,10 +636,12 @@ bool upload_current_datagram(int index) {
 	while (!wait_check_for_reply("#HTTP", 5)) {
 		send_uart_pc("Try PostBody.\n");
 		retries++;
+		WDT_A_clearTimer();
 		send_msg(postBody);
 
 		WDT_A_clearTimer();
 		if (retries > 1) {
+			WDT_A_clearTimer();
 			send_uart_pc("Uploadstored Data failed POSTBODY.\n");
 			return false;
 		}

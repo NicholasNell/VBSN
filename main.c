@@ -60,6 +60,7 @@
 #include <EC5.h>
 #include <helper.h>
 #include <my_gps.h>
+#include <my_i2c.h>
 #include <sx1276Regs-Fsk.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
@@ -159,14 +160,24 @@ void radio_init() {
 	RadioEvents.RxError = on_rx_error;
 
 	// detect radio hardware
-	if (Radio.Read(REG_VERSION) == 0x00) {
-		send_uart_pc("Radio could not be detected!\n\r");
+	int tries = 0;
+	while (Radio.Read(REG_VERSION) == 0x00) {
+		tries++;
+		spi_open();
+
 		rfm95Working = false;
-		ResetCtl_initiateHardReset();
-		return;
-	} else {
-		rfm95Working = true;
+//		ResetCtl_initiateHardReset();
+//		return;
+		if (tries > 10) {
+			tries = 0;
+			send_uart_pc("Radio could not be detected!\n\r");
+			ResetCtl_initiateHardReset();
+			return;
+		}
 	}
+
+	send_uart_pc("Radio found!\n\r");
+	rfm95Working = true;
 
 	Radio.Init(&RadioEvents);
 
@@ -225,22 +236,24 @@ int main(void) {
 	// Initialise all ports and communication protocols
 	board_init_mcu();
 	MAP_WDT_A_clearTimer();
+	// Initialise UART to PC
+	uart_init_pc();
 //	flash_check_for_data();
 	rtc_init();
 	send_uart_pc("rtc Init\n");
 	MAP_WDT_A_clearTimer();
 
+	//	 Initialise the RFM95 Radio Module
+	radio_init();
 	unsigned seed = SX1276Random();
 	srand(seed);	// Seeding Random Number generator
 	MAP_WDT_A_clearTimer();
-	// Initialise UART to PC
-	uart_init_pc();
+
 	MAP_WDT_A_clearTimer();
 	//Initialise UART to GPS;
 	uart_init_gps();
 	MAP_WDT_A_clearTimer();
-//	 Initialise the RFM95 Radio Module
-	radio_init();
+
 	MAP_WDT_A_clearTimer();
 	hasGSM = init_gsm();	//Check if has GSm module
 	MAP_WDT_A_clearTimer();
@@ -258,6 +271,10 @@ int main(void) {
 	}
 	MAP_WDT_A_clearTimer();
 	lightSensorWorking = init_max();
+	while (!lightSensorWorking) {
+		i2c_init();
+		lightSensorWorking = init_max();
+	}
 	MAP_WDT_A_clearTimer();
 	// Have to wait for GPS to get a lock before operation can continue
 	run_systick_function_ms(1000);
