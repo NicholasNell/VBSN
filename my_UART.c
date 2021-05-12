@@ -429,7 +429,7 @@ void UartGPSCommands() {
 				RTC_C_Calendar newCal = { (uint8_t) (sec + 0x01), minute, hr, 0,
 						(uint_fast8_t) day, month, year };
 				currentTime = newCal;
-
+				rtc_set_calendar_time();
 				if (sec != 0x59) {
 					setRTCFlag = true;
 				}

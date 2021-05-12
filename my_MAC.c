@@ -174,6 +174,7 @@ void mac_init() {
 		}
 
 		_txSlot = pFlashData->_txSlot;
+
 		_numNeighbours = pFlashData->_numNeighbours;
 		memcpy(neighbourTable, pFlashData->neighbourTable,
 				sizeof(pFlashData->neighbourTable));
@@ -194,9 +195,6 @@ void mac_init() {
 			_txSlot = (uint16_t) temp;
 		}
 		int i = 0;
-		for (i = 0; i < WINDOW_SCALER; i++) {
-			txSlots[i] = i * WINDOW_TIME_SEC + _txSlot;
-		}
 
 		schedChange = true;
 		_dataLen = 0;
@@ -210,6 +208,10 @@ void mac_init() {
 		sprintf(msg, "Node ID: %3d| TxSlot: %4d\n", _nodeID, _txSlot);
 		send_uart_pc(msg);
 #endif
+	}
+
+	for (i = 0; i < WINDOW_SCALER; i++) {
+		txSlots[i] = i * WINDOW_TIME_SEC + _txSlot;
 	}
 
 }
@@ -268,8 +270,6 @@ bool mac_state_machine() {
 
 							MACState = MAC_SLEEP;
 //						return false;
-						} else {
-
 						}
 					} else {
 						send_uart_pc("Sending RTS Failed\n");
@@ -286,7 +286,6 @@ bool mac_state_machine() {
 				}
 			} else {
 				send_uart_pc("RTS has no route to destination, sending RReq\n");
-				//! TODO request a route to node: send rreq
 				nextNetOp = NET_BROADCAST_RREQ;
 				MACState = MAC_NET_OP;
 
@@ -371,7 +370,7 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 	txDatagram.msgHeader.localSource = _nodeID;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.netDest = dest;
-	txDatagram.msgHeader.ttl = 5;
+	txDatagram.msgHeader.ID = 5;
 	txDatagram.msgHeader.flags = msgType;
 	_numMsgSent++;
 	txDatagram.msgHeader.txSlot = _txSlot;
@@ -490,6 +489,7 @@ static bool process_rx_buffer() {
 			break;
 		case MSG_ACK: 	// ACK
 //				hasData = false;	// data has succesfully been sent
+			numRetries = 0;
 			MACState = MAC_SLEEP;
 			add_neighbour(rxDatagram.msgHeader.localSource,
 					rxDatagram.msgHeader.txSlot);

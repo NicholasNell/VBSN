@@ -38,56 +38,56 @@ typedef enum msgFlags {
 typedef uint8_t nodeAddress;
 
 typedef struct {
-		nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
-		nodeAddress localSource; // Where the message came from, not original source
-		nodeAddress netSource;		// original message source
-		nodeAddress netDest;		// final destination, probably gateway
-		uint8_t ttl;				// maximum number of hops
-		uint16_t txSlot; 			// txSlot
-		uint16_t curSlot;			// This nodes current slotCount
-		msgType_t flags;	 		// see flags
+	nodeAddress nextHop; // Where the message needs to go (MAC LAYER, not final destination);
+	nodeAddress localSource; // Where the message came from, not original source
+	nodeAddress netSource;		// original message source
+	nodeAddress netDest;		// final destination, probably gateway
+	uint8_t ID;					// message ID
+	uint16_t txSlot; 			// txSlot
+	uint16_t curSlot;			// This nodes current slotCount
+	msgType_t flags;	 		// see flags
 } Header_t;
 
 typedef struct {
-		int16_t rssi;
-		int8_t snr;
+	int16_t rssi;
+	int8_t snr;
 } RadioData_t;
 
 typedef struct {
-		LocationData gpsData;
-		float temp;
-		float hum;
-		float press;
-		float lux;
-		RTC_C_Calendar tim;
-		float soilMoisture;
+	LocationData gpsData;
+	float temp;
+	float hum;
+	float press;
+	float lux;
+	RTC_C_Calendar tim;
+	float soilMoisture;
 } MsgData_t;
 
 typedef struct {
-		nodeAddress source_addr;		// where the RReq came from
-		uint8_t source_sequence_num;// the sequence number currently used by the source
-		uint8_t broadcast_id;// The broadcast ID used by the source, ie the number of RReq's it has sent
-		nodeAddress dest_addr;// destination address: will probably be a gateway
-		uint8_t dest_sequence_num;		// destination sequence number
-		uint8_t hop_cnt;		// number of hops the message has gone through
+	nodeAddress source_addr;		// where the RReq came from
+	uint8_t source_sequence_num;// the sequence number currently used by the source
+	uint8_t broadcast_id;// The broadcast ID used by the source, ie the number of RReq's it has sent
+	nodeAddress dest_addr;	// destination address: will probably be a gateway
+	uint8_t dest_sequence_num;		// destination sequence number
+	uint8_t hop_cnt;		// number of hops the message has gone through
 } RReq_t;
 
 typedef struct {
-		nodeAddress source_addr;// source address, will probably be a gateway
-		nodeAddress dest_addr;// destination address: will probably be a sensor
-		uint8_t dest_sequence_num;	// destination sequence number
-		uint8_t hop_cnt;	// number of hops until now
-		uint8_t lifetime;	// TTL?
+	nodeAddress source_addr;	// source address, will probably be a gateway
+	nodeAddress dest_addr;	// destination address: will probably be a sensor
+	uint8_t dest_sequence_num;	// destination sequence number
+	uint8_t hop_cnt;	// number of hops until now
+	uint8_t lifetime;	// TTL?
 } RRep_t;
 
 typedef struct {
-		Header_t msgHeader;
-		RadioData_t radioData;
-		union Data {
-				RReq_t Rreq;
-				RRep_t Rrep;
-				MsgData_t sensData;
-		} data;
+	Header_t msgHeader;
+	RadioData_t radioData;
+	union Data {
+		RReq_t Rreq;
+		RRep_t Rrep;
+		MsgData_t sensData;
+	} data;
 
 } Datagram_t;
 

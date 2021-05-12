@@ -95,6 +95,10 @@ bool collectDataFlag = false;
 
 extern RTC_C_Calendar currentTime;
 
+extern bool gpsWakeFlag;
+
+bool saveFlashData = false;
+
 int scheduler() {
 
 	WDT_A_clearTimer();
@@ -104,6 +108,14 @@ int scheduler() {
 	static bool hasSentGSM = false;
 //	i = WINDOW_SCALER - (MAX_SLOT_COUNT / slotCount);
 	i = slotCount / WINDOW_TIME_SEC;
+
+	if (slotCount % GPS_WAKEUP_TIME == 0) {
+		gpsWakeFlag = true;
+	}
+
+	if (slotCount % FLASH_SAVE_DATA == 0) {
+		saveFlashData = true;
+	}
 
 	if ((slotCount >= gsmStartSlot[i]) && (slotCount <= gsmStopSlot[i])) {
 		if (isRoot) {

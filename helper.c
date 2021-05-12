@@ -19,22 +19,17 @@ extern RTC_C_Calendar timeStamp;
 extern struct bme280_dev bme280Dev;
 extern struct bme280_data bme280Data;
 float soilMoisture = 100;
+extern bool lightSensorWorking;
 
 void helper_collect_sensor_data() {
-	i2c_init();
-
-	get_light();
+	if (lightSensorWorking) {
+		get_light();
+	} else {
+		init_max();
+	}
 	int i = 0;
 
 	bme280_get_data(&bme280Dev, &bme280Data);
-
-	if (bme280Data.pressure < 80000) {
-		i2c_init();
-		init_max();
-		bme280_init(&bme280Dev);
-		get_light();
-		bme280_get_data(&bme280Dev, &bme280Data);
-	}
 
 	get_vwc();
 	timeStamp = RTC_C_getCalendarTime();

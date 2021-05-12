@@ -77,9 +77,9 @@ MEMORY
 
 {
 
-MAIN (RX) : origin = 0x00000000, length = 0x0003F000
+MAIN (RX) : origin = 0x00000000, length = 0x00030000
 
-MYDATA (RX) : origin = 0x0003F000, length = 0x00001000
+MYDATA (RX) : origin = 0x00030000, length = 0x00001000
 
 INFO (RX) : origin = 0x00200000, length = 0x00004000
 

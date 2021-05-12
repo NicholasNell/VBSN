@@ -109,6 +109,8 @@ extern bool hasData;
 
 extern bool readyToUploadFlag;
 
+extern bool saveFlashData;
+
 // MSP432 Developments board LED's
 extern Gpio_t Led_rgb_red;	//RED
 extern Gpio_t Led_rgb_green;	//GREEN
@@ -119,6 +121,10 @@ extern Gpio_t Led_user_red;
 extern LoRaRadioState_t RadioState;
 
 extern RTC_C_Calendar currentTime;
+
+//!
+//! @brief Erases the flash buffer on button press
+static void flash_reset_button_setup(void);
 
 void print_lora_registers(void);
 
@@ -147,6 +153,14 @@ void on_rx_timeout(void);
  */
 void on_rx_error(void);
 
+static void flash_reset_button_setup() {
+	/* Configuring P1.1 as an input and enabling interrupts */
+	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
+	MAP_Interrupt_enableInterrupt(INT_PORT1);
+}
+
 void radio_init() {
 	/*!
 	 * Radio events function pointer
@@ -163,6 +177,7 @@ void radio_init() {
 	int tries = 0;
 	while (Radio.Read(REG_VERSION) == 0x00) {
 		tries++;
+		WDT_A_clearTimer();
 		spi_open();
 
 		rfm95Working = false;
@@ -172,6 +187,7 @@ void radio_init() {
 			tries = 0;
 			send_uart_pc("Radio could not be detected!\n\r");
 			ResetCtl_initiateHardReset();
+
 			return;
 		}
 	}
@@ -223,13 +239,13 @@ extern bool resetFlag;
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
-	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
+	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_128M);	// aprox 256
+	WDT_A_CLOCKITERATIONS_8192K);	// aprox 256
 //
-	MAP_WDT_A_startTimer();
+//	MAP_WDT_A_startTimer();
 
-	flashOK = flash_check_for_data();
+//	flashOK = flash_check_for_data();
 
 	isRoot = false;	// Assume not a root node at first
 
@@ -282,6 +298,7 @@ int main(void) {
 	while (!gpsWorking) {
 		if (systimer_ready_check()) {
 			timeout++;
+			WDT_A_clearTimer();
 #if DEBUG
 			gpio_flash_lED(&Led_rgb_green, 50);
 #endif
@@ -317,10 +334,16 @@ int main(void) {
 	MAP_WDT_A_clearTimer();
 	init_scheduler();
 
+	flash_init_offset();
+
+	flash_fill_struct_for_write();
+	flash_write_struct_to_flash();
+	flash_reset_button_setup();
+
 	MAP_WDT_A_holdTimer();
-	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_8192K);	// 16 sec
+	WDT_A_CLOCKITERATIONS_8192K);	//
 
 	MAP_WDT_A_startTimer();
 
@@ -357,15 +380,34 @@ int main(void) {
 			resetFlag = false;
 			flash_fill_struct_for_write();
 			flash_write_struct_to_flash();
-			ResetCtl_initiateHardReset();
+//			ResetCtl_initiateHardReset();
 		}
-//
-//		if (gpsWakeFlag) {
-//			send_uart_gps("H\r\n");
-//			gpsWakeFlag = false;
-//		}
+
+		if (gpsWakeFlag) {
+			gps_disable_low_power();
+			gpsWakeFlag = false;
+		}
+
+		if (saveFlashData) {
+			saveFlashData = false;
+			flash_fill_struct_for_write();
+			flash_write_struct_to_flash();
+		}
 //		PCM_gotoLPM3InterruptSafe();
 	}
+}
+
+void PORT1_IRQHandler(void) {
+	uint32_t status;
+
+	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
+	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
+
+	/* Toggling the output on the LED */
+	if (status & GPIO_PIN1) {
+		flash_erase_all();
+	}
+
 }
 
 extern bool setRTCFlag;
@@ -377,29 +419,15 @@ void PORT3_IRQHandler(void) {
 	if (status & GPS_PPS_PIN) {
 		ppsCounter++;
 
-		if (ppsCounter > 10) {
+		if (ppsCounter > 10) {// keep gps on for at least a certain amount of seconds locked before switching off
 			ppsCounter = 0;
 
-//			if (!gpsWorking) {
-//				send_uart_gps(PMTK_SET_NMEA_OUTPUT_RMCONLY);
-//			}
-
-//			if (setRTCFlag) {
-			rtc_init();
+//			rtc_init();
 			rtc_set_calendar_time();
 			setRTCFlag = false;
 			gps_set_low_power();
 			gpsWorking = true;
-//			}
 
-//		schedFlag = true;
-//		incrementSlotCount();
-//
-//		if (getSlotCount() == MAX_SLOT_COUNT + 1) {
-//			setSlotCount(0);
-//		}
-//
-//		RtcInit(currentTime);
 		}
 	}
 }
@@ -409,7 +437,7 @@ void PORT2_IRQHandler(void) {
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
-#ifdef DEBUG
+#if DEBUG
 	send_uart_pc("LoRa Interrupt Triggered: ");
 #endif
 	if (status & GPIO_PIN4) {
@@ -424,7 +452,7 @@ void PORT2_IRQHandler(void) {
 void on_tx_done(void) {
 	SX1276clearIRQFlags();
 	RadioState = TXDONE;
-#ifdef DEBUG
+#if DEBUG
 	send_uart_pc("TxDone\n");
 #endif
 }
@@ -436,7 +464,7 @@ void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	RssiValue = rssi;
 	SnrValue = snr;
 	RadioState = RXDONE;
-#ifdef DEBUG
+#if DEBUG
 	send_uart_pc("RxDone\n");
 
 #endif
@@ -445,7 +473,7 @@ void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 void on_tx_timeout(void) {
 	Radio.Sleep();
 	RadioState = TXTIMEOUT;
-#ifdef DEBUG
+#if DEBUG
 	send_uart_pc("TxTimeout\n");
 #endif
 }
@@ -454,9 +482,9 @@ void on_rx_timeout(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXTIMEOUT;
-#ifdef DEBUG
+#if DEBUG
 
-//	send_uart_pc("RxTimeout\n");
+	send_uart_pc("RxTimeout\n");
 
 #endif
 }
@@ -465,7 +493,7 @@ void on_rx_error(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
 	RadioState = RXERROR;
-#ifdef DEBUG
+#if DEBUG
 	send_uart_pc("RxError\n");
 #endif
 }

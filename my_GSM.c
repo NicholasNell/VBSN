@@ -99,7 +99,7 @@ void gsm_startup(void) {
 	MAP_UART_enableInterrupt(EUSCI_A2_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 	MAP_Interrupt_enableInterrupt(INT_EUSCIA2);
 
-	GPIO_setAsInputPin(GPIO_PORT_P7, GPIO_PIN1);
+//	GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P7, GPIO_PIN1);
 
 }
 
@@ -162,6 +162,7 @@ bool init_gsm(void) {
 	int retval = false;
 
 	gsm_startup();
+
 	gsm_power_save_off();
 	delay_ms(100);
 
@@ -312,8 +313,8 @@ int modem_start(void) {
 //						Set the GSM modem to POWER SAVING mode
 void gsm_power_save_on() {
 //	send_gsm_uart("AT+CFUN=5\r");              // Send Attention Command
-//
-//	send_uart_pc("gsm power save on.\n");
+
+	send_uart_pc("gsm power save on.\n");
 }
 //						Set the GSM modem to NORMAL mode
 void gsm_power_save_off() {
@@ -464,6 +465,7 @@ bool gsm_upload_my_data() {
 	WDT_A_clearTimer();
 
 	send_msg(postCommand);
+	WDT_A_clearTimer();
 	int retries = 0;
 	while (!wait_check_for_reply(">>>", 5)) {
 		send_uart_pc("Try PostCommand.\n");

@@ -87,7 +87,7 @@ bool send_rreq() {
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
-	txDatagram.msgHeader.ttl = 5;
+	txDatagram.msgHeader.ID = 5;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
 	txDatagram.data.Rreq.broadcast_id = _broadcastID;
@@ -304,7 +304,7 @@ bool send_rrep() {
 	txDatagram.msgHeader.netDest = newRoute->dest;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.nextHop = rrepNodeUnicast;
-	txDatagram.msgHeader.ttl = 5;
+	txDatagram.msgHeader.ID = 5;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
 	txDatagram.data.Rrep.dest_addr = newRoute->dest;
