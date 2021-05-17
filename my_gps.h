@@ -30,6 +30,7 @@
 #define PMTK_SET_NMEA_UPDATE_1HZ 				"$PMTK220,1000*1F\r\n" ///<  1 Hz
 #define PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ		"$PMTK220,5000*1B\r\n" ///< Once every 5 seconds, 200 millihertz.
 
+#define PMTK_API_SET_FIX_CTL_200mHZ 			"$PMTK300,5000,0,0,0,0*18\r\n" ///< 1 Hz
 #define PMTK_API_SET_FIX_CTL_1HZ 				"$PMTK300,1000,0,0,0,0*1C\r\n" ///< 1 Hz
 #define PMTK_API_SET_FIX_CTL_2HZ 				"$PMTK300,500,0,0,0,0*1C\r\n" ///< 2 Hz
 
@@ -57,18 +58,18 @@
 #include <stdint.h>
 
 typedef struct {
-		float lat;
-		float lon;
+	float lat;
+	float lon;
 } LocationData;
 
 //!
 //! Sets the Gps module in low power mode
-void gps_set_low_power( void );
+void gps_set_low_power(void);
 
 //!
 //! disables the low power mode of the gps
-void gps_disable_low_power( void );
+void gps_disable_low_power(void);
 
 //! @return returns current gps data
-LocationData get_gps_data( void );
+LocationData get_gps_data(void);
 #endif /* MY_GPS_H_ */

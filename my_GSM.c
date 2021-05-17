@@ -468,6 +468,7 @@ bool gsm_upload_my_data() {
 	WDT_A_clearTimer();
 	int retries = 0;
 	while (!wait_check_for_reply(">>>", 5)) {
+		check_com();
 		send_uart_pc("Try PostCommand.\n");
 		WDT_A_clearTimer();
 		retries++;
@@ -487,6 +488,7 @@ bool gsm_upload_my_data() {
 	WDT_A_clearTimer();
 	send_msg(postBody);
 	while (!wait_check_for_reply("#HTTP", 5)) {
+		check_com();
 		send_uart_pc("Try PostBody.\n");
 		WDT_A_clearTimer();
 		retries++;
@@ -505,6 +507,8 @@ bool gsm_upload_my_data() {
 	return true;
 }
 
+extern bool isRoot;
+
 void gsm_upload_stored_datagrams() {
 	counter_read_gsm = 0;
 	gsm_power_save_off();
@@ -513,26 +517,28 @@ void gsm_upload_stored_datagrams() {
 
 	int attempts = 0;
 
-	send_uart_pc("start gateway upload.\n");
-	WDT_A_clearTimer();
-	while (!gsm_upload_my_data()) {
+	if (!isRoot) {
+		send_uart_pc("start gateway upload.\n");
 		WDT_A_clearTimer();
-		check_com();
+		while (!gsm_upload_my_data()) {
+			WDT_A_clearTimer();
+			check_com();
 //		gsm_power_save_on();
 //		gsm_power_save_off();
-		attempts++;
-		send_uart_pc("Retrying gsm_upload_my_data\n");
-		if (attempts > 1) {
-			attempts = 0;
-			send_uart_pc("failed upload my data.\n");
-			WDT_A_clearTimer();
-			return;
+			attempts++;
+			send_uart_pc("Retrying gsm_upload_my_data\n");
+			if (attempts > 1) {
+				attempts = 0;
+				send_uart_pc("failed upload my data.\n");
+				WDT_A_clearTimer();
+				return;
+			}
 		}
+		WDT_A_clearTimer();
+		send_uart_pc("gsm own upload succesful.\n");
+		attempts = 0;
+		delay_ms(2000);
 	}
-	WDT_A_clearTimer();
-	send_uart_pc("gsm own upload succesful.\n");
-	attempts = 0;
-	delay_ms(2000);
 	WDT_A_clearTimer();
 	check_com();
 	WDT_A_clearTimer();
@@ -553,15 +559,14 @@ void gsm_upload_stored_datagrams() {
 				success = upload_current_datagram(i);
 				attempts++;
 				send_uart_pc("Retrying gsm_upload_stored_data\n");
-				if (attempts > 1) {
+				if (attempts > 4) {
 					attempts = 0;
 					send_uart_pc("failed upload stored data.\n");
 					return;
 				}
 			}
 			WDT_A_clearTimer();
-			delay_ms(2000);
-			WDT_A_clearTimer();
+
 		}
 	}
 
@@ -617,6 +622,7 @@ bool upload_current_datagram(int index) {
 	WDT_A_clearTimer();
 	int retries = 0;
 	while (!wait_check_for_reply(">>>", 5)) {
+		check_com();
 		send_uart_pc("Try PostCommand.\n");
 		retries++;
 		send_msg(postCommand);
@@ -636,6 +642,7 @@ bool upload_current_datagram(int index) {
 	send_msg(postBody);
 
 	while (!wait_check_for_reply("#HTTP", 5)) {
+		check_com();
 		send_uart_pc("Try PostBody.\n");
 		retries++;
 		WDT_A_clearTimer();

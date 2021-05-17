@@ -114,11 +114,9 @@ void uart_init_gps() {
 //	send_uart_gps(PMTK_SET_NMEA_OUTPUT_OFF);
 //	sendUARTgps("$PCAS03,0,0,0,0,0,0,9,0*0B\r\n"); // set to ZDA mode
 	delay_ms(100);
-	send_uart_gps(PMTK_FULL_POWER_MODE);
+	send_uart_gps(PMTK_API_SET_FIX_CTL_200mHZ);
 	delay_ms(100);
-	send_uart_gps(PMTK_API_SET_FIX_CTL_1HZ);
-	delay_ms(100);
-	send_uart_gps(PMTK_SET_NMEA_UPDATE_200_MILLIHERTZ);
+	send_uart_gps(PMTK_SET_NMEA_UPDATE_1HZ);
 
 	delay_ms(100);
 //	gps_set_low_power();
@@ -282,7 +280,7 @@ void reset_uart_array() {
 bool return_uart_activity() {
 	return UartActivity;
 }
-
+bool gotGPSUartflag = false;
 void UartGPSCommands() {
 
 	if (UartActivityGps) {
@@ -326,31 +324,7 @@ void UartGPSCommands() {
 				memset(s, 0, 5);
 				sprintf(s, "%c%c", CMD[4], CMD[5]);
 				sec = strtol(s, NULL, 16);
-//				if (!(sec == 0x10 || sec == 0x20 || sec == 0x30 || sec == 0x40
-//						|| sec == 0x50)) {
-//					memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
-//					counter_read_gps = 0;
-//					return;
-//				}
-//				set_slot_count((uint16_t) ((60 - strtol(s, NULL, 10)) % 10)); // sets the slot count to some modulous of 10
-//				uint16_t delayLeft = 0;
-//				memset(s, 0, 5);
-//				sprintf(s, "%c%c%c", CMD[7], CMD[8], CMD[9]);
-//				uint16_t msSec = strtol(s, NULL, 10);
-//				uint16_t msOver = 1000 - msSec;
-//				delayLeft = msOver;
 
-				/* Time is Saturday, November 12th 1955 10:03:00 PM */
-				//				 const RTC_C_Calendar currentTime =
-				//				 {
-				//				         0x00,
-				//				         0x03,
-				//				         0x22,
-				//				         0x06,
-				//				         0x12,
-				//				         0x11,
-				//				         0x1955
-				//				 };
 				CMD = strtok(NULL, c);
 				CMD = strtok(NULL, c);
 
@@ -426,16 +400,23 @@ void UartGPSCommands() {
 				sprintf(s, "%c%c", CMD[4], CMD[5]);
 				year = 0x2000 + (uint8_t) strtol(s, NULL, 16);
 
-				RTC_C_Calendar newCal = { (uint8_t) (sec + 0x01), minute, hr, 0,
-						(uint_fast8_t) day, month, year };
-				currentTime = newCal;
-				rtc_set_calendar_time();
+//				rtc_set_calendar_time();
 				if (sec != 0x59) {
 					setRTCFlag = true;
+					RTC_C_Calendar newCal = { (uint8_t) (sec + 0x01), minute,
+							hr, 0, (uint_fast8_t) day, month, year };
+					currentTime = newCal;
+
 				}
-				int slot = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
-						+ convert_hex_to_dec_by_byte(currentTime.seconds);
-				set_slot_count(slot);
+
+				if (convert_hex_to_dec_by_byte(currentTime.minutes) % 5 == 0) {
+					if (sec == 0x30) {
+						gotGPSUartflag = true;
+					}
+				}
+//				int slot = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
+//						+ convert_hex_to_dec_by_byte(currentTime.seconds);
+//				set_slot_count(slot);
 
 //				CMD = strtok(NULL, c);
 //				// Magnetic Variation
@@ -448,7 +429,7 @@ void UartGPSCommands() {
 
 		}
 	}
-	memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
+//	memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 	counter_read_gps = 0;
 }
 
@@ -457,7 +438,9 @@ void EUSCIA3_IRQHandler(void) {
 
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
 		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(UART_GPS_MODULE);
-//		MAP_UART_transmitData(UART_PC_MODULE, UartRxGPS[counter_read_gps]);
+#if DEBUG
+		MAP_UART_transmitData(UART_PC_MODULE, UartRxGPS[counter_read_gps]);
+#endif
 		counter_read_gps++;
 	}
 	if (UartRxGPS[counter_read_gps - 1] == 0x0A

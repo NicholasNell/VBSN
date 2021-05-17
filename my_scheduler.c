@@ -14,6 +14,7 @@
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_UART.h>
+#include <myNet.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,8 +86,8 @@ void init_scheduler() {
 		gsmStopSlot[i] = i * WINDOW_TIME_SEC + GSM_UPLOAD_DATAGRAMS_TIME;
 	}
 
-	slotCount = 1;
-	lastSync = get_slot_count();
+//	slotCount = 1;
+	lastSync = 0;
 }
 
 bool uploadOwnData = false;
@@ -99,10 +100,12 @@ extern bool gpsWakeFlag;
 
 bool saveFlashData = false;
 
+extern NextNetOp_t nextNetOp;
+
 int scheduler() {
 
 	WDT_A_clearTimer();
-	MACState = MAC_LISTEN;	// by default, listen
+	MACState = MAC_SLEEP;	// by default, sleep
 	bool macStateMachineEnable = true;
 	int i = 0;
 	static bool hasSentGSM = false;
@@ -143,12 +146,16 @@ int scheduler() {
 		}
 
 		if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
-			MACState = MAC_LISTEN;
-			macStateMachineEnable = true;
-		}
-
-		if ((get_sync())) {
-			MACState = MAC_SYNC_BROADCAST;
+//			RouteEntry_t *tempRoute = NULL;
+			if (get_sync()) {
+				MACState = MAC_SYNC_BROADCAST;
+			} else {
+				/*if (!has_route_to_node(GATEWAY_ADDRESS, tempRoute)) {
+				 MACState = MAC_NET_OP;
+				 nextNetOp = NET_BROADCAST_RREQ;
+				 } else {*/
+				MACState = MAC_LISTEN;
+			}
 			macStateMachineEnable = true;
 		}
 
@@ -160,7 +167,7 @@ int scheduler() {
 			}
 		}
 
-		if (slotCount == (gsmStopSlot[i] + 5)) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
+		if (slotCount == (txSlots[i] - 5)) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 			collectDataFlag = true;
 		}
 
@@ -176,7 +183,7 @@ int scheduler() {
 			macStateMachineEnable = true;
 		}
 
-		if ((numRetries > 0) && !neighbourTx && (slotCount % 3 == 0)) {
+		if ((numRetries > 0) && !neighbourTx && (slotCount % GLOBAL_RX == 0)) {
 
 			MACState = MAC_RTS;
 			if (numRetries > 3) {

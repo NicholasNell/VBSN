@@ -105,7 +105,7 @@ extern uint8_t _nodeSequenceNumber;
 extern uint8_t _broadcastID;
 extern uint8_t _destSequenceNumber;
 
-static NextNetOp_t nextNetOp = NET_NONE;
+NextNetOp_t nextNetOp = NET_NONE;
 
 bool hopMessageFlag = false;
 bool readyToUploadFlag = false;
@@ -447,9 +447,9 @@ static bool process_rx_buffer() {
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
 	// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
-	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
-		set_slot_count(rxDatagram.msgHeader.curSlot);
-	}
+//	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
+//		set_slot_count(rxDatagram.msgHeader.curSlot);
+//	}
 //	else {
 //
 //	}

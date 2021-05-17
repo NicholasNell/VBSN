@@ -255,7 +255,7 @@ int main(void) {
 	// Initialise UART to PC
 	uart_init_pc();
 //	flash_check_for_data();
-	rtc_init();
+
 	send_uart_pc("rtc Init\n");
 	MAP_WDT_A_clearTimer();
 
@@ -280,47 +280,28 @@ int main(void) {
 		isRoot = false;
 	}
 
-	if (bme280_user_init(&bme280Dev, &bme280Data) >= 0) {
-		bme280Working = true;
-	} else {
-		bme280Working = false;
-	}
-	MAP_WDT_A_clearTimer();
-	lightSensorWorking = init_max();
-	while (!lightSensorWorking) {
-		i2c_init();
+	if (!isRoot) {
+
+		if (bme280_user_init(&bme280Dev, &bme280Data) >= 0) {
+			bme280Working = true;
+		} else {
+			bme280Working = false;
+		}
+		MAP_WDT_A_clearTimer();
 		lightSensorWorking = init_max();
-	}
-	MAP_WDT_A_clearTimer();
-	// Have to wait for GPS to get a lock before operation can continue
-	run_systick_function_ms(1000);
-	uint8_t timeout = 0;
-	while (!gpsWorking) {
-		if (systimer_ready_check()) {
-			timeout++;
-			WDT_A_clearTimer();
-#if DEBUG
-			gpio_flash_lED(&Led_rgb_green, 50);
-#endif
-			run_systick_function_ms(1000);
-			if (timeout > 60) {
-				uart_init_gps();
-				timeout = 0;
-			}
+		while (!lightSensorWorking) {
+			i2c_init();
+			lightSensorWorking = init_max();
 		}
 	}
-
+	rtc_init();
 	MAP_WDT_A_clearTimer();
-	gps_set_low_power();
-	send_uart_pc("GPS low power\n");
 
-	WDT_A_clearTimer();
+	//	flash_fill_struct_for_write();
 
-//	flash_fill_struct_for_write();
+	//	flash_check_for_data();
 
-//	flash_check_for_data();
-
-//	 Initialise the Network and  MAC protocol
+	//	 Initialise the Network and  MAC protocol
 	send_uart_pc("Net Init\n");
 	net_init();
 	send_uart_pc("Mac Init\n");
@@ -332,13 +313,29 @@ int main(void) {
 	// Volumetric Water Content Sensor
 	get_vwc();
 	MAP_WDT_A_clearTimer();
-	init_scheduler();
+	// Have to wait for GPS to get a lock before operation can continue
+	run_systick_function_ms(1000);
+//	uint8_t timeout = 0;
 
 	flash_init_offset();
 
 	flash_fill_struct_for_write();
 	flash_write_struct_to_flash();
 	flash_reset_button_setup();
+	while (!gpsWorking) {
+		if (systimer_ready_check()) {
+			WDT_A_clearTimer();
+#if DEBUG
+			gpio_flash_lED(&Led_rgb_green, 50);
+#endif
+			run_systick_function_ms(1000);
+
+		}
+	}
+
+	WDT_A_clearTimer();
+
+	init_scheduler();
 
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
@@ -346,6 +343,9 @@ int main(void) {
 	WDT_A_CLOCKITERATIONS_8192K);	//
 
 	MAP_WDT_A_startTimer();
+
+//	gps_set_low_power();
+//	send_uart_pc("GPS low power\n");
 
 	send_uart_pc("Starting Main Loop\n");
 	volatile bool stateChanged = false;
@@ -357,7 +357,7 @@ int main(void) {
 //			MAP_WDT_A_clearTimer();
 		}
 
-		if (collectDataFlag) {
+		if (collectDataFlag & !isRoot) {
 			send_uart_pc("Collecting Sensor Data\n");
 			helper_collect_sensor_data();
 			hasData = true;
@@ -390,8 +390,8 @@ int main(void) {
 
 		if (saveFlashData) {
 			saveFlashData = false;
-			flash_fill_struct_for_write();
-			flash_write_struct_to_flash();
+//			flash_fill_struct_for_write();
+//			flash_write_struct_to_flash();
 		}
 //		PCM_gotoLPM3InterruptSafe();
 	}
@@ -412,23 +412,34 @@ void PORT1_IRQHandler(void) {
 
 extern bool setRTCFlag;
 uint8_t ppsCounter = 0;
+extern bool gotGPSUartflag;
 void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 	if (status & GPS_PPS_PIN) {
 		ppsCounter++;
-
-		if (ppsCounter > 10) {// keep gps on for at least a certain amount of seconds locked before switching off
-			ppsCounter = 0;
-
-//			rtc_init();
-			rtc_set_calendar_time();
-			setRTCFlag = false;
+		if (gotGPSUartflag) {
 			gps_set_low_power();
-			gpsWorking = true;
+			rtc_set_calendar_time();
+			rtc_start_clock();
 
+			gotGPSUartflag = false;
+
+			gpsWorking = true;
+			setRTCFlag = false;
 		}
+//		if (ppsCounter > 10) {// keep gps on for at least a certain amount of seconds locked before switching off
+//			ppsCounter = 0;
+//
+////			rtc_init();
+//			rtc_start_clock();
+//
+//			setRTCFlag = false;
+//			gps_set_low_power();
+//			gpsWorking = true;
+//
+//		}
 	}
 }
 
