@@ -132,28 +132,15 @@ int scheduler() {
 		}
 	} else {
 		hasSentGSM = false;
-		bool neighbourTx = false;
-		int var = 0;
-		for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
-			if (slotCount % neighbourTable[var].neighbourTxSlot == 0) {
-				MACState = MAC_LISTEN;
-				send_uart_pc("Neighbour Tx Slot\n");
-				macStateMachineEnable = true;
-				neighbourTx = true;
-
-				break;
-			}
-		}
 
 		if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
-//			RouteEntry_t *tempRoute = NULL;
+			RouteEntry_t *tempRoute = NULL;
 			if (get_sync()) {
 				MACState = MAC_SYNC_BROADCAST;
+			} else if (!has_route_to_node(GATEWAY_ADDRESS, tempRoute)) {
+				MACState = MAC_NET_OP;
+				nextNetOp = NET_BROADCAST_RREQ;
 			} else {
-				/*if (!has_route_to_node(GATEWAY_ADDRESS, tempRoute)) {
-				 MACState = MAC_NET_OP;
-				 nextNetOp = NET_BROADCAST_RREQ;
-				 } else {*/
 				MACState = MAC_LISTEN;
 			}
 			macStateMachineEnable = true;
@@ -181,6 +168,21 @@ int scheduler() {
 			hopMessageFlag = false;
 			MACState = MAC_HOP_MESSAGE;
 			macStateMachineEnable = true;
+		}
+
+		bool neighbourTx = false;
+		int var = 0;
+		for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
+			if (neighbourTable[var].neighbourTxSlot
+					== (slotCount - (i * WINDOW_TIME_SEC))) {
+				// (slotCount - (i * WINDOW_TIME_SEC))
+				MACState = MAC_LISTEN;
+				send_uart_pc("Neighbour Tx Slot\n");
+				macStateMachineEnable = true;
+				neighbourTx = true;
+
+				break;
+			}
 		}
 
 		if ((numRetries > 0) && !neighbourTx && (slotCount % GLOBAL_RX == 0)) {

@@ -103,7 +103,8 @@ bool send_rreq() {
 	txDatagram.data.Rreq.source_addr = _nodeID;
 	txDatagram.data.Rreq.source_sequence_num = _nodeSequenceNumber;
 
-	retVal = mac_send_tx_datagram();
+	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rreq);
+	retVal = mac_send_tx_datagram(size);
 	return retVal;
 }
 
@@ -119,6 +120,11 @@ NextNetOp_t process_rreq() {
 	NextNetOp_t retVal = NET_NONE;
 	nodeAddress source_addr = rxDatagram.data.Rreq.source_addr;
 	uint8_t broadcast_id = rxDatagram.data.Rreq.broadcast_id;
+
+	if (rxDatagram.data.Rreq.source_addr == _nodeID) { // if this Rreq originated from this node, wait
+		retVal = NET_WAIT;
+		return retVal;
+	}
 
 	if (!notHasReversePathInfo) {
 
@@ -186,10 +192,16 @@ bool net_re_rreq() {
 	memcpy(&txDatagram, &rxDatagram,
 			sizeof(rxDatagram.msgHeader) + sizeof(rxDatagram.data));
 
-	txDatagram.data.Rreq.hop_cnt++;
-	txDatagram.msgHeader.localSource = _nodeID;
+	if (txDatagram.data.Rreq.source_addr != _nodeID) {// only rebroadcast if not own Rreq
 
-	retVal = mac_send_tx_datagram();
+		if (txDatagram.data.Rreq.hop_cnt <= 5) {	// no more than 5 hops
+			txDatagram.data.Rreq.hop_cnt++;
+			txDatagram.msgHeader.localSource = _nodeID;
+			int size = sizeof(txDatagram.msgHeader)
+					+ sizeof(txDatagram.data.Rreq);
+			retVal = mac_send_tx_datagram(size);
+		}
+	}
 	return retVal;
 }
 
@@ -197,6 +209,10 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 	if (routeToNode == NULL)
 		;
 	bool retVal = false;
+	if (dest == _nodeID) {
+		retVal = true;
+		return retVal;
+	}
 	int i;
 	for (i = 0; i < _numRoutes; ++i) {
 		if (dest == routingtable[i].dest) {
@@ -307,13 +323,13 @@ bool send_rrep() {
 	txDatagram.msgHeader.ID = 5;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
-	txDatagram.data.Rrep.dest_addr = newRoute->dest;
+	txDatagram.data.Rrep.dest_addr = rxDatagram.msgHeader.netSource;
 	txDatagram.data.Rrep.dest_sequence_num = newRoute->dest_seq_num;
 	txDatagram.data.Rrep.hop_cnt = newRoute->num_hops;
 	txDatagram.data.Rrep.lifetime = 5;
-	txDatagram.data.Rrep.source_addr = _nodeID;
-
-	retVal = mac_send_tx_datagram();
+	txDatagram.data.Rrep.source_addr = rxDatagram.msgHeader.netDest;
+	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
+	retVal = mac_send_tx_datagram(size);
 	return retVal;
 }
 

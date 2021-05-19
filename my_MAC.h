@@ -72,7 +72,7 @@ void add_neighbour(nodeAddress neighbour, uint16_t txSlot);
  * \brief copies the contents of the txdatagram into the txBuffer and then transmits it. Only use if txdatagram has already been set up correctly.
  * @return returns true if succesfully sent
  */
-bool mac_send_tx_datagram();
+bool mac_send_tx_datagram(int size);
 
 /*!
  * \returns a reference to the neighour table

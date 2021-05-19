@@ -340,6 +340,9 @@ void UartGPSCommands() {
 
 				min = min / 60.0;
 				deg += min;
+				if (abs(deg) > 90) { // cannot be more than 90 maximum for latitude
+					return;
+				}
 				gpsData.lat = deg;
 				CMD = strtok(NULL, c);
 
@@ -362,6 +365,9 @@ void UartGPSCommands() {
 
 				min = min / 60.0;
 				deg += min;
+				if (abs(deg) > 180) { // cannot be more than 180 maximum for longitude
+					return;
+				}
 				gpsData.lon = deg;
 
 				CMD = strtok(NULL, c);
@@ -409,11 +415,11 @@ void UartGPSCommands() {
 
 				}
 
-				if (convert_hex_to_dec_by_byte(currentTime.minutes) % 5 == 0) {
-					if (sec == 0x30) {
-						gotGPSUartflag = true;
-					}
+//				if (convert_hex_to_dec_by_byte(currentTime.minutes) % 2 == 0) {
+				if (sec == 0x30) {
+					gotGPSUartflag = true;
 				}
+//				}
 //				int slot = convert_hex_to_dec_by_byte(currentTime.minutes) * 60
 //						+ convert_hex_to_dec_by_byte(currentTime.seconds);
 //				set_slot_count(slot);

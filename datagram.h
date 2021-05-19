@@ -82,7 +82,7 @@ typedef struct {
 
 typedef struct {
 	Header_t msgHeader;
-	RadioData_t radioData;
+//	RadioData_t radioData;
 	union Data {
 		RReq_t Rreq;
 		RRep_t Rrep;

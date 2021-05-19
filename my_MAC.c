@@ -194,7 +194,6 @@ void mac_init() {
 		} else {
 			_txSlot = (uint16_t) temp;
 		}
-		int i = 0;
 
 		schedChange = true;
 		_dataLen = 0;
@@ -235,7 +234,10 @@ bool mac_state_machine() {
 					MACState = MAC_SLEEP;
 //					return false;
 				}
+			} else {
+				MACState = MAC_SLEEP;
 			}
+
 			break;
 		case MAC_LISTEN:
 //				gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
@@ -299,23 +301,29 @@ bool mac_state_machine() {
 			case NET_REBROADCAST_RREQ:
 				send_uart_pc("Rebroadcasting Rreq\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
+						carrierSenseTimes[carrierSenseSlot++])) {
 					if (net_re_rreq()) {
 						nextNetOp = NET_WAIT;
 					} else {
 						nextNetOp = NET_REBROADCAST_RREQ;
 					}
+				} else {
+					MACState = MAC_SLEEP;
 				}
 				break;
 			case NET_BROADCAST_RREQ:
 				send_uart_pc("Broadcasting Rreq\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
+						carrierSenseTimes[carrierSenseSlot++])) {
 					if (send_rreq()) {
 						nextNetOp = NET_WAIT;
 					} else {
 						nextNetOp = NET_BROADCAST_RREQ;
 					}
+				} else {
+					MACState = MAC_SLEEP;
 				}
 				break;
 			case NET_UNICAST_RREP:
@@ -328,6 +336,7 @@ bool mac_state_machine() {
 				}
 				break;
 			default:
+				MACState = MAC_SLEEP;
 				break;
 			}
 			break;
@@ -338,7 +347,8 @@ bool mac_state_machine() {
 			send_uart_pc("Mac Hop message\n");
 			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
 				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, -60, carrierSenseTimes[carrierSenseSlot++])) {
+				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
+						carrierSenseTimes[carrierSenseSlot++])) {
 
 					if (mac_hop_message(route->next_hop)) { // Send RTS
 
@@ -421,6 +431,7 @@ bool mac_rx(uint32_t timeout) {
 			retVal = false;
 			break;
 		} else if (RadioState == RXERROR) {
+			MACState = MAC_SLEEP;
 			retVal = false;
 			break;
 		} else if (RadioState == RXDONE) {
@@ -556,9 +567,8 @@ bool is_neighbour(nodeAddress node) {
 	return retVal;
 }
 
-bool mac_send_tx_datagram() {
+bool mac_send_tx_datagram(int size) {
 	bool retVal = false;
-	int size = sizeof(txDatagram);
 	memcpy(TXBuffer, &txDatagram, size);
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
