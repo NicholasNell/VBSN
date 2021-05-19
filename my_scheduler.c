@@ -137,7 +137,8 @@ int scheduler() {
 			RouteEntry_t *tempRoute = NULL;
 			if (get_sync()) {
 				MACState = MAC_SYNC_BROADCAST;
-			} else if (!has_route_to_node(GATEWAY_ADDRESS, tempRoute)) {
+			} else if (!has_route_to_node(GATEWAY_ADDRESS, tempRoute)
+					&& !isRoot) {
 				MACState = MAC_NET_OP;
 				nextNetOp = NET_BROADCAST_RREQ;
 			} else {

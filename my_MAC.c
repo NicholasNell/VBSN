@@ -224,49 +224,58 @@ bool mac_state_machine() {
 		WDT_A_clearTimer();
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
-			send_uart_pc("Sending Sync Broadcast\n");
+			send_uart_pc("MAC_SYNC_BROADCAST\n");
 			if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
+				send_uart_pc("MAC_SYNC_BROADCAST: channel clear\n");
 				if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
+					send_uart_pc("MAC_SYNC_BROADCAST: sent RTS\n");
 					schedChange = false;
 					MACState = MAC_SLEEP;
 //					return true;
 				} else {
+					send_uart_pc("MAC_SYNC_BROADCAST: sending RTS failed\n");
 					MACState = MAC_SLEEP;
 //					return false;
 				}
 			} else {
+				send_uart_pc(
+						"MAC_SYNC_BROADCAST: channel busy, prossessing RX message\n");
 				MACState = MAC_SLEEP;
 			}
 
 			break;
 		case MAC_LISTEN:
+			send_uart_pc("MAC_LISTEN\n");
 //				gpio_toggle(&Led_rgb_green); // toggle the green led if slot count was the same between the two messages
 			if (!mac_rx(SLOT_LENGTH_MS)) {
+				send_uart_pc("MAC_LISTEN: heard no message\n");
 				MACState = MAC_SLEEP;
 //				return false;
 			}
 			break;
 		case MAC_SLEEP:
+//			send_uart_pc("MAC_SLEEP\n");
 			// SLEEP
 			if (RadioState != RADIO_SLEEP) {
+				send_uart_pc("MAC_SLEEP: set Sleep mode\n");
 				SX1276SetSleep();
 				RadioState = RADIO_SLEEP;
 			}
 			return false;
 		case MAC_RTS:
 			// Send RTS
-			send_uart_pc("Sending RTS\n");
+			send_uart_pc("MAC_RTS\n");
 //			numRetries++;
 			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
-				send_uart_pc("Node Has a Route to the destination\n");
+				send_uart_pc("MAC_RTS: has route to dest\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY,
 				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
-
+					send_uart_pc("MAC_RTS: channel is clear\n");
 					if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
-
+						send_uart_pc("MAC_RTS: sent RTS\n");
 						if (!mac_rx(SLOT_LENGTH_MS)) {
-							send_uart_pc("No CTS msg Received\n");
+							send_uart_pc("MAC_RTS: no CTS received\n");
 							numRetries++;
 							// no response, send again in next slot
 
@@ -274,20 +283,19 @@ bool mac_state_machine() {
 //						return false;
 						}
 					} else {
-						send_uart_pc("Sending RTS Failed\n");
+						send_uart_pc("MAC_RTS: send RTS failed\n");
 						numRetries++;
 						MACState = MAC_SLEEP;
 //					return false;
 					}
 				} else {
-					send_uart_pc(
-							"RTS carrier sense detecting activity on channel\n");
+					send_uart_pc("MAC_RTS: channel is busy\n");
 					numRetries++;
 					MACState = MAC_SLEEP;
 //				return false;
 				}
 			} else {
-				send_uart_pc("RTS has no route to destination, sending RReq\n");
+				send_uart_pc("MAC_RTS: no Route to dest\n");
 				nextNetOp = NET_BROADCAST_RREQ;
 				MACState = MAC_NET_OP;
 
@@ -296,42 +304,56 @@ bool mac_state_machine() {
 		case MAC_NET_OP:
 			switch (nextNetOp) {
 			case NET_NONE:
+				send_uart_pc("NET_NONE\n");
 				MACState = MAC_LISTEN;
 				break;
 			case NET_REBROADCAST_RREQ:
-				send_uart_pc("Rebroadcasting Rreq\n");
+				send_uart_pc("NET_REBROADCAST_RREQ\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
 						carrierSenseTimes[carrierSenseSlot++])) {
+					send_uart_pc("NET_REBROADCAST_RREQ: channel clear\n");
 					if (net_re_rreq()) {
+						send_uart_pc(
+								"NET_REBROADCAST_RREQ: succesfully rebroadcast RREQ\n");
 						nextNetOp = NET_WAIT;
 					} else {
+						send_uart_pc("NET_REBROADCAST_RREQ: failed re-RREQ\n");
 						nextNetOp = NET_REBROADCAST_RREQ;
 					}
 				} else {
+					send_uart_pc("NET_REBROADCAST_RREQ: channel busy\n");
 					MACState = MAC_SLEEP;
 				}
 				break;
 			case NET_BROADCAST_RREQ:
-				send_uart_pc("Broadcasting Rreq\n");
+				send_uart_pc("NET_BROADCAST_RREQ\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
 						carrierSenseTimes[carrierSenseSlot++])) {
+					send_uart_pc("NET_BROADCAST_RREQ: channel clear\n");
 					if (send_rreq()) {
+						send_uart_pc("NET_BROADCAST_RREQ: sent RREQ\n");
 						nextNetOp = NET_WAIT;
 					} else {
+						send_uart_pc("NET_BROADCAST_RREQ: RREQ failed\n");
 						nextNetOp = NET_BROADCAST_RREQ;
 					}
 				} else {
+					send_uart_pc("NET_BROADCAST_RREQ: channel busy\n");
 					MACState = MAC_SLEEP;
 				}
 				break;
 			case NET_UNICAST_RREP:
+				send_uart_pc("NET_UNICAST_RREP\n");
+
 				send_rrep();
 				MACState = MAC_SLEEP;
 				break;
 			case NET_WAIT:
+				send_uart_pc("NET_WAIT\n");
 				if (!mac_rx(SLOT_LENGTH_MS)) {
+					send_uart_pc("NET_WAIT: heard no message\n");
 					MACState = MAC_SLEEP;
 				}
 				break;
@@ -344,15 +366,19 @@ bool mac_state_machine() {
 			break;
 //			return true;
 		case MAC_HOP_MESSAGE:
-			send_uart_pc("Mac Hop message\n");
+			send_uart_pc("MAC_HOP_MESSAGE\n");
 			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
+				send_uart_pc("MAC_HOP_MESSAGE: has route to dest\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
 						carrierSenseTimes[carrierSenseSlot++])) {
+					send_uart_pc("MAC_HOP_MESSAGE: channel clear\n");
 
 					if (mac_hop_message(route->next_hop)) { // Send RTS
+						send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
+							send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
 							MACState = MAC_SLEEP;
 							//						return false;
 						}
@@ -361,6 +387,7 @@ bool mac_state_machine() {
 						//					return false;
 					}
 				} else {
+					send_uart_pc("MAC_HOP_MESSAGE: channel not free\n");
 					MACState = MAC_SLEEP;
 					//				return false;
 				}
@@ -455,6 +482,15 @@ static bool process_rx_buffer() {
 	if (receivedMsgIndex == MAX_STORED_MSG) {
 		receivedMsgIndex = 0;
 	}
+
+	add_neighbour(rxDatagram.msgHeader.localSource,
+			rxDatagram.msgHeader.txSlot);
+	add_route_to_neighbour(rxDatagram.msgHeader.localSource);
+
+	if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
+		gen_id(true);
+		schedChange = true;
+	}
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
 	// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
@@ -501,10 +537,8 @@ static bool process_rx_buffer() {
 		case MSG_ACK: 	// ACK
 //				hasData = false;	// data has succesfully been sent
 			numRetries = 0;
+			nextNetOp = NET_NONE;
 			MACState = MAC_SLEEP;
-			add_neighbour(rxDatagram.msgHeader.localSource,
-					rxDatagram.msgHeader.txSlot);
-			add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 			break;
 		case MSG_RREP: 	// RREP
 			send_uart_pc("Rx RREP\n");
@@ -518,16 +552,8 @@ static bool process_rx_buffer() {
 		case MSG_SYNC: 	// SYNC
 		{
 //			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
-			add_neighbour(rxDatagram.msgHeader.localSource,
-					rxDatagram.msgHeader.txSlot);
 
 			MACState = MAC_SLEEP;
-
-			if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
-				gen_id(true);
-				schedChange = true;
-			}
-			add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 			break;
 		}
 		case MSG_RREQ: 	// RREQ

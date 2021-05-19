@@ -445,7 +445,7 @@ void EUSCIA3_IRQHandler(void) {
 	if (status & EUSCI_A_UART_RECEIVE_INTERRUPT_FLAG) {
 		UartRxGPS[counter_read_gps] = MAP_UART_receiveData(UART_GPS_MODULE);
 #if DEBUG
-		MAP_UART_transmitData(UART_PC_MODULE, UartRxGPS[counter_read_gps]);
+//		MAP_UART_transmitData(UART_PC_MODULE, UartRxGPS[counter_read_gps]);
 #endif
 		counter_read_gps++;
 	}

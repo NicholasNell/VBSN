@@ -559,12 +559,16 @@ void gsm_upload_stored_datagrams() {
 				success = upload_current_datagram(i);
 				attempts++;
 				send_uart_pc("Retrying gsm_upload_stored_data\n");
-				if (attempts > 4) {
+				if (attempts > 1) {
 					attempts = 0;
 					send_uart_pc("failed upload stored data.\n");
 					return;
 				}
 			}
+
+			// Do not delete! This time delay is crucial.
+			WDT_A_clearTimer();
+			delay_ms(2000);
 			WDT_A_clearTimer();
 
 		}

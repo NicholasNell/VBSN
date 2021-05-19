@@ -323,11 +323,11 @@ bool send_rrep() {
 	txDatagram.msgHeader.ID = 5;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
-	txDatagram.data.Rrep.dest_addr = rxDatagram.msgHeader.netSource;
+	txDatagram.data.Rrep.dest_addr = rxDatagram.msgHeader.netDest;
 	txDatagram.data.Rrep.dest_sequence_num = newRoute->dest_seq_num;
 	txDatagram.data.Rrep.hop_cnt = newRoute->num_hops;
 	txDatagram.data.Rrep.lifetime = 5;
-	txDatagram.data.Rrep.source_addr = rxDatagram.msgHeader.netDest;
+	txDatagram.data.Rrep.source_addr = rxDatagram.msgHeader.netSource;
 	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
 	retVal = mac_send_tx_datagram(size);
 	return retVal;
