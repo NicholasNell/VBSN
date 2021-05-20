@@ -406,7 +406,7 @@ void cmd_load(int index) {
 	}
 }
 int string_search(int index)       // index' is Strings[index][SIZE_COMMAND]
-		{                                    // See defines in .h
+{                                    // See defines in .h
 	cmd_load(index);         // Loads into temp array the string to be found
 	if (strstr(UartGSMRX, Command) != NULL) // Find String or Command in main Buffer
 		return (1);                        // Return 1 if found
@@ -609,7 +609,7 @@ bool upload_current_datagram(int index) {
 	WDT_A_clearTimer();
 	lenWritten =
 			sprintf(postBody,
-					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
+					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\": %.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\": %f,\"Lon\":%f,\"Tim\":%d.%d.%d}\r\n",
 					localAddress, localTemperature, localHumidity,
 					localPressure, localVWC, localLight, localLat, localLon,
 					localHr, localMin, LocalSec);
