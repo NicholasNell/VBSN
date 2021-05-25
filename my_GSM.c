@@ -406,7 +406,7 @@ void cmd_load(int index) {
 	}
 }
 int string_search(int index)       // index' is Strings[index][SIZE_COMMAND]
-{                                    // See defines in .h
+		{                                    // See defines in .h
 	cmd_load(index);         // Loads into temp array the string to be found
 	if (strstr(UartGSMRX, Command) != NULL) // Find String or Command in main Buffer
 		return (1);                        // Return 1 if found
@@ -547,7 +547,7 @@ void gsm_upload_stored_datagrams() {
 	if (numToSend > 0) {
 		WDT_A_clearTimer();
 		send_uart_pc("Starting batch upload.\n");
-		for (i = numToSend - 1; i >= 0; i--) {
+		for (i = 0; i < numToSend; i++) {
 			WDT_A_clearTimer();
 			send_uart_pc("next datagram.\n");
 			success = upload_current_datagram(i);
@@ -601,7 +601,12 @@ bool upload_current_datagram(int index) {
 			pointerToData[index].data.sensData.tim.minutes);
 	int LocalSec = convert_hex_to_dec_by_byte(
 			pointerToData[index].data.sensData.tim.seconds);
-
+	float localSNR = pointerToData[index].radioData.snr;
+	float localRSSI = pointerToData[index].radioData.rssi;
+	int localRoutes = pointerToData[index].netData.numRoutes;
+	int localnumDataSent = pointerToData[index].netData.numDataSent;
+	int localnumNeighbours = pointerToData[index].netData.numNeighbours;
+	int localRTSMissed = pointerToData[index].netData.rtsMissed;
 	char postCommand[SIZE_BUFFER];
 	memset(postCommand, 0, SIZE_BUFFER);
 	char postBody[SIZE_BUFFER];
@@ -609,10 +614,12 @@ bool upload_current_datagram(int index) {
 	WDT_A_clearTimer();
 	lenWritten =
 			sprintf(postBody,
-					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\": %.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\": %f,\"Lon\":%f,\"Tim\":%d.%d.%d}\r\n",
+					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d}\r\n",
 					localAddress, localTemperature, localHumidity,
 					localPressure, localVWC, localLight, localLat, localLon,
-					localHr, localMin, LocalSec);
+					localHr, localMin, LocalSec, localSNR, localRSSI,
+					localRoutes, localnumDataSent, localnumNeighbours,
+					localRTSMissed);
 
 	//	sprintf(postCommand,
 	//			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",

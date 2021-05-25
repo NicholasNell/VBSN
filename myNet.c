@@ -64,7 +64,7 @@ void add_route_to_neighbour(nodeAddress dest) {
 		newRoute.dest_seq_num = 0;
 		newRoute.expiration_time = NULL;
 		newRoute.next_hop = newRoute.dest;
-		newRoute.num_hops = 1;
+		newRoute.num_hops = 0;
 
 		routingtable[_numRoutes++] = newRoute;
 	}
@@ -87,7 +87,7 @@ bool send_rreq() {
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
-	txDatagram.msgHeader.ID = 5;
+	txDatagram.msgHeader.hopCount = 5;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
 	txDatagram.data.Rreq.broadcast_id = _broadcastID;
@@ -320,7 +320,7 @@ bool send_rrep() {
 	txDatagram.msgHeader.netDest = newRoute->dest;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.nextHop = rrepNodeUnicast;
-	txDatagram.msgHeader.ID = 5;
+	txDatagram.msgHeader.hopCount = 5;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
 	txDatagram.data.Rrep.dest_addr = rxDatagram.msgHeader.netDest;

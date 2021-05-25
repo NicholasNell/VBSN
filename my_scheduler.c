@@ -135,12 +135,12 @@ int scheduler() {
 
 		if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
 			RouteEntry_t *tempRoute = NULL;
-			if (get_sync()) {
-				MACState = MAC_SYNC_BROADCAST;
-			} else if (!has_route_to_node(GATEWAY_ADDRESS, tempRoute)
+			if (get_sync() && !has_route_to_node(GATEWAY_ADDRESS, tempRoute)
 					&& !isRoot) {
 				MACState = MAC_NET_OP;
 				nextNetOp = NET_BROADCAST_RREQ;
+			} else if (get_sync()) {
+				MACState = MAC_SYNC_BROADCAST;
 			} else {
 				MACState = MAC_LISTEN;
 			}
@@ -166,7 +166,7 @@ int scheduler() {
 		}
 
 		if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) { // hop the received message in the global RX window
-			hopMessageFlag = false;
+
 			MACState = MAC_HOP_MESSAGE;
 			macStateMachineEnable = true;
 		}

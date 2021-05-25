@@ -30,7 +30,6 @@ void helper_collect_sensor_data() {
 		} else {
 			init_max();
 		}
-		int i = 0;
 
 		bme280_get_data(&bme280Dev, &bme280Data);
 

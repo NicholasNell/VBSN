@@ -136,7 +136,7 @@ void on_tx_done(void);
 /*!
  * \brief Function to be executed on Radio Rx Done event
  */
-void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
+void on_rx_done(uint8_t *payload, uint16_t size, int8_t rssi, int8_t snr);
 
 /*!
  * \brief Function executed on Radio Tx Timeout event
@@ -468,7 +468,7 @@ void on_tx_done(void) {
 #endif
 }
 
-void on_rx_done(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
+void on_rx_done(uint8_t *payload, uint16_t size, int8_t rssi, int8_t snr) {
 	SX1276clearIRQFlags();
 	loraRxBufferSize = size;
 	memcpy(RXBuffer, payload, loraRxBufferSize);

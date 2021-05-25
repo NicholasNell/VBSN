@@ -32,7 +32,7 @@ typedef struct {
 	nodeAddress localSource; // Where the message came from, not original source
 	nodeAddress netSource;		// original message source
 	nodeAddress netDest;		// final destination, probably gateway
-	uint8_t ID;					// message ID
+	uint8_t hopCount;					// message ID
 	uint16_t txSlot; 			// txSlot
 	uint16_t curSlot;			// This nodes current slotCount
 	msgType_t flags;	 		// see flags
@@ -71,13 +71,22 @@ typedef struct {
 } RRep_t;
 
 typedef struct {
+	uint8_t numNeighbours;
+	uint8_t numRoutes;
+	uint16_t numDataSent;
+	uint16_t rtsMissed;
+} NetData_t;
+
+typedef struct {
 	Header_t msgHeader;
-//	RadioData_t radioData;
+
 	union Data {
 		RReq_t Rreq;
 		RRep_t Rrep;
 		MsgData_t sensData;
 	} data;
+	NetData_t netData;
+	RadioData_t radioData;
 
 } Datagram_t;
 

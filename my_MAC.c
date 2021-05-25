@@ -67,6 +67,7 @@ uint16_t _numMsgSent;
 uint16_t _prevMsgId;
 uint16_t _txSlot;
 uint16_t _schedID;
+uint16_t _numRTSMissed;
 
 // The LoRa RX Buffer
 extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
@@ -277,6 +278,7 @@ bool mac_state_machine() {
 						if (!mac_rx(SLOT_LENGTH_MS)) {
 							send_uart_pc("MAC_RTS: no CTS received\n");
 							numRetries++;
+							_numRTSMissed++;
 							// no response, send again in next slot
 
 							MACState = MAC_SLEEP;
@@ -348,6 +350,7 @@ bool mac_state_machine() {
 				send_uart_pc("NET_UNICAST_RREP\n");
 
 				send_rrep();
+				nextNetOp = NET_NONE;
 				MACState = MAC_SLEEP;
 				break;
 			case NET_WAIT:
@@ -383,6 +386,7 @@ bool mac_state_machine() {
 							//						return false;
 						}
 					} else {
+						hopMessageFlag = false;
 						MACState = MAC_SLEEP;
 						//					return false;
 					}
@@ -401,19 +405,22 @@ bool mac_state_machine() {
 	}
 }
 
+extern uint8_t _numRoutes;
+
 bool mac_send(msgType_t msgType, nodeAddress dest) {
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.netDest = dest;
-	txDatagram.msgHeader.ID = 5;
+	txDatagram.msgHeader.hopCount = 0;
 	txDatagram.msgHeader.flags = msgType;
-	_numMsgSent++;
+
 	txDatagram.msgHeader.txSlot = _txSlot;
 	txDatagram.msgHeader.curSlot = get_slot_count();
 
 	if (msgType == MSG_DATA) {
+
 		txDatagram.data.sensData.hum = bme280Data.humidity;
 		txDatagram.data.sensData.press = bme280Data.pressure;
 		txDatagram.data.sensData.temp = bme280Data.temperature;
@@ -422,7 +429,14 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 		txDatagram.data.sensData.soilMoisture = soilMoisture;
 		txDatagram.data.sensData.tim = timeStamp;
 
-		int size = sizeof(txDatagram);
+		_numMsgSent++;
+		txDatagram.netData.numDataSent = _numMsgSent;
+
+		txDatagram.netData.numNeighbours = _numNeighbours;
+		txDatagram.netData.numRoutes = _numRoutes;
+		txDatagram.netData.rtsMissed = _numRTSMissed;
+		int size = sizeof(txDatagram.msgHeader)
+				+ sizeof(txDatagram.data.sensData) + sizeof(txDatagram.netData);
 		memcpy(TXBuffer, &txDatagram, size);
 		start_lora_timer(loraTxtimes[size + 1]);
 		SX1276Send(TXBuffer, size);
@@ -475,6 +489,8 @@ bool mac_rx(uint32_t timeout) {
 	return retVal;
 }
 
+extern volatile int8_t RssiValue;
+extern volatile int8_t SnrValue;
 static bool process_rx_buffer() {
 
 	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
@@ -522,6 +538,8 @@ static bool process_rx_buffer() {
 			} else {
 				hopMessageFlag = false;
 				// now either store the data for further later sending or get ready to upload data to cloud
+				rxDatagram.radioData.rssi = RssiValue;
+				rxDatagram.radioData.snr = SnrValue;
 				receivedDatagrams[receivedMsgIndex++] = rxDatagram;
 				readyToUploadFlag = true;
 			}
@@ -530,7 +548,7 @@ static bool process_rx_buffer() {
 			if (!hopMessageFlag) {
 				MACState = MAC_SLEEP;
 			} else {
-				MACState = MAC_RTS;
+				MACState = MAC_HOP_MESSAGE;
 			}
 
 			break;
@@ -620,7 +638,14 @@ static bool mac_hop_message(nodeAddress dest) {
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.txSlot = _txSlot;
-	int size = sizeof(txDatagram);
+	txDatagram.msgHeader.hopCount = txDatagram.msgHeader.hopCount + 1;
+
+	txDatagram.netData.numDataSent = _numMsgSent;
+	_numMsgSent++;
+	txDatagram.netData.numNeighbours = _numNeighbours;
+	txDatagram.netData.numRoutes = _numRoutes;
+	txDatagram.netData.rtsMissed = _numRTSMissed;
+	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.netData);
 	memcpy(TXBuffer, &txDatagram, size);
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
