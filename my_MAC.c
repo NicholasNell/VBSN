@@ -220,7 +220,7 @@ uint8_t numRetries = 0;
 
 bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
-	RouteEntry_t *route = NULL;
+	RouteEntry_t route;
 	while (true) {
 		WDT_A_clearTimer();
 		switch (MACState) {
@@ -267,13 +267,13 @@ bool mac_state_machine() {
 			// Send RTS
 			send_uart_pc("MAC_RTS\n");
 //			numRetries++;
-			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
+			if (has_route_to_node(GATEWAY_ADDRESS, &route)) {
 				send_uart_pc("MAC_RTS: has route to dest\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY,
 				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
 					send_uart_pc("MAC_RTS: channel is clear\n");
-					if (mac_send(MSG_RTS, route->next_hop)) { // Send RTS
+					if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
 						send_uart_pc("MAC_RTS: sent RTS\n");
 						if (!mac_rx(SLOT_LENGTH_MS)) {
 							send_uart_pc("MAC_RTS: no CTS received\n");
@@ -370,20 +370,20 @@ bool mac_state_machine() {
 //			return true;
 		case MAC_HOP_MESSAGE:
 			send_uart_pc("MAC_HOP_MESSAGE\n");
-			if (has_route_to_node(GATEWAY_ADDRESS, route)) {
+			if (has_route_to_node(GATEWAY_ADDRESS, &route)) {
 				send_uart_pc("MAC_HOP_MESSAGE: has route to dest\n");
 				if (SX1276IsChannelFree(MODEM_LORA,
 				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
 						carrierSenseTimes[carrierSenseSlot++])) {
 					send_uart_pc("MAC_HOP_MESSAGE: channel clear\n");
 
-					if (mac_hop_message(route->next_hop)) { // Send RTS
+					if (mac_hop_message(route.next_hop)) { // Send RTS
 						send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
 							send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
 							MACState = MAC_SLEEP;
-							//						return false;
+							return false;
 						}
 					} else {
 						hopMessageFlag = false;
@@ -572,6 +572,7 @@ static bool process_rx_buffer() {
 //			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
 
 			MACState = MAC_SLEEP;
+			return true;
 			break;
 		}
 		case MSG_RREQ: 	// RREQ

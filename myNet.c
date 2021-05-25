@@ -18,12 +18,15 @@ uint8_t _nodeSequenceNumber;
 uint8_t _broadcastID;
 uint8_t _destSequenceNumber;
 
+static uint8_t IDSourceCombo[MAX_ROUTES][2];
+static uint8_t IDSourceComboCounter = 0;
+
 static nodeAddress rrepNodeUnicast;
-bool notHasReversePathInfo = true;
+bool HasReversePathInfo = false;
 
 static ReversePathInfo_t reversePathInfo;
 
-bool notHasForwardPathInfo = true;
+bool HasForwardPathInfo = false;
 static ForwardPathInfo_t forwardPathInfo;
 
 extern Datagram_t rxDatagram;
@@ -32,6 +35,32 @@ extern nodeAddress _nodeID;
 extern uint16_t _txSlot;
 // extern is flash ok flag
 extern bool flashOK;
+
+static bool check_received_rreq(uint8_t broadcast_id, uint8_t sourceAddress);
+
+static void add_rreq_combo(uint8_t broadcast_id, uint8_t sourceAddress);
+
+static void add_rreq_combo(uint8_t broadcast_id, uint8_t sourceAddress) {
+	if (IDSourceComboCounter >= MAX_ROUTES) { /// only store last \ref{MAX_ROUTES} combos
+		IDSourceComboCounter = 0;
+	}
+	IDSourceCombo[IDSourceComboCounter][0] = broadcast_id;
+	IDSourceCombo[IDSourceComboCounter][1] = sourceAddress;
+	IDSourceComboCounter++;
+}
+
+static bool check_received_rreq(uint8_t broadcast_id, uint8_t sourceAddress) {
+	bool retVal = false;
+	int i = 0;
+	for (i = 0; i < IDSourceComboCounter; i++) {
+		if (IDSourceCombo[i][0] == broadcast_id
+				&& IDSourceCombo[i][1] == sourceAddress) { // if broadcast_id and source address match a previous message, return true
+			retVal = true;
+			return retVal;
+		}
+	}
+	return retVal;
+}
 
 void net_init() {
 	if (flashOK) {
@@ -48,6 +77,7 @@ void net_init() {
 		_destSequenceNumber = 0xFF;
 		_broadcastID = 0;
 		memset(routingtable, NULL, MAX_ROUTES);
+		memset(IDSourceCombo, NULL, MAX_ROUTES * 2);
 	}
 }
 
@@ -77,8 +107,8 @@ nodeAddress get_dest(nodeAddress dest) {
 bool send_rreq() {
 	bool retVal = false;
 
-	RouteEntry_t *newRoute = NULL;
-	has_route_to_node(GATEWAY_ADDRESS, newRoute);
+	RouteEntry_t newRoute;
+	bool hasRoute = has_route_to_node(GATEWAY_ADDRESS, &newRoute);
 
 	_broadcastID++;
 
@@ -93,10 +123,10 @@ bool send_rreq() {
 	txDatagram.data.Rreq.broadcast_id = _broadcastID;
 	txDatagram.data.Rreq.dest_addr = GATEWAY_ADDRESS;
 
-	if (newRoute == NULL) { // if no route exist to node in question, set sequence number as zero
+	if (!hasRoute) { // if no route exist to node in question, set sequence number as zero
 		txDatagram.data.Rreq.dest_sequence_num = 0;
 	} else {
-		txDatagram.data.Rreq.dest_sequence_num = newRoute->dest_seq_num;
+		txDatagram.data.Rreq.dest_sequence_num = newRoute.dest_seq_num;
 	}
 
 	txDatagram.data.Rreq.hop_cnt = 0; // hop count always starts at zero.
@@ -126,63 +156,71 @@ NextNetOp_t process_rreq() {
 		return retVal;
 	}
 
-	if (!notHasReversePathInfo) {
-
-		reversePathInfo.hopcount = rxDatagram.data.Rreq.hop_cnt + 1;
-		reversePathInfo.nextHop = rxDatagram.msgHeader.localSource;
-		reversePathInfo.destinationAddress = source_addr;
-
-		reversePathInfo.source_sequence_num =
-				rxDatagram.data.Rreq.source_sequence_num;
-		reversePathInfo.broadcastID = broadcast_id;
-
-		reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
-
-		add_reverse_path_to_table();
-
-		notHasReversePathInfo = false;
-		start_timer_32_counter(
-		REVERSE_PATH_EXP_TIME * 1000, &notHasReversePathInfo);	//
-	}
-
-// check if message has been received from known neighbour; if not, add to neighbour list and add a new entry to the routing table.
-	bool isNeighbourFlag = is_neighbour(rxDatagram.msgHeader.localSource);
-
-	if (!isNeighbourFlag) {
-		add_neighbour(rxDatagram.msgHeader.localSource,
-				rxDatagram.msgHeader.txSlot);
-		add_route_to_neighbour(rxDatagram.msgHeader.localSource);
-	}
-
-	if (reversePathInfo.destinationAddress == rxDatagram.data.Rreq.source_addr
-			&& broadcast_id == reversePathInfo.broadcastID) { // if this message has already been received; ignore and wait for another message
+	if (check_received_rreq(broadcast_id, source_addr)) { // already received this message, so ignore
 		retVal = NET_WAIT;
 		return retVal;
-	} else {				// else if message has not been received yet
-		if (rxDatagram.data.Rreq.dest_addr == _nodeID) {// check if node is destination node and return
-
-			retVal = NET_UNICAST_RREP;
-			rrepNodeUnicast = rxDatagram.msgHeader.localSource;
-			return retVal;
-		} else {// if node is not destination, check if route is known in routing table
-			RouteEntry_t *tempRouteEntry = NULL;
-			bool hasRoute = has_route_to_node(rxDatagram.data.Rreq.dest_addr,
-					tempRouteEntry);
-			if (!hasRoute) {	// no known route, rebroadcast RReq.
-				retVal = NET_REBROADCAST_RREQ;
-			} else if (tempRouteEntry->dest == rxDatagram.data.Rreq.dest_addr) { // routing table conatins route and can now reply with the routing information
-				if ((tempRouteEntry->dest_seq_num
-						< rxDatagram.data.Rreq.dest_sequence_num)) { // routing table entry is old and a new route is available
-					retVal = NET_REBROADCAST_RREQ;
-				} else { // routing table entry is current, unicast route back to source
-					retVal = NET_UNICAST_RREP;
-					rrepNodeUnicast = rxDatagram.msgHeader.localSource;
-				}
-			} else {	// any other combination is invalid, do nothing.
-				retVal = NET_NONE;
-			}
-		}
+	} else {	// has not received this message, add to combo array
+		add_rreq_combo(broadcast_id, source_addr);
 	}
+
+	// if rreq came from a direct neighbour and this is a gateway, send rrep;
+	if (rxDatagram.data.Rreq.dest_addr == _nodeID) {
+		reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
+		reversePathInfo.destinationAddress = rxDatagram.data.Rreq.dest_addr;
+		reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+		reversePathInfo.hopcount = rxDatagram.data.Rreq.hop_cnt;
+		reversePathInfo.nextHop = rxDatagram.msgHeader.localSource;
+		reversePathInfo.source_sequence_num =
+				rxDatagram.data.Rreq.source_sequence_num;
+		HasReversePathInfo = true;
+		start_timer_32_counter(
+		REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
+		retVal = NET_UNICAST_RREP;
+		return retVal;
+	}
+
+	RouteEntry_t routeToNode;
+	if (has_route_to_node(rxDatagram.data.Rreq.dest_addr, &routeToNode)) { // has route info, so send it back
+		if (routeToNode.dest_seq_num < rxDatagram.data.Rreq.dest_sequence_num) { // Route stored in Routing table is old, delete and rebroadcast rreq
+
+			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
+			reversePathInfo.destinationAddress = rxDatagram.data.Rreq.dest_addr;
+			reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+			reversePathInfo.hopcount = rxDatagram.data.Rreq.hop_cnt;
+			reversePathInfo.nextHop = rxDatagram.msgHeader.localSource;
+			reversePathInfo.source_sequence_num =
+					rxDatagram.data.Rreq.source_sequence_num;
+			HasReversePathInfo = true;
+			start_timer_32_counter(
+			REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
+			retVal = NET_REBROADCAST_RREQ;
+		} else {	// has current route to destination
+			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
+			reversePathInfo.destinationAddress = rxDatagram.data.Rreq.dest_addr;
+			reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+			reversePathInfo.hopcount = rxDatagram.data.Rreq.hop_cnt;
+			reversePathInfo.nextHop = rxDatagram.msgHeader.localSource;
+			reversePathInfo.source_sequence_num =
+					rxDatagram.data.Rreq.source_sequence_num;
+			HasReversePathInfo = true;
+			start_timer_32_counter(
+			REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
+			retVal = NET_UNICAST_RREP;
+		}
+	} else { //has no route info, so save reverse path info and rebroadcast rreq
+		reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
+		reversePathInfo.destinationAddress = rxDatagram.data.Rreq.dest_addr;
+		reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+		reversePathInfo.hopcount = rxDatagram.data.Rreq.hop_cnt;
+		reversePathInfo.nextHop = rxDatagram.msgHeader.localSource;
+		reversePathInfo.source_sequence_num =
+				rxDatagram.data.Rreq.source_sequence_num;
+		HasReversePathInfo = true;
+		start_timer_32_counter(
+		REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
+		retVal = NET_REBROADCAST_RREQ;
+	}
+
 	return retVal;
 }
 
@@ -192,9 +230,9 @@ bool net_re_rreq() {
 	memcpy(&txDatagram, &rxDatagram,
 			sizeof(rxDatagram.msgHeader) + sizeof(rxDatagram.data));
 
-	if (txDatagram.data.Rreq.source_addr != _nodeID) {// only rebroadcast if not own Rreq
+	if (txDatagram.data.Rreq.source_addr != _nodeID) { // only rebroadcast if not own Rreq
 
-		if (txDatagram.data.Rreq.hop_cnt <= 5) {	// no more than 5 hops
+		if (txDatagram.data.Rreq.hop_cnt <= MAX_HOPS) {	// no more than 5 hops
 			txDatagram.data.Rreq.hop_cnt++;
 			txDatagram.msgHeader.localSource = _nodeID;
 			int size = sizeof(txDatagram.msgHeader)
@@ -217,7 +255,8 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 	for (i = 0; i < _numRoutes; ++i) {
 		if (dest == routingtable[i].dest) {
 			retVal = true;
-			routeToNode = &routingtable[i];
+//			routeToNode = &routingtable[i];
+			memcpy(routeToNode, &routingtable[i], sizeof(RouteEntry_t));
 			break;
 		} else {
 			routeToNode = NULL;
@@ -229,7 +268,7 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 NextNetOp_t process_rrep() {
 	NextNetOp_t retVal = NET_NONE;
 
-	forwardPathInfo.destinationAddress = rxDatagram.data.Rrep.dest_addr;
+	forwardPathInfo.destinationAddress = rxDatagram.msgHeader.netSource;
 	forwardPathInfo.nextHop = rxDatagram.msgHeader.localSource;
 	forwardPathInfo.hopcount = rxDatagram.data.Rrep.hop_cnt + 1;
 	forwardPathInfo.expTime = REVERSE_PATH_EXP_TIME;
@@ -240,20 +279,8 @@ NextNetOp_t process_rrep() {
 	if (rxDatagram.data.Rrep.dest_addr == _nodeID) {
 		retVal = NET_NONE;
 		return retVal;
-	}
-
-	if (addedPath) {
+	} else if (addedPath) {
 		retVal = NET_UNICAST_RREP;
-		RouteEntry_t *route = NULL;
-		if (has_route_to_node(rxDatagram.data.Rrep.dest_addr, route)) {
-			rrepNodeUnicast = route->next_hop;
-			retVal = NET_UNICAST_RREP;
-		} else {
-			retVal = NET_NONE;
-			return retVal;
-		}
-	} else {
-		retVal = NET_NONE;
 	}
 	return retVal;
 }
@@ -262,9 +289,9 @@ bool add_reverse_path_to_table() {
 
 	bool retVal = false;
 // first check if an entry exists, then check its sequence number
-	RouteEntry_t *routeToNode = NULL;
+	RouteEntry_t routeToNode;
 	bool hasRoute = has_route_to_node(reversePathInfo.destinationAddress,
-			routeToNode);
+			&routeToNode);
 
 	RouteEntry_t newRouteToNode;
 	newRouteToNode.dest = reversePathInfo.destinationAddress;
@@ -274,8 +301,8 @@ bool add_reverse_path_to_table() {
 	newRouteToNode.num_hops = reversePathInfo.hopcount + 1;
 
 	if (hasRoute) {	// entry already exist within the routing table, now compare the sequence numbers
-		if (routeToNode->dest_seq_num < reversePathInfo.source_sequence_num) {
-			memcpy(routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
+		if (routeToNode.dest_seq_num < reversePathInfo.source_sequence_num) {
+			memcpy(&routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
 			retVal = true;
 		}
 	} else {	// does not have a route, so add one
@@ -295,11 +322,12 @@ bool add_forward_path_to_table() {
 	newRouteToNode.dest_seq_num = forwardPathInfo.dest_sequence_num;
 	newRouteToNode.expiration_time = forwardPathInfo.expTime;
 	newRouteToNode.next_hop = forwardPathInfo.nextHop;
-	newRouteToNode.num_hops = forwardPathInfo.hopcount + 1;
+	newRouteToNode.num_hops = forwardPathInfo.hopcount;
 
 	if (hasRoute) {	// entry already exist within the routing table, now compare the sequence numbers
-		if (routeToNode->dest_seq_num < forwardPathInfo.dest_sequence_num) {
+		if (routeToNode->dest_seq_num > forwardPathInfo.dest_sequence_num) {
 			memcpy(routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
+			add_route(newRouteToNode);
 			retVal = true;
 		}
 	} else {	// does not have a route, so add one
@@ -309,27 +337,55 @@ bool add_forward_path_to_table() {
 	return retVal;
 }
 
+extern bool isRoot;
 bool send_rrep() {
 	bool retVal = false;
 
-	RouteEntry_t *newRoute = NULL;
-	has_route_to_node(rxDatagram.msgHeader.netDest, newRoute);
+	if (HasReversePathInfo && isRoot) {	// the gateway received a rreq, is sending a rrep
+		RouteEntry_t newRoute;
+		has_route_to_node(reversePathInfo.nextHop, &newRoute);
 
-	txDatagram.msgHeader.flags = MSG_RREP;
-	txDatagram.msgHeader.localSource = _nodeID;
-	txDatagram.msgHeader.netDest = newRoute->dest;
-	txDatagram.msgHeader.netSource = _nodeID;
-	txDatagram.msgHeader.nextHop = rrepNodeUnicast;
-	txDatagram.msgHeader.hopCount = 5;
-	txDatagram.msgHeader.txSlot = _txSlot;
+		txDatagram.msgHeader.flags = MSG_RREP;
+		txDatagram.msgHeader.localSource = _nodeID;
+		txDatagram.msgHeader.netDest = rxDatagram.msgHeader.netSource;
+		txDatagram.msgHeader.netSource = _nodeID;
+		txDatagram.msgHeader.nextHop = reversePathInfo.nextHop;
+		txDatagram.msgHeader.hopCount = 0;
+		txDatagram.msgHeader.txSlot = _txSlot;
 
-	txDatagram.data.Rrep.dest_addr = rxDatagram.msgHeader.netDest;
-	txDatagram.data.Rrep.dest_sequence_num = newRoute->dest_seq_num;
-	txDatagram.data.Rrep.hop_cnt = newRoute->num_hops;
-	txDatagram.data.Rrep.lifetime = 5;
-	txDatagram.data.Rrep.source_addr = rxDatagram.msgHeader.netSource;
-	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
-	retVal = mac_send_tx_datagram(size);
+		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.source_addr;
+		txDatagram.data.Rrep.dest_sequence_num = _nodeSequenceNumber;
+		txDatagram.data.Rrep.hop_cnt = 0;
+		txDatagram.data.Rrep.lifetime = MAX_HOPS;
+		txDatagram.data.Rrep.source_addr = _nodeID;
+		int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
+		retVal = mac_send_tx_datagram(size);
+		HasReversePathInfo = false;
+	} else if (HasReversePathInfo && !isRoot) {
+		RouteEntry_t newRoute;
+		has_route_to_node(reversePathInfo.nextHop, &newRoute);
+
+		txDatagram.msgHeader.flags = MSG_RREP;
+		txDatagram.msgHeader.localSource = _nodeID;
+		txDatagram.msgHeader.netDest = reversePathInfo.destinationAddress;
+		txDatagram.msgHeader.netSource = rxDatagram.data.Rrep.source_addr;
+		txDatagram.msgHeader.nextHop = reversePathInfo.nextHop;
+		txDatagram.msgHeader.hopCount = reversePathInfo.hopcount + 1;
+		txDatagram.msgHeader.txSlot = _txSlot;
+
+		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.source_addr;
+		txDatagram.data.Rrep.dest_sequence_num =
+				rxDatagram.data.Rrep.dest_sequence_num;
+		txDatagram.data.Rrep.hop_cnt = rxDatagram.data.Rrep.hop_cnt + 1;
+		txDatagram.data.Rrep.lifetime = MAX_HOPS;
+		txDatagram.data.Rrep.source_addr = rxDatagram.data.Rrep.source_addr;
+		int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
+		retVal = mac_send_tx_datagram(size);
+		HasReversePathInfo = false;
+	} else {
+		retVal = false;
+	}
+
 	return retVal;
 }
 

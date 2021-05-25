@@ -134,8 +134,8 @@ int scheduler() {
 		hasSentGSM = false;
 
 		if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
-			RouteEntry_t *tempRoute = NULL;
-			if (get_sync() && !has_route_to_node(GATEWAY_ADDRESS, tempRoute)
+			RouteEntry_t tempRoute;
+			if (get_sync() && !has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
 					&& !isRoot) {
 				MACState = MAC_NET_OP;
 				nextNetOp = NET_BROADCAST_RREQ;
