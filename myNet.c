@@ -21,7 +21,6 @@ uint8_t _destSequenceNumber;
 static uint8_t IDSourceCombo[MAX_ROUTES][2];
 static uint8_t IDSourceComboCounter = 0;
 
-static nodeAddress rrepNodeUnicast;
 bool HasReversePathInfo = false;
 
 static ReversePathInfo_t reversePathInfo;
@@ -88,11 +87,25 @@ void add_route(RouteEntry_t routeToNode) {
 void add_route_to_neighbour(nodeAddress dest) {
 	RouteEntry_t newRoute;
 	if (has_route_to_node(dest, &newRoute)) {
-		return;
+		if (newRoute.num_hops > 0) {
+			newRoute.dest = dest;
+			newRoute.dest_seq_num = 0;
+			newRoute.expiration_time = 60;
+			newRoute.next_hop = newRoute.dest;
+			newRoute.num_hops = 0;
+			int i = 0;
+			for (i = 0; i < _numRoutes; ++i) {
+				if (routingtable[i].dest == newRoute.dest) {
+					routingtable[i] = newRoute;
+				}
+			}
+		} else {
+			return;
+		}
 	} else {
 		newRoute.dest = dest;
 		newRoute.dest_seq_num = 0;
-		newRoute.expiration_time = NULL;
+		newRoute.expiration_time = 60;
 		newRoute.next_hop = newRoute.dest;
 		newRoute.num_hops = 0;
 
@@ -256,11 +269,16 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 		if (dest == routingtable[i].dest) {
 			retVal = true;
 //			routeToNode = &routingtable[i];
-			memcpy(routeToNode, &routingtable[i], sizeof(RouteEntry_t));
+//			memcpy(routeToNode, &routingtable[i], sizeof(RouteEntry_t));
+			routeToNode->dest = routingtable[i].dest;
+			routeToNode->dest_seq_num = routingtable[i].dest_seq_num;
+			routeToNode->expiration_time = routingtable[i].expiration_time;
+			routeToNode->next_hop = routingtable[i].next_hop;
+			routeToNode->num_hops = routingtable[i].num_hops;
+
 			break;
-		} else {
-			routeToNode = NULL;
 		}
+
 	}
 	return retVal;
 }
@@ -268,7 +286,7 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 NextNetOp_t process_rrep() {
 	NextNetOp_t retVal = NET_NONE;
 
-	forwardPathInfo.destinationAddress = rxDatagram.msgHeader.netSource;
+	forwardPathInfo.destinationAddress = rxDatagram.msgHeader.netDest;
 	forwardPathInfo.nextHop = rxDatagram.msgHeader.localSource;
 	forwardPathInfo.hopcount = rxDatagram.data.Rrep.hop_cnt + 1;
 	forwardPathInfo.expTime = REVERSE_PATH_EXP_TIME;
@@ -314,9 +332,9 @@ bool add_reverse_path_to_table() {
 
 bool add_forward_path_to_table() {
 	bool retVal = false;
-	RouteEntry_t *routeToNode = NULL;
+	RouteEntry_t routeToNode;
 	bool hasRoute = has_route_to_node(forwardPathInfo.destinationAddress,
-			routeToNode);
+			&routeToNode);
 	RouteEntry_t newRouteToNode;
 	newRouteToNode.dest = forwardPathInfo.destinationAddress;
 	newRouteToNode.dest_seq_num = forwardPathInfo.dest_sequence_num;
@@ -324,12 +342,13 @@ bool add_forward_path_to_table() {
 	newRouteToNode.next_hop = forwardPathInfo.nextHop;
 	newRouteToNode.num_hops = forwardPathInfo.hopcount;
 
-	if (hasRoute) {	// entry already exist within the routing table, now compare the sequence numbers
-		if (routeToNode->dest_seq_num > forwardPathInfo.dest_sequence_num) {
-			memcpy(routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
-			add_route(newRouteToNode);
-			retVal = true;
-		}
+	if (hasRoute
+			&& (routeToNode.dest_seq_num > forwardPathInfo.dest_sequence_num)) {// entry already exist within the routing table, now compare the sequence numbers
+
+		memcpy(&routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
+		add_route(newRouteToNode);
+		retVal = true;
+
 	} else {	// does not have a route, so add one
 		add_route(newRouteToNode);
 		retVal = true;

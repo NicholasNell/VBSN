@@ -607,6 +607,7 @@ bool upload_current_datagram(int index) {
 	int localnumDataSent = pointerToData[index].netData.numDataSent;
 	int localnumNeighbours = pointerToData[index].netData.numNeighbours;
 	int localRTSMissed = pointerToData[index].netData.rtsMissed;
+	int localHops = pointerToData[index].msgHeader.hopCount;
 	char postCommand[SIZE_BUFFER];
 	memset(postCommand, 0, SIZE_BUFFER);
 	char postBody[SIZE_BUFFER];
@@ -614,12 +615,12 @@ bool upload_current_datagram(int index) {
 	WDT_A_clearTimer();
 	lenWritten =
 			sprintf(postBody,
-					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d}\r\n",
+					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d,\"Hops\":%d}\r\n",
 					localAddress, localTemperature, localHumidity,
 					localPressure, localVWC, localLight, localLat, localLon,
 					localHr, localMin, LocalSec, localSNR, localRSSI,
 					localRoutes, localnumDataSent, localnumNeighbours,
-					localRTSMissed);
+					localRTSMissed, localHops);
 
 	//	sprintf(postCommand,
 	//			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",

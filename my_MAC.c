@@ -183,7 +183,7 @@ void mac_init() {
 		if (hasGSM) {
 			_nodeID = GATEWAY_ADDRESS;
 		} else {
-			gen_id(false);
+			gen_id(true);
 		}
 
 		double temp = (double) rand();
@@ -420,7 +420,7 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 	txDatagram.msgHeader.curSlot = get_slot_count();
 
 	if (msgType == MSG_DATA) {
-
+		txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 		txDatagram.data.sensData.hum = bme280Data.humidity;
 		txDatagram.data.sensData.press = bme280Data.pressure;
 		txDatagram.data.sensData.temp = bme280Data.temperature;
@@ -573,7 +573,6 @@ static bool process_rx_buffer() {
 
 			MACState = MAC_SLEEP;
 			return true;
-			break;
 		}
 		case MSG_RREQ: 	// RREQ
 			// when a rreq is received, determine what actions to do next.

@@ -18,7 +18,7 @@
 #define POSSIBLE_TX_SLOT 1		// possible slot modulus
 #define GLOBAL_RX (10 / SLOT_SCALER)	// possible global rx modulus
 #define COLLECT_DATA_SLOT_REL 10	// slot in which data is collected before a transmission
-#define SYNC_PROB 800					// probability of sending out a sync message in a global rx slot.
+#define SYNC_PROB 400					// probability of sending out a sync message in a global rx slot.
 #define TOTAL_NETWORK_NODES 5		// total nodes in the network. I've only made 5.
 #define TIME_TO_SEND_SEC (60*5)		// the time between data transmissions
 #define TIME_TO_SEND_DATA_OFFSET 25	//
