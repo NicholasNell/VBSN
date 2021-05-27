@@ -30,6 +30,9 @@ char Command[SIZE_COMMAND];                              // Temp command buffer
 
 /* Private Functions */
 
+// num uploads failed
+static int _numUploadsFailed = 0;
+
 /*!
  * \brief Uninitialises the UART port for the gsm module.
  */
@@ -422,7 +425,9 @@ extern nodeAddress _nodeID;
 extern LocationData gpsData;
 extern RTC_C_Calendar currentTime;
 extern bool hasData;
-
+extern int _numMsgReceived;
+extern uint8_t _numRoutes;
+extern uint8_t _numNeighbours;
 bool gsm_upload_my_data() {
 
 //	gsm_power_save_off();
@@ -433,25 +438,30 @@ bool gsm_upload_my_data() {
 		hasData = true;
 	}
 	WDT_A_clearTimer();
-	double localTemperature = bme280Data.temperature;
-	double localHumidity = bme280Data.humidity;
-	double localPressure = bme280Data.pressure;
+//	double localTemperature = bme280Data.temperature;
+//	double localHumidity = bme280Data.humidity;
+//	double localPressure = bme280Data.pressure;
 	double localVWC = get_latest_value();
 	double localLight = get_lux();
 	double localLat = gpsData.lat;
 	double localLon = gpsData.lon;
 	nodeAddress localAddress = _nodeID;
+	int localRoutes = _numRoutes;
+	int localNeighbours = _numNeighbours;
+	int localMsgRx = _numMsgReceived;
+	int localUploadsfailed = _numUploadsFailed;
 	char postBody[255];
 	memset(postBody, 0, 255);
 	WDT_A_clearTimer();
 	int lenWritten =
 			sprintf(postBody,
-					"{\"nodeID\": %d,\"Temperature\":%.1f,\"Humidity\":%.1f,\"Pressure\": %.0f,\"VWC\":%.1f,\"Light\":%.1f,\"Latitude\": %f,\"Longitude\":%f,\"Time\":%d.%d.%d}\r\n",
-					localAddress, localTemperature, localHumidity,
-					localPressure, localVWC, localLight, localLat, localLon,
+					"{\"ID\": %d,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"Ro\":%d,\"NN\":%d,\"MR\":%d,\"UF\":%d}\r\n",
+					localAddress, localLat, localLon,
 					convert_hex_to_dec_by_byte(currentTime.hours),
 					convert_hex_to_dec_by_byte(currentTime.minutes),
-					convert_hex_to_dec_by_byte(currentTime.seconds));
+					convert_hex_to_dec_by_byte(currentTime.seconds),
+					localRoutes, localNeighbours, localMsgRx,
+					localUploadsfailed);
 
 	char postCommand[255];
 	memset(postCommand, 0, 255);
@@ -517,14 +527,18 @@ void gsm_upload_stored_datagrams() {
 
 	int attempts = 0;
 
-	if (!isRoot) {
+	if (isRoot) {
 		send_uart_pc("start gateway upload.\n");
 		WDT_A_clearTimer();
-		while (!gsm_upload_my_data()) {
+		bool s = false;
+		s = gsm_upload_my_data();
+		while (!s) {
+			_numUploadsFailed++;
 			WDT_A_clearTimer();
 			check_com();
 //		gsm_power_save_on();
 //		gsm_power_save_off();
+			s = gsm_upload_my_data();
 			attempts++;
 			send_uart_pc("Retrying gsm_upload_my_data\n");
 			if (attempts > 1) {
@@ -552,6 +566,7 @@ void gsm_upload_stored_datagrams() {
 			send_uart_pc("next datagram.\n");
 			success = upload_current_datagram(i);
 			while (!success) {
+				_numUploadsFailed++;
 				check_com();
 //				gsm_power_save_on();
 //				gsm_power_save_off();

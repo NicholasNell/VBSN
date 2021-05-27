@@ -106,6 +106,9 @@ extern uint8_t _nodeSequenceNumber;
 extern uint8_t _broadcastID;
 extern uint8_t _destSequenceNumber;
 
+//Number of data messages received
+int _numMsgReceived = 0;
+
 NextNetOp_t nextNetOp = NET_NONE;
 
 bool hopMessageFlag = false;
@@ -542,6 +545,7 @@ static bool process_rx_buffer() {
 				rxDatagram.radioData.snr = SnrValue;
 				receivedDatagrams[receivedMsgIndex++] = rxDatagram;
 				readyToUploadFlag = true;
+				_numMsgReceived++;
 			}
 
 			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
