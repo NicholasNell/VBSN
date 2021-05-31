@@ -130,4 +130,7 @@ bool send_rrep();
  */
 RouteEntry_t* get_routing_table();
 
+//! @param node node to be removed
+void remove_route_with_node(nodeAddress node);
+
 #endif /* MYNET_H_ */

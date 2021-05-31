@@ -242,6 +242,8 @@ int main(void) {
 	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
 	WDT_A_CLOCKITERATIONS_8192K);	// aprox 256
+	ResetCtl_clearHardResetSource(ResetCtl_getHardResetSource());
+	ResetCtl_clearSoftResetSource(ResetCtl_getSoftResetSource());
 //
 //	MAP_WDT_A_startTimer();
 
@@ -317,11 +319,11 @@ int main(void) {
 	run_systick_function_ms(1000);
 //	uint8_t timeout = 0;
 
-	flash_init_offset();
+//	flash_init_offset();
 
-	flash_fill_struct_for_write();
-	flash_write_struct_to_flash();
-	flash_reset_button_setup();
+//	flash_fill_struct_for_write();
+//	flash_write_struct_to_flash();
+//	flash_reset_button_setup();
 	while (!gpsWorking) {
 		if (systimer_ready_check()) {
 			WDT_A_clearTimer();
@@ -340,9 +342,9 @@ int main(void) {
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_8192K);	//
+	WDT_A_CLOCKITERATIONS_128M);	//
 
-	MAP_WDT_A_startTimer();
+//	MAP_WDT_A_startTimer();
 
 //	gps_set_low_power();
 //	send_uart_pc("GPS low power\n");
@@ -360,27 +362,19 @@ int main(void) {
 		if (collectDataFlag & !isRoot) {
 			send_uart_pc("Collecting Sensor Data\n");
 			helper_collect_sensor_data();
-			hasData = true;
 			collectDataFlag = false;
 		}
-		stateChanged = PCM_setPowerState(PCM_LPM3);
+		if (PCM_getPowerState() != PCM_LPM3) {
+			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
+		}
 
-//		if (uploadOwnData) {
-//			gsm_upload_my_data();
-//			uploadOwnData = false;
-//		}
-//
-//		if (readyToUploadFlag) {
-//			readyToUploadFlag = false;
-//			upload_current_datagram();
-//		}
-
-		if (isRoot && resetFlag) {
+		if (resetFlag) {
 			send_uart_pc("Reseting\n");
 			resetFlag = false;
-			flash_fill_struct_for_write();
-			flash_write_struct_to_flash();
+//			flash_fill_struct_for_write();
+//			flash_write_struct_to_flash();
 //			ResetCtl_initiateHardReset();
+			SysCtl_rebootDevice();
 		}
 
 		if (gpsWakeFlag) {
@@ -393,7 +387,6 @@ int main(void) {
 //			flash_fill_struct_for_write();
 //			flash_write_struct_to_flash();
 		}
-//		PCM_gotoLPM3InterruptSafe();
 	}
 }
 
@@ -403,7 +396,6 @@ void PORT1_IRQHandler(void) {
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
-	/* Toggling the output on the LED */
 	if (status & GPIO_PIN1) {
 		flash_erase_all();
 	}
@@ -411,35 +403,20 @@ void PORT1_IRQHandler(void) {
 }
 
 extern bool setRTCFlag;
-uint8_t ppsCounter = 0;
 extern bool gotGPSUartflag;
 void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 	if (status & GPS_PPS_PIN) {
-		ppsCounter++;
 		if (gotGPSUartflag) {
 			gps_set_low_power();
 			rtc_set_calendar_time();
 			rtc_start_clock();
-
 			gotGPSUartflag = false;
-
 			gpsWorking = true;
 			setRTCFlag = false;
 		}
-//		if (ppsCounter > 10) {// keep gps on for at least a certain amount of seconds locked before switching off
-//			ppsCounter = 0;
-//
-////			rtc_init();
-//			rtc_start_clock();
-//
-//			setRTCFlag = false;
-//			gps_set_low_power();
-//			gpsWorking = true;
-//
-//		}
 	}
 }
 

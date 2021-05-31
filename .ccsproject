@@ -15,5 +15,5 @@
 	<templateProperties value="id=empty_MSP_EXP432P401R_nortos_ccs.projectspec.empty_MSP_EXP432P401R_nortos_ccs,buildProfile=release,isHybrid=true"/>
 	<origin value="C:/Users/Nicholas/OneDrive - Stellenbosch University/Vineyard Based Sensor Networks temp/Meesters"/>
 	<filesToOpen value=""/>
-	<isTargetManual value="false"/>
+	<isTargetManual value="true"/>
 </projectOptions>

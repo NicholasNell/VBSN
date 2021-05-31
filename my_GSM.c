@@ -433,16 +433,16 @@ bool gsm_upload_my_data() {
 //	gsm_power_save_off();
 //	context_deactivate_activate();
 	WDT_A_clearTimer();
-	if (!hasData) {
-		helper_collect_sensor_data();
-		hasData = true;
-	}
+//	if (!hasData) {
+//		helper_collect_sensor_data();
+//		hasData = true;
+//	}
 	WDT_A_clearTimer();
 //	double localTemperature = bme280Data.temperature;
 //	double localHumidity = bme280Data.humidity;
 //	double localPressure = bme280Data.pressure;
-	double localVWC = get_latest_value();
-	double localLight = get_lux();
+//	double localVWC = get_latest_value();
+//	double localLight = get_lux();
 	double localLat = gpsData.lat;
 	double localLon = gpsData.lon;
 	nodeAddress localAddress = _nodeID;
@@ -457,9 +457,9 @@ bool gsm_upload_my_data() {
 			sprintf(postBody,
 					"{\"ID\": %d,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"Ro\":%d,\"NN\":%d,\"MR\":%d,\"UF\":%d}\r\n",
 					localAddress, localLat, localLon,
-					convert_hex_to_dec_by_byte(currentTime.hours),
-					convert_hex_to_dec_by_byte(currentTime.minutes),
-					convert_hex_to_dec_by_byte(currentTime.seconds),
+					convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().hours),
+					convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().minutes),
+					convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().seconds),
 					localRoutes, localNeighbours, localMsgRx,
 					localUploadsfailed);
 

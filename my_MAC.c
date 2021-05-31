@@ -7,6 +7,7 @@
 
 #include <bme280_defs.h>
 #include <datagram.h>
+#include <EC5.h>
 #include <main.h>
 #include <my_flash.h>
 #include <my_gpio.h>
@@ -135,6 +136,24 @@ static void gen_id(bool genNew);
 
 static bool mac_hop_message(nodeAddress dest);
 
+static void set_predefined_id(void);
+
+static void set_predefined_id(void) {
+	_nodeID = MAC_ID1;
+//	_nodeID = MAC_ID2;
+//	_nodeID = MAC_ID3;
+//	_nodeID = MAC_ID4;
+}
+
+static void set_predefined_tx(void);
+
+static void set_predefined_tx(void) {
+	_txSlot = MAC_TX1;
+//	_txSlot = MAC_TX2;
+//	_txSlot = MAC_TX3;
+//	_txSlot = MAC_TX4;
+}
+
 static void gen_id(bool genNew) {
 	nodeAddress tempID = 0x0;
 
@@ -157,7 +176,6 @@ static void gen_id(bool genNew) {
 }
 
 void mac_init() {
-	memset(&receivedDatagrams, 0x00, sizeof(receivedDatagrams));
 	uint8_t i;
 	for (i = 0; i < 255; ++i) {
 		{
@@ -174,10 +192,12 @@ void mac_init() {
 		if (hasGSM) {
 			_nodeID = GATEWAY_ADDRESS;
 		} else {
-			_nodeID = pFlashData->thisNodeId;
+//			_nodeID = pFlashData->thisNodeId;
+			set_predefined_id();
 		}
 
-		_txSlot = pFlashData->_txSlot;
+//		_txSlot = pFlashData->_txSlot;
+		set_predefined_tx();
 
 		_numNeighbours = pFlashData->_numNeighbours;
 		memcpy(neighbourTable, pFlashData->neighbourTable,
@@ -186,7 +206,8 @@ void mac_init() {
 		if (hasGSM) {
 			_nodeID = GATEWAY_ADDRESS;
 		} else {
-			gen_id(true);
+//			gen_id(true);
+			set_predefined_id();
 		}
 
 		double temp = (double) rand();
@@ -197,6 +218,10 @@ void mac_init() {
 			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME + 1; // this ensures that there is no txSlot in the GSM upload window
 		} else {
 			_txSlot = (uint16_t) temp;
+		}
+		set_predefined_tx();
+		if (hasGSM) {
+			_txSlot = 0;
 		}
 
 		schedChange = true;
@@ -277,11 +302,16 @@ bool mac_state_machine() {
 				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
 					send_uart_pc("MAC_RTS: channel is clear\n");
 					if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
+						hopMessageFlag = false;
 						send_uart_pc("MAC_RTS: sent RTS\n");
 						if (!mac_rx(SLOT_LENGTH_MS)) {
 							send_uart_pc("MAC_RTS: no CTS received\n");
 							numRetries++;
 							_numRTSMissed++;
+							if (numRetries > 2) {
+								remove_route_with_node(route.next_hop);
+								remove_neighbour(route.next_hop);
+							}
 							// no response, send again in next slot
 
 							MACState = MAC_SLEEP;
@@ -380,10 +410,15 @@ bool mac_state_machine() {
 						carrierSenseTimes[carrierSenseSlot++])) {
 					send_uart_pc("MAC_HOP_MESSAGE: channel clear\n");
 
-					if (mac_hop_message(route.next_hop)) { // Send RTS
+					if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
 						send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
+							numRetries++;
+							if (numRetries > 2) {
+								remove_route_with_node(route.next_hop);
+								remove_neighbour(route.next_hop);
+							}
 							send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
 							MACState = MAC_SLEEP;
 							return false;
@@ -429,7 +464,7 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 		txDatagram.data.sensData.temp = bme280Data.temperature;
 		txDatagram.data.sensData.lux = get_lux();
 		txDatagram.data.sensData.gpsData = gpsData;
-		txDatagram.data.sensData.soilMoisture = soilMoisture;
+		txDatagram.data.sensData.soilMoisture = get_vwc();
 		txDatagram.data.sensData.tim = timeStamp;
 
 		_numMsgSent++;
@@ -531,8 +566,15 @@ static bool process_rx_buffer() {
 			break;
 		case MSG_CTS: 	// CTS
 			send_uart_pc("CTS Msg Received\n");
-			mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
-			MACState = MAC_LISTEN;
+			if (hopMessageFlag) {
+				RouteEntry_t route;
+				has_route_to_node(GATEWAY_ADDRESS, &route);
+				mac_hop_message(route.next_hop);
+			} else {
+				mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
+//				hasData = true;
+				MACState = MAC_LISTEN;
+			}
 
 			break;
 		case MSG_DATA: 	// DATA
@@ -557,7 +599,9 @@ static bool process_rx_buffer() {
 
 			break;
 		case MSG_ACK: 	// ACK
-//				hasData = false;	// data has succesfully been sent
+			if (hopMessageFlag) {
+				hopMessageFlag = false;
+			}
 			numRetries = 0;
 			nextNetOp = NET_NONE;
 			MACState = MAC_SLEEP;
@@ -643,6 +687,7 @@ static bool mac_hop_message(nodeAddress dest) {
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.txSlot = _txSlot;
 	txDatagram.msgHeader.hopCount = txDatagram.msgHeader.hopCount + 1;
+	txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netDest;
 
 	txDatagram.netData.numDataSent = _numMsgSent;
 	_numMsgSent++;
@@ -667,6 +712,24 @@ static bool mac_hop_message(nodeAddress dest) {
 	}
 	stop_lora_timer();
 	return retVal;
+}
+
+void remove_neighbour(nodeAddress neighbour) {
+	int i;
+	for (i = 0; i < _numNeighbours; i++) {
+		if (neighbourTable[i].neighbourID == neighbour) {
+			if (i == MAX_NEIGHBOURS - 1) {
+				_numNeighbours--;
+			} else {
+				int j;
+				for (j = i; j < MAX_NEIGHBOURS - 1; j++) {
+					neighbourTable[j] = neighbourTable[j + 1];
+				}
+				_numNeighbours--;
+			}
+
+		}
+	}
 }
 
 Neighbour_t* get_neighbour_table() {

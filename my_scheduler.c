@@ -60,7 +60,9 @@ static bool get_sync(void) {
 
 	bool retval = false;
 	int ran = (float) rand() / RAND_MAX * SYNC_PROB;
-	if ((slotCount - lastSync) > ran) {
+	if ((slotCount - lastSync) < 0) {
+		lastSync = 0;
+	} else if ((slotCount - lastSync) > ran) {
 		lastSync = slotCount;
 		retval = true;
 	}
@@ -102,14 +104,26 @@ bool saveFlashData = false;
 
 extern NextNetOp_t nextNetOp;
 
+static int waitCounter = 0;
+extern bool resetFlag;
+
+extern uint8_t _numRoutes;
 int scheduler() {
+	waitCounter++;
+
+//	if (waitCounter > WINDOW_TIME_SEC) {
+//		resetFlag = true;
+//	}
+
+	if (_numRoutes >= MAX_ROUTES) {
+		_numRoutes = 0;
+	}
 
 	WDT_A_clearTimer();
 	MACState = MAC_SLEEP;	// by default, sleep
-	bool macStateMachineEnable = true;
+	bool macStateMachineEnable = false;
 	int i = 0;
 	static bool hasSentGSM = false;
-//	i = WINDOW_SCALER - (MAX_SLOT_COUNT / slotCount);
 	i = slotCount / WINDOW_TIME_SEC;
 
 	if (slotCount % GPS_WAKEUP_TIME == 0) {
@@ -123,6 +137,7 @@ int scheduler() {
 	if ((slotCount >= gsmStartSlot[i]) && (slotCount <= gsmStopSlot[i])) {
 		if (isRoot) {
 			if (!hasSentGSM) {
+				waitCounter = 0;
 				send_uart_pc("Uploading Stored datagrams\n");
 				gsm_upload_stored_datagrams();
 				hasSentGSM = true;
@@ -135,40 +150,42 @@ int scheduler() {
 
 		if (slotCount % GLOBAL_RX == 0) { // Global Sync Slots
 			RouteEntry_t tempRoute;
-			if (get_sync() && !has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
-					&& !isRoot) {
+			if (netOp) { // Perform a network layer operation in the global RX window
+				netOp = false;
+
 				MACState = MAC_NET_OP;
-				nextNetOp = NET_BROADCAST_RREQ;
+			} else if (hopMessageFlag) { // hop the received message in the global RX window
+				MACState = MAC_HOP_MESSAGE;
+				if (numRetries > 3) {
+					numRetries = 0;
+					MACState = MAC_LISTEN;
+				}
+
+			} else if ((numRetries > 0)) {
+				if (!isRoot) {
+					MACState = MAC_RTS;
+					if (numRetries > 3) {
+						numRetries = 0;
+						MACState = MAC_LISTEN;
+					}
+
+				}
 			} else if (get_sync()) {
-				MACState = MAC_SYNC_BROADCAST;
+				if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
+						&& !isRoot) {
+					MACState = MAC_NET_OP;
+					nextNetOp = NET_BROADCAST_RREQ;
+				} else {
+					MACState = MAC_SYNC_BROADCAST;
+				}
 			} else {
 				MACState = MAC_LISTEN;
 			}
 			macStateMachineEnable = true;
 		}
 
-		if (slotCount == txSlots[i]) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
-			if (!isRoot) {
-
-				MACState = MAC_RTS;
-				macStateMachineEnable = true;
-			}
-		}
-
 		if (slotCount == (txSlots[i] - 5)) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 			collectDataFlag = true;
-		}
-
-		if ((slotCount % GLOBAL_RX == 0) && netOp) { // Perform a network layer operation in the global RX window
-			netOp = false;
-			macStateMachineEnable = true;
-			MACState = MAC_NET_OP;
-		}
-
-		if ((slotCount % GLOBAL_RX == 0) && hopMessageFlag) { // hop the received message in the global RX window
-
-			MACState = MAC_HOP_MESSAGE;
-			macStateMachineEnable = true;
 		}
 
 		bool neighbourTx = false;
@@ -176,7 +193,6 @@ int scheduler() {
 		for (var = 0; var < _numNeighbours; ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
 			if (neighbourTable[var].neighbourTxSlot
 					== (slotCount - (i * WINDOW_TIME_SEC))) {
-				// (slotCount - (i * WINDOW_TIME_SEC))
 				MACState = MAC_LISTEN;
 				send_uart_pc("Neighbour Tx Slot\n");
 				macStateMachineEnable = true;
@@ -186,15 +202,12 @@ int scheduler() {
 			}
 		}
 
-		if ((numRetries > 0) && !neighbourTx && (slotCount % GLOBAL_RX == 0)) {
-
-			MACState = MAC_RTS;
-			if (numRetries > 3) {
-				numRetries = 0;
-				MACState = MAC_LISTEN;
+		if (slotCount == txSlots[i]) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
+			if (!isRoot) {
+				waitCounter = 0;
+				MACState = MAC_RTS;
+				macStateMachineEnable = true;
 			}
-
-			macStateMachineEnable = true;
 		}
 
 		if (macStateMachineEnable) {

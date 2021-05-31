@@ -106,19 +106,7 @@ void RTC_C_IRQHandler(void) {
 
 		set_slot_count(temp);
 
-//		if (get_slot_count() == MAX_SLOT_COUNT + 1) {
-//			set_slot_count(0);
-//		}
-
 	}
-//	if (time.minutes % 0x5 == 0) {
-//		setSlotCount(0);
-//	}
-//	incrementSlotCount();
-
-//	if (getSlotCount() == MAX_SLOT_COUNT + 1) {
-//		setSlotCount(0);
-//	}
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {
 //		gpsWakeFlag = true;
@@ -126,11 +114,9 @@ void RTC_C_IRQHandler(void) {
 
 	}
 
-	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {
-//		gpsWakeFlag = true;
-//			setSlotCount(0);
-		gps_disable_low_power();
-		resetFlag = true;
+	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {	// Resync with GPS
+		gpsWakeFlag = true;
+//		resetFlag = true;
 	}
 
 }

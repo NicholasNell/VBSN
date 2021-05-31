@@ -80,11 +80,32 @@ void net_init() {
 	}
 }
 
+void remove_route_with_node(nodeAddress node) {
+	_nodeSequenceNumber++;
+	int i;
+	for (i = 0; i < MAX_ROUTES; i++) {
+		if (routingtable[i].dest == node || routingtable[i].next_hop == node) {
+			if (i == MAX_ROUTES - 1) {
+				_numRoutes--;
+			} else {
+				int j;
+				for (j = i; j < MAX_ROUTES - 1; j++) {
+					routingtable[j] = routingtable[j + 1];
+				}
+				_numRoutes--;
+			}
+
+		}
+	}
+}
+
 void add_route(RouteEntry_t routeToNode) {
+	_nodeSequenceNumber++;
 	routingtable[_numRoutes++] = routeToNode;
 }
 
 void add_route_to_neighbour(nodeAddress dest) {
+	_nodeSequenceNumber++;
 	RouteEntry_t newRoute;
 	if (has_route_to_node(dest, &newRoute)) {
 		if (newRoute.num_hops > 0) {
@@ -130,7 +151,7 @@ bool send_rreq() {
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
-	txDatagram.msgHeader.hopCount = 5;
+	txDatagram.msgHeader.hopCount = 0;
 	txDatagram.msgHeader.txSlot = _txSlot;
 
 	txDatagram.data.Rreq.broadcast_id = _broadcastID;
@@ -176,7 +197,7 @@ NextNetOp_t process_rreq() {
 		add_rreq_combo(broadcast_id, source_addr);
 	}
 
-	// if rreq came from a direct neighbour and this is a gateway, send rrep;
+// if rreq came from a direct neighbour and this is a gateway, send rrep;
 	if (rxDatagram.data.Rreq.dest_addr == _nodeID) {
 		reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 		reversePathInfo.destinationAddress = rxDatagram.data.Rreq.dest_addr;

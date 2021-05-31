@@ -11,6 +11,7 @@
 #include <datagram.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <my_scheduler.h>
 
 #define BROADCAST_ADDRESS 0xFF
 #define GATEWAY_ADDRESS 0x00
@@ -19,6 +20,16 @@
 #define SLEEP_TIME 60 * 2 * 1000
 #define MAX_NEIGHBOURS 10
 #define MAX_STORED_MSG 10
+
+#define MAC_ID1 0xAB
+#define MAC_ID2 0xBC
+#define MAC_ID3 0xCD
+#define MAC_ID4 0xDE
+
+#define MAC_TX1 ((WINDOW_TIME_SEC-30) / 4)
+#define MAC_TX2 ((WINDOW_TIME_SEC-30) / 4) * 2
+#define MAC_TX3 ((WINDOW_TIME_SEC-30) / 4) * 3
+#define MAC_TX4 ((WINDOW_TIME_SEC-30) / 4) * 4
 
 typedef enum {
 	TX = 0, RX, TXDONE, RXDONE, RXTIMEOUT, TXTIMEOUT, RXERROR, RADIO_SLEEP
@@ -67,6 +78,9 @@ bool is_neighbour(nodeAddress node);
  * @param txSlot
  */
 void add_neighbour(nodeAddress neighbour, uint16_t txSlot);
+
+//! @param neighbour to remove
+void remove_neighbour(nodeAddress neighbour);
 
 /*!
  * \brief copies the contents of the txdatagram into the txBuffer and then transmits it. Only use if txdatagram has already been set up correctly.
