@@ -140,7 +140,7 @@ static void set_predefined_id(void);
 
 static void set_predefined_id(void) {
 	_nodeID = MAC_ID1;
-//	_nodeID = MAC_ID2;
+	_nodeID = MAC_ID2;
 //	_nodeID = MAC_ID3;
 //	_nodeID = MAC_ID4;
 }
@@ -149,7 +149,7 @@ static void set_predefined_tx(void);
 
 static void set_predefined_tx(void) {
 	_txSlot = MAC_TX1;
-//	_txSlot = MAC_TX2;
+	_txSlot = MAC_TX2;
 //	_txSlot = MAC_TX3;
 //	_txSlot = MAC_TX4;
 }
@@ -297,38 +297,38 @@ bool mac_state_machine() {
 //			numRetries++;
 			if (has_route_to_node(GATEWAY_ADDRESS, &route)) {
 				send_uart_pc("MAC_RTS: has route to dest\n");
-				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY,
-				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
-					send_uart_pc("MAC_RTS: channel is clear\n");
-					if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
-						hopMessageFlag = false;
-						send_uart_pc("MAC_RTS: sent RTS\n");
-						if (!mac_rx(SLOT_LENGTH_MS)) {
-							send_uart_pc("MAC_RTS: no CTS received\n");
-							numRetries++;
-							_numRTSMissed++;
-							if (numRetries > 2) {
-								remove_route_with_node(route.next_hop);
-								remove_neighbour(route.next_hop);
-							}
-							// no response, send again in next slot
-
-							MACState = MAC_SLEEP;
-//						return false;
-						}
-					} else {
-						send_uart_pc("MAC_RTS: send RTS failed\n");
+//				if (SX1276IsChannelFree(MODEM_LORA,
+//				RF_FREQUENCY,
+//				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
+//					send_uart_pc("MAC_RTS: channel is clear\n");
+				if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
+					hopMessageFlag = false;
+					send_uart_pc("MAC_RTS: sent RTS\n");
+					if (!mac_rx(SLOT_LENGTH_MS)) {
+						send_uart_pc("MAC_RTS: no CTS received\n");
 						numRetries++;
+						_numRTSMissed++;
+						if (numRetries > 2) {
+							remove_route_with_node(route.next_hop);
+							remove_neighbour(route.next_hop);
+						}
+						// no response, send again in next slot
+
 						MACState = MAC_SLEEP;
-//					return false;
+//						return false;
 					}
 				} else {
-					send_uart_pc("MAC_RTS: channel is busy\n");
+					send_uart_pc("MAC_RTS: send RTS failed\n");
 					numRetries++;
 					MACState = MAC_SLEEP;
-//				return false;
+//					return false;
 				}
+//				} else {
+//					send_uart_pc("MAC_RTS: channel is busy\n");
+//					numRetries++;
+//					MACState = MAC_SLEEP;
+////				return false;
+//				}
 			} else {
 				send_uart_pc("MAC_RTS: no Route to dest\n");
 				nextNetOp = NET_BROADCAST_RREQ;
