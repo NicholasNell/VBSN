@@ -83,6 +83,7 @@ void rtc_set_calendar_time(void) {
 }
 
 bool resetFlag = false;
+extern bool isRoot;
 void RTC_C_IRQHandler(void) {
 
 	uint32_t status;
@@ -106,6 +107,12 @@ void RTC_C_IRQHandler(void) {
 
 		set_slot_count(temp);
 
+	}
+
+	if (get_slot_count() % (WINDOW_TIME_SEC * 2) == 0) {
+		if (!isRoot) {
+			resetFlag = true;
+		}
 	}
 
 	if (status & RTC_C_TIME_EVENT_INTERRUPT) {

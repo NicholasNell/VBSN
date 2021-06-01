@@ -66,6 +66,11 @@ void mac_init();
 bool mac_state_machine();
 
 /*!
+ * @brief builds the tx datagaram and readies it for sending
+ */
+void build_tx_datagram(void);
+
+/*!
  *
  * @param checks if given node address is a neighbour of this node
  * @return return true if node is a neighbour

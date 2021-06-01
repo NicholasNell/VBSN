@@ -114,11 +114,17 @@ NextNetOp_t nextNetOp = NET_NONE;
 
 bool hopMessageFlag = false;
 bool readyToUploadFlag = false;
+bool waitForAck = false;
 
 extern bool netOp;
 extern bool flashOK;
 
 uint16_t txSlots[WINDOW_SCALER];
+
+/*!
+ * @brief Send
+ */
+static void mac_send_lora_data();
 
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -140,7 +146,7 @@ static void set_predefined_id(void);
 
 static void set_predefined_id(void) {
 	_nodeID = MAC_ID1;
-	_nodeID = MAC_ID2;
+//	_nodeID = MAC_ID2;
 //	_nodeID = MAC_ID3;
 //	_nodeID = MAC_ID4;
 }
@@ -149,7 +155,7 @@ static void set_predefined_tx(void);
 
 static void set_predefined_tx(void) {
 	_txSlot = MAC_TX1;
-	_txSlot = MAC_TX2;
+//	_txSlot = MAC_TX2;
 //	_txSlot = MAC_TX3;
 //	_txSlot = MAC_TX4;
 }
@@ -219,7 +225,7 @@ void mac_init() {
 		} else {
 			_txSlot = (uint16_t) temp;
 		}
-		set_predefined_tx();
+//		set_predefined_tx();
 		if (hasGSM) {
 			_txSlot = 0;
 		}
@@ -301,8 +307,9 @@ bool mac_state_machine() {
 //				RF_FREQUENCY,
 //				LORA_RSSI_THRESHOLD, carrierSenseTimes[carrierSenseSlot++])) {
 //					send_uart_pc("MAC_RTS: channel is clear\n");
-				if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
+				if (mac_send(MSG_DATA, route.next_hop)) { // Send RTS
 					hopMessageFlag = false;
+					waitForAck = true;
 					send_uart_pc("MAC_RTS: sent RTS\n");
 					if (!mac_rx(SLOT_LENGTH_MS)) {
 						send_uart_pc("MAC_RTS: no CTS received\n");
@@ -330,11 +337,14 @@ bool mac_state_machine() {
 ////				return false;
 //				}
 			} else {
+				numRetries++;
+				_numRTSMissed++;
 				send_uart_pc("MAC_RTS: no Route to dest\n");
 				nextNetOp = NET_BROADCAST_RREQ;
 				MACState = MAC_NET_OP;
 
 			}
+			MACState = MAC_SLEEP;
 			break;
 		case MAC_NET_OP:
 			switch (nextNetOp) {
@@ -444,6 +454,42 @@ bool mac_state_machine() {
 }
 
 extern uint8_t _numRoutes;
+
+void build_tx_datagram(void) {
+	RouteEntry_t route;
+	has_route_to_node(GATEWAY_ADDRESS, &route);
+	txDatagram.msgHeader.nextHop = route.next_hop;
+	txDatagram.msgHeader.localSource = _nodeID;
+	txDatagram.msgHeader.netSource = _nodeID;
+	txDatagram.msgHeader.netDest = route.dest;
+	txDatagram.msgHeader.hopCount = 0;
+	txDatagram.msgHeader.flags = MSG_DATA;
+	txDatagram.msgHeader.txSlot = _txSlot;
+	txDatagram.msgHeader.curSlot = get_slot_count() + 5;
+
+	txDatagram.data.sensData.hum = bme280Data.humidity;
+	txDatagram.data.sensData.press = bme280Data.pressure;
+	txDatagram.data.sensData.temp = bme280Data.temperature;
+	txDatagram.data.sensData.lux = get_lux();
+	txDatagram.data.sensData.gpsData = gpsData;
+	txDatagram.data.sensData.soilMoisture = get_vwc();
+	txDatagram.data.sensData.tim = timeStamp;
+	txDatagram.netData.numDataSent = _numMsgSent;
+
+	txDatagram.netData.numNeighbours = _numNeighbours;
+	txDatagram.netData.numRoutes = _numRoutes;
+	txDatagram.netData.rtsMissed = _numRTSMissed;
+	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.sensData)
+			+ sizeof(txDatagram.netData);
+	memcpy(TXBuffer, &txDatagram, size);
+}
+
+static void mac_send_lora_data() {
+	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.sensData)
+			+ sizeof(txDatagram.netData);
+	start_lora_timer(loraTxtimes[size + 1]);
+	SX1276Send(TXBuffer, size);
+}
 
 bool mac_send(msgType_t msgType, nodeAddress dest) {
 
@@ -602,6 +648,9 @@ static bool process_rx_buffer() {
 			if (hopMessageFlag) {
 				hopMessageFlag = false;
 			}
+			if (waitForAck) {
+				waitForAck = false;
+			}
 			numRetries = 0;
 			nextNetOp = NET_NONE;
 			MACState = MAC_SLEEP;
@@ -687,7 +736,7 @@ static bool mac_hop_message(nodeAddress dest) {
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.txSlot = _txSlot;
 	txDatagram.msgHeader.hopCount = txDatagram.msgHeader.hopCount + 1;
-	txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netDest;
+	txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netSource;
 
 	txDatagram.netData.numDataSent = _numMsgSent;
 	_numMsgSent++;

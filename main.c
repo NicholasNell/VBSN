@@ -363,6 +363,7 @@ int main(void) {
 			send_uart_pc("Collecting Sensor Data\n");
 			helper_collect_sensor_data();
 			collectDataFlag = false;
+//			build_tx_datagram();
 		}
 		if (PCM_getPowerState() != PCM_LPM3) {
 			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);

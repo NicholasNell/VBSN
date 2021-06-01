@@ -106,9 +106,11 @@ extern NextNetOp_t nextNetOp;
 
 static int waitCounter = 0;
 extern bool resetFlag;
+uint8_t resetCounter = 0;
 
 extern uint8_t _numRoutes;
 int scheduler() {
+
 	waitCounter++;
 
 //	if (waitCounter > WINDOW_TIME_SEC) {
@@ -137,9 +139,14 @@ int scheduler() {
 	if ((slotCount >= gsmStartSlot[i]) && (slotCount <= gsmStopSlot[i])) {
 		if (isRoot) {
 			if (!hasSentGSM) {
+				resetCounter++;
 				waitCounter = 0;
 				send_uart_pc("Uploading Stored datagrams\n");
 				gsm_upload_stored_datagrams();
+				if (resetCounter >= 3) {
+					resetCounter = 0;
+					resetFlag = true;
+				}
 				hasSentGSM = true;
 			}
 		} else {

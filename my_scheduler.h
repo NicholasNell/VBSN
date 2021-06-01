@@ -28,7 +28,7 @@
 #define GSM_UPLOAD_DATAGRAM_OFFSET 55	// time offset from slot count
 #define WRITE_FLASH_DATA_TIME 120		// Time between flash data writes
 #define WRITE_FLASH_DATA_OFFSET	20		// write flash data offset
-#define WINDOW_TIME_SEC (60*5)			//
+#define WINDOW_TIME_SEC (60*10)			//
 #define WINDOW_SCALER (MAX_SLOT_COUNT / WINDOW_TIME_SEC)
 #define GPS_WAKEUP_TIME (60*30)			// wake up gps every 15 minutes
 #define FLASH_SAVE_DATA	(60 * 5)		// save flash data every 5 minutes
