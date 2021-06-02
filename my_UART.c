@@ -44,13 +44,10 @@ extern struct bme280_dev bme280Dev;
 LocationData gpsData;
 
 extern Gpio_t Led_rgb_blue;
-extern RTC_C_Calendar currentTime;
 extern bool setTimeFlag;
 extern bool gpsWorking;
 
 bool setRTCFlag = false;
-
-extern RTC_C_Calendar currentTime;
 
 // static functions
 static void UartGPSCommands();
@@ -411,7 +408,7 @@ void UartGPSCommands() {
 					setRTCFlag = true;
 					RTC_C_Calendar newCal = { (uint8_t) (sec), minute, hr, 0,
 							(uint_fast8_t) day, month, year };
-					currentTime = newCal;
+					set_current_time(newCal);
 
 				}
 

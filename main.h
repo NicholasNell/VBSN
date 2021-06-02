@@ -15,6 +15,8 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <stdbool.h>
+
 /*!
  * Constant values need to compute the RSSI value
  */
@@ -51,5 +53,7 @@
 #define LORA_RSSI_THRESHOLD -50
 
 #define DEBUG 0
+
+bool get_is_root();
 
 #endif // __MAIN_H__

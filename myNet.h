@@ -133,4 +133,8 @@ RouteEntry_t* get_routing_table();
 //! @param node node to be removed
 void remove_route_with_node(nodeAddress node);
 
+uint8_t get_num_routes();
+
+void reset_num_routes();
+
 #endif /* MYNET_H_ */

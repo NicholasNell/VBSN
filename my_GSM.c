@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <main.h>
+#include <myNet.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
@@ -426,8 +427,6 @@ extern LocationData gpsData;
 extern RTC_C_Calendar currentTime;
 extern bool hasData;
 extern int _numMsgReceived;
-extern uint8_t _numRoutes;
-extern uint8_t _numNeighbours;
 bool gsm_upload_my_data() {
 
 //	gsm_power_save_off();
@@ -446,8 +445,8 @@ bool gsm_upload_my_data() {
 	double localLat = gpsData.lat;
 	double localLon = gpsData.lon;
 	nodeAddress localAddress = _nodeID;
-	int localRoutes = _numRoutes;
-	int localNeighbours = _numNeighbours;
+	int localRoutes = get_num_routes();
+	int localNeighbours = get_num_neighbours();
 	int localMsgRx = _numMsgReceived;
 	int localUploadsfailed = _numUploadsFailed;
 	char postBody[255];
@@ -527,7 +526,7 @@ void gsm_upload_stored_datagrams() {
 
 	int attempts = 0;
 
-	if (isRoot) {
+	if (get_is_root()) {
 		send_uart_pc("start gateway upload.\n");
 		WDT_A_clearTimer();
 		bool s = false;

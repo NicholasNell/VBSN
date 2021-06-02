@@ -27,6 +27,7 @@
 
 // Array of carrier sense times
 static uint32_t carrierSenseTimes[0xff];
+static uint8_t numRetries = 0;
 
 // Datagram containing the data to be sent over the medium
 Datagram_t txDatagram;
@@ -36,9 +37,6 @@ Datagram_t rxDatagram;
 
 Datagram_t receivedDatagrams[MAX_STORED_MSG];
 uint8_t receivedMsgIndex = 0;
-
-// Does this node have data to send?
-bool hasData = false;
 
 // State of the MAC state machine
 volatile MACappState_t MACState = NODE_DISC;
@@ -63,10 +61,10 @@ Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 // This node MAC parameters:
 nodeAddress _nodeID;
 uint8_t _dataLen;
-uint8_t _numNeighbours;
+static uint8_t _numNeighbours;
 uint16_t _numMsgSent;
 uint16_t _prevMsgId;
-uint16_t _txSlot;
+static uint16_t _txSlot;
 uint16_t _schedID;
 uint16_t _numRTSMissed;
 
@@ -79,17 +77,14 @@ extern bool macFlag;
 // bme280Data
 extern struct bme280_data bme280Data;
 
-// soil moisture data
-extern float soilMoisture;
-
 // schedChange
-extern bool schedChange;
+volatile extern bool schedChange;
 
 // has GSM module, if it has, is a root
 extern bool hasGSM;
 
 // current RadioState
-LoRaRadioState_t RadioState;
+volatile LoRaRadioState_t RadioState;
 
 // LoRa transmit buffer
 uint8_t TXBuffer[MAX_MESSAGE_LEN];
@@ -110,16 +105,15 @@ extern uint8_t _destSequenceNumber;
 //Number of data messages received
 int _numMsgReceived = 0;
 
-NextNetOp_t nextNetOp = NET_NONE;
+volatile NextNetOp_t nextNetOp = NET_NONE;
 
-bool hopMessageFlag = false;
-bool readyToUploadFlag = false;
+static bool hopMessageFlag = false;
 bool waitForAck = false;
 
-extern bool netOp;
+volatile extern bool netOp;
 extern bool flashOK;
 
-uint16_t txSlots[WINDOW_SCALER];
+static uint16_t txSlots[WINDOW_SCALER];
 
 /*!
  * @brief Send
@@ -230,9 +224,8 @@ void mac_init() {
 			_txSlot = 0;
 		}
 
-		schedChange = true;
 		_dataLen = 0;
-		_numNeighbours = 0;
+		reset_num_neighbours();
 		_numMsgSent = 0;
 		memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 
@@ -250,8 +243,6 @@ void mac_init() {
 
 }
 
-uint8_t numRetries = 0;
-
 bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
 	RouteEntry_t route;
@@ -264,7 +255,6 @@ bool mac_state_machine() {
 				send_uart_pc("MAC_SYNC_BROADCAST: channel clear\n");
 				if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
 					send_uart_pc("MAC_SYNC_BROADCAST: sent RTS\n");
-					schedChange = false;
 					MACState = MAC_SLEEP;
 //					return true;
 				} else {
@@ -313,9 +303,9 @@ bool mac_state_machine() {
 					send_uart_pc("MAC_RTS: sent RTS\n");
 					if (!mac_rx(SLOT_LENGTH_MS)) {
 						send_uart_pc("MAC_RTS: no CTS received\n");
-						numRetries++;
+						increment_num_retries();
 						_numRTSMissed++;
-						if (numRetries > 2) {
+						if (get_num_retries() > 2) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 						}
@@ -326,18 +316,18 @@ bool mac_state_machine() {
 					}
 				} else {
 					send_uart_pc("MAC_RTS: send RTS failed\n");
-					numRetries++;
+					increment_num_retries();
 					MACState = MAC_SLEEP;
 //					return false;
 				}
 //				} else {
 //					send_uart_pc("MAC_RTS: channel is busy\n");
-//					numRetries++;
+//					increment_num_retries();
 //					MACState = MAC_SLEEP;
 ////				return false;
 //				}
 			} else {
-				numRetries++;
+				increment_num_retries();
 				_numRTSMissed++;
 				send_uart_pc("MAC_RTS: no Route to dest\n");
 				nextNetOp = NET_BROADCAST_RREQ;
@@ -424,8 +414,8 @@ bool mac_state_machine() {
 						send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 
 						if (!mac_rx(SLOT_LENGTH_MS)) {
-							numRetries++;
-							if (numRetries > 2) {
+							increment_num_retries();
+							if (get_num_retries() > 2) {
 								remove_route_with_node(route.next_hop);
 								remove_neighbour(route.next_hop);
 							}
@@ -453,8 +443,6 @@ bool mac_state_machine() {
 	}
 }
 
-extern uint8_t _numRoutes;
-
 void build_tx_datagram(void) {
 	RouteEntry_t route;
 	has_route_to_node(GATEWAY_ADDRESS, &route);
@@ -476,8 +464,8 @@ void build_tx_datagram(void) {
 	txDatagram.data.sensData.tim = timeStamp;
 	txDatagram.netData.numDataSent = _numMsgSent;
 
-	txDatagram.netData.numNeighbours = _numNeighbours;
-	txDatagram.netData.numRoutes = _numRoutes;
+	txDatagram.netData.numNeighbours = get_num_neighbours();
+	txDatagram.netData.numRoutes = get_num_routes();
 	txDatagram.netData.rtsMissed = _numRTSMissed;
 	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.sensData)
 			+ sizeof(txDatagram.netData);
@@ -516,8 +504,9 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 		_numMsgSent++;
 		txDatagram.netData.numDataSent = _numMsgSent;
 
-		txDatagram.netData.numNeighbours = _numNeighbours;
-		txDatagram.netData.numRoutes = _numRoutes;
+		txDatagram.netData.numNeighbours = get_num_neighbours();
+		txDatagram.netData.numRoutes = get_num_routes();
+		;
 		txDatagram.netData.rtsMissed = _numRTSMissed;
 		int size = sizeof(txDatagram.msgHeader)
 				+ sizeof(txDatagram.data.sensData) + sizeof(txDatagram.netData);
@@ -589,7 +578,6 @@ static bool process_rx_buffer() {
 
 	if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
 		gen_id(true);
-		schedChange = true;
 	}
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
@@ -632,7 +620,6 @@ static bool process_rx_buffer() {
 				rxDatagram.radioData.rssi = RssiValue;
 				rxDatagram.radioData.snr = SnrValue;
 				receivedDatagrams[receivedMsgIndex++] = rxDatagram;
-				readyToUploadFlag = true;
 				_numMsgReceived++;
 			}
 
@@ -694,13 +681,14 @@ void add_neighbour(nodeAddress neighbour, uint16_t txSlot) {
 	}
 	receivedNeighbour.neighbourID = neighbour;
 	receivedNeighbour.neighbourTxSlot = txSlot;
-	neighbourTable[_numNeighbours++] = receivedNeighbour;
+	neighbourTable[get_num_neighbours()] = receivedNeighbour;
+	increment_num_neighbours();
 }
 
 bool is_neighbour(nodeAddress node) {
 	bool retVal = false;
 	int i;
-	for (i = 0; i < _numNeighbours; ++i) {
+	for (i = 0; i < get_num_neighbours(); ++i) {
 		if (node == neighbourTable[i].neighbourID) {
 			retVal = true;
 		}
@@ -740,8 +728,8 @@ static bool mac_hop_message(nodeAddress dest) {
 
 	txDatagram.netData.numDataSent = _numMsgSent;
 	_numMsgSent++;
-	txDatagram.netData.numNeighbours = _numNeighbours;
-	txDatagram.netData.numRoutes = _numRoutes;
+	txDatagram.netData.numNeighbours = get_num_neighbours();
+	txDatagram.netData.numRoutes = get_num_routes();
 	txDatagram.netData.rtsMissed = _numRTSMissed;
 	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.netData);
 	memcpy(TXBuffer, &txDatagram, size);
@@ -765,16 +753,16 @@ static bool mac_hop_message(nodeAddress dest) {
 
 void remove_neighbour(nodeAddress neighbour) {
 	int i;
-	for (i = 0; i < _numNeighbours; i++) {
+	for (i = 0; i < get_num_neighbours(); i++) {
 		if (neighbourTable[i].neighbourID == neighbour) {
 			if (i == MAX_NEIGHBOURS - 1) {
-				_numNeighbours--;
+				decrement_num_neighbours();
 			} else {
 				int j;
 				for (j = i; j < MAX_NEIGHBOURS - 1; j++) {
 					neighbourTable[j] = neighbourTable[j + 1];
 				}
-				_numNeighbours--;
+				decrement_num_neighbours();
 			}
 
 		}
@@ -799,4 +787,44 @@ void reset_received_msg_index(void) {
 
 void decrease_received_message_index(void) {
 	receivedMsgIndex--;
+}
+
+uint8_t get_num_retries(void) {
+	return numRetries;
+}
+
+void reset_num_retries(void) {
+	numRetries = 0;
+}
+
+void increment_num_retries(void) {
+	numRetries++;
+}
+
+uint8_t get_num_neighbours() {
+	return _numNeighbours;
+}
+
+void increment_num_neighbours() {
+	_numNeighbours++;
+}
+
+void decrement_num_neighbours() {
+	_numNeighbours--;
+}
+
+void reset_num_neighbours() {
+	_numNeighbours = 0;
+}
+
+uint16_t get_tx_slot() {
+	return _txSlot;
+}
+
+bool get_hop_message_flag() {
+	return hopMessageFlag;
+}
+
+uint16_t* get_tx_slots() {
+	return txSlots;
 }

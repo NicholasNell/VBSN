@@ -13,7 +13,7 @@
 #include <my_flash.h>
 // Routing Table
 RouteEntry_t routingtable[MAX_ROUTES];
-uint8_t _numRoutes;
+static uint8_t _numRoutes;
 uint8_t _nodeSequenceNumber;
 uint8_t _broadcastID;
 uint8_t _destSequenceNumber;
@@ -31,7 +31,6 @@ static ForwardPathInfo_t forwardPathInfo;
 extern Datagram_t rxDatagram;
 extern Datagram_t txDatagram;
 extern nodeAddress _nodeID;
-extern uint16_t _txSlot;
 // extern is flash ok flag
 extern bool flashOK;
 
@@ -152,7 +151,7 @@ bool send_rreq() {
 	txDatagram.msgHeader.netSource = _nodeID;
 	txDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
 	txDatagram.msgHeader.hopCount = 0;
-	txDatagram.msgHeader.txSlot = _txSlot;
+	txDatagram.msgHeader.txSlot = get_tx_slot();
 
 	txDatagram.data.Rreq.broadcast_id = _broadcastID;
 	txDatagram.data.Rreq.dest_addr = GATEWAY_ADDRESS;
@@ -381,7 +380,7 @@ extern bool isRoot;
 bool send_rrep() {
 	bool retVal = false;
 
-	if (HasReversePathInfo && isRoot) {	// the gateway received a rreq, is sending a rrep
+	if (HasReversePathInfo && get_is_root()) {// the gateway received a rreq, is sending a rrep
 		RouteEntry_t newRoute;
 		has_route_to_node(reversePathInfo.nextHop, &newRoute);
 
@@ -391,7 +390,7 @@ bool send_rrep() {
 		txDatagram.msgHeader.netSource = _nodeID;
 		txDatagram.msgHeader.nextHop = reversePathInfo.nextHop;
 		txDatagram.msgHeader.hopCount = 0;
-		txDatagram.msgHeader.txSlot = _txSlot;
+		txDatagram.msgHeader.txSlot = get_tx_slot();
 
 		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.source_addr;
 		txDatagram.data.Rrep.dest_sequence_num = _nodeSequenceNumber;
@@ -401,7 +400,7 @@ bool send_rrep() {
 		int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
 		retVal = mac_send_tx_datagram(size);
 		HasReversePathInfo = false;
-	} else if (HasReversePathInfo && !isRoot) {
+	} else if (HasReversePathInfo && !get_is_root()) {
 		RouteEntry_t newRoute;
 		has_route_to_node(reversePathInfo.nextHop, &newRoute);
 
@@ -411,7 +410,7 @@ bool send_rrep() {
 		txDatagram.msgHeader.netSource = rxDatagram.data.Rrep.source_addr;
 		txDatagram.msgHeader.nextHop = reversePathInfo.nextHop;
 		txDatagram.msgHeader.hopCount = reversePathInfo.hopcount + 1;
-		txDatagram.msgHeader.txSlot = _txSlot;
+		txDatagram.msgHeader.txSlot = get_tx_slot();
 
 		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.source_addr;
 		txDatagram.data.Rrep.dest_sequence_num =
@@ -431,4 +430,12 @@ bool send_rrep() {
 
 RouteEntry_t* get_routing_table() {
 	return routingtable;
+}
+
+uint8_t get_num_routes() {
+	return _numRoutes;
+}
+
+void reset_num_routes() {
+	_numRoutes = 0;
 }

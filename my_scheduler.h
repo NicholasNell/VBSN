@@ -33,16 +33,9 @@
 #define GPS_WAKEUP_TIME (60*30)			// wake up gps every 15 minutes
 #define FLASH_SAVE_DATA	(60 * 5)		// save flash data every 5 minutes
 
-/*!
- * \brief	inititial the scheduler, set tx slot and data collection slot
- */
-void init_scheduler();
-
-/*!
- *  \brief	decides what happes in this particular slot
- * @return int return value
- */
-int scheduler();
+//!
+//! \brief calculates a new sync probability based on the number of known neighbours.
+bool get_sync(void);
 
 /*!
  * \brief returns the current slot count

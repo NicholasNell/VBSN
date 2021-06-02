@@ -33,7 +33,6 @@ uint32_t lastWrite = MYDATA_MEM_START;
 extern uint8_t _nodeID;
 extern uint8_t _numRoutes;
 extern uint8_t _nodeSequenceNumber;
-extern uint8_t _numNeighbours;
 extern uint8_t _destSequenceNumber;
 extern uint8_t _broadcastID;
 extern uint16_t _txSlot;
@@ -126,7 +125,7 @@ int flash_fill_struct_for_write() {
 	myFlashDataStruct.flashValidIdentifier = FLASH_OK_IDENTIFIER;
 	myFlashDataStruct.thisNodeId = _nodeID;
 	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
-	if (_numNeighbours > 0) {
+	if (get_num_neighbours() > 0) {
 		Neighbour_t *ptr = get_neighbour_table();
 		memcpy(&myFlashDataStruct.neighbourTable, &ptr, sizeof(*ptr));
 	}
@@ -138,7 +137,7 @@ int flash_fill_struct_for_write() {
 	}
 	myFlashDataStruct._numRoutes = _numRoutes;
 	myFlashDataStruct._nodeSequenceNumber = _nodeSequenceNumber;
-	myFlashDataStruct._numNeighbours = _numNeighbours;
+	myFlashDataStruct._numNeighbours = get_num_neighbours();
 	myFlashDataStruct._destSequenceNumber = _destSequenceNumber;
 	myFlashDataStruct._broadcastID = _broadcastID;
 	myFlashDataStruct._txSlot = _txSlot;

@@ -66,61 +66,38 @@
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 
-// Uncomment for debug out sendUARTpc
-//#define DEBUG
-
-//uint8_t TXBuffer[255] = { 0 };
 uint8_t RXBuffer[255] = { 0 };
 volatile uint8_t loraRxBufferSize = LORA_MAX_PAYLOAD_LEN;
-
 uint16_t loraTxtimes[255];
-
 volatile int8_t RssiValue = 0;
 volatile int8_t SnrValue = 0;
-
 // Sensor Data Variables
 struct bme280_data bme280Data;
 struct bme280_dev bme280Dev;
-
 // Sensor Availability:
 bool bme280Working = false;
 bool lightSensorWorking = false;
 bool gpsWorking = false;
-
 bool hasGSM = false;
-
-bool MACFlag = true;
-
 // Radio Module status flag:
 bool rfm95Working = false;
-
 // is this a root node??
-bool isRoot = false;
+static bool isRoot = false;
+volatile bool gpsWakeFlag = false;
 
-extern bool schedFlag;
-
-bool gpsWakeFlag = false;
-
-// extern is flash ok flag
+//! External Flags:
+//! Flash
 extern bool flashOK;
-
-extern bool collectDataFlag;
-extern bool hasData;
-
-extern bool readyToUploadFlag;
-
-extern bool saveFlashData;
-
-// MSP432 Developments board LED's
-extern Gpio_t Led_rgb_red;	//RED
-extern Gpio_t Led_rgb_green;	//GREEN
-//extern Gpio_t Led_rgb_blue;		//BLUE
+//! MAC
+volatile extern LoRaRadioState_t RadioState;
+volatile extern MACappState_t MACState;
+//! Board
+extern Gpio_t Led_rgb_red;
+extern Gpio_t Led_rgb_green;
 extern Gpio_t Led_user_red;
-
-// MAC layer state
-extern LoRaRadioState_t RadioState;
-
-extern RTC_C_Calendar currentTime;
+//! UART
+extern bool setRTCFlag;
+extern bool gotGPSUartflag;
 
 //!
 //! @brief Erases the flash buffer on button press
@@ -233,9 +210,6 @@ void radio_init() {
 //	SX1276Send((uint8_t*) "Radio Working!", 13);
 }
 
-extern volatile MACappState_t MACState;
-extern bool uploadOwnData;
-extern bool resetFlag;
 int main(void) {
 	/* Stop Watchdog  */
 	MAP_WDT_A_holdTimer();
@@ -353,25 +327,24 @@ int main(void) {
 	volatile bool stateChanged = false;
 	while (1) {
 
-		if (schedFlag) {
-			schedFlag = false;
-			scheduler();
-//			MAP_WDT_A_clearTimer();
+		if (get_mac_state_machine_enabled()) {
+			reset_mac_state_machine_enabled();
+			mac_state_machine();
 		}
 
-		if (collectDataFlag & !isRoot) {
+		if (get_collect_data_flag() & !isRoot) {
 			send_uart_pc("Collecting Sensor Data\n");
 			helper_collect_sensor_data();
-			collectDataFlag = false;
+			reset_collect_data_flag();
 //			build_tx_datagram();
 		}
 //		if (PCM_getPowerState() != PCM_LPM3) {
 //			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
 //		}
 
-		if (resetFlag) {
+		if (get_reset_flag()) {
 			send_uart_pc("Reseting\n");
-			resetFlag = false;
+			reset_reset_flag();
 //			flash_fill_struct_for_write();
 //			flash_write_struct_to_flash();
 			ResetCtl_initiateHardReset();
@@ -383,10 +356,14 @@ int main(void) {
 			gpsWakeFlag = false;
 		}
 
-		if (saveFlashData) {
-			saveFlashData = false;
+		if (get_save_flash_data_flag()) {
+			reset_save_flash_data_flag();
 //			flash_fill_struct_for_write();
 //			flash_write_struct_to_flash();
+		}
+		if (get_upload_gsm_flag()) {
+			reset_upload_gsm_flag();
+			gsm_upload_stored_datagrams();
 		}
 	}
 }
@@ -403,8 +380,6 @@ void PORT1_IRQHandler(void) {
 
 }
 
-extern bool setRTCFlag;
-extern bool gotGPSUartflag;
 void PORT3_IRQHandler(void) {
 	uint32_t status;
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
@@ -502,4 +477,8 @@ void print_lora_registers(void) {
 		send_uart_integer(spi_read_rfm(registers[i]));
 		send_uart_pc("\n");
 	}
+}
+
+bool get_is_root() {
+	return isRoot;
 }

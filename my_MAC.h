@@ -115,4 +115,30 @@ void reset_received_msg_index(void);
 //!
 //! @brief decreases the received message index by one
 void decrease_received_message_index(void);
+
+//! @return number of retries
+uint8_t get_num_retries(void);
+
+//!
+//! Resets number of retries
+void reset_num_retries(void);
+
+//!
+//! Increments number of retries
+void increment_num_retries(void);
+
+uint8_t get_num_neighbours();
+
+void increment_num_neighbours();
+
+void decrement_num_neighbours();
+
+void reset_num_neighbours();
+
+uint16_t get_tx_slot();
+
+bool get_hop_message_flag();
+
+uint16_t* get_tx_slots();
+
 #endif /* MY_MAC_H_ */

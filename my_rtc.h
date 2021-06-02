@@ -14,19 +14,43 @@
 
 //!
 //! \brief Initilises the RTC without starting the clock
-void rtc_init( );
+void rtc_init();
 
 //!
 //! \brief starts the RTC clock
-void rtc_start_clock( void );
+void rtc_start_clock(void);
 
 //!
 //! \brief holds the RTC clock
-void rtc_stop_clock( void );
+void rtc_stop_clock(void);
 
 //!
 //! \brief holds the clock and then sets the new time, then starts the clock again
-void rtc_set_calendar_time( void );
+void rtc_set_calendar_time(void);
+
+/*!
+ * \brief	inititial the scheduler, set tx slot and data collection slot
+ */
+void init_scheduler();
+
+RTC_C_Calendar get_current_time();
+
+void set_current_time(RTC_C_Calendar time);
+
+bool get_mac_state_machine_enabled();
+void reset_mac_state_machine_enabled();
+
+bool get_upload_gsm_flag();
+void reset_upload_gsm_flag();
+
+bool get_collect_data_flag();
+void reset_collect_data_flag();
+
+bool get_save_flash_data_flag();
+void reset_save_flash_data_flag();
+
+bool get_reset_flag();
+void reset_reset_flag();
 
 #endif  /*MY_RTC_H_*/
 

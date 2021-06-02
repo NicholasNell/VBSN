@@ -24,7 +24,7 @@ extern bool lightSensorWorking;
 extern bool isRoot;
 
 void helper_collect_sensor_data() {
-	if (!isRoot) {
+	if (!get_is_root()) {
 		if (lightSensorWorking) {
 			get_light();
 		} else {
