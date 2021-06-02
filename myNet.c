@@ -5,6 +5,7 @@
  *      Author: njnel
  */
 #include <datagram.h>
+#include <main.h>
 #include <my_MAC.h>
 #include <my_RFM9x.h>
 #include <my_timer.h>
@@ -14,9 +15,8 @@
 // Routing Table
 RouteEntry_t routingtable[MAX_ROUTES];
 static uint8_t _numRoutes;
-uint8_t _nodeSequenceNumber;
-uint8_t _broadcastID;
-uint8_t _destSequenceNumber;
+static uint8_t _nodeSequenceNumber;
+static uint8_t _broadcastID;
 
 static uint8_t IDSourceCombo[MAX_ROUTES][2];
 static uint8_t IDSourceComboCounter = 0;
@@ -30,9 +30,6 @@ static ForwardPathInfo_t forwardPathInfo;
 
 extern Datagram_t rxDatagram;
 extern Datagram_t txDatagram;
-extern nodeAddress _nodeID;
-// extern is flash ok flag
-extern bool flashOK;
 
 static bool check_received_rreq(uint8_t broadcast_id, uint8_t sourceAddress);
 
@@ -61,18 +58,16 @@ static bool check_received_rreq(uint8_t broadcast_id, uint8_t sourceAddress) {
 }
 
 void net_init() {
-	if (flashOK) {
+	if (get_flash_ok_flag()) {
 		FlashData_t *pFlashData = get_flash_data_struct();
 		_numRoutes = pFlashData->_numRoutes;
 		_nodeSequenceNumber = pFlashData->_nodeSequenceNumber;
 		_broadcastID = pFlashData->_broadcastID;
-		_destSequenceNumber = pFlashData->_destSequenceNumber;
 		memcpy(routingtable, pFlashData->routingtable,
 				sizeof(pFlashData->routingtable));
 	} else {
 		_numRoutes = 0;
 		_nodeSequenceNumber = 0;
-		_destSequenceNumber = 0xFF;
 		_broadcastID = 0;
 		memset(routingtable, NULL, MAX_ROUTES);
 		memset(IDSourceCombo, NULL, MAX_ROUTES * 2);
@@ -146,9 +141,9 @@ bool send_rreq() {
 	_broadcastID++;
 
 	txDatagram.msgHeader.flags = MSG_RREQ;
-	txDatagram.msgHeader.localSource = _nodeID;
+	txDatagram.msgHeader.localSource = get_node_id();
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
-	txDatagram.msgHeader.netSource = _nodeID;
+	txDatagram.msgHeader.netSource = get_node_id();
 	txDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
 	txDatagram.msgHeader.hopCount = 0;
 	txDatagram.msgHeader.txSlot = get_tx_slot();
@@ -163,7 +158,7 @@ bool send_rreq() {
 	}
 
 	txDatagram.data.Rreq.hop_cnt = 0; // hop count always starts at zero.
-	txDatagram.data.Rreq.source_addr = _nodeID;
+	txDatagram.data.Rreq.source_addr = get_node_id();
 	txDatagram.data.Rreq.source_sequence_num = _nodeSequenceNumber;
 
 	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rreq);
@@ -184,7 +179,7 @@ NextNetOp_t process_rreq() {
 	nodeAddress source_addr = rxDatagram.data.Rreq.source_addr;
 	uint8_t broadcast_id = rxDatagram.data.Rreq.broadcast_id;
 
-	if (rxDatagram.data.Rreq.source_addr == _nodeID) { // if this Rreq originated from this node, wait
+	if (rxDatagram.data.Rreq.source_addr == get_node_id()) { // if this Rreq originated from this node, wait
 		retVal = NET_WAIT;
 		return retVal;
 	}
@@ -197,7 +192,7 @@ NextNetOp_t process_rreq() {
 	}
 
 // if rreq came from a direct neighbour and this is a gateway, send rrep;
-	if (rxDatagram.data.Rreq.dest_addr == _nodeID) {
+	if (rxDatagram.data.Rreq.dest_addr == get_node_id()) {
 		reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 		reversePathInfo.destinationAddress = rxDatagram.data.Rreq.dest_addr;
 		reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
@@ -263,11 +258,11 @@ bool net_re_rreq() {
 	memcpy(&txDatagram, &rxDatagram,
 			sizeof(rxDatagram.msgHeader) + sizeof(rxDatagram.data));
 
-	if (txDatagram.data.Rreq.source_addr != _nodeID) { // only rebroadcast if not own Rreq
+	if (txDatagram.data.Rreq.source_addr != get_node_id()) { // only rebroadcast if not own Rreq
 
 		if (txDatagram.data.Rreq.hop_cnt <= MAX_HOPS) {	// no more than 5 hops
 			txDatagram.data.Rreq.hop_cnt++;
-			txDatagram.msgHeader.localSource = _nodeID;
+			txDatagram.msgHeader.localSource = get_node_id();
 			int size = sizeof(txDatagram.msgHeader)
 					+ sizeof(txDatagram.data.Rreq);
 			retVal = mac_send_tx_datagram(size);
@@ -280,7 +275,7 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 	if (routeToNode == NULL)
 		;
 	bool retVal = false;
-	if (dest == _nodeID) {
+	if (dest == get_node_id()) {
 		retVal = true;
 		return retVal;
 	}
@@ -314,7 +309,7 @@ NextNetOp_t process_rrep() {
 
 	bool addedPath = add_forward_path_to_table();
 
-	if (rxDatagram.data.Rrep.dest_addr == _nodeID) {
+	if (rxDatagram.data.Rrep.dest_addr == get_node_id()) {
 		retVal = NET_NONE;
 		return retVal;
 	} else if (addedPath) {
@@ -376,7 +371,6 @@ bool add_forward_path_to_table() {
 	return retVal;
 }
 
-extern bool isRoot;
 bool send_rrep() {
 	bool retVal = false;
 
@@ -385,9 +379,9 @@ bool send_rrep() {
 		has_route_to_node(reversePathInfo.nextHop, &newRoute);
 
 		txDatagram.msgHeader.flags = MSG_RREP;
-		txDatagram.msgHeader.localSource = _nodeID;
+		txDatagram.msgHeader.localSource = get_node_id();
 		txDatagram.msgHeader.netDest = rxDatagram.msgHeader.netSource;
-		txDatagram.msgHeader.netSource = _nodeID;
+		txDatagram.msgHeader.netSource = get_node_id();
 		txDatagram.msgHeader.nextHop = reversePathInfo.nextHop;
 		txDatagram.msgHeader.hopCount = 0;
 		txDatagram.msgHeader.txSlot = get_tx_slot();
@@ -396,7 +390,7 @@ bool send_rrep() {
 		txDatagram.data.Rrep.dest_sequence_num = _nodeSequenceNumber;
 		txDatagram.data.Rrep.hop_cnt = 0;
 		txDatagram.data.Rrep.lifetime = MAX_HOPS;
-		txDatagram.data.Rrep.source_addr = _nodeID;
+		txDatagram.data.Rrep.source_addr = get_node_id();
 		int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
 		retVal = mac_send_tx_datagram(size);
 		HasReversePathInfo = false;
@@ -405,7 +399,7 @@ bool send_rrep() {
 		has_route_to_node(reversePathInfo.nextHop, &newRoute);
 
 		txDatagram.msgHeader.flags = MSG_RREP;
-		txDatagram.msgHeader.localSource = _nodeID;
+		txDatagram.msgHeader.localSource = get_node_id();
 		txDatagram.msgHeader.netDest = reversePathInfo.destinationAddress;
 		txDatagram.msgHeader.netSource = rxDatagram.data.Rrep.source_addr;
 		txDatagram.msgHeader.nextHop = reversePathInfo.nextHop;
@@ -438,4 +432,12 @@ uint8_t get_num_routes() {
 
 void reset_num_routes() {
 	_numRoutes = 0;
+}
+
+uint8_t get_node_sequence_number() {
+	return _nodeSequenceNumber;
+}
+
+uint8_t get_broadcast_id() {
+	return _broadcastID;
 }

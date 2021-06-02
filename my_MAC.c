@@ -26,6 +26,7 @@
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
 // Array of carrier sense times
+static uint16_t loraTxtimes[255];
 static uint32_t carrierSenseTimes[0xff];
 static uint8_t numRetries = 0;
 
@@ -35,90 +36,47 @@ Datagram_t txDatagram;
 // Datagram from received message
 Datagram_t rxDatagram;
 
-Datagram_t receivedDatagrams[MAX_STORED_MSG];
-uint8_t receivedMsgIndex = 0;
+static Datagram_t receivedDatagrams[MAX_STORED_MSG];
+static uint8_t receivedMsgIndex = 0;
 
 // State of the MAC state machine
-volatile MACappState_t MACState = NODE_DISC;
-
-// empty array for testing
-uint8_t emptyArray[0];
-
-// pointer to the radio module object
-extern SX1276_t SX1276;
+static volatile MACappState_t MACState = NODE_DISC;
 
 // LED gpio objects
 extern Gpio_t Led_rgb_green;
 //extern Gpio_t Led_rgb_blue;
 extern Gpio_t Led_rgb_red;
 
-// Size of recieved LoRa buffer
-extern volatile uint8_t loraRxBufferSize;
-
 // array of known neighbours
-Neighbour_t neighbourTable[MAX_NEIGHBOURS];
+static Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
 // This node MAC parameters:
-nodeAddress _nodeID;
-uint8_t _dataLen;
+static nodeAddress _nodeID;
 static uint8_t _numNeighbours;
-uint16_t _numMsgSent;
-uint16_t _prevMsgId;
+static uint16_t _numMsgSent;
 static uint16_t _txSlot;
-uint16_t _schedID;
-uint16_t _numRTSMissed;
-
-// The LoRa RX Buffer
-extern uint8_t RXBuffer[MAX_MESSAGE_LEN];
-
-// should mac init
-extern bool macFlag;
+static uint16_t _numRTSMissed;
 
 // bme280Data
 extern struct bme280_data bme280Data;
 
-// schedChange
-volatile extern bool schedChange;
-
-// has GSM module, if it has, is a root
-extern bool hasGSM;
-
 // current RadioState
-volatile LoRaRadioState_t RadioState;
+static volatile LoRaRadioState_t RadioState;
 
 // LoRa transmit buffer
-uint8_t TXBuffer[MAX_MESSAGE_LEN];
-
-//GPS Data
-extern LocationData gpsData;
-
-// lora tx times
-extern uint16_t loraTxtimes[255];
-
-// data collection time
-RTC_C_Calendar timeStamp;
-
-extern uint8_t _nodeSequenceNumber;
-extern uint8_t _broadcastID;
-extern uint8_t _destSequenceNumber;
+static uint8_t TXBuffer[MAX_MESSAGE_LEN];
 
 //Number of data messages received
-int _numMsgReceived = 0;
+static int _numMsgReceived = 0;
 
-volatile NextNetOp_t nextNetOp = NET_NONE;
+volatile static NextNetOp_t nextNetOp = NET_NONE;
 
 static bool hopMessageFlag = false;
-bool waitForAck = false;
+static bool waitForAck = false;
 
-volatile extern bool netOp;
-extern bool flashOK;
+volatile static bool netOp;
 
 static uint16_t txSlots[WINDOW_SCALER];
-
-/*!
- * @brief Send
- */
-static void mac_send_lora_data();
 
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -187,9 +145,9 @@ void mac_init() {
 		}
 	}
 
-	if (flashOK) {
+	if (get_flash_ok_flag()) {
 		FlashData_t *pFlashData = get_flash_data_struct();
-		if (hasGSM) {
+		if (get_is_root()) {
 			_nodeID = GATEWAY_ADDRESS;
 		} else {
 //			_nodeID = pFlashData->thisNodeId;
@@ -203,7 +161,7 @@ void mac_init() {
 		memcpy(neighbourTable, pFlashData->neighbourTable,
 				sizeof(pFlashData->neighbourTable));
 	} else {
-		if (hasGSM) {
+		if (get_is_root()) {
 			_nodeID = GATEWAY_ADDRESS;
 		} else {
 //			gen_id(true);
@@ -220,11 +178,10 @@ void mac_init() {
 			_txSlot = (uint16_t) temp;
 		}
 //		set_predefined_tx();
-		if (hasGSM) {
+		if (get_is_root()) {
 			_txSlot = 0;
 		}
 
-		_dataLen = 0;
 		reset_num_neighbours();
 		_numMsgSent = 0;
 		memset(neighbourTable, NULL, MAX_NEIGHBOURS);
@@ -239,6 +196,12 @@ void mac_init() {
 
 	for (i = 0; i < WINDOW_SCALER; i++) {
 		txSlots[i] = i * WINDOW_TIME_SEC + _txSlot;
+	}
+
+	for (i = 0; i < 255; ++i) {
+		loraTxtimes[i] = SX1276GetTimeOnAir(MODEM_LORA, LORA_BANDWIDTH,
+		LORA_SPREADING_FACTOR, LORA_CODINGRATE, LORA_PREAMBLE_LENGTH,
+		LORA_FIX_LENGTH_PAYLOAD_ON, i + 1, LORA_CRC_ON) + 10;
 	}
 
 }
@@ -459,9 +422,9 @@ void build_tx_datagram(void) {
 	txDatagram.data.sensData.press = bme280Data.pressure;
 	txDatagram.data.sensData.temp = bme280Data.temperature;
 	txDatagram.data.sensData.lux = get_lux();
-	txDatagram.data.sensData.gpsData = gpsData;
+	txDatagram.data.sensData.gpsData = get_gps_data();
 	txDatagram.data.sensData.soilMoisture = get_vwc();
-	txDatagram.data.sensData.tim = timeStamp;
+	txDatagram.data.sensData.tim = RTC_C_getCalendarTime();
 	txDatagram.netData.numDataSent = _numMsgSent;
 
 	txDatagram.netData.numNeighbours = get_num_neighbours();
@@ -470,13 +433,6 @@ void build_tx_datagram(void) {
 	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.sensData)
 			+ sizeof(txDatagram.netData);
 	memcpy(TXBuffer, &txDatagram, size);
-}
-
-static void mac_send_lora_data() {
-	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.sensData)
-			+ sizeof(txDatagram.netData);
-	start_lora_timer(loraTxtimes[size + 1]);
-	SX1276Send(TXBuffer, size);
 }
 
 bool mac_send(msgType_t msgType, nodeAddress dest) {
@@ -497,9 +453,9 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 		txDatagram.data.sensData.press = bme280Data.pressure;
 		txDatagram.data.sensData.temp = bme280Data.temperature;
 		txDatagram.data.sensData.lux = get_lux();
-		txDatagram.data.sensData.gpsData = gpsData;
+		txDatagram.data.sensData.gpsData = get_gps_data();
 		txDatagram.data.sensData.soilMoisture = get_vwc();
-		txDatagram.data.sensData.tim = timeStamp;
+		txDatagram.data.sensData.tim = RTC_C_getCalendarTime();
 
 		_numMsgSent++;
 		txDatagram.netData.numDataSent = _numMsgSent;
@@ -562,11 +518,9 @@ bool mac_rx(uint32_t timeout) {
 	return retVal;
 }
 
-extern volatile int8_t RssiValue;
-extern volatile int8_t SnrValue;
 static bool process_rx_buffer() {
 
-	memcpy(&rxDatagram, &RXBuffer, loraRxBufferSize);
+	memcpy(&rxDatagram, get_rx_buffer(), get_lora_rx_buffer_size());
 
 	if (receivedMsgIndex == MAX_STORED_MSG) {
 		receivedMsgIndex = 0;
@@ -617,8 +571,8 @@ static bool process_rx_buffer() {
 			} else {
 				hopMessageFlag = false;
 				// now either store the data for further later sending or get ready to upload data to cloud
-				rxDatagram.radioData.rssi = RssiValue;
-				rxDatagram.radioData.snr = SnrValue;
+				rxDatagram.radioData.rssi = get_rssi_value();
+				rxDatagram.radioData.snr = get_snr_value();
 				receivedDatagrams[receivedMsgIndex++] = rxDatagram;
 				_numMsgReceived++;
 			}
@@ -718,7 +672,7 @@ bool mac_send_tx_datagram(int size) {
 
 static bool mac_hop_message(nodeAddress dest) {
 
-	memcpy(&txDatagram, &rxDatagram, loraRxBufferSize);
+	memcpy(&txDatagram, &rxDatagram, get_lora_rx_buffer_size());
 	txDatagram.msgHeader.localSource = _nodeID;
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.nextHop = dest;
@@ -827,4 +781,48 @@ bool get_hop_message_flag() {
 
 uint16_t* get_tx_slots() {
 	return txSlots;
+}
+
+LoRaRadioState_t get_lora_radio_state() {
+	return RadioState;
+}
+
+void set_lora_radio_state(LoRaRadioState_t state) {
+	RadioState = state;
+}
+
+MACappState_t get_mac_app_state() {
+	return MACState;
+}
+
+void set_mac_app_state(MACappState_t state) {
+	MACState = state;
+}
+
+nodeAddress get_node_id() {
+	return _nodeID;
+}
+
+void set_node_id(nodeAddress id) {
+	_nodeID = id;
+}
+
+int get_num_msg_rx() {
+	return _numMsgReceived;
+}
+
+void set_next_net_op(NextNetOp_t net) {
+	nextNetOp = net;
+}
+
+bool get_net_op_flag() {
+	return netOp;
+}
+
+void set_net_op_flag() {
+	netOp = true;
+}
+
+void reset_net_op_flag() {
+	netOp = false;
 }

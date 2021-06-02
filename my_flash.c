@@ -21,7 +21,7 @@
 
 #define MY_FLASH_DATA_LEN 4096
 
-bool flashOK = false;
+static bool flashOK = false;
 
 static FlashData_t myFlashDataStruct;
 
@@ -30,12 +30,7 @@ static struct FlashOffset flashOffset;
 static uint8_t myFlashData[MY_FLASH_DATA_LEN];
 uint32_t lastWrite = MYDATA_MEM_START;
 
-extern uint8_t _nodeID;
 extern uint8_t _numRoutes;
-extern uint8_t _nodeSequenceNumber;
-extern uint8_t _destSequenceNumber;
-extern uint8_t _broadcastID;
-extern uint16_t _txSlot;
 
 void flash_init_offset(void) {
 	int tempOffset = 0;
@@ -59,8 +54,6 @@ void flash_init_offset(void) {
 	tempOffset += sizeof(myFlashDataStruct._numNeighbours);
 	flashOffset._broadcastID = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct._broadcastID);
-	flashOffset._destSequenceNumber = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct._destSequenceNumber);
 	flashOffset._txSlot = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct._txSlot);
 
@@ -105,15 +98,15 @@ int flash_erase_all() {
 }
 
 int flash_write_node_id() {
-	myFlashData[NODE_ID_LOCATION] = _nodeID;
+	myFlashData[NODE_ID_LOCATION] = get_node_id();
 	return flash_write_buffer();
 }
 
 int flash_read_node_id() {
 	myFlashData[NODE_ID_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
 			+ NODE_ID_LOCATION);
-	_nodeID = myFlashData[NODE_ID_LOCATION];
-	return _nodeID;
+	set_node_id(myFlashData[NODE_ID_LOCATION]);
+	return myFlashData[NODE_ID_LOCATION];
 }
 
 int flash_init_buffer() {
@@ -123,7 +116,7 @@ int flash_init_buffer() {
 
 int flash_fill_struct_for_write() {
 	myFlashDataStruct.flashValidIdentifier = FLASH_OK_IDENTIFIER;
-	myFlashDataStruct.thisNodeId = _nodeID;
+	myFlashDataStruct.thisNodeId = get_node_id();
 	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
 	if (get_num_neighbours() > 0) {
 		Neighbour_t *ptr = get_neighbour_table();
@@ -136,11 +129,10 @@ int flash_fill_struct_for_write() {
 		memcpy(&myFlashDataStruct.receivedMessages, &ptr2, sizeof(*ptr2));
 	}
 	myFlashDataStruct._numRoutes = _numRoutes;
-	myFlashDataStruct._nodeSequenceNumber = _nodeSequenceNumber;
+	myFlashDataStruct._nodeSequenceNumber = get_node_sequence_number();
 	myFlashDataStruct._numNeighbours = get_num_neighbours();
-	myFlashDataStruct._destSequenceNumber = _destSequenceNumber;
-	myFlashDataStruct._broadcastID = _broadcastID;
-	myFlashDataStruct._txSlot = _txSlot;
+	myFlashDataStruct._broadcastID = get_broadcast_id();
+	myFlashDataStruct._txSlot = get_tx_slot();
 	return 1;
 }
 
@@ -170,4 +162,8 @@ bool flash_check_for_data(void) {
 
 FlashData_t* get_flash_data_struct(void) {
 	return &myFlashDataStruct;
+}
+
+bool get_flash_ok_flag() {
+	return flashOK;
 }

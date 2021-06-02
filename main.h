@@ -15,6 +15,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <bme280_defs.h>
 #include <stdbool.h>
 
 /*!
@@ -55,5 +56,20 @@
 #define DEBUG 0
 
 bool get_is_root();
+
+//!
+//! \brief collects all sensor data
+void helper_collect_sensor_data();
+
+uint8_t* get_rx_buffer();
+
+uint8_t get_lora_rx_buffer_size();
+
+int8_t get_rssi_value();
+int8_t get_snr_value();
+
+bool get_gps_wake_flag();
+void set_gpsWake_flag();
+void reset_gps_wake_flag();
 
 #endif // __MAIN_H__

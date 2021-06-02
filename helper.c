@@ -15,29 +15,6 @@
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 #include <main.h>
 
-extern RTC_C_Calendar timeStamp;
-
-extern struct bme280_dev bme280Dev;
-extern struct bme280_data bme280Data;
-float soilMoisture = 100;
-extern bool lightSensorWorking;
-extern bool isRoot;
-
-void helper_collect_sensor_data() {
-	if (!get_is_root()) {
-		if (lightSensorWorking) {
-			get_light();
-		} else {
-			init_max();
-		}
-
-		bme280_get_data(&bme280Dev, &bme280Data);
-
-		get_vwc();
-		timeStamp = RTC_C_getCalendarTime();
-	}
-}
-
 int convert_hex_to_dec_by_byte(uint_fast8_t hex) {
 	int tens = (hex & 0xF0) >> 4;
 	int ones = (hex & 0x0F);

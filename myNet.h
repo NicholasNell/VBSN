@@ -137,4 +137,8 @@ uint8_t get_num_routes();
 
 void reset_num_routes();
 
+uint8_t get_node_sequence_number();
+
+uint8_t get_broadcast_id();
+
 #endif /* MYNET_H_ */

@@ -66,11 +66,10 @@
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
 
-uint8_t RXBuffer[255] = { 0 };
-volatile uint8_t loraRxBufferSize = LORA_MAX_PAYLOAD_LEN;
-uint16_t loraTxtimes[255];
-volatile int8_t RssiValue = 0;
-volatile int8_t SnrValue = 0;
+static uint8_t RXBuffer[255] = { 0 };
+volatile static uint8_t loraRxBufferSize = LORA_MAX_PAYLOAD_LEN;
+volatile static int8_t RssiValue = 0;
+volatile static int8_t SnrValue = 0;
 // Sensor Data Variables
 struct bme280_data bme280Data;
 struct bme280_dev bme280Dev;
@@ -83,25 +82,14 @@ bool hasGSM = false;
 bool rfm95Working = false;
 // is this a root node??
 static bool isRoot = false;
-volatile bool gpsWakeFlag = false;
+volatile static bool gpsWakeFlag = false;
 
 //! External Flags:
 //! Flash
-extern bool flashOK;
-//! MAC
-volatile extern LoRaRadioState_t RadioState;
-volatile extern MACappState_t MACState;
 //! Board
 extern Gpio_t Led_rgb_red;
 extern Gpio_t Led_rgb_green;
 extern Gpio_t Led_user_red;
-//! UART
-extern bool setRTCFlag;
-extern bool gotGPSUartflag;
-
-//!
-//! @brief Erases the flash buffer on button press
-static void flash_reset_button_setup(void);
 
 void print_lora_registers(void);
 
@@ -129,14 +117,6 @@ void on_rx_timeout(void);
  * \brief Function executed on Radio Rx Error event
  */
 void on_rx_error(void);
-
-static void flash_reset_button_setup() {
-	/* Configuring P1.1 as an input and enabling interrupts */
-	MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
-	MAP_Interrupt_enableInterrupt(INT_PORT1);
-}
 
 void radio_init() {
 	/*!
@@ -199,13 +179,6 @@ void radio_init() {
 	// set radio frequency channel
 	Radio.SetChannel( RF_FREQUENCY);
 	Radio.Sleep();
-
-	int i;
-	for (i = 0; i < 255; ++i) {
-		loraTxtimes[i] = SX1276GetTimeOnAir(MODEM_LORA, LORA_BANDWIDTH,
-		LORA_SPREADING_FACTOR, LORA_CODINGRATE, LORA_PREAMBLE_LENGTH,
-		LORA_FIX_LENGTH_PAYLOAD_ON, i + 1, LORA_CRC_ON) + 10;
-	}
 
 //	SX1276Send((uint8_t*) "Radio Working!", 13);
 }
@@ -338,9 +311,6 @@ int main(void) {
 			reset_collect_data_flag();
 //			build_tx_datagram();
 		}
-//		if (PCM_getPowerState() != PCM_LPM3) {
-//			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
-//		}
 
 		if (get_reset_flag()) {
 			send_uart_pc("Reseting\n");
@@ -365,6 +335,10 @@ int main(void) {
 			reset_upload_gsm_flag();
 			gsm_upload_stored_datagrams();
 		}
+		if (PCM_getPowerState() != PCM_LPM3) {
+			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
+		}
+
 	}
 }
 
@@ -385,13 +359,13 @@ void PORT3_IRQHandler(void) {
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P3);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P3, status);
 	if (status & GPS_PPS_PIN) {
-		if (gotGPSUartflag) {
+		if (get_gps_uart_flag()) {
 			gps_set_low_power();
 			rtc_set_calendar_time();
 			rtc_start_clock();
-			gotGPSUartflag = false;
+			reset_gps_uart_flag();
 			gpsWorking = true;
-			setRTCFlag = false;
+
 		}
 	}
 }
@@ -402,7 +376,7 @@ void PORT2_IRQHandler(void) {
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
 #if DEBUG
-	send_uart_pc("LoRa Interrupt Triggered: ");
+		send_uart_pc("LoRa Interrupt Triggered: ");
 #endif
 	if (status & GPIO_PIN4) {
 		SX1276OnDio0Irq();
@@ -415,9 +389,9 @@ void PORT2_IRQHandler(void) {
 
 void on_tx_done(void) {
 	SX1276clearIRQFlags();
-	RadioState = TXDONE;
+	set_lora_radio_state(TXDONE);
 #if DEBUG
-	send_uart_pc("TxDone\n");
+		send_uart_pc("TxDone\n");
 #endif
 }
 
@@ -427,28 +401,28 @@ void on_rx_done(uint8_t *payload, uint16_t size, int8_t rssi, int8_t snr) {
 	memcpy(RXBuffer, payload, loraRxBufferSize);
 	RssiValue = rssi;
 	SnrValue = snr;
-	RadioState = RXDONE;
+	set_lora_radio_state(RXDONE);
 #if DEBUG
-	send_uart_pc("RxDone\n");
+		send_uart_pc("RxDone\n");
 
 #endif
 }
 
 void on_tx_timeout(void) {
 	Radio.Sleep();
-	RadioState = TXTIMEOUT;
+	set_lora_radio_state(TXTIMEOUT);
 #if DEBUG
-	send_uart_pc("TxTimeout\n");
+		send_uart_pc("TxTimeout\n");
 #endif
 }
 
 void on_rx_timeout(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
-	RadioState = RXTIMEOUT;
+	set_lora_radio_state(RXTIMEOUT);
 #if DEBUG
 
-	send_uart_pc("RxTimeout\n");
+		send_uart_pc("RxTimeout\n");
 
 #endif
 }
@@ -456,9 +430,9 @@ void on_rx_timeout(void) {
 void on_rx_error(void) {
 	SX1276clearIRQFlags();
 	Radio.Sleep();
-	RadioState = RXERROR;
+	set_lora_radio_state(RXERROR);
 #if DEBUG
-	send_uart_pc("RxError\n");
+		send_uart_pc("RxError\n");
 #endif
 }
 
@@ -479,6 +453,48 @@ void print_lora_registers(void) {
 	}
 }
 
+void helper_collect_sensor_data() {
+	if (!get_is_root()) {
+		if (lightSensorWorking) {
+			get_light();
+		} else {
+			init_max();
+		}
+
+		bme280_get_data(&bme280Dev, &bme280Data);
+
+		get_vwc();
+	}
+}
+
 bool get_is_root() {
 	return isRoot;
+}
+
+uint8_t* get_rx_buffer() {
+	return RXBuffer;
+}
+
+uint8_t get_lora_rx_buffer_size() {
+	return loraRxBufferSize;
+}
+
+int8_t get_rssi_value() {
+	return RssiValue;
+}
+
+int8_t get_snr_value() {
+	return SnrValue;
+}
+
+bool get_gps_wake_flag() {
+	return gpsWakeFlag;
+}
+
+void set_gpsWake_flag() {
+	gpsWakeFlag = true;
+}
+
+void reset_gps_wake_flag() {
+	gpsWakeFlag = false;
 }

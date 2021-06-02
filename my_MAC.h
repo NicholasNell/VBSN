@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <my_scheduler.h>
+#include <myNet.h>
 
 #define BROADCAST_ADDRESS 0xFF
 #define GATEWAY_ADDRESS 0x00
@@ -140,5 +141,23 @@ uint16_t get_tx_slot();
 bool get_hop_message_flag();
 
 uint16_t* get_tx_slots();
+
+LoRaRadioState_t get_lora_radio_state();
+
+void set_lora_radio_state(LoRaRadioState_t state);
+
+MACappState_t get_mac_app_state();
+void set_mac_app_state(MACappState_t state);
+
+nodeAddress get_node_id();
+void set_node_id(nodeAddress id);
+
+int get_num_msg_rx();
+
+void set_next_net_op(NextNetOp_t net);
+
+bool get_net_op_flag();
+void set_net_op_flag();
+void reset_net_op_flag();
 
 #endif /* MY_MAC_H_ */

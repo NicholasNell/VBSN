@@ -31,7 +31,6 @@ typedef struct {
 	uint8_t _nodeSequenceNumber;
 	uint8_t _numNeighbours;
 	uint8_t _broadcastID;
-	uint8_t _destSequenceNumber;
 	uint16_t _txSlot;
 } FlashData_t;
 
@@ -46,7 +45,6 @@ struct FlashOffset {
 	int _nodeSequenceNumber;
 	int _numNeighbours;
 	int _broadcastID;
-	int _destSequenceNumber;
 	int _txSlot;
 
 };
@@ -75,12 +73,6 @@ void flash_init_offset(void);
 int flash_fill_struct_for_write();
 
 /*!
- *  \brief fill the struct from flash memory
- * @return
- */
-int flash_fill_struct_from_mem();
-
-/*!
  *  \brief	writes the struct to the flash memory
  * @return
  */
@@ -97,5 +89,7 @@ bool flash_check_for_data(void);
 
 //! @return returns local flash data buffer
 FlashData_t* get_flash_data_struct(void);
+
+bool get_flash_ok_flag();
 
 #endif /* MY_FLASH_H_ */

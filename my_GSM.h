@@ -44,73 +44,51 @@
 /*Send a char array through the specified UART channel*/
 //void send_UART(char *buffer);
 /*Initialises the GSM module, and checks if one is present */
-bool init_gsm(void);
+bool init_gsm(void); //!
 /*Sets up the pins and interrupts for GSM modem*/
-void gsm_startup(void);
+void gsm_startup(void); //!
 /* Function which sends strings on UART to the GSM modem*/
-void send_gsm_uart(char *buffer);
+void send_gsm_uart(char *buffer); //!
 /*Interrupt handler for UARTA0*/
 void EUSCIA0_IRQHandler(void);
 /* EUSCI A1 UART ISR - Receives from the GSM modem */
 void EUSCIA2_IRQHandler(void);
-/*delay the CPU for a set time or a bit returned by gsm*/
-int delay_gsm_respond(int Delay_ctr);
+
 /*Set the modem to POWER SAVE mode*/
-void gsm_power_save_off();
+void gsm_power_save_off(); //!
 /*Set the modem to NORMAL mode*/
-void gsm_power_save_on();
+void gsm_power_save_on(); //!
 /*check if the modem is connected*/
-int check_com();
-/*Waits for the modem to reply with a valid signal strength*/
-int modem_start(void);
+int check_com(); //!
+
 /*Search through the received buffer for a certain string*/
-int string_search(int index);
-/*Loads a command from the strings buffer into a temp buffer for checking*/
-void cmd_load(int index);
+int string_search(int index); //!
+
 /*Sends a message to the gsm modem from buffer*/
-void send_msg(char *buffer);
-/*Sets up the Modem for a ping*/
-void gsm_setup_modem_ping(void);
-/*Pings the google website*/
-void gsm_ping_google(void);
-/*Checks network registration*/
-void check_registration(void);
-/*Checks to see if the GPRS stack is attached*/
-void check_gprs_attached(void);
-/*Checks that GPRS is set on modem, if not then sets it up*/
-void setup_gprs_settings(void);
+void send_msg(char *buffer); //!
+
 /*check for a certain string in return*/
-int check_for_string_position(char *checkFor);
+int check_for_string_position(char *checkFor); //!
 /*Waits for a certain time (in seconds) and checks if a character string
  * has been returned by the GSM modem during that time. If timeout occurs it returns false
  */
-bool wait_check_for_reply(char *reply, uint8_t delay_s);
+bool wait_check_for_reply(char *reply, uint8_t delay_s); //!
 
-void check_signal();
-/*Returns the signal strength from the GSM modem*/
-int get_signal_strength(int index);
-/*Connects to an HTTPS server and attempts to get info from it*/
-void http_connect(void);
-
-void http_send_data(void);
 /*Disables the command echo from the GSM*/
-void disable_command_echo(void);
+void disable_command_echo(void); //!
 
 //!
 //! Uploads the data collected by this node only.
-bool gsm_upload_my_data();
+bool gsm_upload_my_data(); //!
 
 //!
 //! Uploads all stored datagrams to the database
-void gsm_upload_stored_datagrams(void);
+void gsm_upload_stored_datagrams(void); //!
 
 //!
 //! @brief Uploads the datagram it just received
 //! @return succesful or not
-bool upload_current_datagram(int index);
-
-//!
-//! @brief Resets the module
-void reset_gsm_module(void);
+bool upload_current_datagram(int index); //!
+void cmd_load(int index);
 
 #endif /* MY_GSMMODEM_H_ */

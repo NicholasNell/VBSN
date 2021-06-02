@@ -9,7 +9,7 @@
 #include "my_gps.h"
 #include <my_UART.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
-extern LocationData gpsData;
+static LocationData gpsData;
 
 void gps_set_low_power(void) {
 	GPIO_setOutputLowOnPin(GPS_WAKE_PORT, GPS_WAKE_PIN);
@@ -23,4 +23,8 @@ void gps_disable_low_power(void) {
 
 LocationData get_gps_data(void) {
 	return gpsData;
+}
+
+void set_gps_data(LocationData loc) {
+	gpsData = loc;
 }

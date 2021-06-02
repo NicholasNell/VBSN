@@ -72,4 +72,6 @@ void gps_disable_low_power(void);
 
 //! @return returns current gps data
 LocationData get_gps_data(void);
+
+void set_gps_data(LocationData loc);
 #endif /* MY_GPS_H_ */

@@ -41,13 +41,8 @@ char UartRX[SIZE_BUFFER]; //Uart receive buffer
 char UartRxGPS[SIZE_BUFFER_GPS]; //Uart receive buffer
 extern struct bme280_data bme280Data;
 extern struct bme280_dev bme280Dev;
-LocationData gpsData;
-
+volatile static bool gotGPSUartflag = false;
 extern Gpio_t Led_rgb_blue;
-extern bool setTimeFlag;
-extern bool gpsWorking;
-
-bool setRTCFlag = false;
 
 // static functions
 static void UartGPSCommands();
@@ -81,9 +76,10 @@ const eUSCI_UART_ConfigV1 uartConfig = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCL
 		};
 
 void uart_init_gps() {
-
-	gpsData.lat = 0.0;
-	gpsData.lon = 0.0;
+	LocationData loc;
+	loc.lat = 0;
+	loc.lon = 0;
+	set_gps_data(loc);
 	/* Selecting P9.6 and P9.7 in UART mode */
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(
 	UART_GPS_PORT,
@@ -277,10 +273,11 @@ void reset_uart_array() {
 bool return_uart_activity() {
 	return UartActivity;
 }
-bool gotGPSUartflag = false;
+
 void UartGPSCommands() {
 
 	if (UartActivityGps) {
+		LocationData loc;
 
 //		SX1276Send((uint8_t*) UartRxGPS, counter_read_gps);	// Debugging, send uart data OTA to pc
 
@@ -340,13 +337,13 @@ void UartGPSCommands() {
 				if (abs(deg) > 90) { // cannot be more than 90 maximum for latitude
 					return;
 				}
-				gpsData.lat = deg;
+				loc.lat = deg;
 				CMD = strtok(NULL, c);
 
 				if (strpbrk(CMD, "N")) {
 
 				} else if (strpbrk(CMD, "S")) {
-					gpsData.lat *= -1;
+					loc.lat *= -1;
 				}
 
 				CMD = strtok(NULL, c);
@@ -365,16 +362,17 @@ void UartGPSCommands() {
 				if (abs(deg) > 180) { // cannot be more than 180 maximum for longitude
 					return;
 				}
-				gpsData.lon = deg;
+				loc.lon = deg;
 
 				CMD = strtok(NULL, c);
 
 				if (strpbrk(CMD, "E")) {
 
 				} else if (strpbrk(CMD, "W")) {
-					gpsData.lon *= -1;
+					loc.lon *= -1;
 
 				}
+				set_gps_data(loc);
 
 				CMD = strtok(NULL, c);
 				// Speed over Ground "0.00"
@@ -405,7 +403,7 @@ void UartGPSCommands() {
 
 //				rtc_set_calendar_time();
 				if (sec != 0x59) {
-					setRTCFlag = true;
+
 					RTC_C_Calendar newCal = { (uint8_t) (sec), minute, hr, 0,
 							(uint_fast8_t) day, month, year };
 					set_current_time(newCal);
@@ -476,3 +474,12 @@ void EUSCIA0_IRQHandler(void) {
 		counter_read_pc = 0;
 	}
 }
+
+bool get_gps_uart_flag() {
+	return gotGPSUartflag;
+}
+
+void reset_gps_uart_flag() {
+	gotGPSUartflag = false;
+}
+

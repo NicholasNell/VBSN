@@ -15,27 +15,19 @@
 #include <my_scheduler.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <ti/devices/msp432p4xx/driverlib/gpio.h>
-#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
-#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
-#include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
+#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <my_rtc.h>
 #include <my_UART.h>
 #include <myNet.h>
-#include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
 static bool rtcInitFlag = false; // Has the RTC time been initialised by the GPS?
 volatile static bool macStateMachineEnable = false; // Is it time for the MAC state machine to be run? Is determined by the RTC ISR
 volatile static bool uploadGSM = false; // Should the Gateway upload it's stored info? Set by RTC ISR
 volatile static bool collectDataFlag = false; // Tells main to collect sensor data. Set in RTC ISR
-volatile bool netOp = false; // Perform a net operation now? Set in MACStateMachine
-volatile extern bool gpsWakeFlag;	// does the GPS need to wake up?
 volatile static bool saveFlashData = false;	// Does the data need to be saved to flash
-volatile extern NextNetOp_t nextNetOp;	// what is the next netOp
 // GSM upload slots
 static uint16_t gsmStopSlot[WINDOW_SCALER];
 static uint16_t gsmStartSlot[WINDOW_SCALER];
-extern volatile MACappState_t MACState; //next macState
 volatile static bool resetFlag;	// does the system need to reset?
 RTC_C_Calendar currentTime = RTC_ZERO_TIME;	// Calender time
 
@@ -127,14 +119,14 @@ void RTC_C_IRQHandler(void) {
 		if (get_num_routes() >= MAX_ROUTES) {
 			reset_num_routes();
 		}
-		MACState = MAC_SLEEP;	// by default, sleep
+		set_mac_app_state(MAC_SLEEP);	// by default, sleep
 
 		int i = 0;
 		static bool hasSentGSM = false;
 		i = curSlot / WINDOW_TIME_SEC;
 
 		if (curSlot % GPS_WAKEUP_TIME == 0) {
-			gpsWakeFlag = true;
+			set_gpsWake_flag();
 		}
 
 		if (curSlot % FLASH_SAVE_DATA == 0) {
@@ -154,42 +146,46 @@ void RTC_C_IRQHandler(void) {
 					hasSentGSM = true;
 				}
 			} else {
-				MACState = MAC_SLEEP;
-				macStateMachineEnable = true;
+				macStateMachineEnable = false;
+				if (get_mac_app_state() != MAC_SLEEP) {
+					set_mac_app_state(MAC_SLEEP);
+					macStateMachineEnable = true;
+				}
 			}
 		} else {
 			hasSentGSM = false;
 
 			if (curSlot % GLOBAL_RX == 0) { // Global Sync Slots
 				RouteEntry_t tempRoute;
-				if (netOp) { // Perform a network layer operation in the global RX window
-					netOp = false;
-					MACState = MAC_NET_OP;
+				if (get_net_op_flag()) { // Perform a network layer operation in the global RX window
+					reset_net_op_flag();
+					set_mac_app_state(MAC_NET_OP);
 
 				} else if (get_hop_message_flag()) { // hop the received message in the global RX window
-					MACState = MAC_HOP_MESSAGE;
+					set_mac_app_state(MAC_HOP_MESSAGE);
 					if (get_num_retries() > 3) {
 						reset_num_retries();
-						MACState = MAC_LISTEN;
+						set_mac_app_state(MAC_LISTEN);
 					}
 				} else if ((get_num_retries() > 0)) {
 					if (!get_is_root()) {
-						MACState = MAC_RTS;
+						set_mac_app_state(MAC_RTS);
 						if (get_num_retries() > 3) {
 							reset_num_retries();
-							MACState = MAC_LISTEN;
+							set_mac_app_state(MAC_LISTEN);
 						}
 					}
 				} else if (get_sync()) {
 					if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
 							&& !get_is_root()) {
-						MACState = MAC_NET_OP;
-						nextNetOp = NET_BROADCAST_RREQ;
+						set_mac_app_state(MAC_NET_OP);
+						set_next_net_op(NET_BROADCAST_RREQ);
+
 					} else {
-						MACState = MAC_SYNC_BROADCAST;
+						set_mac_app_state(MAC_SYNC_BROADCAST);
 					}
 				} else {
-					MACState = MAC_LISTEN;
+					set_mac_app_state(MAC_LISTEN);
 				}
 				macStateMachineEnable = true;
 			}
@@ -204,7 +200,7 @@ void RTC_C_IRQHandler(void) {
 			for (var = 0; var < get_num_neighbours(); ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
 				if (table[var].neighbourTxSlot
 						== (curSlot - (i * WINDOW_TIME_SEC))) {
-					MACState = MAC_LISTEN;
+					set_mac_app_state(MAC_LISTEN);
 					send_uart_pc("Neighbour Tx Slot\n");
 					macStateMachineEnable = true;
 					break;
@@ -213,7 +209,7 @@ void RTC_C_IRQHandler(void) {
 
 			if (curSlot == get_tx_slots()[i]) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 				if (!get_is_root()) {
-					MACState = MAC_RTS;
+					set_mac_app_state(MAC_RTS);
 					macStateMachineEnable = true;
 				}
 			}
@@ -221,7 +217,7 @@ void RTC_C_IRQHandler(void) {
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {	// Resync with GPS
-		gpsWakeFlag = true;
+		set_gpsWake_flag();
 //		resetFlag = true;
 	}
 
