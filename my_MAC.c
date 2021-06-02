@@ -147,7 +147,7 @@ static void set_predefined_id(void);
 static void set_predefined_id(void) {
 	_nodeID = MAC_ID1;
 //	_nodeID = MAC_ID2;
-//	_nodeID = MAC_ID3;
+	_nodeID = MAC_ID3;
 //	_nodeID = MAC_ID4;
 }
 
@@ -156,7 +156,7 @@ static void set_predefined_tx(void);
 static void set_predefined_tx(void) {
 	_txSlot = MAC_TX1;
 //	_txSlot = MAC_TX2;
-//	_txSlot = MAC_TX3;
+	_txSlot = MAC_TX3;
 //	_txSlot = MAC_TX4;
 }
 
@@ -354,9 +354,9 @@ bool mac_state_machine() {
 				break;
 			case NET_REBROADCAST_RREQ:
 				send_uart_pc("NET_REBROADCAST_RREQ\n");
-				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
-						carrierSenseTimes[carrierSenseSlot++])) {
+				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])/*SX1276IsChannelFree(MODEM_LORA,
+				 RF_FREQUENCY, LORA_RSSI_THRESHOLD,
+				 carrierSenseTimes[carrierSenseSlot++])*/) {
 					send_uart_pc("NET_REBROADCAST_RREQ: channel clear\n");
 					if (net_re_rreq()) {
 						send_uart_pc(
@@ -373,9 +373,9 @@ bool mac_state_machine() {
 				break;
 			case NET_BROADCAST_RREQ:
 				send_uart_pc("NET_BROADCAST_RREQ\n");
-				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
-						carrierSenseTimes[carrierSenseSlot++])) {
+				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])/*SX1276IsChannelFree(MODEM_LORA,
+				 RF_FREQUENCY, LORA_RSSI_THRESHOLD,
+				 carrierSenseTimes[carrierSenseSlot++])*/) {
 					send_uart_pc("NET_BROADCAST_RREQ: channel clear\n");
 					if (send_rreq()) {
 						send_uart_pc("NET_BROADCAST_RREQ: sent RREQ\n");

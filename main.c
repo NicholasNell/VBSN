@@ -365,17 +365,17 @@ int main(void) {
 			collectDataFlag = false;
 //			build_tx_datagram();
 		}
-		if (PCM_getPowerState() != PCM_LPM3) {
-			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
-		}
+//		if (PCM_getPowerState() != PCM_LPM3) {
+//			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
+//		}
 
 		if (resetFlag) {
 			send_uart_pc("Reseting\n");
 			resetFlag = false;
 //			flash_fill_struct_for_write();
 //			flash_write_struct_to_flash();
-//			ResetCtl_initiateHardReset();
-			SysCtl_rebootDevice();
+			ResetCtl_initiateHardReset();
+//			SysCtl_rebootDevice();
 		}
 
 		if (gpsWakeFlag) {

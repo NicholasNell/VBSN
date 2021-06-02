@@ -35,6 +35,7 @@
  *****************************************************************************/
 
 #include <stdint.h>
+#include <ti/devices/msp432p4xx/driverlib/reset.h>
 #include <ti/devices/msp432p4xx/inc/msp_compatibility.h>
 
 /* Linker variable that marks the top of the stack. */
@@ -42,115 +43,111 @@ extern unsigned long __STACK_END;
 
 /* External declaration for the reset handler that is to be called when the */
 /* processor is started                                                     */
-extern void _c_int00( void );
+extern void _c_int00(void);
 
 /* External declaration for system initialization function                  */
-extern void SystemInit( void );
+extern void SystemInit(void);
 
 /* Forward declaration of the default fault handlers. */
-void Default_Handler( void ) __attribute__((weak));
-extern void Reset_Handler( void ) __attribute__((weak));
+void Default_Handler(void) __attribute__((weak));
+extern void Reset_Handler(void) __attribute__((weak));
 
 /* Cortex-M4 Processor Exceptions */
-extern void NMI_Handler( void ) __attribute__((weak, alias("Default_Handler")));
-extern void HardFault_Handler( void )
+extern void NMI_Handler(void) __attribute__((weak, alias("Default_Handler")));
+extern void HardFault_Handler(void)
 		__attribute__((weak, alias("Default_Handler")));
-extern void MemManage_Handler( void )
+extern void MemManage_Handler(void)
 		__attribute__((weak, alias("Default_Handler")));
-extern void BusFault_Handler( void )
+extern void BusFault_Handler(void)
 		__attribute__((weak, alias("Default_Handler")));
-extern void UsageFault_Handler( void )
+extern void UsageFault_Handler(void)
 		__attribute__((weak, alias("Default_Handler")));
-extern void SVC_Handler( void ) __attribute__((weak, alias("Default_Handler")));
-extern void DebugMon_Handler( void )
+extern void SVC_Handler(void) __attribute__((weak, alias("Default_Handler")));
+extern void DebugMon_Handler(void)
 		__attribute__((weak, alias("Default_Handler")));
-extern void PendSV_Handler( void )
+extern void PendSV_Handler(void)
 		__attribute__((weak, alias("Default_Handler")));
 
 /* device specific interrupt handler */
-extern void SysTick_Handler( void )
+extern void SysTick_Handler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void PSS_IRQHandler( void )
+extern void PSS_IRQHandler(void) __attribute__((weak,alias("Default_Handler")));
+extern void CS_IRQHandler(void) __attribute__((weak,alias("Default_Handler")));
+extern void PCM_IRQHandler(void) __attribute__((weak,alias("Default_Handler")));
+extern void WDT_A_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void CS_IRQHandler( void )
+extern void FPU_IRQHandler(void) __attribute__((weak,alias("Default_Handler")));
+extern void FLCTL_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void PCM_IRQHandler( void )
+extern void COMP_E0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void WDT_A_IRQHandler( void )
+extern void COMP_E1_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void FPU_IRQHandler( void )
+extern void TA0_0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void FLCTL_IRQHandler( void )
+extern void TA0_N_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void COMP_E0_IRQHandler( void )
+extern void TA1_0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void COMP_E1_IRQHandler( void )
+extern void TA1_N_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA0_0_IRQHandler( void )
+extern void TA2_0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA0_N_IRQHandler( void )
+extern void TA2_N_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA1_0_IRQHandler( void )
+extern void TA3_0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA1_N_IRQHandler( void )
+extern void TA3_N_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA2_0_IRQHandler( void )
+extern void EUSCIA0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA2_N_IRQHandler( void )
+extern void EUSCIA1_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA3_0_IRQHandler( void )
+extern void EUSCIA2_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void TA3_N_IRQHandler( void )
+extern void EUSCIA3_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIA0_IRQHandler( void )
+extern void EUSCIB0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIA1_IRQHandler( void )
+extern void EUSCIB1_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIA2_IRQHandler( void )
+extern void EUSCIB2_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIA3_IRQHandler( void )
+extern void EUSCIB3_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIB0_IRQHandler( void )
+extern void ADC14_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIB1_IRQHandler( void )
+extern void T32_INT1_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIB2_IRQHandler( void )
+extern void T32_INT2_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void EUSCIB3_IRQHandler( void )
+extern void T32_INTC_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void ADC14_IRQHandler( void )
+extern void AES256_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void T32_INT1_IRQHandler( void )
+extern void RTC_C_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void T32_INT2_IRQHandler( void )
+extern void DMA_ERR_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void T32_INTC_IRQHandler( void )
+extern void DMA_INT3_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void AES256_IRQHandler( void )
+extern void DMA_INT2_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void RTC_C_IRQHandler( void )
+extern void DMA_INT1_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void DMA_ERR_IRQHandler( void )
+extern void DMA_INT0_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void DMA_INT3_IRQHandler( void )
+extern void PORT1_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void DMA_INT2_IRQHandler( void )
+extern void PORT2_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void DMA_INT1_IRQHandler( void )
+extern void PORT3_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void DMA_INT0_IRQHandler( void )
+extern void PORT4_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void PORT1_IRQHandler( void )
+extern void PORT5_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
-extern void PORT2_IRQHandler( void )
-		__attribute__((weak,alias("Default_Handler")));
-extern void PORT3_IRQHandler( void )
-		__attribute__((weak,alias("Default_Handler")));
-extern void PORT4_IRQHandler( void )
-		__attribute__((weak,alias("Default_Handler")));
-extern void PORT5_IRQHandler( void )
-		__attribute__((weak,alias("Default_Handler")));
-extern void PORT6_IRQHandler( void )
+extern void PORT6_IRQHandler(void)
 		__attribute__((weak,alias("Default_Handler")));
 
 /* Interrupt vector table.  Note that the proper constructs must be placed on this to */
@@ -158,7 +155,7 @@ extern void PORT6_IRQHandler( void )
 /* the program if located at a start address other than 0.                            */
 #pragma RETAIN(interruptVectors)
 #pragma DATA_SECTION(interruptVectors, ".intvecs")
-void (*const interruptVectors[])( void ) =
+void (*const interruptVectors[])(void) =
 {
 	(void (*)(void))((uint32_t)&__STACK_END),
 	/* The initial stack pointer */
@@ -227,7 +224,7 @@ void (*const interruptVectors[])( void ) =
 /* actions (such as making decisions based on the reset cause register, and    */
 /* resetting the bits in that register) are left solely in the hands of the    */
 /* application.                                                                */
-void Reset_Handler( void ) {
+void Reset_Handler(void) {
 	SystemInit();
 
 	/* Jump to the CCS C Initialization Routine. */
@@ -238,15 +235,14 @@ void Reset_Handler( void ) {
 /* This is the code that gets called when the processor receives an unexpected  */
 /* interrupt.  This simply enters an infinite loop, preserving the system state */
 /* for examination by a debugger.                                               */
-void Default_Handler( void ) {
+void Default_Handler(void) {
 	/* Fault trap exempt from ULP advisor */
 #pragma diag_push
 #pragma CHECK_ULP("-2.1")
 
 	/* Enter an infinite loop. */
 	while (1) {
-		__no_operation();
-		break;
+		ResetCtl_initiateHardReset();
 	}
 
 #pragma diag_pop

@@ -109,7 +109,7 @@ void RTC_C_IRQHandler(void) {
 
 	}
 
-	if (get_slot_count() % (WINDOW_TIME_SEC * 2) == 0) {
+	if (get_slot_count() % (WINDOW_TIME_SEC * 3) == 0) {
 		if (!isRoot) {
 			resetFlag = true;
 		}
