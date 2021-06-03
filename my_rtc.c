@@ -20,7 +20,7 @@
 #include <my_UART.h>
 #include <myNet.h>
 
-static bool rtcInitFlag = false; // Has the RTC time been initialised by the GPS?
+static volatile bool rtcInitFlag = false; // Has the RTC time been initialised by the GPS?
 volatile static bool macStateMachineEnable = false; // Is it time for the MAC state machine to be run? Is determined by the RTC ISR
 volatile static bool uploadGSM = false; // Should the Gateway upload it's stored info? Set by RTC ISR
 volatile static bool collectDataFlag = false; // Tells main to collect sensor data. Set in RTC ISR
@@ -30,6 +30,7 @@ static uint16_t gsmStopSlot[WINDOW_SCALER];
 static uint16_t gsmStartSlot[WINDOW_SCALER];
 volatile static bool resetFlag;	// does the system need to reset?
 RTC_C_Calendar currentTime = RTC_ZERO_TIME;	// Calender time
+extern Gpio_t Led_user_red;
 
 void init_scheduler() {
 
@@ -269,4 +270,16 @@ bool get_reset_flag() {
 
 void reset_reset_flag() {
 	resetFlag = false;
+}
+
+bool get_rtc_init_flag() {
+	return rtcInitFlag;
+}
+
+void set_rtc_init_flag() {
+	rtcInitFlag = true;
+}
+
+void reset_rtc_init_flag() {
+	rtcInitFlag = false;
 }

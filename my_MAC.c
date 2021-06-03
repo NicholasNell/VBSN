@@ -217,7 +217,7 @@ bool mac_state_machine() {
 			if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
 				send_uart_pc("MAC_SYNC_BROADCAST: channel clear\n");
 				if (mac_send(MSG_SYNC, BROADCAST_ADDRESS)) {
-					send_uart_pc("MAC_SYNC_BROADCAST: sent RTS\n");
+					send_uart_pc("MAC_SYNC_BROADCAST: sent Sync\n");
 					MACState = MAC_SLEEP;
 //					return true;
 				} else {

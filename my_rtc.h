@@ -52,5 +52,9 @@ void reset_save_flash_data_flag();
 bool get_reset_flag();
 void reset_reset_flag();
 
+bool get_rtc_init_flag();
+void set_rtc_init_flag();
+void reset_rtc_init_flag();
+
 #endif  /*MY_RTC_H_*/
 

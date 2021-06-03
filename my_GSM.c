@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <main.h>
-#include <myNet.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/rom_map.h>
@@ -33,6 +32,9 @@ char Command[SIZE_COMMAND];                              // Temp command buffer
 
 // num uploads failed
 static int _numUploadsFailed = 0;
+
+//extern struct bme280_dev bme280Dev;
+//extern struct bme280_data bme280Data;
 
 /*!
  * \brief Uninitialises the UART port for the gsm module.
@@ -141,7 +143,7 @@ static void context_deactivate_activate(void) {
 //		send_msg(CONTEXT_ACTIVATION);
 //	}
 
-	volatile int tries = 0;
+	int tries = 0;
 	while (!wait_check_for_reply("#SGAC", 6)) {
 		WDT_A_clearTimer();
 		tries++;
@@ -252,6 +254,14 @@ void send_msg(char *buffer) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 }
 
+/*Command to check the signal strength which the modem is receiving*/
+void check_signal() {
+	counter_read_gsm = 0;                     // Reset buffer counter
+	send_gsm_uart("AT+CSQ\r");                     // Send Attention Command
+	delay_gsm_respond(5000);                     // Delay a maximum of X seconds
+	counter_read_gsm = 0;                     // Reset buffer counter
+}
+
 /*Check for the position of a certain string in the receive buffer*/
 int check_for_string_position(char *checkFor) {
 	char *s;
@@ -262,6 +272,48 @@ int check_for_string_position(char *checkFor) {
 		return (s - UartGSMRX);
 	}
 	return (0);
+}
+
+/*Pulls the signal strength from the RX buffer at a certain index*/
+int get_signal_strength(int index) {
+	int i;
+	char temp[2];
+	for (i = 0; i < 2; i++) {
+		temp[i] = UartGSMRX[index + 6 + i];
+	}
+	int tempNum;
+	sscanf(temp, "%d", &tempNum);
+	return tempNum;
+}
+
+/*Checks whether the modem is started by checking that it responds and also the signal strength*/
+int modem_start(void) {
+	int ii;
+	int checked = check_com();
+	for (ii = 0; ii < 5; ii++) {
+		check_com();
+		delay_ms(10);
+	}
+
+	if (checked) {
+//		send_UART("modem alive\r");
+		//set_AmIServer(true); //Sets the IAMModem parameter to true
+	} else {
+//		send_UART("modem DEAD\r");
+		//set_AmIServer(false); //Sets the IAMModem parameter to false
+		return 0;
+	}
+	disable_command_echo();
+	int strength;
+	int index;
+	do {
+		check_signal();
+		index = check_for_string_position("+CSQ:");
+		strength = get_signal_strength(index);
+		delay_ms(500);
+	} while ((strength > 31) || (strength <= 1)); //Check that the signal is in the correct range
+//	send_UART(UartGSMRX[index + 6] + UartGSMRX[index + 7]);
+	return 1;
 }
 
 //						Set the GSM modem to POWER SAVING mode
@@ -304,6 +356,22 @@ void disable_command_echo() {
 	send_msg("ATE0\r");
 }
 
+//                         LIMITED DELAY
+int delay_gsm_respond(int Delay_ctr) {
+	counter_read_gsm = 0;                     // Reset buffer counter
+	run_systick_function_ms(Delay_ctr);
+	while ((counter_read_gsm == 0) && (!systimer_ready_check())) // stay here until modem responds (X Seconds is arbitrary)
+	{
+		delay_ms(2);
+	}
+	delay_ms(20);
+	if ((counter_read_gsm == 0) && (Delay_ctr == 0))
+		return (1);
+	if ((counter_read_gsm == 0) && (Delay_ctr > 0)) {
+		return (0);
+	}
+	return (0);
+}
 int delay_UART_respond(int Delay_ctr) {
 	counter_read_gsm = 0;                     // Reset buffer counter
 	while ((counter_read_gsm == 0) && (Delay_ctr > 0)) // stay here until modem responds (X Seconds is arbitrary)
@@ -352,12 +420,6 @@ int string_search(int index)       // index' is Strings[index][SIZE_COMMAND]
 		return (0);                        // Return 0 if not found.
 }
 
-extern struct bme280_dev bme280Dev;
-extern struct bme280_data bme280Data;
-extern Gpio_t Led_rgb_red;
-
-extern RTC_C_Calendar currentTime;
-extern bool hasData;
 bool gsm_upload_my_data() {
 
 //	gsm_power_save_off();
@@ -373,8 +435,9 @@ bool gsm_upload_my_data() {
 //	double localPressure = bme280Data.pressure;
 //	double localVWC = get_latest_value();
 //	double localLight = get_lux();
-	double localLat = get_gps_data().lat;
-	double localLon = get_gps_data().lon;
+	LocationData loc = get_gps_data();
+	double localLat = loc.lat;
+	double localLon = loc.lon;
 	nodeAddress localAddress = get_node_id();
 	int localRoutes = get_num_routes();
 	int localNeighbours = get_num_neighbours();
@@ -624,3 +687,11 @@ bool upload_current_datagram(int index) {
 
 }
 
+void reset_gsm_module(void) {
+	counter_read_gsm = 0;                     // Reset buffer counter
+	send_gsm_uart("AT&F\r");              // Send Attention Command
+	//	delay_gsm_respond(5000);                  // Delay a maximum of X seconds
+	delay_ms(500);
+	counter_read_gsm = 0;                     // Reset buffer counter
+	init_gsm();
+}
