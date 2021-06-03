@@ -192,6 +192,15 @@
 							<tool id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.hex.553952863" name="Arm Hex Utility" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.hex"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1806090540.1070810240" name="my_GSM.c" rcbsApplicability="disable" resourcePath="my_GSM.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP432_20.2.exe.compilerDebug.373393328.1398865375">
+						<tool id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.exe.compilerDebug.373393328.1398865375" name="Arm Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.exe.compilerDebug.373393328">
+							<option id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compilerID.OPT_LEVEL.1123521470" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compilerID.OPT_LEVEL.off" valueType="enumerated"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__C_SRCS.301896920" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__C_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__CPP_SRCS.411850037" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__CPP_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__ASM_SRCS.1077035738" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__ASM_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__ASM2_SRCS.813979607" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.MSP432_20.2.compiler.inputType__ASM2_SRCS"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
