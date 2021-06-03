@@ -317,7 +317,7 @@ int main(void) {
 			reset_reset_flag();
 //			flash_fill_struct_for_write();
 //			flash_write_struct_to_flash();
-			ResetCtl_initiateHardReset();
+//			ResetCtl_initiateHardReset();
 //			SysCtl_rebootDevice();
 		}
 
