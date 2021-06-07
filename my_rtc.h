@@ -56,5 +56,9 @@ bool get_rtc_init_flag();
 void set_rtc_init_flag();
 void reset_rtc_init_flag();
 
+uint16_t get_time_to_route();
+void set_time_to_route_flag();
+void reset_time_to_route_flag();
+
 #endif  /*MY_RTC_H_*/
 

@@ -31,6 +31,8 @@ static uint16_t gsmStartSlot[WINDOW_SCALER];
 volatile static bool resetFlag;	// does the system need to reset?
 RTC_C_Calendar currentTime = RTC_ZERO_TIME;	// Calender time
 extern Gpio_t Led_user_red;
+static volatile uint16_t timeToRoute = 0;
+static volatile bool timeToRouteCounterFlag = false;
 
 void init_scheduler() {
 
@@ -53,7 +55,7 @@ void rtc_init() {
 
 	/* Specify an interrupt to assert every minute */
 //	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_HOURCHANGE);
-	RTC_C_setCalendarAlarm(0x05,
+	MAP_RTC_C_setCalendarAlarm(0x05,
 	RTC_C_ALARMCONDITION_OFF,
 	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
 
@@ -87,8 +89,9 @@ void rtc_stop_clock(void) {
 void rtc_set_calendar_time(void) {
 //	rtc_stop_clock();
 	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
-	int temp = convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().minutes) * 60
-			+ convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().seconds);
+	int temp = convert_hex_to_dec_by_byte(MAP_RTC_C_getCalendarTime().minutes)
+			* 60
+			+ convert_hex_to_dec_by_byte(MAP_RTC_C_getCalendarTime().seconds);
 
 	set_slot_count(temp);
 //	rtc_start_clock();
@@ -105,9 +108,14 @@ void RTC_C_IRQHandler(void) {
 #endif
 
 	if (rtcInitFlag) {
+		if (timeToRouteCounterFlag) {
+			timeToRoute++;
+		}
+
 		int curSlot = convert_hex_to_dec_by_byte(
-				RTC_C_getCalendarTime().minutes) * 60
-				+ convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().seconds);
+		MAP_RTC_C_getCalendarTime().minutes) * 60
+				+ convert_hex_to_dec_by_byte(
+						MAP_RTC_C_getCalendarTime().seconds);
 
 		set_slot_count(curSlot);
 
@@ -139,6 +147,7 @@ void RTC_C_IRQHandler(void) {
 				if (!hasSentGSM) {
 					resetCounter++;
 					send_uart_pc("Uploading Stored datagrams\n");
+					reset_gsm_upload_done_flag();
 					uploadGSM = true;
 					if (resetCounter >= 3) {
 						resetCounter = 0;
@@ -208,11 +217,27 @@ void RTC_C_IRQHandler(void) {
 				}
 			}
 
+			RouteEntry_t *routes;
+			routes = get_routing_table();
+			for (var = 0; var < get_num_routes(); ++var) {
+				if (routes[var].expiration_time == curSlot) {
+					remove_neighbour(routes->next_hop);
+					remove_route_with_node(routes->next_hop);
+				}
+			}
+
 			if (curSlot == get_tx_slots()[i]) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 				if (!get_is_root()) {
 					set_mac_app_state(MAC_RTS);
 					macStateMachineEnable = true;
 				}
+			}
+			if (curSlot == (WINDOW_TIME_SEC / 2 + 1) * (i + 1)) {
+				if (!get_gsm_upload_done_flag() && get_is_root()) {
+					reset_gsm_upload_done_flag();
+					uploadGSM = true;
+				}
+
 			}
 		}
 	}
@@ -282,4 +307,20 @@ void set_rtc_init_flag() {
 
 void reset_rtc_init_flag() {
 	rtcInitFlag = false;
+}
+
+uint16_t get_time_to_route() {
+	if (timeToRouteCounterFlag) {
+		return 0;	// no route yet
+	} else {
+		return timeToRoute;	//time to route discovery
+	}
+}
+
+void set_time_to_route_flag() {
+	timeToRouteCounterFlag = true;
+}
+
+void reset_time_to_route_flag() {
+	timeToRouteCounterFlag = false;
 }

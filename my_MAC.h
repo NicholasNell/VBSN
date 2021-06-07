@@ -20,7 +20,7 @@
 #define DEFAULT_RX_TIME 1000
 #define SLEEP_TIME 60 * 2 * 1000
 #define MAX_NEIGHBOURS 10
-#define MAX_STORED_MSG 100
+#define MAX_STORED_MSG 20
 
 #define MAC_ID1 0xAB
 #define MAC_ID2 0xBC

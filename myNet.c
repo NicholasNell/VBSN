@@ -12,6 +12,7 @@
 #include <myNet.h>
 #include <string.h>
 #include <my_flash.h>
+#include <my_rtc.h>
 // Routing Table
 RouteEntry_t routingtable[MAX_ROUTES];
 static uint8_t _numRoutes;
@@ -27,6 +28,8 @@ static ReversePathInfo_t reversePathInfo;
 
 bool HasForwardPathInfo = false;
 static ForwardPathInfo_t forwardPathInfo;
+
+static uint8_t distanceToGateway;
 
 extern Datagram_t rxDatagram;
 extern Datagram_t txDatagram;
@@ -94,8 +97,13 @@ void remove_route_with_node(nodeAddress node) {
 }
 
 void add_route(RouteEntry_t routeToNode) {
+	if (routeToNode.dest == GATEWAY_ADDRESS) {
+		reset_time_to_route_flag();
+		distanceToGateway = routeToNode.num_hops;
+	}
 	_nodeSequenceNumber++;
 	routingtable[_numRoutes++] = routeToNode;
+
 }
 
 void add_route_to_neighbour(nodeAddress dest) {
@@ -105,7 +113,7 @@ void add_route_to_neighbour(nodeAddress dest) {
 		if (newRoute.num_hops > 0) {
 			newRoute.dest = dest;
 			newRoute.dest_seq_num = 0;
-			newRoute.expiration_time = 60;
+			newRoute.expiration_time = get_slot_count() - 1;
 			newRoute.next_hop = newRoute.dest;
 			newRoute.num_hops = 0;
 			int i = 0;
@@ -120,7 +128,7 @@ void add_route_to_neighbour(nodeAddress dest) {
 	} else {
 		newRoute.dest = dest;
 		newRoute.dest_seq_num = 0;
-		newRoute.expiration_time = 60;
+		newRoute.expiration_time = get_slot_count() - 1;
 		newRoute.next_hop = newRoute.dest;
 		newRoute.num_hops = 0;
 
@@ -359,10 +367,11 @@ bool add_forward_path_to_table() {
 
 	if (hasRoute
 			&& (routeToNode.dest_seq_num > forwardPathInfo.dest_sequence_num)) {// entry already exist within the routing table, now compare the sequence numbers
-
-		memcpy(&routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
-		add_route(newRouteToNode);
-		retVal = true;
+		if (routeToNode.num_hops >= forwardPathInfo.hopcount) {
+			memcpy(&routeToNode, &newRouteToNode, sizeof(RouteEntry_t));
+			add_route(newRouteToNode);
+			retVal = true;
+		}
 
 	} else {	// does not have a route, so add one
 		add_route(newRouteToNode);
@@ -440,4 +449,8 @@ uint8_t get_node_sequence_number() {
 
 uint8_t get_broadcast_id() {
 	return _broadcastID;
+}
+
+uint8_t get_distance_to_gateway() {
+	return distanceToGateway;
 }

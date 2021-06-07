@@ -83,6 +83,7 @@ bool rfm95Working = false;
 // is this a root node??
 static bool isRoot = false;
 volatile static bool gpsWakeFlag = false;
+volatile static bool gsmUploadDone = false;
 
 //! External Flags:
 //! Flash
@@ -210,6 +211,7 @@ int main(void) {
 
 	//	 Initialise the RFM95 Radio Module
 	radio_init();
+
 	unsigned seed = SX1276Random();
 	srand(seed);	// Seeding Random Number generator
 	MAP_WDT_A_clearTimer();
@@ -297,7 +299,7 @@ int main(void) {
 //	send_uart_pc("GPS low power\n");
 
 	send_uart_pc("Starting Main Loop\n");
-	volatile bool stateChanged = false;
+	set_time_to_route_flag();
 	while (1) {
 
 		if (get_mac_state_machine_enabled()) {
@@ -333,10 +335,10 @@ int main(void) {
 		}
 		if (get_upload_gsm_flag()) {
 			reset_upload_gsm_flag();
-			gsm_upload_stored_datagrams();
+			gsmUploadDone = gsm_upload_stored_datagrams();
 		}
 		if (PCM_getPowerState() != PCM_LPM3) {
-			stateChanged = PCM_setPowerStateNonBlocking(PCM_LPM3);
+			PCM_setPowerStateNonBlocking(PCM_LPM3);
 		}
 
 	}
@@ -497,4 +499,16 @@ void set_gpsWake_flag() {
 
 void reset_gps_wake_flag() {
 	gpsWakeFlag = false;
+}
+
+bool get_gsm_upload_done_flag() {
+	return gsmUploadDone;
+}
+
+void set_gsm_upload_done_flag() {
+	gsmUploadDone = true;
+}
+
+void reset_gsm_upload_done_flag() {
+	gsmUploadDone = false;
 }

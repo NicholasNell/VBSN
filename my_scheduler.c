@@ -24,10 +24,9 @@
 
 static uint16_t slotCount;
 
-static uint16_t lastSync = 0;
-
 bool get_sync(void) {
 
+	static uint16_t lastSync = 0;
 	bool retval = false;
 	int ran = (float) rand() / RAND_MAX * SYNC_PROB;
 	if ((slotCount - lastSync) < 0) {

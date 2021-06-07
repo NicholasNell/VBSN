@@ -27,10 +27,7 @@ static FlashData_t myFlashDataStruct;
 
 static struct FlashOffset flashOffset;
 
-static uint8_t myFlashData[MY_FLASH_DATA_LEN];
-uint32_t lastWrite = MYDATA_MEM_START;
-
-extern uint8_t _numRoutes;
+uint8_t myFlashData[16196];
 
 void flash_init_offset(void) {
 	int tempOffset = 0;
@@ -38,8 +35,6 @@ void flash_init_offset(void) {
 	tempOffset += sizeof(myFlashDataStruct.flashValidIdentifier);
 	flashOffset.lastWriteTime = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct.lastWriteTime);
-	flashOffset.thisNodeId = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct.thisNodeId);
 	flashOffset.neighbourTable = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct.neighbourTable);
 	flashOffset.routingtable = tempOffset;
@@ -54,15 +49,13 @@ void flash_init_offset(void) {
 	tempOffset += sizeof(myFlashDataStruct._numNeighbours);
 	flashOffset._broadcastID = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct._broadcastID);
-	flashOffset._txSlot = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct._txSlot);
-
 }
 
 int flash_write_buffer() {
 
 	/* Unprotecting Info Bank 0, Sector 0  */
-	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR16);
+	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,
+			flash_calculate_sector(MYDATA_MEM_START));
 
 	/* Trying to erase the sector. Within this function, the API will
 	 automatically try to erase the maximum number of tries. If it fails,
@@ -74,11 +67,12 @@ int flash_write_buffer() {
 	 automatically try to program the maximum number of tries. If it fails,
 	 trap inside an infinite loop */
 	if (!MAP_FlashCtl_programMemory(myFlashData, (void*) MYDATA_MEM_START,
-			4096))
+	MY_FLASH_DATA_LEN))
 		return ERROR_Write;
 
 	/* Setting the sector back to protected  */
-	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR16);
+	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,
+			flash_calculate_sector(MYDATA_MEM_START));
 	return Completed;
 }
 
@@ -88,12 +82,14 @@ int flash_read_buffer() {
 }
 
 int flash_erase_all() {
-	/* Unprotecting Info Bank 0, Sector 0  */
-	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR16);
+	/* Unprotecting Info Bank 1  */
+	MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,
+			flash_calculate_sector(MYDATA_MEM_START));
 	if (!MAP_FlashCtl_eraseSector(MYDATA_MEM_START))
 		while (1)
 			;
-	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1, FLASH_SECTOR16);
+	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,
+			flash_calculate_sector(MYDATA_MEM_START));
 	return 0;
 }
 
@@ -110,13 +106,12 @@ int flash_read_node_id() {
 }
 
 int flash_init_buffer() {
-	memcpy(myFlashData, &myFlashDataStruct, sizeof(myFlashDataStruct));
+	memset(myFlashData, 0xFF, sizeof(myFlashDataStruct));
 	return true;
 }
 
 int flash_fill_struct_for_write() {
 	myFlashDataStruct.flashValidIdentifier = FLASH_OK_IDENTIFIER;
-	myFlashDataStruct.thisNodeId = get_node_id();
 	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
 	if (get_num_neighbours() > 0) {
 		Neighbour_t *ptr = get_neighbour_table();
@@ -128,11 +123,10 @@ int flash_fill_struct_for_write() {
 		Datagram_t *ptr2 = get_received_messages();
 		memcpy(&myFlashDataStruct.receivedMessages, &ptr2, sizeof(*ptr2));
 	}
-	myFlashDataStruct._numRoutes = _numRoutes;
+	myFlashDataStruct._numRoutes = get_num_routes();
 	myFlashDataStruct._nodeSequenceNumber = get_node_sequence_number();
 	myFlashDataStruct._numNeighbours = get_num_neighbours();
 	myFlashDataStruct._broadcastID = get_broadcast_id();
-	myFlashDataStruct._txSlot = get_tx_slot();
 	return 1;
 }
 
@@ -166,4 +160,110 @@ FlashData_t* get_flash_data_struct(void) {
 
 bool get_flash_ok_flag() {
 	return flashOK;
+}
+
+uint32_t flash_calculate_sector(uint32_t Address) {
+	int sector = ((Address - 0x20000) / 4096);
+	uint32_t retVal = NULL;
+	switch (sector) {
+	case 0:
+		retVal = FLASH_SECTOR0;
+		break;
+	case 1:
+		retVal = FLASH_SECTOR1;
+		break;
+	case 2:
+		retVal = FLASH_SECTOR2;
+		break;
+	case 3:
+		retVal = FLASH_SECTOR3;
+		break;
+	case 4:
+		retVal = FLASH_SECTOR4;
+		break;
+	case 5:
+		retVal = FLASH_SECTOR5;
+		break;
+	case 6:
+		retVal = FLASH_SECTOR6;
+		break;
+	case 7:
+		retVal = FLASH_SECTOR7;
+		break;
+	case 8:
+		retVal = FLASH_SECTOR8;
+		break;
+	case 9:
+		retVal = FLASH_SECTOR9;
+		break;
+	case 10:
+		retVal = FLASH_SECTOR10;
+		break;
+	case 11:
+		retVal = FLASH_SECTOR11;
+		break;
+	case 12:
+		retVal = FLASH_SECTOR12;
+		break;
+	case 13:
+		retVal = FLASH_SECTOR13;
+		break;
+	case 14:
+		retVal = FLASH_SECTOR14;
+		break;
+	case 15:
+		retVal = FLASH_SECTOR15;
+		break;
+	case 16:
+		retVal = FLASH_SECTOR16;
+		break;
+	case 17:
+		retVal = FLASH_SECTOR17;
+		break;
+	case 18:
+		retVal = FLASH_SECTOR18;
+		break;
+	case 19:
+		retVal = FLASH_SECTOR19;
+		break;
+	case 20:
+		retVal = FLASH_SECTOR20;
+		break;
+	case 21:
+		retVal = FLASH_SECTOR21;
+		break;
+	case 22:
+		retVal = FLASH_SECTOR22;
+		break;
+	case 23:
+		retVal = FLASH_SECTOR23;
+		break;
+	case 24:
+		retVal = FLASH_SECTOR24;
+		break;
+	case 25:
+		retVal = FLASH_SECTOR25;
+		break;
+	case 26:
+		retVal = FLASH_SECTOR26;
+		break;
+	case 27:
+		retVal = FLASH_SECTOR27;
+		break;
+	case 28:
+		retVal = FLASH_SECTOR28;
+		break;
+	case 29:
+		retVal = FLASH_SECTOR29;
+		break;
+	case 30:
+		retVal = FLASH_SECTOR30;
+		break;
+	case 31:
+		retVal = FLASH_SECTOR31;
+		break;
+	default:
+		break;
+	}
+	return retVal;
 }

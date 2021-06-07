@@ -141,4 +141,6 @@ uint8_t get_node_sequence_number();
 
 uint8_t get_broadcast_id();
 
+uint8_t get_distance_to_gateway();
+
 #endif /* MYNET_H_ */

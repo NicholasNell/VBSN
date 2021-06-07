@@ -23,7 +23,6 @@
 typedef struct {
 	uint32_t flashValidIdentifier;
 	RTC_C_Calendar lastWriteTime;
-	nodeAddress thisNodeId;
 	Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 	RouteEntry_t routingtable[MAX_ROUTES];
 	Datagram_t receivedMessages[MAX_STORED_MSG];
@@ -31,13 +30,11 @@ typedef struct {
 	uint8_t _nodeSequenceNumber;
 	uint8_t _numNeighbours;
 	uint8_t _broadcastID;
-	uint16_t _txSlot;
 } FlashData_t;
 
 struct FlashOffset {
 	int flashValidIdentifier;
 	int lastWriteTime;
-	int thisNodeId;
 	int neighbourTable;
 	int routingtable;
 	int receivedMessages;
@@ -45,16 +42,13 @@ struct FlashOffset {
 	int _nodeSequenceNumber;
 	int _numNeighbours;
 	int _broadcastID;
-	int _txSlot;
 
 };
 
-#define MYDATA_MEM_START 0x00030000
+#define MYDATA_MEM_START 0x00020000
 #define NODE_ID_LOCATION 0
 #define NODE_NEIGHBOUR_TABLE_LOCATION 1 // len = 255 bytes
 #define NODE_NEIGHBOUR_SYNC_TABLE_LOCATION 256 // len = 255 *2
-
-#define MemLength 766
 
 int flash_write_buffer();
 int flash_write_node_id();
@@ -91,5 +85,7 @@ bool flash_check_for_data(void);
 FlashData_t* get_flash_data_struct(void);
 
 bool get_flash_ok_flag();
+
+uint32_t flash_calculate_sector(uint32_t Address);
 
 #endif /* MY_FLASH_H_ */

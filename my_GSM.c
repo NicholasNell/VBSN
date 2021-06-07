@@ -318,38 +318,38 @@ int modem_start(void) {
 
 //						Set the GSM modem to POWER SAVING mode
 void gsm_power_save_on() {
-//	send_gsm_uart("AT+CFUN=5\r");              // Send Attention Command
+	send_gsm_uart("AT+CFUN=7\r");              // Send Attention Command
 
 	send_uart_pc("gsm power save on.\n");
 }
 //						Set the GSM modem to NORMAL mode
 void gsm_power_save_off() {
-//	bool flag = false;
-//	start_timer_a_counter(5000, &flag);
-//	while (!flag) {
-//
-//		if (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
-//
-//			send_gsm_uart("AT+CFUN=1\r");          // Send Attention Command
-//
-//			if (string_search(OK)) {
-//				break;
-//			}
-//		}
-//	}
-//	stop_timer_a_counter();
+	bool flag = false;
+	start_timer_a_counter(5000, &flag);
+	while (!flag) {
+
+		if (!GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1)) {
+
+			send_gsm_uart("AT+CFUN=1\r");          // Send Attention Command
+
+			if (string_search(OK)) {
+				break;
+			}
+		}
+	}
+	stop_timer_a_counter();
+	WDT_A_clearTimer();
+	delay_ms(2000);
+	WDT_A_clearTimer();
+	delay_ms(2000);
 //	WDT_A_clearTimer();
 //	delay_ms(2000);
 //	WDT_A_clearTimer();
 //	delay_ms(2000);
-////	WDT_A_clearTimer();
-////	delay_ms(2000);
-////	WDT_A_clearTimer();
-////	delay_ms(2000);
-////	WDT_A_clearTimer();
-////	delay_ms(2000);
-////	WDT_A_clearTimer();
-//	send_uart_pc("gsm power save off.\n");
+//	WDT_A_clearTimer();
+//	delay_ms(2000);
+//	WDT_A_clearTimer();
+	send_uart_pc("gsm power save off.\n");
 }
 
 void disable_command_echo() {
@@ -510,7 +510,7 @@ bool gsm_upload_my_data() {
 	return true;
 }
 
-void gsm_upload_stored_datagrams() {
+bool gsm_upload_stored_datagrams() {
 	counter_read_gsm = 0;
 	gsm_power_save_off();
 //	context_deactivate_activate();
@@ -536,7 +536,7 @@ void gsm_upload_stored_datagrams() {
 				attempts = 0;
 				send_uart_pc("failed upload my data.\n");
 				WDT_A_clearTimer();
-				return;
+				return false;
 			}
 		}
 		WDT_A_clearTimer();
@@ -568,7 +568,7 @@ void gsm_upload_stored_datagrams() {
 				if (attempts > 1) {
 					attempts = 0;
 					send_uart_pc("failed upload stored data.\n");
-					return;
+					return false;
 				}
 			}
 
@@ -582,6 +582,7 @@ void gsm_upload_stored_datagrams() {
 
 	gsm_power_save_on();
 	WDT_A_clearTimer();
+	return true;
 }
 
 bool upload_current_datagram(int index) {
@@ -614,6 +615,7 @@ bool upload_current_datagram(int index) {
 	int localnumNeighbours = pointerToData[index].netData.numNeighbours;
 	int localRTSMissed = pointerToData[index].netData.rtsMissed;
 	int localHops = pointerToData[index].msgHeader.hopCount;
+	int localTimeToRoute = pointerToData[index].netData.timeToRoute;
 	char postCommand[SIZE_BUFFER];
 	memset(postCommand, 0, SIZE_BUFFER);
 	char postBody[SIZE_BUFFER];
@@ -621,12 +623,12 @@ bool upload_current_datagram(int index) {
 	WDT_A_clearTimer();
 	lenWritten =
 			sprintf(postBody,
-					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d,\"Hops\":%d}\r\n",
+					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d,\"Hops\":%d,\"TTR\":%d}\r\n",
 					localAddress, localTemperature, localHumidity,
 					localPressure, localVWC, localLight, localLat, localLon,
 					localHr, localMin, LocalSec, localSNR, localRSSI,
 					localRoutes, localnumDataSent, localnumNeighbours,
-					localRTSMissed, localHops);
+					localRTSMissed, localHops, localTimeToRoute);
 
 	//	sprintf(postCommand,
 	//			"AT#HTTPSND=1,0,\"http://meesters.ddns.net:8008/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",

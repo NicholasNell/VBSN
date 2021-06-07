@@ -13,6 +13,7 @@
 #include <my_gpio.h>
 #include <my_gps.h>
 #include <my_MAC.h>
+#include <my_rtc.h>
 #include <my_RFM9x.h>
 #include <my_scheduler.h>
 #include <my_timer.h>
@@ -42,20 +43,16 @@ static uint8_t receivedMsgIndex = 0;
 // State of the MAC state machine
 static volatile MACappState_t MACState = NODE_DISC;
 
-// LED gpio objects
-extern Gpio_t Led_rgb_green;
-//extern Gpio_t Led_rgb_blue;
-extern Gpio_t Led_rgb_red;
-
 // array of known neighbours
 static Neighbour_t neighbourTable[MAX_NEIGHBOURS];
 
 // This node MAC parameters:
 static nodeAddress _nodeID;
 static uint8_t _numNeighbours;
-static uint16_t _numMsgSent;
+static uint16_t _numDataMsgSent;
 static uint16_t _txSlot;
 static uint16_t _numRTSMissed;
+static uint16_t _totalMsgSent;
 
 // bme280Data
 extern struct bme280_data bme280Data;
@@ -99,7 +96,7 @@ static void set_predefined_id(void);
 static void set_predefined_id(void) {
 	_nodeID = MAC_ID1;
 //	_nodeID = MAC_ID2;
-	_nodeID = MAC_ID3;
+//	_nodeID = MAC_ID3;
 //	_nodeID = MAC_ID4;
 }
 
@@ -108,7 +105,7 @@ static void set_predefined_tx(void);
 static void set_predefined_tx(void) {
 	_txSlot = MAC_TX1;
 //	_txSlot = MAC_TX2;
-	_txSlot = MAC_TX3;
+//	_txSlot = MAC_TX3;
 //	_txSlot = MAC_TX4;
 }
 
@@ -183,7 +180,8 @@ void mac_init() {
 		}
 
 		reset_num_neighbours();
-		_numMsgSent = 0;
+		_numDataMsgSent = 0;
+		_totalMsgSent = 0;
 		memset(neighbourTable, NULL, MAX_NEIGHBOURS);
 
 #if DEBUG
@@ -425,7 +423,7 @@ void build_tx_datagram(void) {
 	txDatagram.data.sensData.gpsData = get_gps_data();
 	txDatagram.data.sensData.soilMoisture = get_vwc();
 	txDatagram.data.sensData.tim = RTC_C_getCalendarTime();
-	txDatagram.netData.numDataSent = _numMsgSent;
+	txDatagram.netData.numDataSent = _numDataMsgSent;
 
 	txDatagram.netData.numNeighbours = get_num_neighbours();
 	txDatagram.netData.numRoutes = get_num_routes();
@@ -436,6 +434,7 @@ void build_tx_datagram(void) {
 }
 
 bool mac_send(msgType_t msgType, nodeAddress dest) {
+	_totalMsgSent++;
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -457,13 +456,14 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 		txDatagram.data.sensData.soilMoisture = get_vwc();
 		txDatagram.data.sensData.tim = RTC_C_getCalendarTime();
 
-		_numMsgSent++;
-		txDatagram.netData.numDataSent = _numMsgSent;
-
+		_numDataMsgSent++;
+		txDatagram.netData.numDataSent = _numDataMsgSent;
+		txDatagram.netData.timeToRoute = get_time_to_route();
 		txDatagram.netData.numNeighbours = get_num_neighbours();
 		txDatagram.netData.numRoutes = get_num_routes();
-		;
+		txDatagram.netData.totalMsgSent = _totalMsgSent;
 		txDatagram.netData.rtsMissed = _numRTSMissed;
+		txDatagram.netData.distToGate = get_distance_to_gateway();
 		int size = sizeof(txDatagram.msgHeader)
 				+ sizeof(txDatagram.data.sensData) + sizeof(txDatagram.netData);
 		memcpy(TXBuffer, &txDatagram, size);
@@ -522,20 +522,21 @@ static bool process_rx_buffer() {
 
 	memcpy(&rxDatagram, get_rx_buffer(), get_lora_rx_buffer_size());
 
+	if (rxDatagram.msgHeader.flags > MSG_RREP) { // if rx message does not match any known flags discard
+		MACState = MAC_SLEEP;
+		return false;
+	}
+
 	if (receivedMsgIndex == MAX_STORED_MSG) {
 		receivedMsgIndex = 0;
 	}
-
-	add_neighbour(rxDatagram.msgHeader.localSource,
-			rxDatagram.msgHeader.txSlot);
-	add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 
 	if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
 		gen_id(true);
 	}
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
-	// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
+// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
 //	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
 //		set_slot_count(rxDatagram.msgHeader.curSlot);
 //	}
@@ -543,7 +544,7 @@ static bool process_rx_buffer() {
 //
 //	}
 
-	// check if message was meant for this node:
+// check if message was meant for this node:
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
 			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) { // if destination is this node or broadcast check message type
 
@@ -608,7 +609,9 @@ static bool process_rx_buffer() {
 		case MSG_SYNC: 	// SYNC
 		{
 //			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource);
-
+			add_neighbour(rxDatagram.msgHeader.localSource,
+					rxDatagram.msgHeader.txSlot);
+			add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 			MACState = MAC_SLEEP;
 			return true;
 		}
@@ -667,12 +670,12 @@ bool mac_send_tx_datagram(int size) {
 		}
 	}
 	stop_lora_timer();
-	return retVal;
+	return (retVal);
 }
 
 static bool mac_hop_message(nodeAddress dest) {
-
-	memcpy(&txDatagram, &rxDatagram, get_lora_rx_buffer_size());
+	int size = get_lora_rx_buffer_size();
+	memcpy(&txDatagram, &rxDatagram, size);
 	txDatagram.msgHeader.localSource = _nodeID;
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.nextHop = dest;
@@ -680,12 +683,12 @@ static bool mac_hop_message(nodeAddress dest) {
 	txDatagram.msgHeader.hopCount = txDatagram.msgHeader.hopCount + 1;
 	txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netSource;
 
-	txDatagram.netData.numDataSent = _numMsgSent;
-	_numMsgSent++;
-	txDatagram.netData.numNeighbours = get_num_neighbours();
-	txDatagram.netData.numRoutes = get_num_routes();
-	txDatagram.netData.rtsMissed = _numRTSMissed;
-	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.netData);
+//	txDatagram.netData.numDataSent = _numMsgSent;
+//	_numMsgSent++;
+//	txDatagram.netData.numNeighbours = get_num_neighbours();
+//	txDatagram.netData.numRoutes = get_num_routes();
+//	txDatagram.netData.rtsMissed = _numRTSMissed;
+
 	memcpy(TXBuffer, &txDatagram, size);
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);

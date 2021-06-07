@@ -72,4 +72,8 @@ bool get_gps_wake_flag();
 void set_gpsWake_flag();
 void reset_gps_wake_flag();
 
+bool get_gsm_upload_done_flag();
+void set_gsm_upload_done_flag();
+void reset_gsm_upload_done_flag();
+
 #endif // __MAIN_H__
