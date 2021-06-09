@@ -497,9 +497,9 @@ static bool process_rx_buffer() {
 		receivedMsgIndex = 0;
 	}
 
-	if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
-		gen_id(true);
-	}
+//	if (rxDatagram.msgHeader.localSource == _nodeID) { // change ID because another node has the same ID
+//		gen_id(true);
+//	}
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
 // Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message

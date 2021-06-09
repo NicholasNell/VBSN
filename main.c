@@ -209,7 +209,7 @@ int main(void) {
 	ResetCtl_clearHardResetSource(ResetCtl_getHardResetSource());
 	ResetCtl_clearSoftResetSource(ResetCtl_getSoftResetSource());
 //
-	MAP_WDT_A_startTimer();
+//	MAP_WDT_A_startTimer();
 
 	flash_check_for_data();
 
@@ -309,7 +309,7 @@ int main(void) {
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
 	WDT_A_CLOCKITERATIONS_2G);	// 22 min
 
-	MAP_WDT_A_startTimer();
+//	MAP_WDT_A_startTimer();
 
 //	gps_set_low_power();
 //	send_uart_pc("GPS low power\n");

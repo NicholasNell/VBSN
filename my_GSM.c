@@ -489,9 +489,7 @@ bool gsm_upload_stored_datagrams() {
 bool upload_current_datagram(int index) {
 
 	Datagram_t *pointerToData = get_received_messages();
-
 	int lenWritten = 0;
-
 	double localTemperature = pointerToData[index].data.sensData.temp;
 	double localHumidity = pointerToData[index].data.sensData.hum;
 	double localPressure = pointerToData[index].data.sensData.press;
