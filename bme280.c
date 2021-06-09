@@ -1562,13 +1562,11 @@ int8_t bme280_user_init(struct bme280_dev *dev, struct bme280_data *comp_data) {
 }
 
 void bme280_get_data(struct bme280_dev *dev, struct bme280_data *comp_data) {
-	BME280_ON
-	delay_ms(50);
+	delay_ms(100);
 	uint32_t req_delay;
 	req_delay = bme280_cal_meas_delay(&dev->settings);
 	bme280_set_sensor_mode(BME280_FORCED_MODE, dev);
 	dev->delay_us(req_delay, dev->intf_ptr);
 	bme280_get_sensor_data(BME280_ALL, comp_data, dev);
 	bme280_set_sensor_mode(BME280_SLEEP_MODE, dev);
-	BME280_OFF
 }

@@ -95,18 +95,18 @@ static void set_predefined_id(void);
 
 static void set_predefined_id(void) {
 	_nodeID = MAC_ID1;
-//	_nodeID = MAC_ID2;
-//	_nodeID = MAC_ID3;
-//	_nodeID = MAC_ID4;
+	_nodeID = MAC_ID2;
+	_nodeID = MAC_ID3;
+	_nodeID = MAC_ID4;
 }
 
 static void set_predefined_tx(void);
 
 static void set_predefined_tx(void) {
 	_txSlot = MAC_TX1;
-//	_txSlot = MAC_TX2;
-//	_txSlot = MAC_TX3;
-//	_txSlot = MAC_TX4;
+	_txSlot = MAC_TX2;
+	_txSlot = MAC_TX3;
+	_txSlot = MAC_TX4;
 }
 
 static void gen_id(bool genNew) {
@@ -143,20 +143,16 @@ void mac_init() {
 	}
 
 	if (get_flash_ok_flag()) {
-		FlashData_t *pFlashData = get_flash_data_struct();
 		if (get_is_root()) {
 			_nodeID = GATEWAY_ADDRESS;
 		} else {
-//			_nodeID = pFlashData->thisNodeId;
 			set_predefined_id();
 		}
 
-//		_txSlot = pFlashData->_txSlot;
 		set_predefined_tx();
+		_numDataMsgSent = flash_get_num_data_sent();
+		_totalMsgSent = flash_get_total_msg_sent();
 
-		_numNeighbours = pFlashData->_numNeighbours;
-		memcpy(neighbourTable, pFlashData->neighbourTable,
-				sizeof(pFlashData->neighbourTable));
 	} else {
 		if (get_is_root()) {
 			_nodeID = GATEWAY_ADDRESS;
@@ -208,7 +204,6 @@ bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
 	RouteEntry_t route;
 	while (true) {
-		WDT_A_clearTimer();
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
 			send_uart_pc("MAC_SYNC_BROADCAST\n");
@@ -269,6 +264,7 @@ bool mac_state_machine() {
 						if (get_num_retries() > 2) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
+							set_gps_wake_flag();
 						}
 						// no response, send again in next slot
 
@@ -379,6 +375,7 @@ bool mac_state_machine() {
 							if (get_num_retries() > 2) {
 								remove_route_with_node(route.next_hop);
 								remove_neighbour(route.next_hop);
+								set_gps_wake_flag();
 							}
 							send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
 							MACState = MAC_SLEEP;
@@ -402,35 +399,6 @@ bool mac_state_machine() {
 		}
 //		return false;
 	}
-}
-
-void build_tx_datagram(void) {
-	RouteEntry_t route;
-	has_route_to_node(GATEWAY_ADDRESS, &route);
-	txDatagram.msgHeader.nextHop = route.next_hop;
-	txDatagram.msgHeader.localSource = _nodeID;
-	txDatagram.msgHeader.netSource = _nodeID;
-	txDatagram.msgHeader.netDest = route.dest;
-	txDatagram.msgHeader.hopCount = 0;
-	txDatagram.msgHeader.flags = MSG_DATA;
-	txDatagram.msgHeader.txSlot = _txSlot;
-	txDatagram.msgHeader.curSlot = get_slot_count() + 5;
-
-	txDatagram.data.sensData.hum = bme280Data.humidity;
-	txDatagram.data.sensData.press = bme280Data.pressure;
-	txDatagram.data.sensData.temp = bme280Data.temperature;
-	txDatagram.data.sensData.lux = get_lux();
-	txDatagram.data.sensData.gpsData = get_gps_data();
-	txDatagram.data.sensData.soilMoisture = get_vwc();
-	txDatagram.data.sensData.tim = RTC_C_getCalendarTime();
-	txDatagram.netData.numDataSent = _numDataMsgSent;
-
-	txDatagram.netData.numNeighbours = get_num_neighbours();
-	txDatagram.netData.numRoutes = get_num_routes();
-	txDatagram.netData.rtsMissed = _numRTSMissed;
-	int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.sensData)
-			+ sizeof(txDatagram.netData);
-	memcpy(TXBuffer, &txDatagram, size);
 }
 
 bool mac_send(msgType_t msgType, nodeAddress dest) {
@@ -587,6 +555,7 @@ static bool process_rx_buffer() {
 
 			break;
 		case MSG_ACK: 	// ACK
+			WDT_A_clearTimer();
 			if (hopMessageFlag) {
 				hopMessageFlag = false;
 			}
@@ -828,4 +797,12 @@ void set_net_op_flag() {
 
 void reset_net_op_flag() {
 	netOp = false;
+}
+
+uint16_t get_num_data_msg_sent() {
+	return _numDataMsgSent;
+}
+
+uint16_t get_total_msg_sent() {
+	return _totalMsgSent;
 }

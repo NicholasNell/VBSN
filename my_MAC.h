@@ -160,4 +160,7 @@ bool get_net_op_flag();
 void set_net_op_flag();
 void reset_net_op_flag();
 
+uint16_t get_num_data_msg_sent();
+uint16_t get_total_msg_sent();
+
 #endif /* MY_MAC_H_ */

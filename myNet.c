@@ -62,12 +62,8 @@ static bool check_received_rreq(uint8_t broadcast_id, uint8_t sourceAddress) {
 
 void net_init() {
 	if (get_flash_ok_flag()) {
-		FlashData_t *pFlashData = get_flash_data_struct();
-		_numRoutes = pFlashData->_numRoutes;
-		_nodeSequenceNumber = pFlashData->_nodeSequenceNumber;
-		_broadcastID = pFlashData->_broadcastID;
-		memcpy(routingtable, pFlashData->routingtable,
-				sizeof(pFlashData->routingtable));
+		_nodeSequenceNumber = flash_get_node_seq_num();
+		_broadcastID = flash_get_broadcast_id();
 	} else {
 		_numRoutes = 0;
 		_nodeSequenceNumber = 0;
@@ -109,6 +105,9 @@ void add_route(RouteEntry_t routeToNode) {
 void add_route_to_neighbour(nodeAddress dest) {
 	_nodeSequenceNumber++;
 	RouteEntry_t newRoute;
+	if (dest == GATEWAY_ADDRESS) {
+		reset_time_to_route_flag();
+	}
 	if (has_route_to_node(dest, &newRoute)) {
 		if (newRoute.num_hops > 0) {
 			newRoute.dest = dest;
@@ -155,6 +154,7 @@ bool send_rreq() {
 	txDatagram.msgHeader.nextHop = BROADCAST_ADDRESS;
 	txDatagram.msgHeader.hopCount = 0;
 	txDatagram.msgHeader.txSlot = get_tx_slot();
+	txDatagram.msgHeader.curSlot = get_slot_count();
 
 	txDatagram.data.Rreq.broadcast_id = _broadcastID;
 	txDatagram.data.Rreq.dest_addr = GATEWAY_ADDRESS;

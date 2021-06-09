@@ -193,37 +193,36 @@ int main(void) {
 	ResetCtl_clearHardResetSource(ResetCtl_getHardResetSource());
 	ResetCtl_clearSoftResetSource(ResetCtl_getSoftResetSource());
 //
-//	MAP_WDT_A_startTimer();
+	MAP_WDT_A_startTimer();
 
-//	flashOK = flash_check_for_data();
+	flashOK = flash_check_for_data();
 
 	isRoot = false;	// Assume not a root node at first
 
 	// Initialise all ports and communication protocols
 	board_init_mcu();
+	WDT_A_clearTimer();
 	MAP_WDT_A_clearTimer();
 	// Initialise UART to PC
 	uart_init_pc();
-//	flash_check_for_data();
 
 	send_uart_pc("rtc Init\n");
 	MAP_WDT_A_clearTimer();
-
+	WDT_A_clearTimer();
 	//	 Initialise the RFM95 Radio Module
 	radio_init();
 
 	unsigned seed = SX1276Random();
 	srand(seed);	// Seeding Random Number generator
-	MAP_WDT_A_clearTimer();
+	WDT_A_clearTimer();
 
-	MAP_WDT_A_clearTimer();
 	//Initialise UART to GPS;
 	uart_init_gps();
-	MAP_WDT_A_clearTimer();
+	WDT_A_clearTimer();
 
-	MAP_WDT_A_clearTimer();
+	WDT_A_clearTimer();
 	hasGSM = init_gsm();	//Check if has GSm module
-	MAP_WDT_A_clearTimer();
+	WDT_A_clearTimer();
 	if (hasGSM) {
 		isRoot = true;
 //		gpio_toggle(&Led_rgb_green);
@@ -246,7 +245,7 @@ int main(void) {
 		}
 	}
 	rtc_init();
-	MAP_WDT_A_clearTimer();
+	WDT_A_clearTimer();
 
 	//	flash_fill_struct_for_write();
 
@@ -263,10 +262,9 @@ int main(void) {
 
 	// Volumetric Water Content Sensor
 	get_vwc();
-	MAP_WDT_A_clearTimer();
+	WDT_A_clearTimer();
 	// Have to wait for GPS to get a lock before operation can continue
 	run_systick_function_ms(1000);
-//	uint8_t timeout = 0;
 
 //	flash_init_offset();
 
@@ -291,9 +289,9 @@ int main(void) {
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_128M);	//
+	WDT_A_CLOCKITERATIONS_2G);	// 22 min
 
-//	MAP_WDT_A_startTimer();
+	MAP_WDT_A_startTimer();
 
 //	gps_set_low_power();
 //	send_uart_pc("GPS low power\n");
@@ -301,6 +299,10 @@ int main(void) {
 	send_uart_pc("Starting Main Loop\n");
 	set_time_to_route_flag();
 	while (1) {
+
+		if (isRoot) {
+			set_node_id(GATEWAY_ADDRESS);
+		}
 
 		if (get_mac_state_machine_enabled()) {
 			reset_mac_state_machine_enabled();
@@ -317,9 +319,9 @@ int main(void) {
 		if (get_reset_flag()) {
 			send_uart_pc("Reseting\n");
 			reset_reset_flag();
-//			flash_fill_struct_for_write();
-//			flash_write_struct_to_flash();
-//			ResetCtl_initiateHardReset();
+			flash_fill_struct_for_write();
+			flash_write_struct_to_flash();
+			ResetCtl_initiateHardReset();
 //			SysCtl_rebootDevice();
 		}
 
@@ -330,8 +332,8 @@ int main(void) {
 
 		if (get_save_flash_data_flag()) {
 			reset_save_flash_data_flag();
-//			flash_fill_struct_for_write();
-//			flash_write_struct_to_flash();
+			flash_fill_struct_for_write();
+			flash_write_struct_to_flash();
 		}
 		if (get_upload_gsm_flag()) {
 			reset_upload_gsm_flag();
@@ -493,7 +495,7 @@ bool get_gps_wake_flag() {
 	return gpsWakeFlag;
 }
 
-void set_gpsWake_flag() {
+void set_gps_wake_flag() {
 	gpsWakeFlag = true;
 }
 

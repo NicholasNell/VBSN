@@ -19,15 +19,13 @@
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/rtc_c.h>
 
-#define MY_FLASH_DATA_LEN 4096
-
 static bool flashOK = false;
 
 static FlashData_t myFlashDataStruct;
 
 static struct FlashOffset flashOffset;
 
-uint8_t myFlashData[16196];
+static uint8_t myFlashData[FLASH_DATA_SIZE];
 
 void flash_init_offset(void) {
 	int tempOffset = 0;
@@ -35,20 +33,14 @@ void flash_init_offset(void) {
 	tempOffset += sizeof(myFlashDataStruct.flashValidIdentifier);
 	flashOffset.lastWriteTime = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct.lastWriteTime);
-	flashOffset.neighbourTable = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct.neighbourTable);
-	flashOffset.routingtable = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct.routingtable);
-	flashOffset.receivedMessages = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct.receivedMessages);
-	flashOffset._numRoutes = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct._numRoutes);
 	flashOffset._nodeSequenceNumber = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct._nodeSequenceNumber);
-	flashOffset._numNeighbours = tempOffset;
-	tempOffset += sizeof(myFlashDataStruct._numNeighbours);
 	flashOffset._broadcastID = tempOffset;
 	tempOffset += sizeof(myFlashDataStruct._broadcastID);
+	flashOffset._numDataSent = tempOffset;
+	tempOffset += sizeof(myFlashDataStruct._numDataSent);
+	flashOffset._totalMsgSent = tempOffset;
+	tempOffset += sizeof(myFlashDataStruct._totalMsgSent);
 }
 
 int flash_write_buffer() {
@@ -67,18 +59,13 @@ int flash_write_buffer() {
 	 automatically try to program the maximum number of tries. If it fails,
 	 trap inside an infinite loop */
 	if (!MAP_FlashCtl_programMemory(myFlashData, (void*) MYDATA_MEM_START,
-	MY_FLASH_DATA_LEN))
+	FLASH_DATA_SIZE))
 		return ERROR_Write;
 
 	/* Setting the sector back to protected  */
 	MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,
 			flash_calculate_sector(MYDATA_MEM_START));
 	return Completed;
-}
-
-int flash_read_buffer() {
-	memcpy(&myFlashData, (uint32_t*) (MYDATA_MEM_START), MY_FLASH_DATA_LEN);
-	return true;
 }
 
 int flash_erase_all() {
@@ -93,18 +80,6 @@ int flash_erase_all() {
 	return 0;
 }
 
-int flash_write_node_id() {
-	myFlashData[NODE_ID_LOCATION] = get_node_id();
-	return flash_write_buffer();
-}
-
-int flash_read_node_id() {
-	myFlashData[NODE_ID_LOCATION] = *(uint8_t*) (MYDATA_MEM_START
-			+ NODE_ID_LOCATION);
-	set_node_id(myFlashData[NODE_ID_LOCATION]);
-	return myFlashData[NODE_ID_LOCATION];
-}
-
 int flash_init_buffer() {
 	memset(myFlashData, 0xFF, sizeof(myFlashDataStruct));
 	return true;
@@ -112,21 +87,11 @@ int flash_init_buffer() {
 
 int flash_fill_struct_for_write() {
 	myFlashDataStruct.flashValidIdentifier = FLASH_OK_IDENTIFIER;
-	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
-	if (get_num_neighbours() > 0) {
-		Neighbour_t *ptr = get_neighbour_table();
-		memcpy(&myFlashDataStruct.neighbourTable, &ptr, sizeof(*ptr));
-	}
-	RouteEntry_t *ptr1 = get_routing_table();
-	memcpy(&myFlashDataStruct.routingtable, &ptr1, sizeof(*ptr1));
-	if (get_received_messages_index() > 0) {
-		Datagram_t *ptr2 = get_received_messages();
-		memcpy(&myFlashDataStruct.receivedMessages, &ptr2, sizeof(*ptr2));
-	}
-	myFlashDataStruct._numRoutes = get_num_routes();
-	myFlashDataStruct._nodeSequenceNumber = get_node_sequence_number();
-	myFlashDataStruct._numNeighbours = get_num_neighbours();
-	myFlashDataStruct._broadcastID = get_broadcast_id();
+	flash_write_num_data_sent();
+	flash_write_total_msg_sent();
+	flash_write_rtc_time();
+	flash_write_node_seq_num();
+	flash_write_broadcast_id();
 	return 1;
 }
 
@@ -137,7 +102,7 @@ int flash_write_struct_to_flash() {
 }
 
 int flash_read_from_flash(void) {
-	memcpy(&myFlashData, (uint8_t*) MYDATA_MEM_START, MY_FLASH_DATA_LEN);
+	memcpy(&myFlashData, (uint8_t*) MYDATA_MEM_START, FLASH_DATA_SIZE);
 	memcpy(&myFlashDataStruct, &myFlashData, sizeof(myFlashDataStruct));
 	return 1;
 }
@@ -266,4 +231,59 @@ uint32_t flash_calculate_sector(uint32_t Address) {
 		break;
 	}
 	return retVal;
+}
+
+RTC_C_Calendar flash_get_last_write_time() {
+	memcpy(&myFlashDataStruct.lastWriteTime,
+			(void*) (MYDATA_MEM_START + flashOffset.lastWriteTime),
+			sizeof(myFlashDataStruct.lastWriteTime));
+	return myFlashDataStruct.lastWriteTime;
+}
+
+uint8_t flash_get_num_data_sent() {
+	memcpy(&myFlashDataStruct._numDataSent,
+			(void*) (MYDATA_MEM_START + flashOffset._numDataSent),
+			sizeof(myFlashDataStruct._numDataSent));
+	return myFlashDataStruct._numDataSent;
+}
+
+uint8_t flash_get_total_msg_sent() {
+	memcpy(&myFlashDataStruct._totalMsgSent,
+			(void*) (MYDATA_MEM_START + flashOffset._totalMsgSent),
+			sizeof(myFlashDataStruct._totalMsgSent));
+	return myFlashDataStruct._totalMsgSent;
+}
+
+uint8_t flash_get_node_seq_num() {
+	memcpy(&myFlashDataStruct._nodeSequenceNumber,
+			(void*) (MYDATA_MEM_START + flashOffset._nodeSequenceNumber),
+			sizeof(myFlashDataStruct._nodeSequenceNumber));
+	return myFlashDataStruct._nodeSequenceNumber;
+}
+
+uint8_t flash_get_broadcast_id() {
+	memcpy(&myFlashDataStruct._broadcastID,
+			(void*) (MYDATA_MEM_START + flashOffset._broadcastID),
+			sizeof(myFlashDataStruct._broadcastID));
+	return myFlashDataStruct._broadcastID;
+}
+
+void flash_write_num_data_sent() {
+	myFlashDataStruct._numDataSent = get_num_data_msg_sent();
+}
+
+void flash_write_total_msg_sent() {
+	myFlashDataStruct._numDataSent = get_total_msg_sent();
+}
+
+void flash_write_rtc_time() {
+	myFlashDataStruct.lastWriteTime = RTC_C_getCalendarTime();
+}
+
+void flash_write_node_seq_num() {
+	myFlashDataStruct._nodeSequenceNumber = get_node_sequence_number();
+}
+
+void flash_write_broadcast_id() {
+	myFlashDataStruct._broadcastID = get_broadcast_id();
 }

@@ -69,7 +69,7 @@ int8_t get_rssi_value();
 int8_t get_snr_value();
 
 bool get_gps_wake_flag();
-void set_gpsWake_flag();
+void set_gps_wake_flag();
 void reset_gps_wake_flag();
 
 bool get_gsm_upload_done_flag();

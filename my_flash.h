@@ -19,41 +19,32 @@
 #define Completed 0;
 
 #define FLASH_OK_IDENTIFIER 0xABCDEFAB
+#define NODE_ID_LOCATION 0
+#define NODE_NEIGHBOUR_TABLE_LOCATION 1 // len = 255 bytes
+#define NODE_NEIGHBOUR_SYNC_TABLE_LOCATION 256 // len = 255 *2
+#define FLASH_DATA_SIZE 38
 
 typedef struct {
-	uint32_t flashValidIdentifier;
-	RTC_C_Calendar lastWriteTime;
-	Neighbour_t neighbourTable[MAX_NEIGHBOURS];
-	RouteEntry_t routingtable[MAX_ROUTES];
-	Datagram_t receivedMessages[MAX_STORED_MSG];
-	uint8_t _numRoutes;
-	uint8_t _nodeSequenceNumber;
-	uint8_t _numNeighbours;
-	uint8_t _broadcastID;
-} FlashData_t;
+	uint32_t flashValidIdentifier; 	// 4  bytes
+	RTC_C_Calendar lastWriteTime;  	// 28 bytes
+	uint8_t _nodeSequenceNumber;   	// 1  byte
+	uint8_t _broadcastID;          	// 1  byte
+	uint16_t _numDataSent;			// 2 bytes
+	uint16_t _totalMsgSent;			// 2 bytes
+} FlashData_t;						// 38 bytes
 
 struct FlashOffset {
 	int flashValidIdentifier;
 	int lastWriteTime;
-	int neighbourTable;
-	int routingtable;
-	int receivedMessages;
-	int _numRoutes;
 	int _nodeSequenceNumber;
-	int _numNeighbours;
 	int _broadcastID;
-
+	int _numDataSent;
+	int _totalMsgSent;
 };
 
 #define MYDATA_MEM_START 0x00020000
-#define NODE_ID_LOCATION 0
-#define NODE_NEIGHBOUR_TABLE_LOCATION 1 // len = 255 bytes
-#define NODE_NEIGHBOUR_SYNC_TABLE_LOCATION 256 // len = 255 *2
 
 int flash_write_buffer();
-int flash_write_node_id();
-int flash_read_node_id();
-int flash_read_buffer();
 int flash_erase_all();
 int flash_init_buffer();
 
@@ -87,5 +78,18 @@ FlashData_t* get_flash_data_struct(void);
 bool get_flash_ok_flag();
 
 uint32_t flash_calculate_sector(uint32_t Address);
+
+RTC_C_Calendar flash_get_last_write_time();
+uint8_t flash_get_broadcast_id();
+uint8_t flash_get_num_data_sent();
+uint8_t flash_get_total_msg_sent();
+uint8_t flash_get_node_seq_num();
+uint8_t flash_get_broadcast_id();
+
+void flash_write_num_data_sent();
+void flash_write_total_msg_sent();
+void flash_write_rtc_time();
+void flash_write_node_seq_num();
+void flash_write_broadcast_id();
 
 #endif /* MY_FLASH_H_ */

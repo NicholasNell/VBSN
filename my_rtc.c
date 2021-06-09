@@ -1,10 +1,8 @@
 /*
-
  * my_rtc.c
  *
  *  Created on: 09 Mar 2020
  *      Author: nicholas
-
  */
 
 #include <helper.h>
@@ -51,21 +49,17 @@ void rtc_init() {
 	/* Initializing RTC with current time as described in time in
 	 * definitions section */
 
-	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
+	RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
 
 	/* Specify an interrupt to assert every minute */
 //	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_HOURCHANGE);
-	MAP_RTC_C_setCalendarAlarm(0x05,
-	RTC_C_ALARMCONDITION_OFF,
-	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF);
-
 	/* Enable interrupt for RTC Ready Status, which asserts when the RTC
 	 * Calendar registers are ready to read.
 	 * Also, enable interrupts for the Calendar alarm and Calendar event. */
-	MAP_RTC_C_clearInterruptFlag(
+	RTC_C_clearInterruptFlag(
 			RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
 					| RTC_C_CLOCK_ALARM_INTERRUPT);
-	MAP_RTC_C_enableInterrupt(
+	RTC_C_enableInterrupt(
 			RTC_C_CLOCK_READ_READY_INTERRUPT | RTC_C_TIME_EVENT_INTERRUPT
 					| RTC_C_CLOCK_ALARM_INTERRUPT);
 
@@ -88,10 +82,9 @@ void rtc_stop_clock(void) {
 
 void rtc_set_calendar_time(void) {
 //	rtc_stop_clock();
-	MAP_RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
-	int temp = convert_hex_to_dec_by_byte(MAP_RTC_C_getCalendarTime().minutes)
-			* 60
-			+ convert_hex_to_dec_by_byte(MAP_RTC_C_getCalendarTime().seconds);
+	RTC_C_initCalendar(&currentTime, RTC_C_FORMAT_BCD);
+	int temp = convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().minutes) * 60
+			+ convert_hex_to_dec_by_byte(RTC_C_getCalendarTime().seconds);
 
 	set_slot_count(temp);
 //	rtc_start_clock();
@@ -112,18 +105,11 @@ void RTC_C_IRQHandler(void) {
 			timeToRoute++;
 		}
 
-		int curSlot = convert_hex_to_dec_by_byte(
-		MAP_RTC_C_getCalendarTime().minutes) * 60
-				+ convert_hex_to_dec_by_byte(
-						MAP_RTC_C_getCalendarTime().seconds);
+		RTC_C_Calendar time = RTC_C_getCalendarTime();
+		int curSlot = convert_hex_to_dec_by_byte(time.minutes) * 60
+				+ convert_hex_to_dec_by_byte(time.seconds);
 
 		set_slot_count(curSlot);
-
-		if (curSlot % (WINDOW_TIME_SEC * 3) == 0) {
-			if (!get_is_root()) {
-				resetFlag = true;
-			}
-		}
 
 		if (get_num_routes() >= MAX_ROUTES) {
 			reset_num_routes();
@@ -135,7 +121,7 @@ void RTC_C_IRQHandler(void) {
 		i = curSlot / WINDOW_TIME_SEC;
 
 		if (curSlot % GPS_WAKEUP_TIME == 0) {
-			set_gpsWake_flag();
+			set_gps_wake_flag();
 		}
 
 		if (curSlot % FLASH_SAVE_DATA == 0) {
@@ -243,7 +229,7 @@ void RTC_C_IRQHandler(void) {
 	}
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {	// Resync with GPS
-		set_gpsWake_flag();
+		set_gps_wake_flag();
 //		resetFlag = true;
 	}
 

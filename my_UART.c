@@ -47,6 +47,8 @@ extern Gpio_t Led_rgb_blue;
 // static functions
 static void UartGPSCommands();
 
+static int dayofweek(int d, int m, int y);
+
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 
 //UART configured for 9600 Baud
@@ -404,8 +406,9 @@ void UartGPSCommands() {
 //				rtc_set_calendar_time();
 				if (sec != 0x59) {
 
-					RTC_C_Calendar newCal = { (uint8_t) (sec), minute, hr, 0,
-							(uint_fast8_t) day, month, year };
+					RTC_C_Calendar newCal = { (uint8_t) (sec), minute, hr,
+							dayofweek(day, month, year), (uint_fast8_t) day,
+							month, year };
 					set_current_time(newCal);
 
 				}
@@ -432,6 +435,12 @@ void UartGPSCommands() {
 	}
 //	memset(UartRxGPS, 0x00, SIZE_BUFFER_GPS);
 	counter_read_gps = 0;
+}
+
+static int dayofweek(int d, int m, int y) {
+	static int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+	y -= m < 3;
+	return (y + y / 4 - y / 100 + y / 400 + t[m - 1] + d) % 7;
 }
 
 void EUSCIA3_IRQHandler(void) {
