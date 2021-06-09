@@ -119,6 +119,22 @@ void on_rx_timeout(void);
  */
 void on_rx_error(void);
 
+void init_buttons();
+
+void init_buttons() {
+	// Left Button: S1
+	GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+	GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
+	GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);
+
+	// Right Button: S2
+	GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN4);
+	GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN4);
+	GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN4);
+
+	Interrupt_enableInterrupt(INT_PORT1);
+}
+
 void radio_init() {
 	/*!
 	 * Radio events function pointer
@@ -189,13 +205,13 @@ int main(void) {
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_8192K);	// aprox 256
+	WDT_A_CLOCKITERATIONS_128M);	// aprox 256
 	ResetCtl_clearHardResetSource(ResetCtl_getHardResetSource());
 	ResetCtl_clearSoftResetSource(ResetCtl_getSoftResetSource());
 //
 	MAP_WDT_A_startTimer();
 
-	flashOK = flash_check_for_data();
+	flash_check_for_data();
 
 	isRoot = false;	// Assume not a root node at first
 
@@ -263,6 +279,8 @@ int main(void) {
 	// Volumetric Water Content Sensor
 	get_vwc();
 	WDT_A_clearTimer();
+	init_buttons();
+
 	// Have to wait for GPS to get a lock before operation can continue
 	run_systick_function_ms(1000);
 
@@ -348,12 +366,56 @@ int main(void) {
 
 void PORT1_IRQHandler(void) {
 	uint32_t status;
+	static uint8_t numPresses = 0;
 
 	status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
 	MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
 
 	if (status & GPIO_PIN1) {
 		flash_erase_all();
+	} else if (status & GPIO_PIN4) {
+		GPIO_disableInterrupt(GPIO_PORT_P1, GPIO_PIN4);
+		if (!isRoot) {
+			numPresses++;
+			if (numPresses > 4) {
+				numPresses = 1;
+			}
+			switch (numPresses) {
+			case 1:
+				set_node_id(MAC_ID1);
+				gpio_flash_lED(&Led_user_red, 10);
+				break;
+			case 2:
+				set_node_id(MAC_ID2);
+				gpio_flash_lED(&Led_user_red, 10);
+				delay_ms(100);
+				gpio_flash_lED(&Led_user_red, 10);
+				break;
+			case 3:
+				set_node_id(MAC_ID3);
+				gpio_flash_lED(&Led_user_red, 10);
+				delay_ms(100);
+				gpio_flash_lED(&Led_user_red, 10);
+				delay_ms(100);
+				gpio_flash_lED(&Led_user_red, 10);
+				break;
+			case 4:
+				set_node_id(MAC_ID4);
+				gpio_flash_lED(&Led_user_red, 10);
+				delay_ms(100);
+				gpio_flash_lED(&Led_user_red, 10);
+				delay_ms(100);
+				gpio_flash_lED(&Led_user_red, 10);
+				delay_ms(100);
+				gpio_flash_lED(&Led_user_red, 10);
+				break;
+			default:
+				break;
+			}
+		}
+		GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN4);
+		delay_ms(500);
+		GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN4);
 	}
 
 }

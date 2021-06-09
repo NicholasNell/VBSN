@@ -119,14 +119,12 @@ static void gen_id(bool genNew) {
 		}
 		_nodeID = tempID;
 	} else {
-		tempID = flash_read_node_id();
 
 		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
 			tempID = (nodeAddress) rand();
 		}
 		_nodeID = tempID;
 	}
-	flash_write_node_id();
 
 }
 

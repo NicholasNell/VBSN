@@ -41,6 +41,13 @@ static int _numUploadsFailed = 0;
  */
 void GSM_disable(void);
 
+void init_power_on();
+
+void init_power_on() {
+	send_gsm_uart("AT+CFUN=1\r");
+	delay_ms(4000);
+}
+
 static void context_deactivate_activate(void);
 
 const eUSCI_UART_ConfigV1 uartConfigGSM = { EUSCI_A_UART_CLOCKSOURCE_SMCLK, // SMCLK Clock Source
