@@ -78,6 +78,9 @@ typedef struct {
 	uint16_t timeToRoute;
 	uint16_t totalMsgSent;
 	uint8_t distToGate;
+	uint16_t rreqTx;
+	uint16_t rrepTx;
+	uint16_t rreqReTx;
 } NetData_t;
 
 typedef struct {

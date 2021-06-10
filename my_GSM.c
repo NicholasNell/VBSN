@@ -375,13 +375,17 @@ bool gsm_upload_my_data() {
 	int localHour = convert_hex_to_dec_by_byte(tim.hours);
 	int localMinute = convert_hex_to_dec_by_byte(tim.minutes);
 	int localSecond = convert_hex_to_dec_by_byte(tim.seconds);
+	int localRreqTx = get_rreq_sent();
+	int localRrepTx = get_rrep_sent();
+	int localRreqReTx = get_rreq_re_sent();
 	memset(postBody, 0, 255);
 	int lenWritten =
 			sprintf(postBody,
-					"{\"ID\": %d,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"Ro\":%d,\"NN\":%d,\"MR\":%d,\"UF\":%d}\r\n",
+					"{\"ID\": %d,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"Ro\":%d,\"NN\":%d,\"MR\":%d,\"UF\":%d,\"RQS\":%d,\"RQRS\":%d,\"RPS\":%d}\r\n",
 					localAddress, localLat, localLon, localHour, localMinute,
 					localSecond, localRoutes, localNeighbours, localMsgRx,
-					localUploadsfailed);
+					localUploadsfailed, localRreqTx, localRreqReTx,
+					localRrepTx);
 
 	char postCommand[255];
 	memset(postCommand, 0, 255);
@@ -514,19 +518,23 @@ bool upload_current_datagram(int index) {
 	int localTimeToRoute = pointerToData[index].netData.timeToRoute;
 	int localTotalMsgSent = pointerToData[index].netData.totalMsgSent;
 	int localDistToGate = pointerToData[index].netData.distToGate;
+	int localRreqTx = pointerToData[index].netData.rreqTx;
+	int localRrepTx = pointerToData[index].netData.rrepTx;
+	int localRreqReTx = pointerToData[index].netData.rreqReTx;
 	char postCommand[SIZE_BUFFER];
 	memset(postCommand, 0, SIZE_BUFFER);
 	char postBody[SIZE_BUFFER];
 	memset(postBody, 0, SIZE_BUFFER);
 	lenWritten =
 			sprintf(postBody,
-					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d,\"Hops\":%d,\"TTR\":%d,\"TMS\":%d,\"DTG\":%d}\r\n",
+					"{\"ID\": %d,\"T\":%.1f,\"H\":%.1f,\"P\":%.0f,\"V\":%.1f,\"L\":%.1f,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"SNR\":%.1f,\"R\":%.1f,\"Ro\":%d,\"DS\":%d,\"NN\":%d,\"rts\":%d,\"Hops\":%d,\"TTR\":%d,\"TMS\":%d,\"DTG\":%d,\"RQS\":%d,\"RQRS\":%d,\"RPS\":%d}\r\n",
 					localAddress, localTemperature, localHumidity,
 					localPressure, localVWC, localLight, localLat, localLon,
 					localHr, localMin, LocalSec, localSNR, localRSSI,
 					localRoutes, localnumDataSent, localnumNeighbours,
 					localRTSMissed, localHops, localTimeToRoute,
-					localTotalMsgSent, localDistToGate);
+					localTotalMsgSent, localDistToGate, localRreqTx,
+					localRreqReTx, localRrepTx);
 
 	sprintf(postCommand,
 			"AT#HTTPSND=1,0,\"/api/v1/%s/telemetry\",%d,\"application/json\"\r\n",

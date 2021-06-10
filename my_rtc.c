@@ -171,14 +171,11 @@ void RTC_C_IRQHandler(void) {
 							set_mac_app_state(MAC_LISTEN);
 						}
 					}
-				} else if (get_sync()) {
-					if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
-							&& !get_is_root()) {
+				} else if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
+						&& !get_is_root()) {
+					if (get_sync()) {
 						set_mac_app_state(MAC_NET_OP);
 						set_next_net_op(NET_BROADCAST_RREQ);
-
-					} else {
-						set_mac_app_state(MAC_SYNC_BROADCAST);
 					}
 				} else {
 					set_mac_app_state(MAC_LISTEN);

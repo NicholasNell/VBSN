@@ -309,7 +309,7 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 NextNetOp_t process_rrep() {
 	NextNetOp_t retVal = NET_NONE;
 
-	forwardPathInfo.destinationAddress = rxDatagram.msgHeader.netDest;
+	forwardPathInfo.destinationAddress = rxDatagram.data.Rrep.source_addr;
 	forwardPathInfo.nextHop = rxDatagram.msgHeader.localSource;
 	forwardPathInfo.hopcount = rxDatagram.data.Rrep.hop_cnt + 1;
 	forwardPathInfo.expTime = REVERSE_PATH_EXP_TIME;
@@ -395,7 +395,7 @@ bool send_rrep() {
 		txDatagram.msgHeader.hopCount = 0;
 		txDatagram.msgHeader.txSlot = get_tx_slot();
 
-		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.source_addr;
+		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.dest_addr;
 		txDatagram.data.Rrep.dest_sequence_num = _nodeSequenceNumber;
 		txDatagram.data.Rrep.hop_cnt = 0;
 		txDatagram.data.Rrep.lifetime = MAX_HOPS;

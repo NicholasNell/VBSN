@@ -163,4 +163,8 @@ void reset_net_op_flag();
 uint16_t get_num_data_msg_sent();
 uint16_t get_total_msg_sent();
 
+uint16_t get_rreq_sent();
+uint16_t get_rreq_re_sent();
+uint16_t get_rrep_sent();
+
 #endif /* MY_MAC_H_ */

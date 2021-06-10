@@ -26,16 +26,24 @@ static uint16_t slotCount;
 
 bool get_sync(void) {
 
-	static uint16_t lastSync = 0;
-	bool retval = false;
-	int ran = (float) rand() / RAND_MAX * SYNC_PROB;
-	if ((slotCount - lastSync) < 0) {
-		lastSync = 0;
-	} else if ((slotCount - lastSync) > ran) {
-		lastSync = slotCount;
-		retval = true;
+//	static uint16_t lastSync = 0;
+//	bool retval = false;
+//	int ran = (float) rand() / RAND_MAX * SYNC_PROB;
+//	if ((slotCount - lastSync) < 0) {
+//		lastSync = 0;
+//	} else if ((slotCount - lastSync) > ran) {
+//		lastSync = slotCount;
+//		retval = true;
+//	}
+//	return retval;
+
+	int ran = rand();
+	int compVal = (100 - SYNC_PROB) * RAND_MAX / 100;
+	if (ran > compVal) {
+		return true;
+	} else {
+		return false;
 	}
-	return retval;
 }
 
 uint16_t get_slot_count() {

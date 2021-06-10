@@ -53,6 +53,9 @@ static uint16_t _numDataMsgSent;
 static uint16_t _txSlot;
 static uint16_t _numRTSMissed;
 static uint16_t _totalMsgSent;
+static uint16_t _rreqSent = 0;
+static uint16_t _rrepSent = 0;
+static uint16_t _rreqReBroadcast = 0;
 
 // bme280Data
 extern struct bme280_data bme280Data;
@@ -304,6 +307,7 @@ bool mac_state_machine() {
 				 carrierSenseTimes[carrierSenseSlot++])*/) {
 					send_uart_pc("NET_REBROADCAST_RREQ: channel clear\n");
 					if (net_re_rreq()) {
+						_rreqReBroadcast++;
 						send_uart_pc(
 								"NET_REBROADCAST_RREQ: succesfully rebroadcast RREQ\n");
 						nextNetOp = NET_WAIT;
@@ -323,6 +327,7 @@ bool mac_state_machine() {
 				 carrierSenseTimes[carrierSenseSlot++])*/) {
 					send_uart_pc("NET_BROADCAST_RREQ: channel clear\n");
 					if (send_rreq()) {
+						_rreqSent++;
 						send_uart_pc("NET_BROADCAST_RREQ: sent RREQ\n");
 						nextNetOp = NET_WAIT;
 					} else {
@@ -338,6 +343,7 @@ bool mac_state_machine() {
 				send_uart_pc("NET_UNICAST_RREP\n");
 
 				send_rrep();
+				_rrepSent++;
 				nextNetOp = NET_NONE;
 				MACState = MAC_SLEEP;
 				break;
@@ -408,7 +414,6 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 	txDatagram.msgHeader.netDest = dest;
 	txDatagram.msgHeader.hopCount = 0;
 	txDatagram.msgHeader.flags = msgType;
-
 	txDatagram.msgHeader.txSlot = _txSlot;
 	txDatagram.msgHeader.curSlot = get_slot_count();
 
@@ -430,6 +435,10 @@ bool mac_send(msgType_t msgType, nodeAddress dest) {
 		txDatagram.netData.totalMsgSent = _totalMsgSent;
 		txDatagram.netData.rtsMissed = _numRTSMissed;
 		txDatagram.netData.distToGate = get_distance_to_gateway();
+		txDatagram.netData.rreqTx = _rreqSent;
+		txDatagram.netData.rreqReTx = _rreqReBroadcast;
+		txDatagram.netData.rrepTx = _rrepSent;
+
 		int size = sizeof(txDatagram.msgHeader)
 				+ sizeof(txDatagram.data.sensData) + sizeof(txDatagram.netData);
 		memcpy(TXBuffer, &txDatagram, size);
@@ -622,6 +631,7 @@ bool is_neighbour(nodeAddress node) {
 
 bool mac_send_tx_datagram(int size) {
 	bool retVal = false;
+	memset(TXBuffer, 0, MAX_MESSAGE_LEN);
 	memcpy(TXBuffer, &txDatagram, size);
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
@@ -803,4 +813,16 @@ uint16_t get_num_data_msg_sent() {
 
 uint16_t get_total_msg_sent() {
 	return _totalMsgSent;
+}
+
+uint16_t get_rreq_sent() {
+	return _rreqSent;
+}
+
+uint16_t get_rreq_re_sent() {
+	return _rreqReBroadcast;
+}
+
+uint16_t get_rrep_sent() {
+	return _rrepSent;
 }
