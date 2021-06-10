@@ -395,7 +395,7 @@ bool send_rrep() {
 		txDatagram.msgHeader.hopCount = 0;
 		txDatagram.msgHeader.txSlot = get_tx_slot();
 
-		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.dest_addr;
+		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rreq.source_addr;
 		txDatagram.data.Rrep.dest_sequence_num = _nodeSequenceNumber;
 		txDatagram.data.Rrep.hop_cnt = 0;
 		txDatagram.data.Rrep.lifetime = MAX_HOPS;
@@ -420,7 +420,7 @@ bool send_rrep() {
 				rxDatagram.data.Rrep.dest_sequence_num;
 		txDatagram.data.Rrep.hop_cnt = rxDatagram.data.Rrep.hop_cnt + 1;
 		txDatagram.data.Rrep.lifetime = MAX_HOPS;
-		txDatagram.data.Rrep.source_addr = rxDatagram.data.Rrep.source_addr;
+		txDatagram.data.Rrep.source_addr = GATEWAY_ADDRESS;
 		int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
 		retVal = mac_send_tx_datagram(size);
 		HasReversePathInfo = false;

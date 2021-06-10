@@ -289,13 +289,18 @@ int main(void) {
 //	flash_fill_struct_for_write();
 //	flash_write_struct_to_flash();
 //	flash_reset_button_setup();
+	int counter = 0;
 	while (!gpsWorking) {
 		if (systimer_ready_check()) {
 			WDT_A_clearTimer();
+			counter++;
 #if DEBUG
 			gpio_flash_lED(&Led_rgb_green, 50);
 #endif
 			run_systick_function_ms(1000);
+			if (counter > 120) {
+				ResetCtl_initiateHardReset();
+			}
 
 		}
 	}
