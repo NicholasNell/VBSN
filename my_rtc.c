@@ -131,14 +131,14 @@ void RTC_C_IRQHandler(void) {
 		if ((curSlot >= gsmStartSlot[i]) && (curSlot <= gsmStopSlot[i])) {
 			if (get_is_root()) {
 				if (!hasSentGSM) {
-					resetCounter++;
+//					resetCounter++;
 					send_uart_pc("Uploading Stored datagrams\n");
 					reset_gsm_upload_done_flag();
 					uploadGSM = true;
-					if (resetCounter >= 3) {
-						resetCounter = 0;
-						resetFlag = true;
-					}
+//					if (resetCounter >= 3) {
+//						resetCounter = 0;
+//						resetFlag = true;
+//					}
 					hasSentGSM = true;
 				}
 			} else {

@@ -59,14 +59,12 @@ typedef struct {
 	uint8_t broadcast_id;// The broadcast ID used by the source, ie the number of RReq's it has sent
 	nodeAddress dest_addr;	// destination address: will probably be a gateway
 	uint8_t dest_sequence_num;		// destination sequence number
-	uint8_t hop_cnt;		// number of hops the message has gone through
 } RReq_t;
 
 typedef struct {
 	nodeAddress source_addr;	// source address, will probably be a gateway
 	nodeAddress dest_addr;	// destination address: will probably be a sensor
 	uint8_t dest_sequence_num;	// destination sequence number
-	uint8_t hop_cnt;	// number of hops until now
 	uint8_t lifetime;	// TTL?
 } RRep_t;
 

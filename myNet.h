@@ -23,8 +23,8 @@ typedef struct {
 } RouteEntry_t;
 
 typedef struct {
-	nodeAddress destinationAddress;	// the source of the rreq (ie the destination of the reverse path)
-	nodeAddress nextHop;	// the next hop on the way to the source of the rreq
+	nodeAddress sourceAddress; // the source of the rreq (ie the destination of the reverse path)
+	nodeAddress localSourceAddress;	// the next hop on the way to the source of the rreq
 	uint8_t hopcount;		// the number of hops to the source of the rreq
 
 	uint8_t broadcastID;	// RReq boradcast ID (used to identify the rreq)
@@ -35,7 +35,7 @@ typedef struct {
 
 typedef struct {
 	nodeAddress destinationAddress; // the final destination of the rreq, specified by the rrep
-	nodeAddress nextHop;		// the node from which the rrep was received
+	nodeAddress nextHop;	// the node from which the rrep was received
 	uint8_t hopcount;			// the number of hnops to the destination
 
 	uint8_t expTime;			// expiration time of the reverse path info

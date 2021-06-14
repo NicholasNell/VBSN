@@ -520,6 +520,9 @@ static bool process_rx_buffer() {
 //	}
 
 // check if message was meant for this node:
+	add_neighbour(rxDatagram.msgHeader.localSource,
+			rxDatagram.msgHeader.txSlot);
+	add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
 			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) { // if destination is this node or broadcast check message type
 
