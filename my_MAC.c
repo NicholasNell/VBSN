@@ -366,35 +366,27 @@ bool mac_state_machine() {
 			send_uart_pc("MAC_HOP_MESSAGE\n");
 			if (has_route_to_node(GATEWAY_ADDRESS, &route)) {
 				send_uart_pc("MAC_HOP_MESSAGE: has route to dest\n");
-				if (SX1276IsChannelFree(MODEM_LORA,
-				RF_FREQUENCY, LORA_RSSI_THRESHOLD,
-						carrierSenseTimes[carrierSenseSlot++])) {
-					send_uart_pc("MAC_HOP_MESSAGE: channel clear\n");
+				send_uart_pc("MAC_HOP_MESSAGE: channel clear\n");
+				if (mac_hop_message(route.next_hop)) { // Send RTS
+					send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 
-					if (mac_send(MSG_RTS, route.next_hop)) { // Send RTS
-						send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
-
-						if (!mac_rx(SLOT_LENGTH_MS)) {
-							increment_num_retries();
-							if (get_num_retries() > 2) {
-								remove_route_with_node(route.next_hop);
-								remove_neighbour(route.next_hop);
-								set_gps_wake_flag();
-							}
-							send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
-							MACState = MAC_SLEEP;
-							return false;
+					if (!mac_rx(SLOT_LENGTH_MS)) {
+						increment_num_retries();
+						if (get_num_retries() > 2) {
+							remove_route_with_node(route.next_hop);
+							remove_neighbour(route.next_hop);
+							set_gps_wake_flag();
 						}
-					} else {
-						hopMessageFlag = false;
+						send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
 						MACState = MAC_SLEEP;
-						//					return false;
+						return false;
 					}
 				} else {
-					send_uart_pc("MAC_HOP_MESSAGE: channel not free\n");
+					hopMessageFlag = true;
 					MACState = MAC_SLEEP;
-					//				return false;
+					//					return false;
 				}
+
 			}
 			break;
 
@@ -547,7 +539,7 @@ static bool process_rx_buffer() {
 		case MSG_DATA: 	// DATA
 			if (rxDatagram.msgHeader.netDest != _nodeID) {
 				hopMessageFlag = true;
-			} else {
+			} else if (get_is_root()) {
 				hopMessageFlag = false;
 				// now either store the data for further later sending or get ready to upload data to cloud
 				rxDatagram.radioData.rssi = get_rssi_value();
@@ -557,11 +549,12 @@ static bool process_rx_buffer() {
 			}
 
 			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
-			if (!hopMessageFlag) {
-				MACState = MAC_SLEEP;
-			} else {
-				MACState = MAC_HOP_MESSAGE;
-			}
+//			if (!hopMessageFlag) {
+//				MACState = MAC_SLEEP;
+//			} else {
+//				MACState = MAC_HOP_MESSAGE;
+//			}
+			MACState = MAC_SLEEP;
 
 			break;
 		case MSG_ACK: 	// ACK
@@ -660,19 +653,13 @@ static bool mac_hop_message(nodeAddress dest) {
 	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.txSlot = _txSlot;
-	txDatagram.msgHeader.hopCount = txDatagram.msgHeader.hopCount + 1;
+	txDatagram.msgHeader.hopCount = rxDatagram.msgHeader.hopCount + 1;
 	txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netSource;
-
-//	txDatagram.netData.numDataSent = _numMsgSent;
-//	_numMsgSent++;
-//	txDatagram.netData.numNeighbours = get_num_neighbours();
-//	txDatagram.netData.numRoutes = get_num_routes();
-//	txDatagram.netData.rtsMissed = _numRTSMissed;
 
 	memcpy(TXBuffer, &txDatagram, size);
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
-
+	waitForAck = true;
 	RadioState = TX;
 	bool retVal = false;
 	while (true) {
