@@ -18,7 +18,8 @@
 #define POSSIBLE_TX_SLOT 1		// possible slot modulus
 #define GLOBAL_RX (10 / SLOT_SCALER)	// possible global rx modulus
 #define COLLECT_DATA_SLOT_REL 10	// slot in which data is collected before a transmission
-#define SYNC_PROB 20					// probability of sending out a sync message in a global rx slot.
+#define SYNC_PROB_ROUTE_DISC 20					// probability of sending out a sync message in a global rx slot.
+#define SYNC_PROB_HELLO_MSG 5		// prob of root sending helo msg
 #define TOTAL_NETWORK_NODES 5		// total nodes in the network. I've only made 5.
 #define TIME_TO_SEND_SEC (60*5)		// the time between data transmissions
 #define TIME_TO_SEND_DATA_OFFSET 25	//
@@ -35,7 +36,7 @@
 
 //!
 //! \brief calculates a new sync probability based on the number of known neighbours.
-bool get_sync(void);
+bool get_sync(uint8_t per);
 
 /*!
  * \brief returns the current slot count

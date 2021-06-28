@@ -11,7 +11,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\\\ti\\\\ccs930\\\\ccs\\\\utils\\\\bin\\\\gmake",
+            "compilerPath": "C:\\ti\\ccs1020\\ccs\\utils\\bin\\gmake.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"

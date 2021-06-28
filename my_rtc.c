@@ -53,6 +53,8 @@ void rtc_init() {
 
 	/* Specify an interrupt to assert every minute */
 //	MAP_RTC_C_setCalendarEvent(RTC_C_CALENDAREVENT_HOURCHANGE);
+	RTC_C_setCalendarAlarm(RTC_C_ALARMCONDITION_OFF, 0x0,
+	RTC_C_ALARMCONDITION_OFF, RTC_C_ALARMCONDITION_OFF); // set an alarm for midnight
 	/* Enable interrupt for RTC Ready Status, which asserts when the RTC
 	 * Calendar registers are ready to read.
 	 * Also, enable interrupts for the Calendar alarm and Calendar event. */
@@ -91,8 +93,6 @@ void rtc_set_calendar_time(void) {
 }
 
 void RTC_C_IRQHandler(void) {
-	static uint8_t resetCounter = 0;
-
 	uint32_t status;
 	status = MAP_RTC_C_getEnabledInterruptStatus();
 	MAP_RTC_C_clearInterruptFlag(status);
@@ -131,14 +131,10 @@ void RTC_C_IRQHandler(void) {
 		if ((curSlot >= gsmStartSlot[i]) && (curSlot <= gsmStopSlot[i])) {
 			if (get_is_root()) {
 				if (!hasSentGSM) {
-//					resetCounter++;
+
 					send_uart_pc("Uploading Stored datagrams\n");
 					reset_gsm_upload_done_flag();
 					uploadGSM = true;
-//					if (resetCounter >= 3) {
-//						resetCounter = 0;
-//						resetFlag = true;
-//					}
 					hasSentGSM = true;
 				}
 			} else {
@@ -173,10 +169,12 @@ void RTC_C_IRQHandler(void) {
 					}
 				} else if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
 						&& !get_is_root()) {
-					if (get_sync()) {
+					if (get_sync(SYNC_PROB_ROUTE_DISC)) {
 						set_mac_app_state(MAC_NET_OP);
 						set_next_net_op(NET_BROADCAST_RREQ);
 					}
+				} else if (get_sync(SYNC_PROB_HELLO_MSG) && get_is_root()) {
+					set_mac_app_state(MAC_SYNC_BROADCAST); // root will periodically send out hello messages
 				} else {
 					set_mac_app_state(MAC_LISTEN);
 				}
@@ -200,6 +198,7 @@ void RTC_C_IRQHandler(void) {
 				}
 			}
 
+			//Try to only remove routes if retries is exceeded???
 			RouteEntry_t *routes;
 			routes = get_routing_table();
 			for (var = 0; var < get_num_routes(); ++var) {
@@ -227,7 +226,7 @@ void RTC_C_IRQHandler(void) {
 
 	if (status & RTC_C_CLOCK_ALARM_INTERRUPT) {	// Resync with GPS
 		set_gps_wake_flag();
-//		resetFlag = true;
+		resetFlag = true;
 	}
 
 }

@@ -87,7 +87,6 @@ void remove_route_with_node(nodeAddress node) {
 				}
 				_numRoutes--;
 			}
-
 		}
 	}
 }
@@ -141,7 +140,6 @@ nodeAddress get_dest(nodeAddress dest) {
 
 bool send_rreq() {
 	bool retVal = false;
-
 	RouteEntry_t newRoute;
 	bool hasRoute = has_route_to_node(GATEWAY_ADDRESS, &newRoute);
 
@@ -189,7 +187,7 @@ NextNetOp_t process_rreq() {
 	if (rxDatagram.data.Rreq.source_addr == get_node_id()) { // if this Rreq originated from this node, wait
 		retVal = NET_WAIT;
 		return retVal;
-	}
+	} //! FINE!
 
 	if (check_received_rreq(broadcast_id, source_addr)) { // already received this message, so ignore
 		retVal = NET_WAIT;
@@ -202,7 +200,7 @@ NextNetOp_t process_rreq() {
 	if (rxDatagram.data.Rreq.dest_addr == get_node_id()) {
 		reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 		reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
-		reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+		reversePathInfo.expTime = get_slot_count() - 1;
 		reversePathInfo.localSourceAddress = rxDatagram.msgHeader.localSource;
 		reversePathInfo.source_sequence_num =
 				rxDatagram.data.Rreq.source_sequence_num;
@@ -220,7 +218,7 @@ NextNetOp_t process_rreq() {
 			reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
 			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 			reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
-			reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+			reversePathInfo.expTime = get_slot_count() - 1;
 			reversePathInfo.localSourceAddress =
 					rxDatagram.msgHeader.localSource;
 			reversePathInfo.source_sequence_num =
@@ -233,7 +231,7 @@ NextNetOp_t process_rreq() {
 			reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
 			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 			reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
-			reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+			reversePathInfo.expTime = get_slot_count() - 1;
 			reversePathInfo.localSourceAddress =
 					rxDatagram.msgHeader.localSource;
 			reversePathInfo.source_sequence_num =
@@ -247,7 +245,7 @@ NextNetOp_t process_rreq() {
 		reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
 		reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 		reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
-		reversePathInfo.expTime = REVERSE_PATH_EXP_TIME;
+		reversePathInfo.expTime = get_slot_count() - 1;
 		reversePathInfo.localSourceAddress = rxDatagram.msgHeader.localSource;
 		reversePathInfo.source_sequence_num =
 				rxDatagram.data.Rreq.source_sequence_num;
@@ -288,11 +286,10 @@ bool has_route_to_node(nodeAddress dest, RouteEntry_t *routeToNode) {
 		return retVal;
 	}
 	int i;
+
 	for (i = 0; i < _numRoutes; ++i) {
 		if (dest == routingtable[i].dest) {
 			retVal = true;
-//			routeToNode = &routingtable[i];
-//			memcpy(routeToNode, &routingtable[i], sizeof(RouteEntry_t));
 			routeToNode->dest = routingtable[i].dest;
 			routeToNode->dest_seq_num = routingtable[i].dest_seq_num;
 			routeToNode->expiration_time = routingtable[i].expiration_time;
@@ -337,7 +334,7 @@ bool add_reverse_path_to_table() {
 	RouteEntry_t newRouteToNode;
 	newRouteToNode.dest = reversePathInfo.sourceAddress;
 	newRouteToNode.dest_seq_num = reversePathInfo.source_sequence_num;
-	newRouteToNode.expiration_time = reversePathInfo.expTime;
+	newRouteToNode.expiration_time = get_slot_count() - 1;
 	newRouteToNode.next_hop = reversePathInfo.localSourceAddress;
 	newRouteToNode.num_hops = reversePathInfo.hopcount + 1;
 
@@ -361,7 +358,7 @@ bool add_forward_path_to_table() {
 	RouteEntry_t newRouteToNode;
 	newRouteToNode.dest = forwardPathInfo.destinationAddress;
 	newRouteToNode.dest_seq_num = forwardPathInfo.dest_sequence_num;
-	newRouteToNode.expiration_time = forwardPathInfo.expTime;
+	newRouteToNode.expiration_time = get_slot_count() - 1;
 	newRouteToNode.next_hop = forwardPathInfo.nextHop;
 	newRouteToNode.num_hops = forwardPathInfo.hopcount;
 
@@ -405,20 +402,27 @@ bool send_rrep() {
 	} else if (HasReversePathInfo && !get_is_root()) {
 		RouteEntry_t newRoute;
 		has_route_to_node(reversePathInfo.localSourceAddress, &newRoute);
+		RouteEntry_t routeToGate;
+		has_route_to_node(GATEWAY_ADDRESS, &routeToGate);
 
-		txDatagram.msgHeader.flags = MSG_RREP;
-		txDatagram.msgHeader.localSource = get_node_id();
-		txDatagram.msgHeader.netDest = reversePathInfo.sourceAddress;
-		txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netSource;
 		txDatagram.msgHeader.nextHop = reversePathInfo.localSourceAddress;
+		txDatagram.msgHeader.localSource = get_node_id();
+		txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netSource;
+		txDatagram.msgHeader.netDest = reversePathInfo.sourceAddress;
 		txDatagram.msgHeader.hopCount = reversePathInfo.hopcount + 1;
 		txDatagram.msgHeader.txSlot = get_tx_slot();
+		txDatagram.msgHeader.curSlot = get_slot_count();
+		txDatagram.msgHeader.flags = MSG_RREP;
 
-		txDatagram.data.Rrep.dest_addr = rxDatagram.data.Rrep.dest_addr;
-		txDatagram.data.Rrep.dest_sequence_num =
-				rxDatagram.data.Rrep.dest_sequence_num;
-		txDatagram.data.Rrep.lifetime = rxDatagram.data.Rrep.lifetime - 1;
 		txDatagram.data.Rrep.source_addr = reversePathInfo.sourceAddress;
+		txDatagram.data.Rrep.dest_addr = GATEWAY_ADDRESS;
+		txDatagram.data.Rrep.dest_sequence_num = routeToGate.dest_seq_num;
+		if (rxDatagram.data.Rrep.lifetime > 0) {
+			txDatagram.data.Rrep.lifetime = rxDatagram.data.Rrep.lifetime - 1;
+		} else {
+			txDatagram.data.Rrep.lifetime = 5; // temp
+		}
+
 		int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data.Rrep);
 		retVal = mac_send_tx_datagram(size);
 		HasReversePathInfo = false;

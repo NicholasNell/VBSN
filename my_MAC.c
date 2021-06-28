@@ -56,6 +56,7 @@ static uint16_t _totalMsgSent;
 static uint16_t _rreqSent = 0;
 static uint16_t _rrepSent = 0;
 static uint16_t _rreqReBroadcast = 0;
+static Datagram_t msgToHop;
 
 // bme280Data
 extern struct bme280_data bme280Data;
@@ -90,7 +91,7 @@ static bool mac_send(msgType_t msgType, nodeAddress dest);
 
 static bool mac_rx(uint32_t timeout);
 
-static void gen_id(bool genNew);
+//static void gen_id(bool genNew);
 
 static bool mac_hop_message(nodeAddress dest);
 
@@ -112,24 +113,26 @@ static void set_predefined_tx(void) {
 	_txSlot = MAC_TX4;
 }
 
-static void gen_id(bool genNew) {
-	nodeAddress tempID = 0x0;
+// uncomment this function + prototype if youb want to randomly generate new ID's
 
-	if (genNew) {
-		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS
-				|| tempID == _nodeID) {
-			tempID = (nodeAddress) rand();
-		}
-		_nodeID = tempID;
-	} else {
-
-		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
-			tempID = (nodeAddress) rand();
-		}
-		_nodeID = tempID;
-	}
-
-}
+//static void gen_id(bool genNew) {
+//	nodeAddress tempID = 0x0;
+//
+//	if (genNew) {
+//		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS
+//				|| tempID == _nodeID) {
+//			tempID = (nodeAddress) rand();
+//		}
+//		_nodeID = tempID;
+//	} else {
+//
+//		while (tempID == BROADCAST_ADDRESS || tempID == GATEWAY_ADDRESS) {
+//			tempID = (nodeAddress) rand();
+//		}
+//		_nodeID = tempID;
+//	}
+//
+//}
 
 void mac_init() {
 	uint8_t i;
@@ -203,7 +206,7 @@ void mac_init() {
 
 bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
-	RouteEntry_t route;
+	static RouteEntry_t route;
 	while (true) {
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
@@ -271,6 +274,8 @@ bool mac_state_machine() {
 
 						MACState = MAC_SLEEP;
 //						return false;
+					} else {
+						route.expiration_time = get_slot_count() - 1; // reset the expiration timer onthe route you just succesfully used
 					}
 				} else {
 					send_uart_pc("MAC_RTS: send RTS failed\n");
@@ -341,8 +346,13 @@ bool mac_state_machine() {
 				break;
 			case NET_UNICAST_RREP:
 				send_uart_pc("NET_UNICAST_RREP\n");
-
-				send_rrep();
+				if (!get_is_root()) { // if yuo arent the root, wait to see if the root responds first
+					if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
+						send_rrep();
+					}
+				} else {	// if you are the root, send rrep immediately
+					send_rrep();
+				}
 				_rrepSent++;
 				nextNetOp = NET_NONE;
 				MACState = MAC_SLEEP;
@@ -366,7 +376,6 @@ bool mac_state_machine() {
 			send_uart_pc("MAC_HOP_MESSAGE\n");
 			if (has_route_to_node(GATEWAY_ADDRESS, &route)) {
 				send_uart_pc("MAC_HOP_MESSAGE: has route to dest\n");
-				send_uart_pc("MAC_HOP_MESSAGE: channel clear\n");
 				if (mac_hop_message(route.next_hop)) { // Send RTS
 					send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 
@@ -539,6 +548,7 @@ static bool process_rx_buffer() {
 		case MSG_DATA: 	// DATA
 			if (rxDatagram.msgHeader.netDest != _nodeID) {
 				hopMessageFlag = true;
+				memcpy(&msgToHop, &rxDatagram, get_lora_rx_buffer_size());
 			} else if (get_is_root()) {
 				hopMessageFlag = false;
 				// now either store the data for further later sending or get ready to upload data to cloud
@@ -549,12 +559,12 @@ static bool process_rx_buffer() {
 			}
 
 			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
-//			if (!hopMessageFlag) {
-//				MACState = MAC_SLEEP;
-//			} else {
-//				MACState = MAC_HOP_MESSAGE;
-//			}
-			MACState = MAC_SLEEP;
+			if (!hopMessageFlag) {
+				MACState = MAC_SLEEP;
+			} else {
+				MACState = MAC_HOP_MESSAGE;
+			}
+//			MACState = MAC_SLEEP;
 
 			break;
 		case MSG_ACK: 	// ACK
@@ -647,16 +657,18 @@ bool mac_send_tx_datagram(int size) {
 }
 
 static bool mac_hop_message(nodeAddress dest) {
-	int size = get_lora_rx_buffer_size();
-	memcpy(&txDatagram, &rxDatagram, size);
-	txDatagram.msgHeader.localSource = _nodeID;
-	txDatagram.msgHeader.netDest = GATEWAY_ADDRESS;
-	txDatagram.msgHeader.nextHop = dest;
-	txDatagram.msgHeader.txSlot = _txSlot;
-	txDatagram.msgHeader.hopCount = rxDatagram.msgHeader.hopCount + 1;
-	txDatagram.msgHeader.netSource = rxDatagram.msgHeader.netSource;
+	int size = sizeof(msgToHop.msgHeader) + sizeof(msgToHop.data)
+			+ sizeof(msgToHop.netData);
+	msgToHop.msgHeader.nextHop = dest;
+	msgToHop.msgHeader.localSource = _nodeID;
+	msgToHop.msgHeader.netSource = rxDatagram.msgHeader.netSource;
+	msgToHop.msgHeader.netDest = GATEWAY_ADDRESS;
+	msgToHop.msgHeader.hopCount = rxDatagram.msgHeader.hopCount + 1;
+	msgToHop.msgHeader.txSlot = _txSlot;
+	msgToHop.msgHeader.curSlot = get_slot_count();
+	msgToHop.msgHeader.flags = MSG_DATA;
 
-	memcpy(TXBuffer, &txDatagram, size);
+	memcpy(TXBuffer, &msgToHop, size);
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
 	waitForAck = true;

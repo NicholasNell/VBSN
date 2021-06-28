@@ -10,7 +10,7 @@
 #include <datagram.h>
 #include <stdint.h>
 
-#define MAX_ROUTES 20
+#define MAX_ROUTES 10
 #define MAX_HOPS 5
 #define REVERSE_PATH_EXP_TIME 60
 
@@ -47,7 +47,8 @@ typedef enum netOps {
 	NET_REBROADCAST_RREQ,
 	NET_BROADCAST_RREQ,
 	NET_UNICAST_RREP,
-	NET_WAIT
+	NET_WAIT,
+
 } NextNetOp_t;
 
 void net_init();
