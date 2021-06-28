@@ -211,7 +211,7 @@ int main(void) {
 //
 //	MAP_WDT_A_startTimer();
 
-	flash_check_for_data();
+//	flash_check_for_data();
 
 	isRoot = false;	// Assume not a root node at first
 
@@ -461,6 +461,7 @@ void PORT2_IRQHandler(void) {
 void on_tx_done(void) {
 	SX1276clearIRQFlags();
 	set_lora_radio_state(TXDONE);
+	increment_total_msg_tx();
 #if DEBUG
 		send_uart_pc("TxDone\n");
 #endif

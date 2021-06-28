@@ -167,4 +167,6 @@ uint16_t get_rreq_sent();
 uint16_t get_rreq_re_sent();
 uint16_t get_rrep_sent();
 
+void increment_total_msg_tx();
+
 #endif /* MY_MAC_H_ */

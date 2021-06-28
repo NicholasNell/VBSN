@@ -48,7 +48,7 @@ typedef enum netOps {
 	NET_BROADCAST_RREQ,
 	NET_UNICAST_RREP,
 	NET_WAIT,
-
+	NET_BROKEN_LINK
 } NextNetOp_t;
 
 void net_init();

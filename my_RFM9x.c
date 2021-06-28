@@ -1043,8 +1043,8 @@ void SX1276SetRx(uint32_t timeout) {
 
 		if (SX1276.Settings.LoRa.FreqHopOn == true) {
 			spi_write_rfm( REG_LR_IRQFLAGSMASK, //RFLR_IRQFLAGS_RXTIMEOUT |
-											   //RFLR_IRQFLAGS_RXDONE |
-											   //RFLR_IRQFLAGS_PAYLOADCRCERROR |
+												//RFLR_IRQFLAGS_RXDONE |
+												//RFLR_IRQFLAGS_PAYLOADCRCERROR |
 					RFLR_IRQFLAGS_VALIDHEADER |
 					RFLR_IRQFLAGS_TXDONE |
 					RFLR_IRQFLAGS_CADDONE |
@@ -1060,8 +1060,8 @@ void SX1276SetRx(uint32_t timeout) {
 							| RFLR_DIOMAPPING1_DIO2_00);
 		} else {
 			spi_write_rfm( REG_LR_IRQFLAGSMASK, //RFLR_IRQFLAGS_RXTIMEOUT |
-											   //RFLR_IRQFLAGS_RXDONE |
-											   //RFLR_IRQFLAGS_PAYLOADCRCERROR |
+												//RFLR_IRQFLAGS_RXDONE |
+												//RFLR_IRQFLAGS_PAYLOADCRCERROR |
 					RFLR_IRQFLAGS_VALIDHEADER |
 					RFLR_IRQFLAGS_TXDONE |
 					RFLR_IRQFLAGS_CADDONE |
@@ -1438,8 +1438,9 @@ void SX1276OnDio0Irq() {
 				break;
 			}
 			// Returns SNR value [dB] rounded to the nearest integer value
-			SX1276.Settings.LoRaPacketHandler.SnrValue = (((int8_t) spi_read_rfm(
-			REG_LR_PKTSNRVALUE)) + 2) >> 2;
+			SX1276.Settings.LoRaPacketHandler.SnrValue =
+					(((int8_t) spi_read_rfm(
+					REG_LR_PKTSNRVALUE)) + 2) >> 2;
 
 			int16_t rssi = spi_read_rfm( REG_LR_PKTRSSIVALUE);
 			if (SX1276.Settings.LoRaPacketHandler.SnrValue < 0) {

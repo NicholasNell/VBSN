@@ -22,7 +22,8 @@ typedef enum msgFlags {
 	MSG_ACK,
 	MSG_SYNC,
 	MSG_RREQ,
-	MSG_RREP
+	MSG_RREP,
+	MSG_BROKEN_LINK
 } msgType_t;
 
 typedef uint8_t nodeAddress;

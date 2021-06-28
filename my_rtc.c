@@ -147,6 +147,18 @@ void RTC_C_IRQHandler(void) {
 		} else {
 			hasSentGSM = false;
 
+			//Try to only remove routes if retries is exceeded???
+			static bool routeExpired = false;
+//			RouteEntry_t *routes;
+//			routes = get_routing_table();
+//			for (var = 0; var < get_num_routes(); ++var) {
+//				if (routes[var].expiration_time == curSlot) {
+//					routeExpired = true;
+//					remove_neighbour(routes->next_hop);
+//					remove_route_with_node(routes->next_hop);
+//				}
+//			}
+
 			if (curSlot % GLOBAL_RX == 0) { // Global Sync Slots
 				RouteEntry_t tempRoute;
 				if (get_net_op_flag()) { // Perform a network layer operation in the global RX window
@@ -174,7 +186,11 @@ void RTC_C_IRQHandler(void) {
 						set_next_net_op(NET_BROADCAST_RREQ);
 					}
 				} else if (get_sync(SYNC_PROB_HELLO_MSG) && get_is_root()) {
-					set_mac_app_state(MAC_SYNC_BROADCAST); // root will periodically send out hello messages
+//					set_mac_app_state(MAC_SYNC_BROADCAST); // root will periodically send out hello messages
+					set_mac_app_state(MAC_LISTEN); // comment this out later, disables hello messages
+				} else if (routeExpired) {
+					set_mac_app_state(MAC_NET_OP);
+					set_next_net_op(NET_BROKEN_LINK);
 				} else {
 					set_mac_app_state(MAC_LISTEN);
 				}
@@ -195,16 +211,6 @@ void RTC_C_IRQHandler(void) {
 					send_uart_pc("Neighbour Tx Slot\n");
 					macStateMachineEnable = true;
 					break;
-				}
-			}
-
-			//Try to only remove routes if retries is exceeded???
-			RouteEntry_t *routes;
-			routes = get_routing_table();
-			for (var = 0; var < get_num_routes(); ++var) {
-				if (routes[var].expiration_time == curSlot) {
-					remove_neighbour(routes->next_hop);
-					remove_route_with_node(routes->next_hop);
 				}
 			}
 

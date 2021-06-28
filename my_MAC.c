@@ -265,7 +265,7 @@ bool mac_state_machine() {
 						send_uart_pc("MAC_RTS: no CTS received\n");
 						increment_num_retries();
 						_numRTSMissed++;
-						if (get_num_retries() > 2) {
+						if (get_num_retries() > 5) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 							set_gps_wake_flag();
@@ -294,10 +294,10 @@ bool mac_state_machine() {
 				_numRTSMissed++;
 				send_uart_pc("MAC_RTS: no Route to dest\n");
 				nextNetOp = NET_BROADCAST_RREQ;
-				MACState = MAC_NET_OP;
+				MACState = MAC_SLEEP;
+				netOp = true;
 
 			}
-			MACState = MAC_SLEEP;
 			break;
 		case MAC_NET_OP:
 			switch (nextNetOp) {
@@ -357,6 +357,13 @@ bool mac_state_machine() {
 				nextNetOp = NET_NONE;
 				MACState = MAC_SLEEP;
 				break;
+			case NET_BROKEN_LINK:
+				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
+					if (mac_send(MSG_BROKEN_LINK, BROADCAST_ADDRESS)) {
+						MACState = MAC_SLEEP;
+					}
+				}
+				break;
 			case NET_WAIT:
 				send_uart_pc("NET_WAIT\n");
 				if (!mac_rx(SLOT_LENGTH_MS)) {
@@ -407,7 +414,6 @@ bool mac_state_machine() {
 }
 
 bool mac_send(msgType_t msgType, nodeAddress dest) {
-	_totalMsgSent++;
 
 	txDatagram.msgHeader.nextHop = dest;
 	txDatagram.msgHeader.localSource = _nodeID;
@@ -498,6 +504,24 @@ static bool process_rx_buffer() {
 
 	memcpy(&rxDatagram, get_rx_buffer(), get_lora_rx_buffer_size());
 
+	if (get_is_root()
+			&& (rxDatagram.msgHeader.localSource == 0xBC
+					|| rxDatagram.msgHeader.localSource == 0xCD)) { // gateway can't hear BC or CD
+		return false;
+	}
+
+	if (get_node_id() == 0xBC && rxDatagram.msgHeader.localSource == 0x00) { // Node BC can't hear gateway
+		return false;
+	}
+	if (get_node_id() == 0xAB && rxDatagram.msgHeader.localSource == 0xCD) { // Node AB can't hear CD
+		return false;
+	}
+
+	if (get_node_id() == 0xCD
+			&& (rxDatagram.msgHeader.localSource == 0xAB
+					|| rxDatagram.msgHeader.localSource == 0x00)) {
+		return false;
+	}
 	if (rxDatagram.msgHeader.flags > MSG_RREP) { // if rx message does not match any known flags discard
 		MACState = MAC_SLEEP;
 		return false;
@@ -602,6 +626,11 @@ static bool process_rx_buffer() {
 			nextNetOp = process_rreq();
 			MACState = MAC_NET_OP;
 			netOp = true;
+			break;
+		case MSG_BROKEN_LINK:
+			remove_route_with_node(rxDatagram.msgHeader.localSource);
+			remove_neighbour(rxDatagram.msgHeader.localSource);
+			MACState = MAC_SLEEP;
 			break;
 		default:
 			return false;
@@ -827,4 +856,8 @@ uint16_t get_rreq_re_sent() {
 
 uint16_t get_rrep_sent() {
 	return _rrepSent;
+}
+
+void increment_total_msg_tx() {
+	_totalMsgSent++;
 }
