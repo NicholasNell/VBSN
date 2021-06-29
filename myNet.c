@@ -264,13 +264,16 @@ bool net_re_rreq() {
 	memcpy(&txDatagram, &rxDatagram,
 			sizeof(rxDatagram.msgHeader) + sizeof(rxDatagram.data));
 
-	if (txDatagram.data.Rreq.source_addr != get_node_id()) { // only rebroadcast if not own Rreq
-
+	if (HasReversePathInfo) { // only rebroadcast if not own Rreq
+		txDatagram.msgHeader.hopCount = reversePathInfo.hopcount + 1;
+		txDatagram.data.Rreq.broadcast_id = reversePathInfo.broadcastID;
+		txDatagram.data.Rreq.source_addr = reversePathInfo.sourceAddress;
+		txDatagram.msgHeader.localSource = reversePathInfo.localSourceAddress;
+		txDatagram.data.Rreq.source_sequence_num =
+				reversePathInfo.source_sequence_num;
 		if (txDatagram.msgHeader.hopCount <= MAX_HOPS) { // no more than 5 hops
-			txDatagram.msgHeader.hopCount++;
 			txDatagram.msgHeader.localSource = get_node_id();
-			int size = sizeof(txDatagram.msgHeader)
-					+ sizeof(txDatagram.data.Rreq);
+			int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data);
 			retVal = mac_send_tx_datagram(size);
 		}
 	}

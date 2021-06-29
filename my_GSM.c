@@ -378,14 +378,15 @@ bool gsm_upload_my_data() {
 	int localRreqTx = get_rreq_sent();
 	int localRrepTx = get_rrep_sent();
 	int localRreqReTx = get_rreq_re_sent();
+	int localTotalMsgSent = get_total_msg_sent();
 	memset(postBody, 0, 255);
 	int lenWritten =
 			sprintf(postBody,
-					"{\"ID\": %d,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"Ro\":%d,\"NN\":%d,\"MR\":%d,\"UF\":%d,\"RQS\":%d,\"RQRS\":%d,\"RPS\":%d}\r\n",
+					"{\"ID\": %d,\"Lat\":%f,\"Lon\":%f,\"Tim\":%d.%d.%d,\"Ro\":%d,\"NN\":%d,\"MR\":%d,\"UF\":%d,\"RQS\":%d,\"RQRS\":%d,\"RPS\":%d,\"TMS\":%d}\r\n",
 					localAddress, localLat, localLon, localHour, localMinute,
 					localSecond, localRoutes, localNeighbours, localMsgRx,
-					localUploadsfailed, localRreqTx, localRreqReTx,
-					localRrepTx);
+					localUploadsfailed, localRreqTx, localRreqReTx, localRrepTx,
+					localTotalMsgSent);
 
 	char postCommand[255];
 	memset(postCommand, 0, 255);

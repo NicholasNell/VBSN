@@ -307,9 +307,7 @@ bool mac_state_machine() {
 				break;
 			case NET_REBROADCAST_RREQ:
 				send_uart_pc("NET_REBROADCAST_RREQ\n");
-				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])/*SX1276IsChannelFree(MODEM_LORA,
-				 RF_FREQUENCY, LORA_RSSI_THRESHOLD,
-				 carrierSenseTimes[carrierSenseSlot++])*/) {
+				if (!mac_rx(carrierSenseTimes[carrierSenseSlot++])) {
 					send_uart_pc("NET_REBROADCAST_RREQ: channel clear\n");
 					if (net_re_rreq()) {
 						_rreqReBroadcast++;
@@ -385,10 +383,9 @@ bool mac_state_machine() {
 				send_uart_pc("MAC_HOP_MESSAGE: has route to dest\n");
 				if (mac_hop_message(route.next_hop)) { // Send RTS
 					send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
-
 					if (!mac_rx(SLOT_LENGTH_MS)) {
 						increment_num_retries();
-						if (get_num_retries() > 2) {
+						if (get_num_retries() > 5) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 							set_gps_wake_flag();
@@ -504,24 +501,35 @@ static bool process_rx_buffer() {
 
 	memcpy(&rxDatagram, get_rx_buffer(), get_lora_rx_buffer_size());
 
+	//!---------------------------------------------------------------------------------------
+	//! Hopping Test
+
 	if (get_is_root()
 			&& (rxDatagram.msgHeader.localSource == 0xBC
-					|| rxDatagram.msgHeader.localSource == 0xCD)) { // gateway can't hear BC or CD
+					|| rxDatagram.msgHeader.localSource == 0xCD
+					|| rxDatagram.msgHeader.localSource == 0xDE)) { // gateway can't hear BC or CD
 		return false;
-	}
-
-	if (get_node_id() == 0xBC && rxDatagram.msgHeader.localSource == 0x00) { // Node BC can't hear gateway
+	} else if (get_node_id() == 0xBC
+			&& (rxDatagram.msgHeader.localSource == 0x00
+					|| rxDatagram.msgHeader.localSource == 0xDE)) { // Node BC can't hear gateway
 		return false;
-	}
-	if (get_node_id() == 0xAB && rxDatagram.msgHeader.localSource == 0xCD) { // Node AB can't hear CD
+	} else if (get_node_id() == 0xAB
+			&& (rxDatagram.msgHeader.localSource == 0xCD
+					|| rxDatagram.msgHeader.localSource == 0xDE)) { // Node AB can't hear CD
 		return false;
-	}
-
-	if (get_node_id() == 0xCD
+	} else if (get_node_id() == 0xCD
 			&& (rxDatagram.msgHeader.localSource == 0xAB
 					|| rxDatagram.msgHeader.localSource == 0x00)) {
 		return false;
+	} else if (get_node_id() == 0xDE
+			&& (rxDatagram.msgHeader.localSource == 0x00
+					|| rxDatagram.msgHeader.localSource == 0xAB
+					|| rxDatagram.msgHeader.localSource == 0xBC)) {
+		return false;
 	}
+
+	//!-----------------------------------------------------------------------------------------
+
 	if (rxDatagram.msgHeader.flags > MSG_RREP) { // if rx message does not match any known flags discard
 		MACState = MAC_SLEEP;
 		return false;
@@ -583,12 +591,12 @@ static bool process_rx_buffer() {
 			}
 
 			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
-			if (!hopMessageFlag) {
-				MACState = MAC_SLEEP;
-			} else {
-				MACState = MAC_HOP_MESSAGE;
-			}
-//			MACState = MAC_SLEEP;
+//			if (!hopMessageFlag) {
+//				MACState = MAC_SLEEP;
+//			} else {
+//				MACState = MAC_HOP_MESSAGE;
+//			}
+			MACState = MAC_SLEEP;
 
 			break;
 		case MSG_ACK: 	// ACK
