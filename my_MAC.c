@@ -265,10 +265,11 @@ bool mac_state_machine() {
 						send_uart_pc("MAC_RTS: no CTS received\n");
 						increment_num_retries();
 						_numRTSMissed++;
-						if (get_num_retries() > 5) {
+						if (get_num_retries() > 3) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 							set_gps_wake_flag();
+							set_route_expired_flag();
 						}
 						// no response, send again in next slot
 
@@ -385,10 +386,11 @@ bool mac_state_machine() {
 					send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 					if (!mac_rx(SLOT_LENGTH_MS)) {
 						increment_num_retries();
-						if (get_num_retries() > 5) {
+						if (get_num_retries() > 3) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 							set_gps_wake_flag();
+							set_route_expired_flag();
 						}
 						send_uart_pc("MAC_HOP_MESSAGE: heard no ACK\n");
 						MACState = MAC_SLEEP;
@@ -558,7 +560,7 @@ static bool process_rx_buffer() {
 	add_route_to_neighbour(rxDatagram.msgHeader.localSource);
 	if ((rxDatagram.msgHeader.nextHop == _nodeID)
 			|| (rxDatagram.msgHeader.nextHop == BROADCAST_ADDRESS)) { // if destination is this node or broadcast check message type
-
+		_numMsgReceived++;
 		switch (rxDatagram.msgHeader.flags) {
 		case MSG_RTS: 	// RTS
 			mac_send(MSG_CTS, rxDatagram.msgHeader.localSource); // send CTS to requesting node
@@ -579,18 +581,25 @@ static bool process_rx_buffer() {
 			break;
 		case MSG_DATA: 	// DATA
 			if (rxDatagram.msgHeader.netDest != _nodeID) {
-				hopMessageFlag = true;
-				memcpy(&msgToHop, &rxDatagram, get_lora_rx_buffer_size());
+				RouteEntry_t route;
+				bool hasRoute = has_route_to_node(_nodeID, &route);
+				if (hasRoute) {
+					hopMessageFlag = true;
+					memcpy(&msgToHop, &rxDatagram, get_lora_rx_buffer_size());
+					mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
+				} else {
+					hopMessageFlag = false;
+					mac_send(MSG_BROKEN_LINK, rxDatagram.msgHeader.localSource);
+				}
 			} else if (get_is_root()) {
 				hopMessageFlag = false;
 				// now either store the data for further later sending or get ready to upload data to cloud
 				rxDatagram.radioData.rssi = get_rssi_value();
 				rxDatagram.radioData.snr = get_snr_value();
 				receivedDatagrams[receivedMsgIndex++] = rxDatagram;
-				_numMsgReceived++;
+				mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 			}
 
-			mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 //			if (!hopMessageFlag) {
 //				MACState = MAC_SLEEP;
 //			} else {

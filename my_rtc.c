@@ -23,6 +23,7 @@ volatile static bool macStateMachineEnable = false; // Is it time for the MAC st
 volatile static bool uploadGSM = false; // Should the Gateway upload it's stored info? Set by RTC ISR
 volatile static bool collectDataFlag = false; // Tells main to collect sensor data. Set in RTC ISR
 volatile static bool saveFlashData = false;	// Does the data need to be saved to flash
+static bool routeExpired = false;
 // GSM upload slots
 static uint16_t gsmStopSlot[WINDOW_SCALER];
 static uint16_t gsmStartSlot[WINDOW_SCALER];
@@ -148,7 +149,7 @@ void RTC_C_IRQHandler(void) {
 			hasSentGSM = false;
 
 			//Try to only remove routes if retries is exceeded???
-			static bool routeExpired = false;
+
 //			RouteEntry_t *routes;
 //			routes = get_routing_table();
 //			for (var = 0; var < get_num_routes(); ++var) {
@@ -171,15 +172,15 @@ void RTC_C_IRQHandler(void) {
 						reset_num_retries();
 						set_mac_app_state(MAC_LISTEN);
 					}
-				} else if ((get_num_retries() > 0)) {
-					if (!get_is_root()) {
-						set_mac_app_state(MAC_RTS);
-						if (get_num_retries() > 3) {
-							reset_num_retries();
-							set_mac_app_state(MAC_LISTEN);
-						}
-					}
-				} else if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
+				} /*else if ((get_num_retries() > 0)) {
+				 if (!get_is_root()) {
+				 set_mac_app_state(MAC_RTS);
+				 if (get_num_retries() > 3) {
+				 reset_num_retries();
+				 set_mac_app_state(MAC_LISTEN);
+				 }
+				 }
+				 }*/else if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
 						&& !get_is_root()) {
 					if (get_sync(SYNC_PROB_ROUTE_DISC)) {
 						set_mac_app_state(MAC_NET_OP);
@@ -191,6 +192,7 @@ void RTC_C_IRQHandler(void) {
 				} else if (routeExpired) {
 					set_mac_app_state(MAC_NET_OP);
 					set_next_net_op(NET_BROKEN_LINK);
+					reset_route_expired_flag();
 				} else {
 					set_mac_app_state(MAC_LISTEN);
 				}
@@ -311,4 +313,14 @@ void set_time_to_route_flag() {
 
 void reset_time_to_route_flag() {
 	timeToRouteCounterFlag = false;
+}
+
+void set_route_expired_flag() {
+	routeExpired = true;
+}
+void reset_route_expired_flag() {
+	routeExpired = false;
+}
+bool get_route_expired_flag() {
+	return routeExpired;
 }

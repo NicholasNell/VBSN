@@ -214,7 +214,25 @@ NextNetOp_t process_rreq() {
 
 	RouteEntry_t routeToNode;
 	if (has_route_to_node(rxDatagram.data.Rreq.dest_addr, &routeToNode)) { // has route info, so send it back
-		if (routeToNode.dest_seq_num < rxDatagram.data.Rreq.dest_sequence_num) { // Route stored in Routing table is old, delete and rebroadcast rreq
+		if (routeToNode.next_hop == rxDatagram.msgHeader.localSource) {	// received rreq from node on current route to path, therefore troute is invalid
+			remove_route_with_node(rxDatagram.msgHeader.localSource);
+			remove_neighbour(rxDatagram.msgHeader.localSource);
+			add_neighbour(rxDatagram.msgHeader.localSource,
+					rxDatagram.msgHeader.txSlot);
+			reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
+			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
+			reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
+			reversePathInfo.expTime = get_slot_count() - 1;
+			reversePathInfo.localSourceAddress =
+					rxDatagram.msgHeader.localSource;
+			reversePathInfo.source_sequence_num =
+					rxDatagram.data.Rreq.source_sequence_num;
+			HasReversePathInfo = true;
+			start_timer_32_counter(
+			REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
+			retVal = NET_REBROADCAST_RREQ;
+		} else if (routeToNode.dest_seq_num
+				< rxDatagram.data.Rreq.dest_sequence_num) { // Route stored in Routing table is old, delete and rebroadcast rreq
 			reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
 			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 			reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
@@ -228,6 +246,7 @@ NextNetOp_t process_rreq() {
 			REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
 			retVal = NET_REBROADCAST_RREQ;
 		} else {	// has current route to destination
+
 			reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
 			reversePathInfo.broadcastID = rxDatagram.data.Rreq.broadcast_id;
 			reversePathInfo.sourceAddress = rxDatagram.data.Rreq.source_addr;
@@ -240,6 +259,7 @@ NextNetOp_t process_rreq() {
 			start_timer_32_counter(
 			REVERSE_PATH_EXP_TIME * 1000, &HasReversePathInfo);
 			retVal = NET_UNICAST_RREP;
+
 		}
 	} else { //has no route info, so save reverse path info and rebroadcast rreq
 		reversePathInfo.hopcount = rxDatagram.msgHeader.hopCount;
@@ -273,7 +293,8 @@ bool net_re_rreq() {
 				reversePathInfo.source_sequence_num;
 		if (txDatagram.msgHeader.hopCount <= MAX_HOPS) { // no more than 5 hops
 			txDatagram.msgHeader.localSource = get_node_id();
-			int size = sizeof(txDatagram.msgHeader) + sizeof(txDatagram.data);
+			int size = sizeof(txDatagram.msgHeader)
+					+ sizeof(txDatagram.data.Rreq);
 			retVal = mac_send_tx_datagram(size);
 		}
 	}

@@ -60,5 +60,9 @@ uint16_t get_time_to_route();
 void set_time_to_route_flag();
 void reset_time_to_route_flag();
 
+void set_route_expired_flag();
+void reset_route_expired_flag();
+bool get_route_expired_flag();
+
 #endif  /*MY_RTC_H_*/
 

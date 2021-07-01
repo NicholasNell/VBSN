@@ -31,8 +31,8 @@
 #define WRITE_FLASH_DATA_OFFSET	20		// write flash data offset
 #define WINDOW_TIME_SEC (60*10)			//
 #define WINDOW_SCALER (MAX_SLOT_COUNT / WINDOW_TIME_SEC)
-#define GPS_WAKEUP_TIME (int)(60*10.1)			// wake up gps every 15 minutes
-#define FLASH_SAVE_DATA	(int)(60 * 5.1)		// save flash data every 5 minutes
+#define GPS_WAKEUP_TIME (int)(60*10)			// wake up gps every 15 minutes
+#define FLASH_SAVE_DATA	(int)(60 * 5)		// save flash data every 5 minutes
 
 //!
 //! \brief calculates a new sync probability based on the number of known neighbours.
