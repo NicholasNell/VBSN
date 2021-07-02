@@ -171,4 +171,12 @@ void increment_total_msg_tx();
 
 void gen_new_tx_slot();
 
+bool has_messages_in_queue();
+void set_messages_in_queue();
+void reset_messages_in_queue();
+
+uint8_t get_num_messages_in_queue();
+void decrement_messages_in_queue();
+void increment_messages_in_queue();
+
 #endif /* MY_MAC_H_ */

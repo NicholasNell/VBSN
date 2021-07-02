@@ -173,7 +173,7 @@ void RTC_C_IRQHandler(void) {
 					reset_net_op_flag();
 					set_mac_app_state(MAC_NET_OP);
 
-				} else if (get_hop_message_flag()) { // hop the received message in the global RX window
+				} else if (has_messages_in_queue()) { // hop the received message in the global RX window
 					set_mac_app_state(MAC_HOP_MESSAGE);
 					if (get_num_retries() > 3) {
 						reset_num_retries();

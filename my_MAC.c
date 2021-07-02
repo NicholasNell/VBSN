@@ -56,7 +56,7 @@ static uint16_t _totalMsgSent;
 static uint16_t _rreqSent = 0;
 static uint16_t _rrepSent = 0;
 static uint16_t _rreqReBroadcast = 0;
-static Datagram_t msgToHop;
+//static Datagram_t msgToHop;
 
 // bme280Data
 extern struct bme280_data bme280Data;
@@ -75,9 +75,15 @@ volatile static NextNetOp_t nextNetOp = NET_NONE;
 static bool hopMessageFlag = false;
 static bool waitForAck = false;
 
+static bool hasMessagesinQueue = false;
+
+static uint8_t numMessagesInQueue = 0;
+
 volatile static bool netOp;
 
 static uint16_t txSlots[WINDOW_SCALER];
+
+static Datagram_t messageQueue[10];
 
 /*!
  * \brief Return true if message is successfully processed. Returns false if not.
@@ -586,7 +592,11 @@ static bool process_rx_buffer() {
 				bool hasRoute = has_route_to_node(_nodeID, &route);
 				if (hasRoute) {
 					hopMessageFlag = true;
-					memcpy(&msgToHop, &rxDatagram, get_lora_rx_buffer_size());
+//					memcpy(&msgToHop, &rxDatagram, get_lora_rx_buffer_size());
+					messageQueue[get_num_messages_in_queue()] = rxDatagram;
+//					memcpy(&messageQueue[get_num_messages_in_queue()], &rxDatagram,get_lora_rx_buffer_size())
+					increment_messages_in_queue();
+					set_messages_in_queue();
 					mac_send(MSG_ACK, rxDatagram.msgHeader.localSource); // Send Ack back to transmitting node
 				} else {
 					hopMessageFlag = false;
@@ -704,18 +714,27 @@ bool mac_send_tx_datagram(int size) {
 }
 
 static bool mac_hop_message(nodeAddress dest) {
-	int size = sizeof(msgToHop.msgHeader) + sizeof(msgToHop.data)
-			+ sizeof(msgToHop.netData);
-	msgToHop.msgHeader.nextHop = dest;
-	msgToHop.msgHeader.localSource = _nodeID;
-	msgToHop.msgHeader.netSource = rxDatagram.msgHeader.netSource;
-	msgToHop.msgHeader.netDest = GATEWAY_ADDRESS;
-	msgToHop.msgHeader.hopCount = rxDatagram.msgHeader.hopCount + 1;
-	msgToHop.msgHeader.txSlot = _txSlot;
-	msgToHop.msgHeader.curSlot = get_slot_count();
-	msgToHop.msgHeader.flags = MSG_DATA;
+	int index = get_num_messages_in_queue() - 1;
 
-	memcpy(TXBuffer, &msgToHop, size);
+	int size = sizeof(messageQueue[index].msgHeader)
+			+ sizeof(messageQueue[index].data)
+			+ sizeof(messageQueue[index].netData);
+
+	messageQueue[index].msgHeader.nextHop = dest;
+	messageQueue[index].msgHeader.localSource = _nodeID;
+	messageQueue[index].msgHeader.netSource = rxDatagram.msgHeader.netSource;
+	messageQueue[index].msgHeader.netDest = GATEWAY_ADDRESS;
+	messageQueue[index].msgHeader.hopCount = rxDatagram.msgHeader.hopCount + 1;
+	messageQueue[index].msgHeader.txSlot = _txSlot;
+	messageQueue[index].msgHeader.curSlot = get_slot_count();
+	messageQueue[index].msgHeader.flags = MSG_DATA;
+
+//	memcpy(TXBuffer, &msgToHop, size);
+	memcpy(TXBuffer, &messageQueue[get_num_messages_in_queue() - 1], size);
+	decrement_messages_in_queue();
+	if (get_num_messages_in_queue() == 0) {
+		reset_messages_in_queue();	// no more messages to send
+	}
 	start_lora_timer(loraTxtimes[size + 1]);
 	SX1276Send(TXBuffer, size);
 	waitForAck = true;
@@ -898,4 +917,28 @@ void gen_new_tx_slot() {
 	for (i = 0; i < WINDOW_SCALER; i++) {
 		txSlots[i] = i * WINDOW_TIME_SEC + _txSlot;
 	}
+}
+
+bool has_messages_in_queue() {
+	return hasMessagesinQueue;
+}
+
+void set_messages_in_queue() {
+	hasMessagesinQueue = true;
+}
+
+void reset_messages_in_queue() {
+	hasMessagesinQueue = false;
+}
+
+uint8_t get_num_messages_in_queue() {
+	return numMessagesInQueue;
+}
+
+void decrement_messages_in_queue() {
+	numMessagesInQueue--;
+}
+
+void increment_messages_in_queue() {
+	numMessagesInQueue++;
 }
