@@ -23,7 +23,8 @@ volatile static bool macStateMachineEnable = false; // Is it time for the MAC st
 volatile static bool uploadGSM = false; // Should the Gateway upload it's stored info? Set by RTC ISR
 volatile static bool collectDataFlag = false; // Tells main to collect sensor data. Set in RTC ISR
 volatile static bool saveFlashData = false;	// Does the data need to be saved to flash
-static bool routeExpired = false;
+static volatile bool routeExpired = false;
+static volatile bool performOperationNextSlot = false;
 // GSM upload slots
 static uint16_t gsmStopSlot[WINDOW_SCALER];
 static uint16_t gsmStartSlot[WINDOW_SCALER];
@@ -101,6 +102,7 @@ void RTC_C_IRQHandler(void) {
 	gpio_toggle(&Led_user_red);
 #endif
 
+	MAP_WDT_A_clearTimer();
 	if (rtcInitFlag) {
 		if (timeToRouteCounterFlag) {
 			timeToRoute++;
@@ -111,11 +113,11 @@ void RTC_C_IRQHandler(void) {
 				+ convert_hex_to_dec_by_byte(time.seconds);
 
 		set_slot_count(curSlot);
+		curSlot += 1;	// see what happens in next slot
 
 		if (get_num_routes() >= MAX_ROUTES) {
 			reset_num_routes();
 		}
-		set_mac_app_state(MAC_SLEEP);	// by default, sleep
 
 		int i = 0;
 		static bool hasSentGSM = false;
@@ -142,23 +144,28 @@ void RTC_C_IRQHandler(void) {
 				macStateMachineEnable = false;
 				if (get_mac_app_state() != MAC_SLEEP) {
 					set_mac_app_state(MAC_SLEEP);
-					macStateMachineEnable = true;
+//					macStateMachineEnable = true;
+					performOperationNextSlot = true;
 				}
 			}
 		} else {
 			hasSentGSM = false;
-
+			if (performOperationNextSlot) {
+				macStateMachineEnable = true;
+				return;
+			}
+			set_mac_app_state(MAC_SLEEP);	// by default, sleep
 			//Try to only remove routes if retries is exceeded???
-
-//			RouteEntry_t *routes;
-//			routes = get_routing_table();
-//			for (var = 0; var < get_num_routes(); ++var) {
-//				if (routes[var].expiration_time == curSlot) {
-//					routeExpired = true;
-//					remove_neighbour(routes->next_hop);
-//					remove_route_with_node(routes->next_hop);
-//				}
-//			}
+			int var;
+			RouteEntry_t *routes;
+			routes = get_routing_table();
+			for (var = 0; var < get_num_routes(); ++var) {
+				if (routes[var].expiration_time == curSlot) {
+					routeExpired = true;
+					remove_neighbour(routes->next_hop);
+					remove_route_with_node(routes->next_hop);
+				}
+			}
 
 			if (curSlot % GLOBAL_RX == 0) { // Global Sync Slots
 				RouteEntry_t tempRoute;
@@ -172,15 +179,15 @@ void RTC_C_IRQHandler(void) {
 						reset_num_retries();
 						set_mac_app_state(MAC_LISTEN);
 					}
-				} /*else if ((get_num_retries() > 0)) {
-				 if (!get_is_root()) {
-				 set_mac_app_state(MAC_RTS);
-				 if (get_num_retries() > 3) {
-				 reset_num_retries();
-				 set_mac_app_state(MAC_LISTEN);
-				 }
-				 }
-				 }*/else if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
+				} else if (get_num_retries() > 0) {
+					if (!get_is_root()) {
+						set_mac_app_state(MAC_RTS);
+						if (get_num_retries() > 3) {
+							reset_num_retries();
+							set_mac_app_state(MAC_LISTEN);
+						}
+					}
+				} else if (!has_route_to_node(GATEWAY_ADDRESS, &tempRoute)
 						&& !get_is_root()) {
 					if (get_sync(SYNC_PROB_ROUTE_DISC)) {
 						set_mac_app_state(MAC_NET_OP);
@@ -189,21 +196,30 @@ void RTC_C_IRQHandler(void) {
 				} else if (get_sync(SYNC_PROB_HELLO_MSG) && get_is_root()) {
 //					set_mac_app_state(MAC_SYNC_BROADCAST); // root will periodically send out hello messages
 					set_mac_app_state(MAC_LISTEN); // comment this out later, disables hello messages
-				} else if (routeExpired) {
-					set_mac_app_state(MAC_NET_OP);
-					set_next_net_op(NET_BROKEN_LINK);
-					reset_route_expired_flag();
 				} else {
 					set_mac_app_state(MAC_LISTEN);
 				}
-				macStateMachineEnable = true;
+//				macStateMachineEnable = true;
+				performOperationNextSlot = true;
+				if (routeExpired) {
+					if (!get_is_root()) {
+						set_mac_app_state(MAC_NET_OP);
+						set_next_net_op(NET_BROKEN_LINK);
+						reset_route_expired_flag();
+						// todo: change tx slot
+						gen_new_tx_slot();
+//					macStateMachineEnable = true;
+						performOperationNextSlot = true;
+					}
+				}
+
 			}
 
 			if (curSlot == (get_tx_slots()[i] - 5)) { // if slotcount equals collectdataSlot then collect sensor data and flag the hasData flag
 				collectDataFlag = true;
+				performOperationNextSlot = true;
 			}
 
-			int var = 0;
 			Neighbour_t *table;
 			table = get_neighbour_table();
 			for (var = 0; var < get_num_neighbours(); ++var) { // loop through all neighbours and listen if any of them are expected to transmit a message
@@ -211,7 +227,8 @@ void RTC_C_IRQHandler(void) {
 						== (curSlot - (i * WINDOW_TIME_SEC))) {
 					set_mac_app_state(MAC_LISTEN);
 					send_uart_pc("Neighbour Tx Slot\n");
-					macStateMachineEnable = true;
+//					macStateMachineEnable = true;
+					performOperationNextSlot = true;
 					break;
 				}
 			}
@@ -219,7 +236,8 @@ void RTC_C_IRQHandler(void) {
 			if (curSlot == get_tx_slots()[i]) { // if it is the node's tx slot and it has data to send and it is in its correct bracket
 				if (!get_is_root()) {
 					set_mac_app_state(MAC_RTS);
-					macStateMachineEnable = true;
+//					macStateMachineEnable = true;
+					performOperationNextSlot = true;
 				}
 			}
 			if (curSlot == (WINDOW_TIME_SEC / 2 + 1) * (i + 1)) {
@@ -227,7 +245,6 @@ void RTC_C_IRQHandler(void) {
 					reset_gsm_upload_done_flag();
 					uploadGSM = true;
 				}
-
 			}
 		}
 	}
@@ -323,4 +340,11 @@ void reset_route_expired_flag() {
 }
 bool get_route_expired_flag() {
 	return routeExpired;
+}
+
+bool get_perform_operation_flag() {
+	return performOperationNextSlot;
+}
+void reset_perform_operation_flag() {
+	performOperationNextSlot = false;
 }

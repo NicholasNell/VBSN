@@ -64,5 +64,8 @@ void set_route_expired_flag();
 void reset_route_expired_flag();
 bool get_route_expired_flag();
 
+bool get_perform_operation_flag();
+void reset_perform_operation_flag();
+
 #endif  /*MY_RTC_H_*/
 

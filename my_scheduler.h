@@ -13,25 +13,15 @@
 
 #define SLOT_LENGTH_MS 1000		// length of the time slots in ms
 #define SLOT_SCALER 1			// used to increase the length of the time slots: only used for debugging
-//#define MAX_SLOT_COUNT (60.0 * 5.0 / SLOT_SCALER)	// maximum slots, before counter resets
 #define MAX_SLOT_COUNT 3600	// maximum slots, before counter resets
-#define POSSIBLE_TX_SLOT 1		// possible slot modulus
+#define POSSIBLE_TX_SLOT 5		// possible slot modulus
 #define GLOBAL_RX (10 / SLOT_SCALER)	// possible global rx modulus
-#define COLLECT_DATA_SLOT_REL 10	// slot in which data is collected before a transmission
 #define SYNC_PROB_ROUTE_DISC 20					// probability of sending out a sync message in a global rx slot.
 #define SYNC_PROB_HELLO_MSG 5		// prob of root sending helo msg
-#define TOTAL_NETWORK_NODES 5		// total nodes in the network. I've only made 5.
-#define TIME_TO_SEND_SEC (60*5)		// the time between data transmissions
-#define TIME_TO_SEND_DATA_OFFSET 25	//
-#define TIME_TO_COLLECT_DATA_SEC 30 // time to collect data
-#define TIME_TO_COLLECT_DATA_OFFSET	5	//
 #define GSM_UPLOAD_DATAGRAMS_TIME 60	// time to upload datagrams
-#define GSM_UPLOAD_DATAGRAM_OFFSET 55	// time offset from slot count
-#define WRITE_FLASH_DATA_TIME 120		// Time between flash data writes
-#define WRITE_FLASH_DATA_OFFSET	20		// write flash data offset
 #define WINDOW_TIME_SEC (60*10)			//
 #define WINDOW_SCALER (MAX_SLOT_COUNT / WINDOW_TIME_SEC)
-#define GPS_WAKEUP_TIME (int)(60*10)			// wake up gps every 15 minutes
+#define GPS_WAKEUP_TIME (int)(60*55)			// wake up gps every 15 minutes
 #define FLASH_SAVE_DATA	(int)(60 * 5)		// save flash data every 5 minutes
 
 //!

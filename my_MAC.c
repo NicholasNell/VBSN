@@ -164,16 +164,20 @@ void mac_init() {
 //			gen_id(true);
 			set_predefined_id();
 		}
+		double temp;
+		do {
+			temp = (double) rand();
+			temp /= RAND_MAX;
+			temp *= (WINDOW_TIME_SEC - 2 * GSM_UPLOAD_DATAGRAMS_TIME);
+			temp += GSM_UPLOAD_DATAGRAMS_TIME;
+		} while (((uint16_t) temp % POSSIBLE_TX_SLOT != 0)
+				|| ((uint16_t) temp % GLOBAL_RX == 0)); // tx slot on 5 seconds not on 10
 
-		double temp = (double) rand();
-		temp /= RAND_MAX;
-		temp *= (WINDOW_TIME_SEC);
-
-		if (temp < GSM_UPLOAD_DATAGRAMS_TIME) {
-			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME + 1; // this ensures that there is no txSlot in the GSM upload window
-		} else {
-			_txSlot = (uint16_t) temp;
-		}
+//		if (temp < GSM_UPLOAD_DATAGRAMS_TIME) {
+//			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME + 1; // this ensures that there is no txSlot in the GSM upload window
+//		} else {
+		_txSlot = (uint16_t) temp;
+//		}
 //		set_predefined_tx();
 		if (get_is_root()) {
 			_txSlot = 0;
@@ -207,6 +211,9 @@ void mac_init() {
 bool mac_state_machine() {
 	static uint8_t carrierSenseSlot;
 	static RouteEntry_t route;
+	reset_net_op_flag();
+	hopMessageFlag = false;
+	reset_route_expired_flag();
 	while (true) {
 		switch (MACState) {
 		case MAC_SYNC_BROADCAST:
@@ -265,7 +272,7 @@ bool mac_state_machine() {
 						send_uart_pc("MAC_RTS: no CTS received\n");
 						increment_num_retries();
 						_numRTSMissed++;
-						if (get_num_retries() > 3) {
+						if (get_num_retries() > 2) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 							set_gps_wake_flag();
@@ -274,7 +281,7 @@ bool mac_state_machine() {
 						// no response, send again in next slot
 
 						MACState = MAC_SLEEP;
-//						return false;
+						return false;
 					} else {
 						route.expiration_time = get_slot_count() - 1; // reset the expiration timer onthe route you just succesfully used
 					}
@@ -367,6 +374,9 @@ bool mac_state_machine() {
 				send_uart_pc("NET_WAIT\n");
 				if (!mac_rx(SLOT_LENGTH_MS)) {
 					send_uart_pc("NET_WAIT: heard no message\n");
+					if (_rreqSent % 10) {
+						set_gps_wake_flag();
+					}
 					MACState = MAC_SLEEP;
 				}
 				break;
@@ -386,7 +396,7 @@ bool mac_state_machine() {
 					send_uart_pc("MAC_HOP_MESSAGE: sent Hop\n");
 					if (!mac_rx(SLOT_LENGTH_MS)) {
 						increment_num_retries();
-						if (get_num_retries() > 3) {
+						if (get_num_retries() > 2) {
 							remove_route_with_node(route.next_hop);
 							remove_neighbour(route.next_hop);
 							set_gps_wake_flag();
@@ -546,14 +556,6 @@ static bool process_rx_buffer() {
 //	}
 //	receivedDatagrams[receivedMsgIndex] = rxDatagram;
 
-// Comapare slotr counts of the two messages, if different, change this slot Count to the one from the received message
-//	if (rxDatagram.msgHeader.curSlot != get_slot_count()) {
-//		set_slot_count(rxDatagram.msgHeader.curSlot);
-//	}
-//	else {
-//
-//	}
-
 // check if message was meant for this node:
 	add_neighbour(rxDatagram.msgHeader.localSource,
 			rxDatagram.msgHeader.txSlot);
@@ -574,7 +576,6 @@ static bool process_rx_buffer() {
 				mac_hop_message(route.next_hop);
 			} else {
 				mac_send(MSG_DATA, rxDatagram.msgHeader.localSource); // Send data to destination node
-//				hasData = true;
 				MACState = MAC_LISTEN;
 			}
 
@@ -877,4 +878,24 @@ uint16_t get_rrep_sent() {
 
 void increment_total_msg_tx() {
 	_totalMsgSent++;
+}
+
+void gen_new_tx_slot() {
+	double temp;
+	do {
+		temp = (double) rand();
+		temp /= RAND_MAX;
+		temp *= (WINDOW_TIME_SEC - 2 * GSM_UPLOAD_DATAGRAMS_TIME);
+		temp += GSM_UPLOAD_DATAGRAMS_TIME;
+	} while (((uint16_t) temp % POSSIBLE_TX_SLOT != 0)
+			|| ((uint16_t) temp % GLOBAL_RX == 0)); // tx slot on 5 seconds not on 10
+
+	//		if (temp < GSM_UPLOAD_DATAGRAMS_TIME) {
+	//			_txSlot = (uint16_t) temp + GSM_UPLOAD_DATAGRAMS_TIME + 1; // this ensures that there is no txSlot in the GSM upload window
+	//		} else {
+	_txSlot = (uint16_t) temp;
+	int i;
+	for (i = 0; i < WINDOW_SCALER; i++) {
+		txSlots[i] = i * WINDOW_TIME_SEC + _txSlot;
+	}
 }

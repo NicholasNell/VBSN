@@ -169,4 +169,6 @@ uint16_t get_rrep_sent();
 
 void increment_total_msg_tx();
 
+void gen_new_tx_slot();
+
 #endif /* MY_MAC_H_ */

@@ -312,9 +312,9 @@ int main(void) {
 	MAP_WDT_A_holdTimer();
 	SysCtl_setWDTTimeoutResetType(SYSCTL_HARD_RESET);
 	WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_SMCLK,
-	WDT_A_CLOCKITERATIONS_2G);	// 22 min
+	WDT_A_CLOCKITERATIONS_128M);	//
 
-//	MAP_WDT_A_startTimer();
+	MAP_WDT_A_startTimer();
 
 //	gps_set_low_power();
 //	send_uart_pc("GPS low power\n");
@@ -329,6 +329,7 @@ int main(void) {
 
 		if (get_mac_state_machine_enabled()) {
 			reset_mac_state_machine_enabled();
+			reset_perform_operation_flag();
 			mac_state_machine();
 		}
 

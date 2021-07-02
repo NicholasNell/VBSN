@@ -22,11 +22,11 @@ static uint8_t _broadcastID;
 static uint8_t IDSourceCombo[MAX_ROUTES][2];
 static uint8_t IDSourceComboCounter = 0;
 
-bool HasReversePathInfo = false;
+static bool HasReversePathInfo = false;
 
 static ReversePathInfo_t reversePathInfo;
 
-bool HasForwardPathInfo = false;
+static bool HasForwardPathInfo = false;
 static ForwardPathInfo_t forwardPathInfo;
 
 static uint8_t distanceToGateway;
